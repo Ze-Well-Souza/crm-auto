@@ -10,6 +10,7 @@ import {
   Home 
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Link, useLocation } from "react-router-dom";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: Home, current: true },
@@ -24,6 +25,8 @@ const navigation = [
 ];
 
 export const Sidebar = () => {
+  const location = useLocation();
+  
   return (
     <div className="flex h-full w-64 flex-col bg-sidebar border-r border-sidebar-border shadow-elevated">
       {/* Logo */}
@@ -42,27 +45,30 @@ export const Sidebar = () => {
       {/* Navigation */}
       <nav className="flex flex-1 flex-col px-4 py-6">
         <ul role="list" className="flex flex-1 flex-col gap-y-2">
-          {navigation.map((item) => (
-            <li key={item.name}>
-              <a
-                href={item.href}
-                className={cn(
-                  "group flex gap-x-3 rounded-lg p-3 text-sm font-medium transition-smooth",
-                  item.current
-                    ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-sm"
-                    : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                )}
-              >
-                <item.icon
+          {navigation.map((item) => {
+            const isActive = location.pathname === item.href;
+            return (
+              <li key={item.name}>
+                <Link
+                  to={item.href}
                   className={cn(
-                    "h-5 w-5 shrink-0 transition-fast",
-                    item.current ? "text-sidebar-accent-foreground" : "text-sidebar-foreground/70"
+                    "group flex gap-x-3 rounded-lg p-3 text-sm font-medium transition-smooth",
+                    isActive
+                      ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-sm"
+                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                   )}
-                />
-                {item.name}
-              </a>
-            </li>
-          ))}
+                >
+                  <item.icon
+                    className={cn(
+                      "h-5 w-5 shrink-0 transition-fast",
+                      isActive ? "text-sidebar-accent-foreground" : "text-sidebar-foreground/70"
+                    )}
+                  />
+                  {item.name}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </nav>
 
