@@ -37,7 +37,6 @@ export const useParts = () => {
       
       // Since there's no parts table in the current schema,
       // we'll create mock data for demonstration
-      console.log('Parts table not found in schema, using mock data');
       
       // Mock data for demonstration
       const mockParts: Part[] = [
@@ -99,7 +98,6 @@ export const useParts = () => {
 
       setParts(mockParts);
     } catch (err) {
-      console.error('Erro ao buscar peças:', err);
       setError('Erro inesperado ao carregar peças');
     } finally {
       setLoading(false);
