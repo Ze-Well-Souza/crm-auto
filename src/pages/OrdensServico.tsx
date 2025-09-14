@@ -7,10 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, Search, Wrench, Clock, CheckCircle, AlertCircle } from "lucide-react";
 import { useServiceOrders } from "@/hooks/useServiceOrders";
+import { ServiceOrderForm } from "@/components/service-orders/ServiceOrderForm";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const OrdensServico = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const { serviceOrders, loading, error } = useServiceOrders();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { serviceOrders, loading, error, refetch } = useServiceOrders();
 
   const getStatusIcon = (status: string | null) => {
     switch (status) {
@@ -106,10 +109,23 @@ const OrdensServico = () => {
             <p className="text-muted-foreground">Gerencie orçamentos, serviços e acompanhe o status</p>
           </div>
           
-          <Button className="shadow-primary">
-            <Plus className="mr-2 h-4 w-4" />
-            Nova Ordem
-          </Button>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="shadow-primary">
+                <Plus className="mr-2 h-4 w-4" />
+                Nova Ordem
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Criar Nova Ordem de Serviço</DialogTitle>
+              </DialogHeader>
+              <ServiceOrderForm onSuccess={() => {
+                setIsDialogOpen(false);
+                refetch();
+              }} />
+            </DialogContent>
+          </Dialog>
         </div>
 
         {/* Stats */}

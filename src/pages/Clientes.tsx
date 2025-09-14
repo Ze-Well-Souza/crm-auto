@@ -7,12 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Search, Users, Phone, Mail, MapPin } from "lucide-react";
 import { useClients } from "@/hooks/useClients";
 import { ClientForm } from "@/components/clients/ClientForm";
+import { ClientActions } from "@/components/clients/ClientActions";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const Clientes = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { clients, loading, error } = useClients();
+  const { clients, loading, error, refetch } = useClients();
 
   const filteredClients = clients?.filter(client => 
     client.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -79,7 +80,10 @@ const Clientes = () => {
               <DialogHeader>
                 <DialogTitle>Cadastrar Novo Cliente</DialogTitle>
               </DialogHeader>
-              <ClientForm onSuccess={() => setIsDialogOpen(false)} />
+              <ClientForm onSuccess={() => {
+                setIsDialogOpen(false);
+                refetch();
+              }} />
             </DialogContent>
           </Dialog>
         </div>
@@ -153,7 +157,10 @@ const Clientes = () => {
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg">{client.name}</CardTitle>
-                    <Badge variant="secondary">Cliente</Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary">Cliente</Badge>
+                      <ClientActions client={client} onUpdate={refetch} />
+                    </div>
                   </div>
                   {client.cpf_cnpj && (
                     <CardDescription>
@@ -225,7 +232,10 @@ const Clientes = () => {
                         <DialogHeader>
                           <DialogTitle>Cadastrar Novo Cliente</DialogTitle>
                         </DialogHeader>
-                        <ClientForm onSuccess={() => setIsDialogOpen(false)} />
+                        <ClientForm onSuccess={() => {
+                          setIsDialogOpen(false);
+                          refetch();
+                        }} />
                       </DialogContent>
                     </Dialog>
                   )}

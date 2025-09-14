@@ -28,51 +28,15 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/auth" element={<Auth />} />
-            <Route path="/" element={
-              <ProtectedRoute>
-                <Index />
-              </ProtectedRoute>
-            } />
-            <Route path="/clientes" element={
-              <ProtectedRoute>
-                <Clientes />
-              </ProtectedRoute>
-            } />
-            <Route path="/veiculos" element={
-              <ProtectedRoute>
-                <Veiculos />
-              </ProtectedRoute>
-            } />
-            <Route path="/ordens" element={
-              <ProtectedRoute>
-                <OrdensServico />
-              </ProtectedRoute>
-            } />
-            <Route path="/agendamentos" element={
-              <ProtectedRoute>
-                <Agendamentos />
-              </ProtectedRoute>
-            } />
-            <Route path="/estoque" element={
-              <ProtectedRoute>
-                <Estoque />
-              </ProtectedRoute>
-            } />
-            <Route path="/financeiro" element={
-              <ProtectedRoute>
-                <Financeiro />
-              </ProtectedRoute>
-            } />
-            <Route path="/relatorios" element={
-              <ProtectedRoute>
-                <Relatorios />
-              </ProtectedRoute>
-            } />
-            <Route path="/configuracoes" element={
-              <ProtectedRoute>
-                <Configuracoes />
-              </ProtectedRoute>
-            } />
+            <Route path="/" element={<Index />} />
+            <Route path="/clientes" element={<Clientes />} />
+            <Route path="/veiculos" element={<Veiculos />} />
+            <Route path="/ordens" element={<OrdensServico />} />
+            <Route path="/agendamentos" element={<Agendamentos />} />
+            <Route path="/estoque" element={<Estoque />} />
+            <Route path="/financeiro" element={<Financeiro />} />
+            <Route path="/relatorios" element={<Relatorios />} />
+            <Route path="/configuracoes" element={<Configuracoes />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
