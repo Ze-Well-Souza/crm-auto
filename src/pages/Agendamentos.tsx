@@ -37,7 +37,8 @@ const Agendamentos = () => {
   };
 
   const filteredAppointments = appointments?.filter(appointment => 
-    appointment.notes?.toLowerCase().includes(searchTerm.toLowerCase())
+    appointment.servico_tipo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    appointment.observacoes?.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
 
   if (loading) {
@@ -165,7 +166,7 @@ const Agendamentos = () => {
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg">
-                      {new Date(appointment.date).toLocaleDateString('pt-BR')}
+                      {new Date(appointment.data_agendamento).toLocaleDateString('pt-BR')}
                     </CardTitle>
                     <Badge variant={getStatusVariant(appointment.status)} className="flex items-center gap-1">
                       {getStatusIcon(appointment.status)}
@@ -173,15 +174,15 @@ const Agendamentos = () => {
                     </Badge>
                   </div>
                   <CardDescription>
-                    {appointment.time} • {appointment.notes || 'Sem observações'}
+                    {appointment.servico_tipo} • {appointment.observacoes || 'Sem observações'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  {appointment.total_price && (
+                  {appointment.valor_final && (
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-muted-foreground">Valor:</span>
                       <span className="font-semibold">
-                        R$ {appointment.total_price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        R$ {appointment.valor_final.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </span>
                     </div>
                   )}

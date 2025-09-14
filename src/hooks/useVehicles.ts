@@ -35,10 +35,10 @@ export const useVehicles = () => {
       setError(null);
       
       const { data, error } = await supabase
-        .from('vehicles')
+        .from('vehicles_deprecated')
         .select(`
           *,
-          clients (
+          clients_deprecated (
             name,
             email
           )
@@ -63,11 +63,11 @@ export const useVehicles = () => {
   const createVehicle = async (vehicleData: Omit<Vehicle, 'id' | 'created_at' | 'updated_at' | 'clients'>) => {
     try {
       const { data, error } = await supabase
-        .from('vehicles')
+        .from('vehicles_deprecated')
         .insert([vehicleData])
         .select(`
           *,
-          clients (
+          clients_deprecated (
             name,
             email
           )

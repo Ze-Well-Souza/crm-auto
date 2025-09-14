@@ -4,25 +4,23 @@ import { useToast } from "@/hooks/use-toast";
 
 export interface Appointment {
   id: string;
-  date: string;
-  time: string;
-  user_id: string | null;
-  service_id: string | null;
-  establishment_id: string | null;
+  usuario_id: string | null;
+  parceiro_id: number | null;
+  data_agendamento: string;
+  servico_tipo: string;
+  servico_descricao: string | null;
+  valor_estimado: number | null;
+  valor_final: number | null;
   status: string | null;
-  notes: string | null;
-  total_price: number | null;
+  observacoes: string | null;
+  endereco_atendimento: any | null;
+  veiculo_info: any | null;
+  duracao_estimada: number | null;
+  motivo_cancelamento: string | null;
+  cancelado_por: string | null;
+  cancelado_em: string | null;
   created_at: string;
-  updated_at: string;
-  clients?: {
-    name: string;
-    email: string | null;
-    phone: string | null;
-  };
-  services?: {
-    name: string;
-    price: number | null;
-  };
+  updated_at: string | null;
 }
 
 export const useAppointments = () => {
@@ -37,9 +35,9 @@ export const useAppointments = () => {
       setError(null);
       
       const { data, error } = await supabase
-        .from('appointments')
+        .from('agendamentos')
         .select('*')
-        .order('date', { ascending: true });
+        .order('data_agendamento', { ascending: false });
 
       if (error) {
         console.error('Erro ao buscar agendamentos:', error);

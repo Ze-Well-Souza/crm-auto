@@ -29,7 +29,7 @@ export const useClients = () => {
       setError(null);
       
       const { data, error } = await supabase
-        .from('clients')
+        .from('clients_deprecated')
         .select('*')
         .order('name', { ascending: true });
 
@@ -51,7 +51,7 @@ export const useClients = () => {
   const createClient = async (clientData: Omit<Client, 'id' | 'created_at' | 'updated_at'>) => {
     try {
       const { data, error } = await supabase
-        .from('clients')
+        .from('clients_deprecated')
         .insert([clientData])
         .select()
         .single();

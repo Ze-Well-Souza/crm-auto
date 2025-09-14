@@ -17,9 +17,6 @@ export interface FinancialTransaction {
   created_by: string | null;
   created_at: string;
   updated_at: string;
-  service_orders?: {
-    order_number: string;
-  };
 }
 
 export const useFinancialTransactions = () => {
@@ -34,13 +31,8 @@ export const useFinancialTransactions = () => {
       setError(null);
       
       const { data, error } = await supabase
-        .from('financial_transactions')
-        .select(`
-          *,
-          service_orders (
-            order_number
-          )
-        `)
+        .from('financial_transactions_deprecated')
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (error) {
