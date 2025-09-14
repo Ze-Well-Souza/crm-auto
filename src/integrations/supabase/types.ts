@@ -2450,6 +2450,18 @@ export type Database = {
           total: number
         }[]
       }
+      get_partner_contact_info: {
+        Args: { partner_id_param: number }
+        Returns: {
+          address: Json
+          business_name: string
+          email: string
+          id: number
+          phone: string
+          services: string[]
+          working_hours: Json
+        }[]
+      }
       get_partner_statistics: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -2476,6 +2488,16 @@ export type Database = {
           tipo_tarefa: string
           ultima_falha: string
           updated_at: string
+        }[]
+      }
+      get_public_partner_directory: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          average_rating: number
+          business_name: string
+          id: number
+          is_available: boolean
+          total_reviews: number
         }[]
       }
       get_task_queue_metrics: {
