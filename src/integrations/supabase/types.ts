@@ -133,13 +133,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "appointment_ratings_appointment_id_fkey"
-            columns: ["appointment_id"]
-            isOneToOne: false
-            referencedRelation: "bookings"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "appointment_ratings_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -179,13 +172,6 @@ export type Database = {
             columns: ["appointment_id"]
             isOneToOne: false
             referencedRelation: "appointments_deprecated"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "appointment_status_history_appointment_id_fkey"
-            columns: ["appointment_id"]
-            isOneToOne: false
-            referencedRelation: "bookings"
             referencedColumns: ["id"]
           },
           {
@@ -1763,13 +1749,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "reviews_appointment_id_fkey"
-            columns: ["appointment_id"]
-            isOneToOne: false
-            referencedRelation: "bookings"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "reviews_establishment_id_fkey"
             columns: ["establishment_id"]
             isOneToOne: false
@@ -2501,70 +2480,6 @@ export type Database = {
       }
     }
     Views: {
-      bookings: {
-        Row: {
-          client_id: string | null
-          created_at: string | null
-          date: string | null
-          establishment_id: string | null
-          id: string | null
-          notes: string | null
-          service_id: string | null
-          status: string | null
-          time: string | null
-          total_price: number | null
-          updated_at: string | null
-        }
-        Insert: {
-          client_id?: string | null
-          created_at?: string | null
-          date?: string | null
-          establishment_id?: string | null
-          id?: string | null
-          notes?: string | null
-          service_id?: string | null
-          status?: string | null
-          time?: string | null
-          total_price?: number | null
-          updated_at?: string | null
-        }
-        Update: {
-          client_id?: string | null
-          created_at?: string | null
-          date?: string | null
-          establishment_id?: string | null
-          id?: string | null
-          notes?: string | null
-          service_id?: string | null
-          status?: string | null
-          time?: string | null
-          total_price?: number | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "appointments_establishment_id_fkey"
-            columns: ["establishment_id"]
-            isOneToOne: false
-            referencedRelation: "establishments_deprecated"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "appointments_service_id_fkey"
-            columns: ["service_id"]
-            isOneToOne: false
-            referencedRelation: "services_deprecated"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "appointments_user_id_fkey"
-            columns: ["client_id"]
-            isOneToOne: false
-            referencedRelation: "users_deprecated"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       metricas_fila_tarefas: {
         Row: {
           tarefas_concluidas: number | null
