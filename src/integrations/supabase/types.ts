@@ -80,13 +80,6 @@ export type Database = {
             foreignKeyName: "agendamentos_parceiro_id_fkey"
             columns: ["parceiro_id"]
             isOneToOne: false
-            referencedRelation: "parceiro_estatisticas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "agendamentos_parceiro_id_fkey"
-            columns: ["parceiro_id"]
-            isOneToOne: false
             referencedRelation: "parceiros"
             referencedColumns: ["id"]
           },
@@ -246,13 +239,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users_deprecated"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_appointments_parceiro_id"
-            columns: ["parceiro_id"]
-            isOneToOne: false
-            referencedRelation: "parceiro_estatisticas"
             referencedColumns: ["id"]
           },
           {
@@ -478,13 +464,6 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "email_logs_partner_id_fkey"
-            columns: ["partner_id"]
-            isOneToOne: false
-            referencedRelation: "parceiro_estatisticas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "email_logs_partner_id_fkey"
             columns: ["partner_id"]
@@ -950,13 +929,6 @@ export type Database = {
             foreignKeyName: "pagamentos_parceiro_id_fkey"
             columns: ["parceiro_id"]
             isOneToOne: false
-            referencedRelation: "parceiro_estatisticas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "pagamentos_parceiro_id_fkey"
-            columns: ["parceiro_id"]
-            isOneToOne: false
             referencedRelation: "parceiros"
             referencedColumns: ["id"]
           },
@@ -1001,13 +973,6 @@ export type Database = {
           usuario_responsavel?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "parceiro_audit_log_parceiro_id_fkey"
-            columns: ["parceiro_id"]
-            isOneToOne: false
-            referencedRelation: "parceiro_estatisticas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "parceiro_audit_log_parceiro_id_fkey"
             columns: ["parceiro_id"]
@@ -1059,13 +1024,6 @@ export type Database = {
             foreignKeyName: "parceiro_avaliacoes_parceiro_id_fkey"
             columns: ["parceiro_id"]
             isOneToOne: false
-            referencedRelation: "parceiro_estatisticas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "parceiro_avaliacoes_parceiro_id_fkey"
-            columns: ["parceiro_id"]
-            isOneToOne: false
             referencedRelation: "parceiros"
             referencedColumns: ["id"]
           },
@@ -1110,13 +1068,6 @@ export type Database = {
             foreignKeyName: "parceiro_documentos_parceiro_id_fkey"
             columns: ["parceiro_id"]
             isOneToOne: false
-            referencedRelation: "parceiro_estatisticas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "parceiro_documentos_parceiro_id_fkey"
-            columns: ["parceiro_id"]
-            isOneToOne: false
             referencedRelation: "parceiros"
             referencedColumns: ["id"]
           },
@@ -1148,13 +1099,6 @@ export type Database = {
           parceiro_id?: number
         }
         Relationships: [
-          {
-            foreignKeyName: "parceiro_especialidades_parceiro_id_fkey"
-            columns: ["parceiro_id"]
-            isOneToOne: false
-            referencedRelation: "parceiro_estatisticas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "parceiro_especialidades_parceiro_id_fkey"
             columns: ["parceiro_id"]
@@ -1355,13 +1299,6 @@ export type Database = {
             foreignKeyName: "partner_documents_partner_id_fkey"
             columns: ["partner_id"]
             isOneToOne: false
-            referencedRelation: "parceiro_estatisticas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "partner_documents_partner_id_fkey"
-            columns: ["partner_id"]
-            isOneToOne: false
             referencedRelation: "parceiros"
             referencedColumns: ["id"]
           },
@@ -1399,13 +1336,6 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "partner_services_parceiro_id_fkey"
-            columns: ["parceiro_id"]
-            isOneToOne: false
-            referencedRelation: "parceiro_estatisticas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "partner_services_parceiro_id_fkey"
             columns: ["parceiro_id"]
@@ -2480,21 +2410,7 @@ export type Database = {
       }
     }
     Views: {
-      parceiro_estatisticas: {
-        Row: {
-          aprovado_em: string | null
-          created_at: string | null
-          documentos_aprovados: number | null
-          id: number | null
-          media_avaliacoes: number | null
-          nome_empresa: string | null
-          status: string | null
-          total_avaliacoes: number | null
-          total_documentos: number | null
-          total_especialidades: number | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       executar_testes_sistema: {
@@ -2532,6 +2448,21 @@ export type Database = {
           tempo_medio_processamento: number
           tipo_tarefa: string
           total: number
+        }[]
+      }
+      get_partner_statistics: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          aprovado_em: string
+          created_at: string
+          documentos_aprovados: number
+          id: number
+          media_avaliacoes: number
+          nome_empresa: string
+          status: string
+          total_avaliacoes: number
+          total_documentos: number
+          total_especialidades: number
         }[]
       }
       get_problematic_tasks: {
