@@ -2480,33 +2480,6 @@ export type Database = {
       }
     }
     Views: {
-      metricas_fila_tarefas: {
-        Row: {
-          tarefas_concluidas: number | null
-          tarefas_falhadas: number | null
-          tarefas_pendentes: number | null
-          tarefas_processando: number | null
-          tarefas_ultima_hora: number | null
-          tarefas_ultimo_dia: number | null
-          tempo_medio_processamento_segundos: number | null
-          total_tarefas: number | null
-        }
-        Relationships: []
-      }
-      metricas_por_tipo_tarefa: {
-        Row: {
-          concluidas: number | null
-          falhadas: number | null
-          max_tentativas: number | null
-          media_tentativas: number | null
-          pendentes: number | null
-          processando: number | null
-          tempo_medio_processamento: number | null
-          tipo_tarefa: string | null
-          total: number | null
-        }
-        Relationships: []
-      }
       parceiro_estatisticas: {
         Row: {
           aprovado_em: string | null
@@ -2519,50 +2492,6 @@ export type Database = {
           total_avaliacoes: number | null
           total_documentos: number | null
           total_especialidades: number | null
-        }
-        Relationships: []
-      }
-      performance_por_hora: {
-        Row: {
-          concluidas: number | null
-          falhadas: number | null
-          hora: string | null
-          taxa_sucesso_pct: number | null
-          tempo_medio_processamento: number | null
-          total_tarefas: number | null
-        }
-        Relationships: []
-      }
-      tarefas_problematicas: {
-        Row: {
-          created_at: string | null
-          id: number | null
-          payload: Json | null
-          status: string | null
-          tentativas: number | null
-          tipo_tarefa: string | null
-          ultima_falha: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: number | null
-          payload?: Json | null
-          status?: string | null
-          tentativas?: number | null
-          tipo_tarefa?: string | null
-          ultima_falha?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: number | null
-          payload?: Json | null
-          status?: string | null
-          tentativas?: number | null
-          tipo_tarefa?: string | null
-          ultima_falha?: string | null
-          updated_at?: string | null
         }
         Relationships: []
       }
@@ -2579,6 +2508,57 @@ export type Database = {
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      get_hourly_performance: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          concluidas: number
+          falhadas: number
+          hora: string
+          taxa_sucesso_pct: number
+          tempo_medio_processamento: number
+          total_tarefas: number
+        }[]
+      }
+      get_metrics_by_task_type: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          concluidas: number
+          falhadas: number
+          max_tentativas: number
+          media_tentativas: number
+          pendentes: number
+          processando: number
+          tempo_medio_processamento: number
+          tipo_tarefa: string
+          total: number
+        }[]
+      }
+      get_problematic_tasks: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          created_at: string
+          id: number
+          payload: Json
+          status: string
+          tentativas: number
+          tipo_tarefa: string
+          ultima_falha: string
+          updated_at: string
+        }[]
+      }
+      get_task_queue_metrics: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          tarefas_concluidas: number
+          tarefas_falhadas: number
+          tarefas_pendentes: number
+          tarefas_processando: number
+          tarefas_ultima_hora: number
+          tarefas_ultimo_dia: number
+          tempo_medio_processamento_segundos: number
+          total_tarefas: number
+        }[]
       }
       get_user_role: {
         Args: Record<PropertyKey, never> | { user_id_param: string }
