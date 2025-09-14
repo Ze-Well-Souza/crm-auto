@@ -84,13 +84,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "agendamentos_parceiro_id_fkey"
-            columns: ["parceiro_id"]
-            isOneToOne: false
-            referencedRelation: "partner_directory"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "agendamentos_usuario_id_fkey"
             columns: ["usuario_id"]
             isOneToOne: false
@@ -253,13 +246,6 @@ export type Database = {
             columns: ["parceiro_id"]
             isOneToOne: false
             referencedRelation: "parceiros"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_appointments_parceiro_id"
-            columns: ["parceiro_id"]
-            isOneToOne: false
-            referencedRelation: "partner_directory"
             referencedColumns: ["id"]
           },
         ]
@@ -483,13 +469,6 @@ export type Database = {
             columns: ["partner_id"]
             isOneToOne: false
             referencedRelation: "parceiros"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "email_logs_partner_id_fkey"
-            columns: ["partner_id"]
-            isOneToOne: false
-            referencedRelation: "partner_directory"
             referencedColumns: ["id"]
           },
         ]
@@ -954,13 +933,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "pagamentos_parceiro_id_fkey"
-            columns: ["parceiro_id"]
-            isOneToOne: false
-            referencedRelation: "partner_directory"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "pagamentos_usuario_id_fkey"
             columns: ["usuario_id"]
             isOneToOne: false
@@ -1006,13 +978,6 @@ export type Database = {
             columns: ["parceiro_id"]
             isOneToOne: false
             referencedRelation: "parceiros"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "parceiro_audit_log_parceiro_id_fkey"
-            columns: ["parceiro_id"]
-            isOneToOne: false
-            referencedRelation: "partner_directory"
             referencedColumns: ["id"]
           },
         ]
@@ -1062,13 +1027,6 @@ export type Database = {
             referencedRelation: "parceiros"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "parceiro_avaliacoes_parceiro_id_fkey"
-            columns: ["parceiro_id"]
-            isOneToOne: false
-            referencedRelation: "partner_directory"
-            referencedColumns: ["id"]
-          },
         ]
       }
       parceiro_documentos: {
@@ -1113,13 +1071,6 @@ export type Database = {
             referencedRelation: "parceiros"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "parceiro_documentos_parceiro_id_fkey"
-            columns: ["parceiro_id"]
-            isOneToOne: false
-            referencedRelation: "partner_directory"
-            referencedColumns: ["id"]
-          },
         ]
       }
       parceiro_especialidades: {
@@ -1153,13 +1104,6 @@ export type Database = {
             columns: ["parceiro_id"]
             isOneToOne: false
             referencedRelation: "parceiros"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "parceiro_especialidades_parceiro_id_fkey"
-            columns: ["parceiro_id"]
-            isOneToOne: false
-            referencedRelation: "partner_directory"
             referencedColumns: ["id"]
           },
         ]
@@ -1358,13 +1302,6 @@ export type Database = {
             referencedRelation: "parceiros"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "partner_documents_partner_id_fkey"
-            columns: ["partner_id"]
-            isOneToOne: false
-            referencedRelation: "partner_directory"
-            referencedColumns: ["id"]
-          },
         ]
       }
       partner_services_deprecated: {
@@ -1404,13 +1341,6 @@ export type Database = {
             columns: ["parceiro_id"]
             isOneToOne: false
             referencedRelation: "parceiros"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "partner_services_parceiro_id_fkey"
-            columns: ["parceiro_id"]
-            isOneToOne: false
-            referencedRelation: "partner_directory"
             referencedColumns: ["id"]
           },
           {
@@ -2480,30 +2410,7 @@ export type Database = {
       }
     }
     Views: {
-      partner_directory: {
-        Row: {
-          average_rating: number | null
-          business_name: string | null
-          id: number | null
-          is_available: boolean | null
-          total_reviews: number | null
-        }
-        Insert: {
-          average_rating?: never
-          business_name?: string | null
-          id?: number | null
-          is_available?: boolean | null
-          total_reviews?: never
-        }
-        Update: {
-          average_rating?: never
-          business_name?: string | null
-          id?: number | null
-          is_available?: boolean | null
-          total_reviews?: never
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       executar_testes_sistema: {
@@ -2553,6 +2460,16 @@ export type Database = {
           phone: string
           services: string[]
           working_hours: Json
+        }[]
+      }
+      get_partner_directory: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          average_rating: number
+          business_name: string
+          id: number
+          is_available: boolean
+          total_reviews: number
         }[]
       }
       get_partner_statistics: {
