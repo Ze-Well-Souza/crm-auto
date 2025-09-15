@@ -55,7 +55,8 @@ export const ServiceOrderForm = ({ onSuccess }: ServiceOrderFormProps) => {
           discount: discountValue || null,
           status: formData.status,
           mechanic_id: formData.mechanic_id || null,
-          notes: formData.notes || null
+          notes: formData.notes || null,
+          order_number: `OS-${Date.now()}`
         });
 
       if (error) {
