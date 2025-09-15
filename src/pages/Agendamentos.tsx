@@ -6,11 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, Search, Calendar, Clock, CheckCircle, AlertCircle } from "lucide-react";
-import { useAppointments } from "@/hooks/useAppointments";
+import { AppointmentForm } from "@/components/appointments/AppointmentForm";
+import { useAppointmentsNew } from "@/hooks/useAppointmentsNew";
 
 const Agendamentos = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const { appointments, loading, error } = useAppointments();
+  const [showForm, setShowForm] = useState(false);
+  const { appointments, loading, error, refetch } = useAppointmentsNew();
 
   const getStatusIcon = (status: string | null) => {
     switch (status) {
@@ -37,8 +39,9 @@ const Agendamentos = () => {
   };
 
   const filteredAppointments = appointments?.filter(appointment => 
-    appointment.servico_tipo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    appointment.observacoes?.toLowerCase().includes(searchTerm.toLowerCase())
+    appointment.service_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    appointment.notes?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    appointment.clients?.name.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
 
   if (loading) {
@@ -166,7 +169,7 @@ const Agendamentos = () => {
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg">
-                      {new Date(appointment.data_agendamento).toLocaleDateString('pt-BR')}
+                      {new Date(appointment.scheduled_date).toLocaleDateString('pt-BR')} - {appointment.scheduled_time}
                     </CardTitle>
                     <Badge variant={getStatusVariant(appointment.status)} className="flex items-center gap-1">
                       {getStatusIcon(appointment.status)}
@@ -174,15 +177,15 @@ const Agendamentos = () => {
                     </Badge>
                   </div>
                   <CardDescription>
-                    {appointment.servico_tipo} • {appointment.observacoes || 'Sem observações'}
+                    {appointment.service_type} • Cliente: {appointment.clients?.name || 'N/A'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  {appointment.valor_final && (
+                  {appointment.final_value && (
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-muted-foreground">Valor:</span>
                       <span className="font-semibold">
-                        R$ {appointment.valor_final.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        R$ {appointment.final_value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </span>
                     </div>
                   )}
@@ -214,9 +217,15 @@ const Agendamentos = () => {
             </div>
           )}
         </div>
-      </div>
-    </DashboardLayout>
-  );
-};
+        </div>
+
+        <AppointmentForm
+          open={showForm}
+          onOpenChange={setShowForm}
+          onSuccess={refetch}
+        />
+      </DashboardLayout>
+    );
+  };
 
 export default Agendamentos;

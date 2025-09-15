@@ -6,11 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, Search, Package, AlertTriangle, CheckCircle } from "lucide-react";
-import { useParts } from "@/hooks/useParts";
+import { PartsForm } from "@/components/parts/PartsForm";
+import { usePartsNew } from "@/hooks/usePartsNew";
 
 const Estoque = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const { parts, loading, error } = useParts();
+  const [showForm, setShowForm] = useState(false);
+  const { parts, loading, error, refetch } = usePartsNew();
 
   const getStockStatus = (part: any) => {
     if (!part.stock_quantity || part.stock_quantity <= 0) {

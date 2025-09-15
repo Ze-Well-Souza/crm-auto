@@ -176,6 +176,81 @@ export type Database = {
           },
         ]
       }
+      appointments: {
+        Row: {
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          cancelled_by: string | null
+          client_id: string
+          created_at: string
+          estimated_duration: number | null
+          estimated_value: number | null
+          final_value: number | null
+          id: string
+          notes: string | null
+          scheduled_date: string
+          scheduled_time: string
+          service_description: string | null
+          service_type: string
+          status: string | null
+          updated_at: string
+          vehicle_id: string | null
+        }
+        Insert: {
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          client_id: string
+          created_at?: string
+          estimated_duration?: number | null
+          estimated_value?: number | null
+          final_value?: number | null
+          id?: string
+          notes?: string | null
+          scheduled_date: string
+          scheduled_time: string
+          service_description?: string | null
+          service_type: string
+          status?: string | null
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Update: {
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          client_id?: string
+          created_at?: string
+          estimated_duration?: number | null
+          estimated_value?: number | null
+          final_value?: number | null
+          id?: string
+          notes?: string | null
+          scheduled_date?: string
+          scheduled_time?: string
+          service_description?: string | null
+          service_type?: string
+          status?: string | null
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       appointments_deprecated: {
         Row: {
           created_at: string | null
@@ -377,6 +452,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      clients: {
+        Row: {
+          address: string | null
+          city: string | null
+          cpf_cnpj: string | null
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          state: string | null
+          updated_at: string
+          zip_code: string | null
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          cpf_cnpj?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          state?: string | null
+          updated_at?: string
+          zip_code?: string | null
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          cpf_cnpj?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          state?: string | null
+          updated_at?: string
+          zip_code?: string | null
+        }
+        Relationships: []
       }
       clients_deprecated: {
         Row: {
@@ -654,6 +774,68 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      financial_transactions: {
+        Row: {
+          amount: number
+          category: string | null
+          client_id: string | null
+          created_at: string
+          created_by: string | null
+          description: string
+          due_date: string | null
+          id: string
+          notes: string | null
+          payment_date: string | null
+          payment_method: string | null
+          service_order_id: string | null
+          status: string | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          category?: string | null
+          client_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          description: string
+          due_date?: string | null
+          id?: string
+          notes?: string | null
+          payment_date?: string | null
+          payment_method?: string | null
+          service_order_id?: string | null
+          status?: string | null
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          category?: string | null
+          client_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          due_date?: string | null
+          id?: string
+          notes?: string | null
+          payment_date?: string | null
+          payment_method?: string | null
+          service_order_id?: string | null
+          status?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financial_transactions_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       financial_transactions_deprecated: {
         Row: {
@@ -1405,6 +1587,71 @@ export type Database = {
           },
         ]
       }
+      parts: {
+        Row: {
+          active: boolean | null
+          brand: string | null
+          category: string | null
+          code: string | null
+          cost_price: number | null
+          created_at: string
+          description: string | null
+          id: string
+          location: string | null
+          max_stock: number | null
+          min_stock: number | null
+          name: string
+          sale_price: number | null
+          stock_quantity: number | null
+          supplier_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean | null
+          brand?: string | null
+          category?: string | null
+          code?: string | null
+          cost_price?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          max_stock?: number | null
+          min_stock?: number | null
+          name: string
+          sale_price?: number | null
+          stock_quantity?: number | null
+          supplier_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean | null
+          brand?: string | null
+          category?: string | null
+          code?: string | null
+          cost_price?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          max_stock?: number | null
+          min_stock?: number | null
+          name?: string
+          sale_price?: number | null
+          stock_quantity?: number | null
+          supplier_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parts_supplier_id_fkey1"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       parts_deprecated: {
         Row: {
           active: boolean | null
@@ -1469,6 +1716,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      payment_methods: {
+        Row: {
+          active: boolean | null
+          created_at: string
+          id: string
+          name: string
+          type: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string
+          id?: string
+          name: string
+          type?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string
+          id?: string
+          name?: string
+          type?: string | null
+        }
+        Relationships: []
       }
       payments: {
         Row: {
@@ -1782,6 +2053,81 @@ export type Database = {
           },
         ]
       }
+      service_orders: {
+        Row: {
+          client_id: string
+          created_at: string
+          delivered_at: string | null
+          description: string | null
+          discount: number | null
+          finished_at: string | null
+          id: string
+          mechanic_id: string | null
+          notes: string | null
+          order_number: string | null
+          started_at: string | null
+          status: string | null
+          total_amount: number | null
+          total_labor: number | null
+          total_parts: number | null
+          updated_at: string
+          vehicle_id: string | null
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          delivered_at?: string | null
+          description?: string | null
+          discount?: number | null
+          finished_at?: string | null
+          id?: string
+          mechanic_id?: string | null
+          notes?: string | null
+          order_number?: string | null
+          started_at?: string | null
+          status?: string | null
+          total_amount?: number | null
+          total_labor?: number | null
+          total_parts?: number | null
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          delivered_at?: string | null
+          description?: string | null
+          discount?: number | null
+          finished_at?: string | null
+          id?: string
+          mechanic_id?: string | null
+          notes?: string | null
+          order_number?: string | null
+          started_at?: string | null
+          status?: string | null
+          total_amount?: number | null
+          total_labor?: number | null
+          total_parts?: number | null
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_orders_client_id_fkey1"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_orders_vehicle_id_fkey1"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       service_orders_deprecated: {
         Row: {
           client_id: string
@@ -2023,6 +2369,56 @@ export type Database = {
         }
         Relationships: []
       }
+      stock_movements: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          movement_type: string
+          notes: string | null
+          part_id: string
+          quantity: number
+          reference_id: string | null
+          reference_type: string | null
+          total_cost: number | null
+          unit_cost: number | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          movement_type: string
+          notes?: string | null
+          part_id: string
+          quantity: number
+          reference_id?: string | null
+          reference_type?: string | null
+          total_cost?: number | null
+          unit_cost?: number | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          movement_type?: string
+          notes?: string | null
+          part_id?: string
+          quantity?: number
+          reference_id?: string | null
+          reference_type?: string | null
+          total_cost?: number | null
+          unit_cost?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_movements_part_id_fkey1"
+            columns: ["part_id"]
+            isOneToOne: false
+            referencedRelation: "parts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       stock_movements_deprecated: {
         Row: {
           created_at: string
@@ -2066,6 +2462,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      suppliers: {
+        Row: {
+          active: boolean | null
+          address: string | null
+          city: string | null
+          cnpj: string | null
+          contact_name: string | null
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          state: string | null
+          updated_at: string
+          zip_code: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          address?: string | null
+          city?: string | null
+          cnpj?: string | null
+          contact_name?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          state?: string | null
+          updated_at?: string
+          zip_code?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          address?: string | null
+          city?: string | null
+          cnpj?: string | null
+          contact_name?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          state?: string | null
+          updated_at?: string
+          zip_code?: string | null
+        }
+        Relationships: []
       }
       suppliers_deprecated: {
         Row: {
@@ -2278,6 +2725,65 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      vehicles: {
+        Row: {
+          brand: string
+          client_id: string
+          color: string | null
+          created_at: string
+          engine: string | null
+          fuel_type: string | null
+          id: string
+          license_plate: string | null
+          mileage: number | null
+          model: string
+          notes: string | null
+          updated_at: string
+          vin: string | null
+          year: number | null
+        }
+        Insert: {
+          brand: string
+          client_id: string
+          color?: string | null
+          created_at?: string
+          engine?: string | null
+          fuel_type?: string | null
+          id?: string
+          license_plate?: string | null
+          mileage?: number | null
+          model: string
+          notes?: string | null
+          updated_at?: string
+          vin?: string | null
+          year?: number | null
+        }
+        Update: {
+          brand?: string
+          client_id?: string
+          color?: string | null
+          created_at?: string
+          engine?: string | null
+          fuel_type?: string | null
+          id?: string
+          license_plate?: string | null
+          mileage?: number | null
+          model?: string
+          notes?: string | null
+          updated_at?: string
+          vin?: string | null
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicles_client_id_fkey1"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       vehicles_deprecated: {
         Row: {

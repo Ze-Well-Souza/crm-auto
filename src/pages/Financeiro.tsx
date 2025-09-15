@@ -6,11 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, Search, DollarSign, TrendingUp, TrendingDown, Clock } from "lucide-react";
-import { useFinancialTransactions } from "@/hooks/useFinancialTransactions";
+import { TransactionForm } from "@/components/financial/TransactionForm";
+import { useFinancialTransactionsNew } from "@/hooks/useFinancialTransactionsNew";
 
 const Financeiro = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const { transactions, loading, error } = useFinancialTransactions();
+  const [showForm, setShowForm] = useState(false);
+  const { transactions, loading, error, refetch } = useFinancialTransactionsNew();
 
   const getTypeIcon = (type: string) => {
     return type === 'receita' ? 
