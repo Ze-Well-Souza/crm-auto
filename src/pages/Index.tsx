@@ -1,6 +1,7 @@
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { MetricCard } from "@/components/dashboard/MetricCard";
 import { ModuleCard } from "@/components/dashboard/ModuleCard";
+import { Skeleton } from "@/components/ui/skeleton";
 import { 
   Users, 
   Car, 
@@ -13,8 +14,41 @@ import {
   Clock,
   CheckCircle
 } from "lucide-react";
+import { useClients } from "@/hooks/useClients";
+import { useVehicles } from "@/hooks/useVehicles";
+import { usePartsNew } from "@/hooks/usePartsNew";
+import { useFinancialTransactionsNew } from "@/hooks/useFinancialTransactionsNew";
+import { useAppointmentsNew } from "@/hooks/useAppointmentsNew";
+import { useServiceOrders } from "@/hooks/useServiceOrders";
 
 const Index = () => {
+  // Data hooks
+  const { clients, loading: clientsLoading } = useClients();
+  const { vehicles, loading: vehiclesLoading } = useVehicles();
+  const { parts, loading: partsLoading } = usePartsNew();
+  const { transactions, loading: transactionsLoading } = useFinancialTransactionsNew();
+  const { appointments, loading: appointmentsLoading } = useAppointmentsNew();
+  const { serviceOrders, loading: serviceOrdersLoading } = useServiceOrders();
+
+  const isLoading = clientsLoading || vehiclesLoading || partsLoading || 
+                   transactionsLoading || appointmentsLoading || serviceOrdersLoading;
+
+  // Calculate metrics
+  const totalClients = clients?.length || 0;
+  const totalVehicles = vehicles?.length || 0;
+  const totalParts = parts?.length || 0;
+  const lowStockParts = parts?.filter(p => p.min_stock && p.stock_quantity && p.stock_quantity <= p.min_stock).length || 0;
+  
+  const totalReceitas = transactions?.filter(t => t.type === 'receita').reduce((sum, t) => sum + t.amount, 0) || 0;
+  const totalDespesas = transactions?.filter(t => t.type === 'despesa').reduce((sum, t) => sum + t.amount, 0) || 0;
+  const monthlyRevenue = totalReceitas - totalDespesas;
+  
+  const totalAppointments = appointments?.length || 0;
+  const pendingAppointments = appointments?.filter(a => a.status === 'agendado').length || 0;
+  const completedAppointments = appointments?.filter(a => a.status === 'concluido').length || 0;
+  
+  const totalServiceOrders = serviceOrders?.length || 0;
+  const completedServiceOrders = serviceOrders?.filter(so => so.status === 'finalizado').length || 0;
   const modules = [
     {
       title: "Gestão de Clientes",
@@ -74,36 +108,44 @@ const Index = () => {
       </div>
 
       {/* Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <MetricCard
-          title="Clientes Ativos"
-          value="1,247"
-          change="+12% vs mês anterior"
-          changeType="positive"
-          icon={Users}
-        />
-        <MetricCard
-          title="Serviços em Andamento"
-          value="23"
-          change="5 agendados hoje"
-          changeType="neutral"
-          icon={Clock}
-        />
-        <MetricCard
-          title="Faturamento Mensal"
-          value="R$ 45.890"
-          change="+8.2% vs mês anterior"
-          changeType="positive"
-          icon={TrendingUp}
-        />
-        <MetricCard
-          title="Serviços Concluídos"
-          value="156"
-          change="Este mês"
-          changeType="positive"
-          icon={CheckCircle}
-        />
-      </div>
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[...Array(4)].map((_, i) => (
+            <Skeleton key={i} className="h-24 w-full" />
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <MetricCard
+            title="Clientes Ativos"
+            value={totalClients.toString()}
+            change={`${totalVehicles} veículos cadastrados`}
+            changeType="neutral"
+            icon={Users}
+          />
+          <MetricCard
+            title="Agendamentos"
+            value={totalAppointments.toString()}
+            change={`${pendingAppointments} pendentes`}
+            changeType={pendingAppointments > 0 ? "neutral" : "positive"}
+            icon={Calendar}
+          />
+          <MetricCard
+            title="Saldo Mensal"
+            value={`R$ ${monthlyRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+            change={`Receitas: R$ ${totalReceitas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+            changeType={monthlyRevenue >= 0 ? "positive" : "negative"}
+            icon={TrendingUp}
+          />
+          <MetricCard
+            title="Estoque"
+            value={totalParts.toString()}
+            change={lowStockParts > 0 ? `${lowStockParts} com estoque baixo` : "Estoque OK"}
+            changeType={lowStockParts > 0 ? "negative" : "positive"}
+            icon={Package}
+          />
+        </div>
+      )}
 
       {/* Modules Grid */}
       <div className="space-y-4">

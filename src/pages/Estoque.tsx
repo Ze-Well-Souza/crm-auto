@@ -85,7 +85,7 @@ const Estoque = () => {
             <p className="text-muted-foreground">Gerencie peças, fornecedores e movimentações</p>
           </div>
           
-          <Button className="shadow-primary">
+          <Button className="shadow-primary" onClick={() => setShowForm(true)}>
             <Plus className="mr-2 h-4 w-4" />
             Nova Peça
           </Button>
@@ -238,6 +238,12 @@ const Estoque = () => {
             </div>
           )}
         </div>
+
+        <PartsForm
+          open={showForm}
+          onOpenChange={setShowForm}
+          onSuccess={refetch}
+        />
       </div>
     </DashboardLayout>
   );

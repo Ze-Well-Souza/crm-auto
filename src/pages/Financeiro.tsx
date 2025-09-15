@@ -93,7 +93,7 @@ const Financeiro = () => {
             <p className="text-muted-foreground">Controle de receitas, despesas e fluxo de caixa</p>
           </div>
           
-          <Button className="shadow-primary">
+          <Button className="shadow-primary" onClick={() => setShowForm(true)}>
             <Plus className="mr-2 h-4 w-4" />
             Nova Transação
           </Button>
@@ -249,6 +249,12 @@ const Financeiro = () => {
             </div>
           )}
         </div>
+
+        <TransactionForm
+          open={showForm}
+          onOpenChange={setShowForm}
+          onSuccess={refetch}
+        />
       </div>
     </DashboardLayout>
   );
