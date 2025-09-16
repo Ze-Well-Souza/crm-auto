@@ -43,8 +43,19 @@ export const useServiceOrders = () => {
       setError(null);
       
       const { data, error } = await supabase
-        .from('service_orders_deprecated')
-        .select('*')
+        .from('service_orders')
+        .select(`
+          *,
+          clients (
+            name,
+            email
+          ),
+          vehicles (
+            brand,
+            model,
+            license_plate
+          )
+        `)
         .order('created_at', { ascending: false });
 
       if (error) {
