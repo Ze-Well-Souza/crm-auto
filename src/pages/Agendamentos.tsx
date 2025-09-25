@@ -2,27 +2,56 @@ import { useState } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Plus, Search, Calendar, Clock, CheckCircle, AlertCircle } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Plus, Calendar, Clock, CheckCircle, List, CalendarDays } from "lucide-react";
 import { AppointmentForm } from "@/components/appointments/AppointmentForm";
+import { CalendarView } from "@/components/appointments/CalendarView";
+import { AppointmentDetails } from "@/components/appointments/AppointmentDetails";
+import { QuickAppointmentForm } from "@/components/appointments/QuickAppointmentForm";
 import { useAppointmentsNew } from "@/hooks/useAppointmentsNew";
 import { SearchInput } from "@/components/common/SearchInput";
 import { EmptyState } from "@/components/common/EmptyState";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { StatusBadge } from "@/components/common/StatusBadge";
+import { formatDate, formatCurrency } from "@/utils/formatters";
+import type { Appointment } from "@/types";
 
 const Agendamentos = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showForm, setShowForm] = useState(false);
+  const [showQuickForm, setShowQuickForm] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [showDetails, setShowDetails] = useState(false);
+  const [activeTab, setActiveTab] = useState("calendar");
+  
   const { appointments, loading, error, refetch } = useAppointmentsNew();
 
   const filteredAppointments = appointments?.filter(appointment => 
     appointment.service_type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     appointment.service_description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    appointment.clients?.name.toLowerCase().includes(searchTerm.toLowerCase())
+    appointment.clients?.name?.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
+
+  const handleDateSelect = (date: Date) => {
+    setSelectedDate(date);
+    setShowQuickForm(true);
+  };
+
+  const handleAppointmentClick = (appointment: Appointment) => {
+    setSelectedAppointment(appointment);
+    setShowDetails(true);
+  };
+
+  const handleNewAppointment = (date?: Date) => {
+    if (date) {
+      setSelectedDate(date);
+      setShowQuickForm(true);
+    } else {
+      setShowForm(true);
+    }
+  };
 
   if (loading) {
     return (
@@ -46,6 +75,11 @@ const Agendamentos = () => {
     );
   }
 
+  const totalAppointments = appointments?.length || 0;
+  const pendingAppointments = appointments?.filter(a => a.status === 'agendado').length || 0;
+  const confirmedAppointments = appointments?.filter(a => a.status === 'confirmado').length || 0;
+  const completedAppointments = appointments?.filter(a => a.status === 'concluido').length || 0;
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -53,7 +87,7 @@ const Agendamentos = () => {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-2">
             <h1 className="text-3xl font-bold text-foreground">Agendamentos</h1>
-            <p className="text-muted-foreground">Gerencie a agenda de serviços e consultas</p>
+            <p className="text-muted-foreground">Gerencie a agenda de serviços com visualização interativa</p>
           </div>
           
           <Button className="shadow-primary" onClick={() => setShowForm(true)}>
@@ -63,17 +97,17 @@ const Agendamentos = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="gradient-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-primary" />
-                Total de Agendamentos
+                Total
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{appointments?.length || 0}</div>
-              <p className="text-xs text-muted-foreground">Todos os agendamentos</p>
+              <div className="text-2xl font-bold">{totalAppointments}</div>
+              <p className="text-xs text-muted-foreground">Agendamentos</p>
             </CardContent>
           </Card>
           
@@ -85,9 +119,7 @@ const Agendamentos = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {appointments?.filter(a => a.status === 'agendado').length || 0}
-              </div>
+              <div className="text-2xl font-bold">{pendingAppointments}</div>
               <p className="text-xs text-muted-foreground">Aguardando confirmação</p>
             </CardContent>
           </Card>
@@ -100,76 +132,140 @@ const Agendamentos = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {appointments?.filter(a => a.status === 'confirmado').length || 0}
-              </div>
-              <p className="text-xs text-muted-foreground">Agendamentos confirmados</p>
+              <div className="text-2xl font-bold">{confirmedAppointments}</div>
+              <p className="text-xs text-muted-foreground">Confirmados</p>
+            </CardContent>
+          </Card>
+
+          <Card className="gradient-card">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <CheckCircle className="h-4 w-4 text-info" />
+                Concluídos
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{completedAppointments}</div>
+              <p className="text-xs text-muted-foreground">Finalizados</p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Search */}
-        <SearchInput
-          placeholder="Buscar agendamentos por tipo de serviço, descrição ou cliente..."
-          value={searchTerm}
-          onChange={setSearchTerm}
-        />
+        {/* Tabs for Calendar and List View */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="calendar" className="flex items-center gap-2">
+              <CalendarDays className="h-4 w-4" />
+              Agenda Visual
+            </TabsTrigger>
+            <TabsTrigger value="list" className="flex items-center gap-2">
+              <List className="h-4 w-4" />
+              Lista
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Appointments List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredAppointments.length > 0 ? (
-            filteredAppointments.map((appointment) => (
-              <Card key={appointment.id} className="hover:shadow-elevated transition-smooth cursor-pointer">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">
-                      {new Date(appointment.scheduled_date).toLocaleDateString('pt-BR')} - {appointment.scheduled_time}
-                    </CardTitle>
-                    <StatusBadge status={appointment.status} type="appointment" />
-                  </div>
-                  <CardDescription>
-                    {appointment.service_type} • Cliente: {appointment.clients?.name || 'N/A'}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {appointment.estimated_value && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Valor:</span>
-                      <span className="font-semibold">
-                        R$ {appointment.estimated_value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                      </span>
-                    </div>
-                  )}
-                  
-                  <div className="flex justify-between items-center pt-2 border-t">
-                    <span className="text-xs text-muted-foreground">
-                      Criado em {new Date(appointment.created_at).toLocaleDateString('pt-BR')}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          ) : (
-            <div className="col-span-full">
-              <EmptyState
-                icon={Calendar}
-                title={searchTerm ? "Nenhum agendamento encontrado" : "Nenhum agendamento cadastrado"}
-                description={searchTerm 
-                  ? "Tente ajustar os termos de busca." 
-                  : "Comece criando o primeiro agendamento."
-                }
-                actionLabel="Novo Agendamento"
-                onAction={() => setShowForm(true)}
-                showAction={!searchTerm}
-              />
+          {/* Calendar View */}
+          <TabsContent value="calendar" className="space-y-4">
+            <CalendarView
+              appointments={appointments || []}
+              onDateSelect={handleDateSelect}
+              onAppointmentClick={handleAppointmentClick}
+              onNewAppointment={handleNewAppointment}
+            />
+          </TabsContent>
+
+          {/* List View */}
+          <TabsContent value="list" className="space-y-4">
+            {/* Search */}
+            <SearchInput
+              placeholder="Buscar agendamentos por tipo de serviço, descrição ou cliente..."
+              value={searchTerm}
+              onChange={setSearchTerm}
+            />
+
+            {/* Appointments List */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredAppointments.length > 0 ? (
+                filteredAppointments.map((appointment) => (
+                  <Card 
+                    key={appointment.id} 
+                    className="hover:shadow-elevated transition-smooth cursor-pointer"
+                    onClick={() => handleAppointmentClick(appointment)}
+                  >
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-lg">
+                          {formatDate(appointment.scheduled_date)} - {appointment.scheduled_time}
+                        </CardTitle>
+                        <StatusBadge status={appointment.status} type="appointment" />
+                      </div>
+                      <CardDescription>
+                        {appointment.service_type} • {appointment.clients?.name || 'N/A'}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {appointment.estimated_value && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-muted-foreground">Valor:</span>
+                          <span className="font-semibold">
+                            {formatCurrency(appointment.estimated_value)}
+                          </span>
+                        </div>
+                      )}
+                      
+                      {appointment.estimated_duration && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-muted-foreground">Duração:</span>
+                          <span className="text-sm">{appointment.estimated_duration} min</span>
+                        </div>
+                      )}
+                      
+                      <div className="flex justify-between items-center pt-2 border-t">
+                        <span className="text-xs text-muted-foreground">
+                          Criado em {formatDate(appointment.created_at)}
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <div className="col-span-full">
+                  <EmptyState
+                    icon={Calendar}
+                    title={searchTerm ? "Nenhum agendamento encontrado" : "Nenhum agendamento cadastrado"}
+                    description={searchTerm 
+                      ? "Tente ajustar os termos de busca." 
+                      : "Comece criando o primeiro agendamento."
+                    }
+                    actionLabel="Novo Agendamento"
+                    onAction={() => setShowForm(true)}
+                    showAction={!searchTerm}
+                  />
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          </TabsContent>
+        </Tabs>
 
+        {/* Forms and Dialogs */}
         <AppointmentForm
           open={showForm}
           onOpenChange={setShowForm}
           onSuccess={refetch}
+        />
+
+        <QuickAppointmentForm
+          open={showQuickForm}
+          onOpenChange={setShowQuickForm}
+          selectedDate={selectedDate}
+          onSuccess={refetch}
+        />
+
+        <AppointmentDetails
+          appointment={selectedAppointment}
+          open={showDetails}
+          onOpenChange={setShowDetails}
+          onUpdate={refetch}
         />
       </div>
     </DashboardLayout>
