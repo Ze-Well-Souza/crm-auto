@@ -245,8 +245,9 @@ const Agendamentos = () => {
           onOpenChange={setShowForm}
           onSuccess={refetch}
         />
-      </DashboardLayout>
-    );
-  };
+      </div>
+    </DashboardLayout>
+  );
+};
 
 export default Agendamentos;
