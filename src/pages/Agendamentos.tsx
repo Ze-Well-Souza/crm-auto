@@ -16,10 +16,14 @@ const Agendamentos = () => {
 
   const getStatusIcon = (status: string | null) => {
     switch (status) {
-      case 'confirmed':
+      case 'confirmado':
         return <CheckCircle className="h-4 w-4 text-success" />;
-      case 'pending':
+      case 'agendado':
         return <Clock className="h-4 w-4 text-warning" />;
+      case 'concluido':
+        return <CheckCircle className="h-4 w-4 text-success" />;
+      case 'cancelado':
+        return <AlertCircle className="h-4 w-4 text-destructive" />;
       default:
         return <AlertCircle className="h-4 w-4 text-muted-foreground" />;
     }
@@ -27,20 +31,38 @@ const Agendamentos = () => {
 
   const getStatusVariant = (status: string | null): "default" | "secondary" | "destructive" | "outline" => {
     switch (status) {
-      case 'confirmed':
+      case 'confirmado':
+      case 'concluido':
         return 'default';
-      case 'pending':
+      case 'agendado':
+      case 'em_andamento':
         return 'secondary';
-      case 'cancelled':
+      case 'cancelado':
         return 'destructive';
       default:
         return 'outline';
     }
   };
 
+  const getStatusLabel = (status: string | null) => {
+    switch (status) {
+      case 'agendado':
+        return 'Agendado';
+      case 'confirmado':
+        return 'Confirmado';
+      case 'em_andamento':
+        return 'Em Andamento';
+      case 'concluido':
+        return 'Concluído';
+      case 'cancelado':
+        return 'Cancelado';
+      default:
+        return 'Pendente';
+    }
+  };
   const filteredAppointments = appointments?.filter(appointment => 
     appointment.service_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    appointment.notes?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    appointment.service_description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     appointment.clients?.name.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
 
@@ -94,7 +116,7 @@ const Agendamentos = () => {
             <p className="text-muted-foreground">Gerencie a agenda de serviços e consultas</p>
           </div>
           
-          <Button className="shadow-primary">
+          <Button className="shadow-primary" onClick={() => setShowForm(true)}>
             <Plus className="mr-2 h-4 w-4" />
             Novo Agendamento
           </Button>
@@ -124,7 +146,7 @@ const Agendamentos = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {appointments?.filter(a => a.status === 'pending').length || 0}
+                {appointments?.filter(a => a.status === 'agendado').length || 0}
               </div>
               <p className="text-xs text-muted-foreground">Aguardando confirmação</p>
             </CardContent>
@@ -139,7 +161,7 @@ const Agendamentos = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {appointments?.filter(a => a.status === 'confirmed').length || 0}
+                {appointments?.filter(a => a.status === 'confirmado').length || 0}
               </div>
               <p className="text-xs text-muted-foreground">Agendamentos confirmados</p>
             </CardContent>
@@ -173,7 +195,7 @@ const Agendamentos = () => {
                     </CardTitle>
                     <Badge variant={getStatusVariant(appointment.status)} className="flex items-center gap-1">
                       {getStatusIcon(appointment.status)}
-                      {appointment.status || 'Pendente'}
+                      {getStatusLabel(appointment.status)}
                     </Badge>
                   </div>
                   <CardDescription>
@@ -181,11 +203,11 @@ const Agendamentos = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  {appointment.final_value && (
+                  {appointment.estimated_value && (
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-muted-foreground">Valor:</span>
                       <span className="font-semibold">
-                        R$ {appointment.final_value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        R$ {appointment.estimated_value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </span>
                     </div>
                   )}
@@ -216,7 +238,6 @@ const Agendamentos = () => {
               </Card>
             </div>
           )}
-        </div>
         </div>
 
         <AppointmentForm
