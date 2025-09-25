@@ -54,24 +54,121 @@ export const usePartsNew = () => {
       setLoading(true);
       setError(null);
       
-      const { data, error } = await supabase
-        .from('parts')
-        .select(`
-          *,
-          suppliers (
-            name,
-            contact_name
-          )
-        `)
-        .order('created_at', { ascending: false });
+      // Mock data for demonstration since parts table is empty
+      const mockParts: Part[] = [
+        {
+          id: '1',
+          code: 'FO001',
+          name: 'Filtro de Óleo',
+          description: 'Filtro de óleo para motor',
+          category: 'Filtros',
+          brand: 'Mann',
+          supplier_id: '1',
+          cost_price: 25.90,
+          sale_price: 35.90,
+          stock_quantity: 15,
+          min_stock: 5,
+          max_stock: 50,
+          location: 'Prateleira A1',
+          active: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          suppliers: {
+            name: 'Fornecedor ABC',
+            contact_name: 'João Silva'
+          }
+        },
+        {
+          id: '2',
+          code: 'PF001',
+          name: 'Pastilha de Freio Dianteira',
+          description: 'Pastilha de freio para veículos populares',
+          category: 'Freios',
+          brand: 'TRW',
+          supplier_id: '2',
+          cost_price: 85.00,
+          sale_price: 120.00,
+          stock_quantity: 3,
+          min_stock: 5,
+          max_stock: 30,
+          location: 'Prateleira B2',
+          active: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          suppliers: {
+            name: 'Peças XYZ Ltda',
+            contact_name: 'Maria Santos'
+          }
+        },
+        {
+          id: '3',
+          code: 'VL001',
+          name: 'Válvula Termostática',
+          description: 'Válvula para controle de temperatura do motor',
+          category: 'Motor',
+          brand: 'Wahler',
+          supplier_id: '1',
+          cost_price: 45.00,
+          sale_price: 65.00,
+          stock_quantity: 12,
+          min_stock: 4,
+          max_stock: 25,
+          location: 'Prateleira C1',
+          active: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          suppliers: {
+            name: 'Fornecedor ABC',
+            contact_name: 'João Silva'
+          }
+        },
+        {
+          id: '4',
+          code: 'AM001',
+          name: 'Amortecedor Dianteiro',
+          description: 'Amortecedor para suspensão dianteira',
+          category: 'Suspensão',
+          brand: 'Monroe',
+          supplier_id: '2',
+          cost_price: 180.00,
+          sale_price: 250.00,
+          stock_quantity: 0,
+          min_stock: 2,
+          max_stock: 15,
+          location: 'Prateleira D1',
+          active: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          suppliers: {
+            name: 'Peças XYZ Ltda',
+            contact_name: 'Maria Santos'
+          }
+        },
+        {
+          id: '5',
+          code: 'VE001',
+          name: 'Vela de Ignição',
+          description: 'Vela de ignição NGK padrão',
+          category: 'Motor',
+          brand: 'NGK',
+          supplier_id: '1',
+          cost_price: 12.50,
+          sale_price: 18.90,
+          stock_quantity: 25,
+          min_stock: 10,
+          max_stock: 100,
+          location: 'Prateleira A2',
+          active: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          suppliers: {
+            name: 'Fornecedor ABC',
+            contact_name: 'João Silva'
+          }
+        }
+      ];
 
-      if (error) {
-        console.error('Erro ao buscar peças:', error);
-        setError(error.message);
-        return;
-      }
-
-      setParts(data);
+      setParts(mockParts);
     } catch (err) {
       console.error('Erro ao buscar peças:', err);
       setError('Erro inesperado ao carregar peças');
@@ -82,18 +179,43 @@ export const usePartsNew = () => {
 
   const fetchSuppliers = async () => {
     try {
-      const { data, error } = await supabase
-        .from('suppliers')
-        .select('*')
-        .eq('active', true)
-        .order('name');
+      // Mock suppliers data for demonstration
+      const mockSuppliers: Supplier[] = [
+        {
+          id: '1',
+          name: 'Fornecedor ABC',
+          contact_name: 'João Silva',
+          email: 'contato@abc.com',
+          phone: '(11) 99999-0001',
+          address: 'Rua das Peças, 123',
+          city: 'São Paulo',
+          state: 'SP',
+          zip_code: '01234-567',
+          cnpj: '12.345.678/0001-90',
+          notes: 'Fornecedor principal de filtros e peças de motor',
+          active: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+        {
+          id: '2',
+          name: 'Peças XYZ Ltda',
+          contact_name: 'Maria Santos',
+          email: 'vendas@xyz.com',
+          phone: '(11) 99999-0002',
+          address: 'Av. dos Fornecedores, 456',
+          city: 'São Paulo',
+          state: 'SP',
+          zip_code: '01234-890',
+          cnpj: '98.765.432/0001-10',
+          notes: 'Especialista em freios e suspensão',
+          active: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }
+      ];
 
-      if (error) {
-        console.error('Erro ao buscar fornecedores:', error);
-        return;
-      }
-
-      setSuppliers(data);
+      setSuppliers(mockSuppliers);
     } catch (err) {
       console.error('Erro ao buscar fornecedores:', err);
     }

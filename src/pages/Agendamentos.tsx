@@ -60,8 +60,9 @@ const Agendamentos = () => {
         return 'Pendente';
     }
   };
+  
   const filteredAppointments = appointments?.filter(appointment => 
-    appointment.service_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    appointment.service_type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     appointment.service_description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     appointment.clients?.name.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
