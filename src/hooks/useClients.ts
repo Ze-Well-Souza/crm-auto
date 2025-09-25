@@ -1,21 +1,7 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-
-export interface Client {
-  id: string;
-  name: string;
-  email: string | null;
-  phone: string | null;
-  cpf_cnpj: string | null;
-  address: string | null;
-  city: string | null;
-  state: string | null;
-  zip_code: string | null;
-  notes: string | null;
-  created_at: string;
-  updated_at: string;
-}
+import type { Client } from "@/types";
+import { mockClients } from "@/utils/mockData";
 
 export const useClients = () => {
   const [clients, setClients] = useState<Client[] | null>(null);
@@ -28,18 +14,12 @@ export const useClients = () => {
       setLoading(true);
       setError(null);
       
-      const { data, error } = await supabase
-        .from('clients')
-        .select('*')
-        .order('name', { ascending: true });
-
-      if (error) {
-        console.error('Erro ao buscar clientes:', error);
-        setError(error.message);
-        return;
-      }
-
-      setClients(data);
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Use mock data for demonstration
+      const sortedClients = [...mockClients].sort((a, b) => a.name.localeCompare(b.name));
+      setClients(sortedClients);
     } catch (err) {
       console.error('Erro ao buscar clientes:', err);
       setError('Erro inesperado ao carregar clientes');
@@ -50,30 +30,27 @@ export const useClients = () => {
 
   const createClient = async (clientData: Omit<Client, 'id' | 'created_at' | 'updated_at'>) => {
     try {
-      const { data, error } = await supabase
-        .from('clients')
-        .insert([clientData])
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Erro ao criar cliente:', error);
-        toast({
-          title: "Erro ao criar cliente",
-          description: error.message,
-          variant: "destructive",
-        });
-        return null;
-      }
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      const newClient: Client = {
+        ...clientData,
+        id: Math.random().toString(36).substr(2, 9),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      
+      // Add to mock data
+      mockClients.push(newClient);
 
       toast({
         title: "Cliente criado com sucesso",
-        description: `${data.name} foi adicionado ao sistema.`,
+        description: `${newClient.name} foi adicionado ao sistema.`,
       });
 
       // Atualiza a lista de clientes
       fetchClients();
-      return data;
+      return newClient;
     } catch (err) {
       console.error('Erro ao criar cliente:', err);
       toast({

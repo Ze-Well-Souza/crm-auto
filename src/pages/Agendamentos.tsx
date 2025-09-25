@@ -8,59 +8,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, Search, Calendar, Clock, CheckCircle, AlertCircle } from "lucide-react";
 import { AppointmentForm } from "@/components/appointments/AppointmentForm";
 import { useAppointmentsNew } from "@/hooks/useAppointmentsNew";
+import { SearchInput } from "@/components/common/SearchInput";
+import { EmptyState } from "@/components/common/EmptyState";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { StatusBadge } from "@/components/common/StatusBadge";
 
 const Agendamentos = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showForm, setShowForm] = useState(false);
   const { appointments, loading, error, refetch } = useAppointmentsNew();
 
-  const getStatusIcon = (status: string | null) => {
-    switch (status) {
-      case 'confirmado':
-        return <CheckCircle className="h-4 w-4 text-success" />;
-      case 'agendado':
-        return <Clock className="h-4 w-4 text-warning" />;
-      case 'concluido':
-        return <CheckCircle className="h-4 w-4 text-success" />;
-      case 'cancelado':
-        return <AlertCircle className="h-4 w-4 text-destructive" />;
-      default:
-        return <AlertCircle className="h-4 w-4 text-muted-foreground" />;
-    }
-  };
-
-  const getStatusVariant = (status: string | null): "default" | "secondary" | "destructive" | "outline" => {
-    switch (status) {
-      case 'confirmado':
-      case 'concluido':
-        return 'default';
-      case 'agendado':
-      case 'em_andamento':
-        return 'secondary';
-      case 'cancelado':
-        return 'destructive';
-      default:
-        return 'outline';
-    }
-  };
-
-  const getStatusLabel = (status: string | null) => {
-    switch (status) {
-      case 'agendado':
-        return 'Agendado';
-      case 'confirmado':
-        return 'Confirmado';
-      case 'em_andamento':
-        return 'Em Andamento';
-      case 'concluido':
-        return 'Concluído';
-      case 'cancelado':
-        return 'Cancelado';
-      default:
-        return 'Pendente';
-    }
-  };
-  
   const filteredAppointments = appointments?.filter(appointment => 
     appointment.service_type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     appointment.service_description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -70,26 +27,8 @@ const Agendamentos = () => {
   if (loading) {
     return (
       <DashboardLayout>
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <Skeleton className="h-8 w-64" />
-              <Skeleton className="h-4 w-96" />
-            </div>
-            <Skeleton className="h-10 w-32" />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[...Array(3)].map((_, i) => (
-              <Card key={i}>
-                <CardHeader className="pb-3">
-                  <Skeleton className="h-4 w-32" />
-                </CardHeader>
-                <CardContent>
-                  <Skeleton className="h-6 w-16" />
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+        <div className="flex justify-center items-center h-64">
+          <LoadingSpinner size="lg" />
         </div>
       </DashboardLayout>
     );
@@ -170,19 +109,11 @@ const Agendamentos = () => {
         </div>
 
         {/* Search */}
-        <Card>
-          <CardContent className="pt-6">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Buscar agendamentos..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-          </CardContent>
-        </Card>
+        <SearchInput
+          placeholder="Buscar agendamentos por tipo de serviço, descrição ou cliente..."
+          value={searchTerm}
+          onChange={setSearchTerm}
+        />
 
         {/* Appointments List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -194,10 +125,7 @@ const Agendamentos = () => {
                     <CardTitle className="text-lg">
                       {new Date(appointment.scheduled_date).toLocaleDateString('pt-BR')} - {appointment.scheduled_time}
                     </CardTitle>
-                    <Badge variant={getStatusVariant(appointment.status)} className="flex items-center gap-1">
-                      {getStatusIcon(appointment.status)}
-                      {getStatusLabel(appointment.status)}
-                    </Badge>
+                    <StatusBadge status={appointment.status} type="appointment" />
                   </div>
                   <CardDescription>
                     {appointment.service_type} • Cliente: {appointment.clients?.name || 'N/A'}
@@ -223,20 +151,17 @@ const Agendamentos = () => {
             ))
           ) : (
             <div className="col-span-full">
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-medium text-muted-foreground mb-2">
-                    {searchTerm ? "Nenhum agendamento encontrado" : "Nenhum agendamento cadastrado"}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-4 text-center max-w-sm">
-                    {searchTerm 
-                      ? "Tente ajustar os termos de busca." 
-                      : "Comece criando o primeiro agendamento."
-                    }
-                  </p>
-                </CardContent>
-              </Card>
+              <EmptyState
+                icon={Calendar}
+                title={searchTerm ? "Nenhum agendamento encontrado" : "Nenhum agendamento cadastrado"}
+                description={searchTerm 
+                  ? "Tente ajustar os termos de busca." 
+                  : "Comece criando o primeiro agendamento."
+                }
+                actionLabel="Novo Agendamento"
+                onAction={() => setShowForm(true)}
+                showAction={!searchTerm}
+              />
             </div>
           )}
         </div>

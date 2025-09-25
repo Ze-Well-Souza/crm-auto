@@ -8,6 +8,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, Search, Package, AlertTriangle, CheckCircle } from "lucide-react";
 import { PartsForm } from "@/components/parts/PartsForm";
 import { usePartsNew } from "@/hooks/usePartsNew";
+import { SearchInput } from "@/components/common/SearchInput";
+import { EmptyState } from "@/components/common/EmptyState";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 const Estoque = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -33,26 +36,8 @@ const Estoque = () => {
   if (loading) {
     return (
       <DashboardLayout>
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <Skeleton className="h-8 w-64" />
-              <Skeleton className="h-4 w-96" />
-            </div>
-            <Skeleton className="h-10 w-32" />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            {[...Array(4)].map((_, i) => (
-              <Card key={i}>
-                <CardHeader className="pb-3">
-                  <Skeleton className="h-4 w-32" />
-                </CardHeader>
-                <CardContent>
-                  <Skeleton className="h-6 w-16" />
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+        <div className="flex justify-center items-center h-64">
+          <LoadingSpinner size="lg" />
         </div>
       </DashboardLayout>
     );
@@ -149,19 +134,11 @@ const Estoque = () => {
         </div>
 
         {/* Search */}
-        <Card>
-          <CardContent className="pt-6">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Buscar peças por nome, código ou categoria..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-          </CardContent>
-        </Card>
+        <SearchInput
+          placeholder="Buscar peças por nome, código ou categoria..."
+          value={searchTerm}
+          onChange={setSearchTerm}
+        />
 
         {/* Parts List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -221,20 +198,17 @@ const Estoque = () => {
             })
           ) : (
             <div className="col-span-full">
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <Package className="h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-medium text-muted-foreground mb-2">
-                    {searchTerm ? "Nenhuma peça encontrada" : "Nenhuma peça cadastrada"}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-4 text-center max-w-sm">
-                    {searchTerm 
-                      ? "Tente ajustar os termos de busca." 
-                      : "Comece cadastrando a primeira peça do estoque."
-                    }
-                  </p>
-                </CardContent>
-              </Card>
+              <EmptyState
+                icon={Package}
+                title={searchTerm ? "Nenhuma peça encontrada" : "Nenhuma peça cadastrada"}
+                description={searchTerm 
+                  ? "Tente ajustar os termos de busca." 
+                  : "Comece cadastrando a primeira peça do estoque."
+                }
+                actionLabel="Nova Peça"
+                onAction={() => setShowForm(true)}
+                showAction={!searchTerm}
+              />
             </div>
           )}
         </div>

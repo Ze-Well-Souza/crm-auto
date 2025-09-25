@@ -31,6 +31,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { usePartsNew } from "@/hooks/usePartsNew";
+import { PART_CATEGORIES } from "@/utils/constants";
+import type { Part } from "@/types";
 
 const partSchema = z.object({
   code: z.string().optional(),
@@ -84,21 +86,6 @@ export const PartsForm = ({
       active: part?.active ?? true,
     },
   });
-
-  const categories = [
-    "Filtros",
-    "Freios",
-    "Motor",
-    "Transmissão",
-    "Suspensão",
-    "Sistema Elétrico",
-    "Ar Condicionado",
-    "Pneus e Rodas",
-    "Carroceria",
-    "Fluidos",
-    "Ferramentas",
-    "Outros"
-  ];
 
   const onSubmit = async (data: PartFormData) => {
     try {
@@ -198,7 +185,7 @@ export const PartsForm = ({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {categories.map((category) => (
+                        {PART_CATEGORIES.map((category) => (
                           <SelectItem key={category} value={category}>
                             {category}
                           </SelectItem>

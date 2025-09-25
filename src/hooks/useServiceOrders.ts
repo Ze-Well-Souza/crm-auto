@@ -1,35 +1,40 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import type { ServiceOrder } from "@/types";
+import { mockClients } from "@/utils/mockData";
+import { generateId } from "@/utils/formatters";
 
-export interface ServiceOrder {
-  id: string;
-  order_number: string;
-  client_id: string;
-  vehicle_id: string | null;
-  description: string | null;
-  total_labor: number | null;
-  total_parts: number | null;
-  total_amount: number | null;
-  discount: number | null;
-  status: string | null;
-  mechanic_id: string | null;
-  notes: string | null;
-  delivered_at: string | null;
-  finished_at: string | null;
-  started_at: string | null;
-  created_at: string;
-  updated_at: string;
-  clients?: {
-    name: string;
-    email: string | null;
-  };
-  vehicles?: {
-    brand: string;
-    model: string;
-    license_plate: string | null;
-  };
-}
+// Mock service orders data
+const mockServiceOrders: ServiceOrder[] = [
+  {
+    id: generateId(),
+    order_number: `OS-${Date.now()}`,
+    client_id: mockClients[0]?.id || generateId(),
+    vehicle_id: generateId(),
+    description: 'Troca de óleo e filtros',
+    total_labor: 80.00,
+    total_parts: 70.00,
+    total_amount: 150.00,
+    discount: 0,
+    status: 'concluido',
+    mechanic_id: 'mec-001',
+    notes: 'Serviço realizado conforme agendado',
+    delivered_at: new Date().toISOString(),
+    finished_at: new Date().toISOString(),
+    started_at: new Date().toISOString(),
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    clients: {
+      name: mockClients[0]?.name || 'João Silva',
+      email: mockClients[0]?.email || 'joao@email.com'
+    },
+    vehicles: {
+      brand: 'Toyota',
+      model: 'Corolla',
+      license_plate: 'ABC-1234'
+    }
+  }
+];
 
 export const useServiceOrders = () => {
   const [serviceOrders, setServiceOrders] = useState<ServiceOrder[] | null>(null);
@@ -42,29 +47,14 @@ export const useServiceOrders = () => {
       setLoading(true);
       setError(null);
       
-      const { data, error } = await supabase
-        .from('service_orders')
-        .select(`
-          *,
-          clients (
-            name,
-            email
-          ),
-          vehicles (
-            brand,
-            model,
-            license_plate
-          )
-        `)
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Erro ao buscar ordens de serviço:', error);
-        setError(error.message);
-        return;
-      }
-
-      setServiceOrders(data);
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Use mock data sorted by creation date
+      const sortedOrders = [...mockServiceOrders].sort((a, b) => 
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+      setServiceOrders(sortedOrders);
     } catch (err) {
       console.error('Erro ao buscar ordens de serviço:', err);
       setError('Erro inesperado ao carregar ordens de serviço');

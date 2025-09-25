@@ -6,6 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useVehicles } from "@/hooks/useVehicles";
 import { useClients } from "@/hooks/useClients";
+import { FUEL_TYPES } from "@/utils/constants";
+import type { Vehicle } from "@/types";
 
 interface VehicleFormProps {
   onSuccess?: () => void;
@@ -180,13 +182,11 @@ export const VehicleForm = ({ onSuccess }: VehicleFormProps) => {
               <SelectValue placeholder="Selecione o combustível" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Gasolina">Gasolina</SelectItem>
-              <SelectItem value="Etanol">Etanol</SelectItem>
-              <SelectItem value="Flex">Flex</SelectItem>
-              <SelectItem value="Diesel">Diesel</SelectItem>
-              <SelectItem value="GNV">GNV</SelectItem>
-              <SelectItem value="Elétrico">Elétrico</SelectItem>
-              <SelectItem value="Híbrido">Híbrido</SelectItem>
+              {FUEL_TYPES.map((fuel) => (
+                <SelectItem key={fuel} value={fuel}>
+                  {fuel}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>

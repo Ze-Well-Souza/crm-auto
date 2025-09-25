@@ -8,6 +8,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, Search, DollarSign, TrendingUp, TrendingDown, Clock } from "lucide-react";
 import { TransactionForm } from "@/components/financial/TransactionForm";
 import { useFinancialTransactionsNew } from "@/hooks/useFinancialTransactionsNew";
+import { SearchInput } from "@/components/common/SearchInput";
+import { EmptyState } from "@/components/common/EmptyState";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { StatusBadge } from "@/components/common/StatusBadge";
 
 const Financeiro = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -20,19 +24,6 @@ const Financeiro = () => {
       <TrendingDown className="h-4 w-4 text-destructive" />;
   };
 
-  const getStatusVariant = (status: string | null): "default" | "secondary" | "destructive" | "outline" => {
-    switch (status) {
-      case 'pago':
-        return 'default';
-      case 'pendente':
-        return 'secondary';
-      case 'vencido':
-        return 'destructive';
-      default:
-        return 'outline';
-    }
-  };
-
   const filteredTransactions = transactions?.filter(transaction => 
     transaction.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     transaction.category?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -41,26 +32,8 @@ const Financeiro = () => {
   if (loading) {
     return (
       <DashboardLayout>
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <Skeleton className="h-8 w-64" />
-              <Skeleton className="h-4 w-96" />
-            </div>
-            <Skeleton className="h-10 w-32" />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            {[...Array(4)].map((_, i) => (
-              <Card key={i}>
-                <CardHeader className="pb-3">
-                  <Skeleton className="h-4 w-32" />
-                </CardHeader>
-                <CardContent>
-                  <Skeleton className="h-6 w-16" />
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+        <div className="flex justify-center items-center h-64">
+          <LoadingSpinner size="lg" />
         </div>
       </DashboardLayout>
     );
@@ -161,19 +134,11 @@ const Financeiro = () => {
         </div>
 
         {/* Search */}
-        <Card>
-          <CardContent className="pt-6">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Buscar transações por descrição ou categoria..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-          </CardContent>
-        </Card>
+        <SearchInput
+          placeholder="Buscar transações por descrição ou categoria..."
+          value={searchTerm}
+          onChange={setSearchTerm}
+        />
 
         {/* Transactions List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -186,9 +151,7 @@ const Financeiro = () => {
                       {getTypeIcon(transaction.type)}
                       {transaction.description}
                     </CardTitle>
-                    <Badge variant={getStatusVariant(transaction.status)}>
-                      {transaction.status || 'Pendente'}
-                    </Badge>
+                   <StatusBadge status={transaction.status} type="transaction" />
                   </div>
                   {transaction.category && (
                     <CardDescription>
@@ -232,20 +195,17 @@ const Financeiro = () => {
             ))
           ) : (
             <div className="col-span-full">
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <DollarSign className="h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-medium text-muted-foreground mb-2">
-                    {searchTerm ? "Nenhuma transação encontrada" : "Nenhuma transação cadastrada"}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-4 text-center max-w-sm">
-                    {searchTerm 
-                      ? "Tente ajustar os termos de busca." 
-                      : "Comece cadastrando a primeira transação financeira."
-                    }
-                  </p>
-                </CardContent>
-              </Card>
+            <EmptyState
+              icon={DollarSign}
+              title={searchTerm ? "Nenhuma transação encontrada" : "Nenhuma transação cadastrada"}
+              description={searchTerm 
+                ? "Tente ajustar os termos de busca." 
+                : "Comece cadastrando a primeira transação financeira."
+              }
+              actionLabel="Nova Transação"
+              onAction={() => setShowForm(true)}
+              showAction={!searchTerm}
+            />
             </div>
           )}
         </div>

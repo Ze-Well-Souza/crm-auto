@@ -40,6 +40,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useClients } from "@/hooks/useClients";
 import { useFinancialTransactionsNew } from "@/hooks/useFinancialTransactionsNew";
+import { RECEIPT_CATEGORIES, EXPENSE_CATEGORIES } from "@/utils/constants";
+import type { FinancialTransaction } from "@/types";
 
 const transactionSchema = z.object({
   type: z.enum(["receita", "despesa"], {
@@ -91,28 +93,6 @@ export const TransactionForm = ({
     },
   });
 
-  const receiptCategories = [
-    "Serviços Automotivos",
-    "Venda de Peças",
-    "Manutenção Preventiva",
-    "Manutenção Corretiva",
-    "Consultoria",
-    "Outros Serviços"
-  ];
-
-  const expenseCategories = [
-    "Compra de Peças",
-    "Salários",
-    "Aluguel",
-    "Energia Elétrica",
-    "Telefone/Internet",
-    "Combustível",
-    "Ferramentas",
-    "Marketing",
-    "Impostos",
-    "Outros"
-  ];
-
   const onSubmit = async (data: TransactionFormData) => {
     try {
       setLoading(true);
@@ -142,7 +122,7 @@ export const TransactionForm = ({
   };
 
   const selectedType = form.watch("type");
-  const categories = selectedType === "receita" ? receiptCategories : expenseCategories;
+  const categories = selectedType === "receita" ? RECEIPT_CATEGORIES : EXPENSE_CATEGORIES;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

@@ -5,6 +5,7 @@ import * as z from "zod";
 import { CalendarIcon, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { SERVICE_TYPES, TIME_SLOTS } from "@/utils/constants";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -41,6 +42,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useClients } from "@/hooks/useClients";
 import { useVehicles } from "@/hooks/useVehicles";
 import { useAppointmentsNew } from "@/hooks/useAppointmentsNew";
+import type { Appointment } from "@/types";
 
 const appointmentSchema = z.object({
   client_id: z.string().min(1, "Cliente é obrigatório"),
@@ -90,28 +92,6 @@ export const AppointmentForm = ({
       notes: appointment?.notes || "",
     },
   });
-
-  const timeSlots = [
-    "08:00", "08:30", "09:00", "09:30", "10:00", "10:30",
-    "11:00", "11:30", "12:00", "12:30", "13:00", "13:30",
-    "14:00", "14:30", "15:00", "15:30", "16:00", "16:30",
-    "17:00", "17:30", "18:00"
-  ];
-
-  const serviceTypes = [
-    "Manutenção Preventiva",
-    "Manutenção Corretiva",
-    "Troca de Óleo",
-    "Revisão Geral",
-    "Freios",
-    "Suspensão",
-    "Motor",
-    "Transmissão",
-    "Sistema Elétrico",
-    "Ar Condicionado",
-    "Pneus e Rodas",
-    "Outros"
-  ];
 
   const onSubmit = async (data: AppointmentFormData) => {
     try {
@@ -225,7 +205,7 @@ export const AppointmentForm = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {serviceTypes.map((type) => (
+                      {SERVICE_TYPES.map((type) => (
                         <SelectItem key={type} value={type}>
                           {type}
                         </SelectItem>
@@ -294,7 +274,7 @@ export const AppointmentForm = ({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {timeSlots.map((time) => (
+                        {TIME_SLOTS.map((time) => (
                           <SelectItem key={time} value={time}>
                             {time}
                           </SelectItem>
