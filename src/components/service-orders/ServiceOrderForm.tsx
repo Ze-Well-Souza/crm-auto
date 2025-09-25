@@ -7,8 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useClients } from "@/hooks/useClients";
 import { useVehicles } from "@/hooks/useVehicles";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useServiceOrders } from "@/hooks/useServiceOrders";
 
 interface ServiceOrderFormProps {
   onSuccess?: () => void;
@@ -18,6 +18,7 @@ export const ServiceOrderForm = ({ onSuccess }: ServiceOrderFormProps) => {
   const [loading, setLoading] = useState(false);
   const { clients } = useClients();
   const { vehicles } = useVehicles();
+  const { createServiceOrder } = useServiceOrders();
   const { toast } = useToast();
 
   const [formData, setFormData] = useState({
@@ -43,35 +44,24 @@ export const ServiceOrderForm = ({ onSuccess }: ServiceOrderFormProps) => {
       const discountValue = parseFloat(formData.discount) || 0;
       const totalAmount = laborValue + partsValue - discountValue;
 
-      const { error } = await supabase
-        .from('service_orders_deprecated')
-        .insert({
-          client_id: formData.client_id,
-          vehicle_id: formData.vehicle_id || null,
-          description: formData.description || null,
-          total_labor: laborValue || null,
-          total_parts: partsValue || null,
-          total_amount: totalAmount || null,
-          discount: discountValue || null,
-          status: formData.status,
-          mechanic_id: formData.mechanic_id || null,
-          notes: formData.notes || null,
-          order_number: `OS-${Date.now()}`
-        });
+      const result = await createServiceOrder({
+        client_id: formData.client_id,
+        vehicle_id: formData.vehicle_id || null,
+        description: formData.description || null,
+        total_labor: laborValue || null,
+        total_parts: partsValue || null,
+        total_amount: totalAmount || null,
+        discount: discountValue || null,
+        status: formData.status,
+        mechanic_id: formData.mechanic_id || null,
+        notes: formData.notes || null,
+        order_number: null,
+        delivered_at: null,
+        finished_at: null,
+        started_at: null,
+      });
 
-      if (error) {
-        console.error('Erro ao criar ordem de serviço:', error);
-        toast({
-          title: "Erro",
-          description: "Erro ao criar ordem de serviço. Tente novamente.",
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Sucesso",
-          description: "Ordem de serviço criada com sucesso!",
-        });
-
+      if (result) {
         // Reset form
         setFormData({
           client_id: "",

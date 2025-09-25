@@ -63,6 +63,48 @@ export const useServiceOrders = () => {
     }
   };
 
+  const createServiceOrder = async (orderData: Omit<ServiceOrder, 'id' | 'created_at' | 'updated_at' | 'clients' | 'vehicles'>) => {
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      const clientData = mockClients.find(c => c.id === orderData.client_id);
+      
+      const newOrder: ServiceOrder = {
+        ...orderData,
+        id: generateId(),
+        order_number: `OS-${Date.now()}`,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        clients: clientData ? {
+          name: clientData.name,
+          email: clientData.email
+        } : undefined,
+        vehicles: undefined
+      };
+      
+      // Add to mock data
+      mockServiceOrders.push(newOrder);
+
+      toast({
+        title: "Ordem de serviço criada",
+        description: `Ordem ${newOrder.order_number} foi criada com sucesso.`,
+      });
+
+      // Atualiza a lista
+      fetchServiceOrders();
+      return newOrder;
+    } catch (err) {
+      console.error('Erro ao criar ordem de serviço:', err);
+      toast({
+        title: "Erro inesperado",
+        description: "Não foi possível criar a ordem de serviço.",
+        variant: "destructive",
+      });
+      return null;
+    }
+  };
+
   useEffect(() => {
     fetchServiceOrders();
   }, []);
@@ -71,6 +113,7 @@ export const useServiceOrders = () => {
     serviceOrders,
     loading,
     error,
+    createServiceOrder,
     refetch: fetchServiceOrders
   };
 };
