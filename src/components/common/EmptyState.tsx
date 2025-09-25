@@ -1,7 +1,7 @@
 // Reusable empty state component
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { LucideIcon } from "lucide-react";
+import { DivideIcon as LucideIcon } from "lucide-react";
 
 interface EmptyStateProps {
   icon: LucideIcon;
