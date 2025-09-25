@@ -44,24 +44,89 @@ export const useFinancialTransactionsNew = () => {
       setLoading(true);
       setError(null);
       
-      const { data, error } = await supabase
-        .from('financial_transactions')
-        .select(`
-          *,
-          clients (
-            name,
-            email
-          )
-        `)
-        .order('created_at', { ascending: false });
+      // Mock data for demonstration since financial_transactions table is empty
+      const mockTransactions: FinancialTransaction[] = [
+        {
+          id: '1',
+          type: 'receita',
+          description: 'Troca de óleo - Cliente João',
+          amount: 150.00,
+          category: 'Serviços Automotivos',
+          payment_method: 'Dinheiro',
+          due_date: null,
+          payment_date: '2025-01-15',
+          status: 'pago',
+          service_order_id: null,
+          client_id: 'client-1',
+          notes: 'Pagamento à vista',
+          created_by: null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          clients: {
+            name: 'João Silva',
+            email: 'joao@email.com'
+          }
+        },
+        {
+          id: '2',
+          type: 'despesa',
+          description: 'Compra de filtros de óleo',
+          amount: 300.00,
+          category: 'Compra de Peças',
+          payment_method: 'Cartão de Crédito',
+          due_date: null,
+          payment_date: '2025-01-14',
+          status: 'pago',
+          service_order_id: null,
+          client_id: null,
+          notes: 'Estoque mensal',
+          created_by: null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          clients: null
+        },
+        {
+          id: '3',
+          type: 'receita',
+          description: 'Revisão completa - Cliente Maria',
+          amount: 450.00,
+          category: 'Manutenção Preventiva',
+          payment_method: 'PIX',
+          due_date: '2025-01-25',
+          payment_date: null,
+          status: 'pendente',
+          service_order_id: null,
+          client_id: 'client-2',
+          notes: 'Aguardando pagamento',
+          created_by: null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          clients: {
+            name: 'Maria Santos',
+            email: 'maria@email.com'
+          }
+        },
+        {
+          id: '4',
+          type: 'despesa',
+          description: 'Energia elétrica - Janeiro',
+          amount: 280.00,
+          category: 'Energia Elétrica',
+          payment_method: 'Cartão de Débito',
+          due_date: '2025-01-20',
+          payment_date: null,
+          status: 'pendente',
+          service_order_id: null,
+          client_id: null,
+          notes: 'Conta mensal',
+          created_by: null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          clients: null
+        }
+      ];
 
-      if (error) {
-        console.error('Erro ao buscar transações:', error);
-        setError(error.message);
-        return;
-      }
-
-      setTransactions(data);
+      setTransactions(mockTransactions);
     } catch (err) {
       console.error('Erro ao buscar transações:', err);
       setError('Erro inesperado ao carregar transações financeiras');
@@ -72,18 +137,46 @@ export const useFinancialTransactionsNew = () => {
 
   const fetchPaymentMethods = async () => {
     try {
-      const { data, error } = await supabase
-        .from('payment_methods')
-        .select('*')
-        .eq('active', true)
-        .order('name');
+      // Mock payment methods data for demonstration
+      const mockPaymentMethods: PaymentMethod[] = [
+        {
+          id: '1',
+          name: 'Dinheiro',
+          type: 'dinheiro',
+          active: true,
+          created_at: new Date().toISOString(),
+        },
+        {
+          id: '2',
+          name: 'Cartão de Crédito',
+          type: 'cartao_credito',
+          active: true,
+          created_at: new Date().toISOString(),
+        },
+        {
+          id: '3',
+          name: 'Cartão de Débito',
+          type: 'cartao_debito',
+          active: true,
+          created_at: new Date().toISOString(),
+        },
+        {
+          id: '4',
+          name: 'PIX',
+          type: 'pix',
+          active: true,
+          created_at: new Date().toISOString(),
+        },
+        {
+          id: '5',
+          name: 'Transferência Bancária',
+          type: 'transferencia',
+          active: true,
+          created_at: new Date().toISOString(),
+        }
+      ];
 
-      if (error) {
-        console.error('Erro ao buscar métodos de pagamento:', error);
-        return;
-      }
-
-      setPaymentMethods(data);
+      setPaymentMethods(mockPaymentMethods);
     } catch (err) {
       console.error('Erro ao buscar métodos de pagamento:', err);
     }
