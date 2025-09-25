@@ -16,23 +16,25 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   };
 
   return (
-    <div className="flex h-screen bg-gradient-dashboard">
+    <div className="flex h-screen gradient-mesh">
       <Sidebar />
       <main className="flex-1 overflow-auto">
-        {/* Top bar with user info and logout */}
-        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
-          <div className="flex items-center justify-between px-6 py-3">
+        {/* Modern top bar with glassmorphism */}
+        <div className="sticky top-0 z-10 glass border-b border-border/50">
+          <div className="flex items-center justify-between px-6 py-4">
             <div className="flex-1" />
             <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2 text-sm">
-                <User className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">{user?.email}</span>
+              <div className="flex items-center space-x-3 text-sm bg-background/50 rounded-full px-4 py-2 backdrop-blur-sm">
+                <div className="w-8 h-8 bg-gradient-primary rounded-full flex items-center justify-center animate-glow">
+                  <User className="h-4 w-4 text-primary-foreground" />
+                </div>
+                <span className="text-foreground font-medium">{user?.email}</span>
               </div>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleSignOut}
-                className="flex items-center space-x-2"
+                className="flex items-center space-x-2 hover:bg-destructive/10 hover:text-destructive transition-smooth"
               >
                 <LogOut className="h-4 w-4" />
                 <span>Sair</span>
@@ -40,7 +42,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             </div>
           </div>
         </div>
-        <div className="container mx-auto p-6 space-y-6">
+        <div className="container mx-auto p-6 space-y-8">
           {children}
         </div>
       </main>

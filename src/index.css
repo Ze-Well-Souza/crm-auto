@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 /* Oficina Eficiente CRM Design System 
-Professional automotive CRM with modern enterprise aesthetics
+Modern automotive CRM with vibrant colors and stunning visual effects
 All colors MUST be HSL.
 */
 
 @layer base {
   :root {
-    --background: 220 20% 97%;
+    --background: 220 25% 96%;
     --foreground: 220 15% 15%;
 
     --card: 0 0% 100%;
@@ -18,12 +18,13 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 220 15% 15%;
 
-    /* Professional blue palette for automotive business */
+    /* Vibrant color palette for modern CRM */
     --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
     --primary-glow: 217 91% 70%;
+    --primary-light: 217 91% 85%;
 
-    /* Warm secondary for highlights */
+    /* Colorful secondary variants */
     --secondary: 220 15% 96%;
     --secondary-foreground: 220 15% 25%;
 
@@ -33,16 +34,41 @@ All colors MUST be HSL.
     --accent: 217 91% 95%;
     --accent-foreground: 217 91% 20%;
 
-    /* Success green for completed services */
+    /* Vibrant status colors */
     --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
+    --success-light: 142 71% 85%;
+    --success-glow: 142 71% 65%;
 
-    /* Warning amber for pending items */
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
+    --warning-light: 38 92% 85%;
+    --warning-glow: 38 92% 70%;
+
+    --info: 199 89% 48%;
+    --info-foreground: 0 0% 100%;
+    --info-light: 199 89% 85%;
+    --info-glow: 199 89% 68%;
+
+    --purple: 271 81% 56%;
+    --purple-foreground: 0 0% 100%;
+    --purple-light: 271 81% 85%;
+    --purple-glow: 271 81% 76%;
+
+    --pink: 330 81% 60%;
+    --pink-foreground: 0 0% 100%;
+    --pink-light: 330 81% 85%;
+    --pink-glow: 330 81% 80%;
+
+    --orange: 24 95% 53%;
+    --orange-foreground: 0 0% 100%;
+    --orange-light: 24 95% 85%;
+    --orange-glow: 24 95% 73%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
+    --destructive-light: 0 84% 85%;
+    --destructive-glow: 0 84% 75%;
 
     --border: 220 15% 88%;
     --input: 220 15% 88%;
@@ -50,19 +76,37 @@ All colors MUST be HSL.
 
     --radius: 0.75rem;
 
-    /* Professional gradients */
+    /* Modern gradients with vibrant colors */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-success: linear-gradient(135deg, hsl(var(--success)), hsl(var(--success-glow)));
+    --gradient-warning: linear-gradient(135deg, hsl(var(--warning)), hsl(var(--warning-glow)));
+    --gradient-info: linear-gradient(135deg, hsl(var(--info)), hsl(var(--info-glow)));
+    --gradient-purple: linear-gradient(135deg, hsl(var(--purple)), hsl(var(--purple-glow)));
+    --gradient-pink: linear-gradient(135deg, hsl(var(--pink)), hsl(var(--pink-glow)));
+    --gradient-orange: linear-gradient(135deg, hsl(var(--orange)), hsl(var(--orange-glow)));
+    
     --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(220 15% 98%));
-    --gradient-dashboard: linear-gradient(135deg, hsl(220 20% 97%), hsl(217 91% 97%));
+    --gradient-glass: linear-gradient(145deg, hsl(0 0% 100% / 0.9), hsl(220 15% 98% / 0.8));
+    --gradient-dashboard: linear-gradient(135deg, hsl(220 25% 96%), hsl(217 91% 97%));
+    --gradient-mesh: radial-gradient(circle at 25% 25%, hsl(var(--primary) / 0.1) 0%, transparent 50%), 
+                     radial-gradient(circle at 75% 75%, hsl(var(--purple) / 0.1) 0%, transparent 50%),
+                     radial-gradient(circle at 50% 50%, hsl(var(--pink) / 0.05) 0%, transparent 50%);
 
-    /* Elegant shadows */
+    /* Enhanced shadows with color */
     --shadow-card: 0 4px 6px -1px hsl(220 15% 15% / 0.1), 0 2px 4px -1px hsl(220 15% 15% / 0.06);
     --shadow-elevated: 0 10px 15px -3px hsl(220 15% 15% / 0.1), 0 4px 6px -2px hsl(220 15% 15% / 0.05);
-    --shadow-primary: 0 4px 14px 0 hsl(var(--primary) / 0.25);
+    --shadow-primary: 0 8px 25px -8px hsl(var(--primary) / 0.4);
+    --shadow-success: 0 8px 25px -8px hsl(var(--success) / 0.4);
+    --shadow-warning: 0 8px 25px -8px hsl(var(--warning) / 0.4);
+    --shadow-info: 0 8px 25px -8px hsl(var(--info) / 0.4);
+    --shadow-purple: 0 8px 25px -8px hsl(var(--purple) / 0.4);
+    --shadow-glass: 0 8px 32px 0 hsl(220 15% 15% / 0.1);
+    --shadow-glow: 0 0 20px hsl(var(--primary) / 0.3);
 
-    /* Smooth transitions */
+    /* Smooth transitions and animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-fast: all 0.15s ease;
+    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
     --sidebar-background: 0 0% 98%;
 
@@ -94,6 +138,7 @@ All colors MUST be HSL.
     --primary: 217 91% 65%;
     --primary-foreground: 220 15% 8%;
     --primary-glow: 217 91% 75%;
+    --primary-light: 217 91% 85%;
 
     --secondary: 220 15% 15%;
     --secondary-foreground: 0 0% 90%;
@@ -106,12 +151,38 @@ All colors MUST be HSL.
 
     --success: 142 71% 55%;
     --success-foreground: 220 15% 8%;
+    --success-light: 142 71% 25%;
+    --success-glow: 142 71% 65%;
 
     --warning: 38 92% 60%;
     --warning-foreground: 220 15% 8%;
+    --warning-light: 38 92% 25%;
+    --warning-glow: 38 92% 70%;
+
+    --info: 199 89% 58%;
+    --info-foreground: 220 15% 8%;
+    --info-light: 199 89% 25%;
+    --info-glow: 199 89% 68%;
+
+    --purple: 271 81% 66%;
+    --purple-foreground: 220 15% 8%;
+    --purple-light: 271 81% 25%;
+    --purple-glow: 271 81% 76%;
+
+    --pink: 330 81% 70%;
+    --pink-foreground: 220 15% 8%;
+    --pink-light: 330 81% 25%;
+    --pink-glow: 330 81% 80%;
+
+    --orange: 24 95% 63%;
+    --orange-foreground: 220 15% 8%;
+    --orange-light: 24 95% 25%;
+    --orange-glow: 24 95% 73%;
 
     --destructive: 0 84% 65%;
     --destructive-foreground: 0 0% 100%;
+    --destructive-light: 0 84% 25%;
+    --destructive-glow: 0 84% 75%;
 
     --border: 220 15% 18%;
     --input: 220 15% 18%;
@@ -119,8 +190,19 @@ All colors MUST be HSL.
 
     /* Dark mode gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-success: linear-gradient(135deg, hsl(var(--success)), hsl(var(--success-glow)));
+    --gradient-warning: linear-gradient(135deg, hsl(var(--warning)), hsl(var(--warning-glow)));
+    --gradient-info: linear-gradient(135deg, hsl(var(--info)), hsl(var(--info-glow)));
+    --gradient-purple: linear-gradient(135deg, hsl(var(--purple)), hsl(var(--purple-glow)));
+    --gradient-pink: linear-gradient(135deg, hsl(var(--pink)), hsl(var(--pink-glow)));
+    --gradient-orange: linear-gradient(135deg, hsl(var(--orange)), hsl(var(--orange-glow)));
+    
     --gradient-card: linear-gradient(145deg, hsl(220 15% 10%), hsl(220 15% 12%));
+    --gradient-glass: linear-gradient(145deg, hsl(220 15% 10% / 0.9), hsl(220 15% 12% / 0.8));
     --gradient-dashboard: linear-gradient(135deg, hsl(220 15% 8%), hsl(217 91% 12%));
+    --gradient-mesh: radial-gradient(circle at 25% 25%, hsl(var(--primary) / 0.1) 0%, transparent 50%), 
+                     radial-gradient(circle at 75% 75%, hsl(var(--purple) / 0.1) 0%, transparent 50%),
+                     radial-gradient(circle at 50% 50%, hsl(var(--pink) / 0.05) 0%, transparent 50%);
 
     --sidebar-background: 220 15% 6%;
     --sidebar-foreground: 0 0% 90%;
@@ -156,17 +238,53 @@ All colors MUST be HSL.
     @apply text-lg font-semibold;
   }
 
-  /* Custom utilities for CRM design */
+  /* Custom utilities for modern CRM design */
   .gradient-primary {
     background: var(--gradient-primary);
+  }
+
+  .gradient-success {
+    background: var(--gradient-success);
+  }
+
+  .gradient-warning {
+    background: var(--gradient-warning);
+  }
+
+  .gradient-info {
+    background: var(--gradient-info);
+  }
+
+  .gradient-purple {
+    background: var(--gradient-purple);
+  }
+
+  .gradient-pink {
+    background: var(--gradient-pink);
+  }
+
+  .gradient-orange {
+    background: var(--gradient-orange);
   }
 
   .gradient-card {
     background: var(--gradient-card);
   }
 
+  .gradient-glass {
+    background: var(--gradient-glass);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(0 0% 100% / 0.2);
+  }
+
   .gradient-dashboard {
     background: var(--gradient-dashboard);
+    background-attachment: fixed;
+  }
+
+  .gradient-mesh {
+    background: var(--gradient-mesh);
+    background-attachment: fixed;
   }
 
   .shadow-card {
@@ -181,11 +299,108 @@ All colors MUST be HSL.
     box-shadow: var(--shadow-primary);
   }
 
+  .shadow-success {
+    box-shadow: var(--shadow-success);
+  }
+
+  .shadow-warning {
+    box-shadow: var(--shadow-warning);
+  }
+
+  .shadow-info {
+    box-shadow: var(--shadow-info);
+  }
+
+  .shadow-purple {
+    box-shadow: var(--shadow-purple);
+  }
+
+  .shadow-glass {
+    box-shadow: var(--shadow-glass);
+  }
+
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+
   .transition-smooth {
     transition: var(--transition-smooth);
   }
 
   .transition-fast {
     transition: var(--transition-fast);
+  }
+
+  .transition-bounce {
+    transition: var(--transition-bounce);
+  }
+
+  /* Hover effects */
+  .hover-lift {
+    transition: var(--transition-smooth);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-elevated);
+  }
+
+  .hover-glow:hover {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .hover-scale {
+    transition: var(--transition-fast);
+  }
+
+  .hover-scale:hover {
+    transform: scale(1.02);
+  }
+
+  /* Glass morphism effect */
+  .glass {
+    background: var(--gradient-glass);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(0 0% 100% / 0.2);
+  }
+
+  /* Animated backgrounds */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  /* Text gradients */
+  .text-gradient-primary {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-success {
+    background: var(--gradient-success);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-warning {
+    background: var(--gradient-warning);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 }
