@@ -20,7 +20,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { MoreHorizontal, Edit, Trash2, Eye } from "lucide-react";
 import { ClientForm } from "./ClientForm";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { useNotifications } from "@/contexts/NotificationContext";
+import { useZodFormValidation } from "@/hooks/useZodValidation";
+import { updateClientSchema } from "@/schemas/client.schema";
 
 interface Client {
   id: string;
@@ -44,7 +46,7 @@ export const ClientActions = ({ client, onUpdate }: ClientActionsProps) => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
+  const notifications = useNotifications();
 
   const handleDelete = async () => {
     setLoading(true);
@@ -57,25 +59,14 @@ export const ClientActions = ({ client, onUpdate }: ClientActionsProps) => {
 
       if (error) {
         console.error('Erro ao excluir cliente:', error);
-        toast({
-          title: "Erro",
-          description: "Erro ao excluir cliente. Tente novamente.",
-          variant: "destructive",
-        });
+        notifications.showOperationError("Excluir", "cliente", error.message);
       } else {
-        toast({
-          title: "Sucesso",
-          description: "Cliente excluído com sucesso!",
-        });
+        notifications.showDeleteSuccess("Cliente");
         onUpdate();
       }
     } catch (err) {
       console.error('Erro ao excluir cliente:', err);
-      toast({
-        title: "Erro",
-        description: "Erro inesperado. Tente novamente.",
-        variant: "destructive",
-      });
+      notifications.showOperationError("Excluir", "cliente", "Erro inesperado");
     } finally {
       setLoading(false);
       setIsDeleteDialogOpen(false);
@@ -151,7 +142,7 @@ export const ClientActions = ({ client, onUpdate }: ClientActionsProps) => {
 // Formulário de edição do cliente
 const ClientEditForm = ({ client, onSuccess }: { client: Client; onSuccess: () => void }) => {
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
+  const notifications = useNotifications();
 
   const [formData, setFormData] = useState({
     name: client.name || "",
@@ -165,63 +156,65 @@ const ClientEditForm = ({ client, onSuccess }: { client: Client; onSuccess: () =
     notes: client.notes || ""
   });
 
+  const { validate, validateField, errors, clearErrors } = useZodFormValidation(updateClientSchema);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      const validationResult = validate({ ...formData, id: client.id });
+      
+      if (!validationResult.isValid || !validationResult.data) {
+        setLoading(false);
+        return;
+      }
+
       const { error } = await supabase
-        .from('clients_deprecated')
+        .from('clients')
         .update({
-          name: formData.name,
-          email: formData.email || null,
-          phone: formData.phone || null,
-          cpf_cnpj: formData.cpf_cnpj || null,
-          address: formData.address || null,
-          city: formData.city || null,
-          state: formData.state || null,
-          zip_code: formData.zip_code || null,
-          notes: formData.notes || null,
-          updated_at: new Date().toISOString()
+          name: validationResult.data.name,
+          email: validationResult.data.email || null,
+          phone: validationResult.data.phone || null,
+          cpf_cnpj: validationResult.data.cpf_cnpj || null,
+          address: validationResult.data.address || null,
+          city: validationResult.data.city || null,
+          state: validationResult.data.state || null,
+          zip_code: validationResult.data.zip_code || null,
+          notes: validationResult.data.notes || null,
         })
         .eq('id', client.id);
 
       if (error) {
-        console.error('Erro ao atualizar cliente:', error);
-        toast({
-          title: "Erro",
-          description: "Erro ao atualizar cliente. Tente novamente.",
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Sucesso",
-          description: "Cliente atualizado com sucesso!",
-        });
-        onSuccess();
+        throw error;
       }
-    } catch (err) {
-      console.error('Erro ao atualizar cliente:', err);
-      toast({
-        title: "Erro",
-        description: "Erro inesperado. Tente novamente.",
-        variant: "destructive",
-      });
+
+      notifications.showUpdateSuccess("Cliente");
+      onSuccess();
+    } catch (error) {
+      notifications.showOperationError("atualizar cliente", error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [name]: value
     }));
+
+    // Validação em tempo real para campos específicos
+    if (name === 'email' || name === 'cpf_cnpj' || name === 'phone' || name === 'zip_code') {
+      setTimeout(() => {
+        validateField(name, value);
+      }, 500);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* ... Mesma estrutura do ClientForm, mas com valores preenchidos */}
       <div className="grid grid-cols-2 gap-4">
         <div className="col-span-2">
           <label htmlFor="name" className="text-sm font-medium">Nome Completo *</label>
@@ -231,8 +224,11 @@ const ClientEditForm = ({ client, onSuccess }: { client: Client; onSuccess: () =
             value={formData.name}
             onChange={handleChange}
             required
-            className="w-full mt-1 px-3 py-2 border border-input rounded-md"
+            className={`w-full mt-1 px-3 py-2 border border-input rounded-md ${errors.name ? "border-destructive" : ""}`}
           />
+          {errors.name && (
+            <p className="text-sm text-destructive mt-1">{errors.name}</p>
+          )}
         </div>
 
         <div>
@@ -243,8 +239,11 @@ const ClientEditForm = ({ client, onSuccess }: { client: Client; onSuccess: () =
             type="email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full mt-1 px-3 py-2 border border-input rounded-md"
+            className={`w-full mt-1 px-3 py-2 border border-input rounded-md ${errors.email ? "border-destructive" : ""}`}
           />
+          {errors.email && (
+            <p className="text-sm text-destructive mt-1">{errors.email}</p>
+          )}
         </div>
 
         <div>
@@ -254,8 +253,97 @@ const ClientEditForm = ({ client, onSuccess }: { client: Client; onSuccess: () =
             name="phone"
             value={formData.phone}
             onChange={handleChange}
-            className="w-full mt-1 px-3 py-2 border border-input rounded-md"
+            className={`w-full mt-1 px-3 py-2 border border-input rounded-md ${errors.phone ? "border-destructive" : ""}`}
           />
+          {errors.phone && (
+            <p className="text-sm text-destructive mt-1">{errors.phone}</p>
+          )}
+        </div>
+
+        <div className="col-span-2">
+          <label htmlFor="cpf_cnpj" className="text-sm font-medium">CPF/CNPJ</label>
+          <input
+            id="cpf_cnpj"
+            name="cpf_cnpj"
+            value={formData.cpf_cnpj}
+            onChange={handleChange}
+            className={`w-full mt-1 px-3 py-2 border border-input rounded-md ${errors.cpf_cnpj ? "border-destructive" : ""}`}
+          />
+          {errors.cpf_cnpj && (
+            <p className="text-sm text-destructive mt-1">{errors.cpf_cnpj}</p>
+          )}
+        </div>
+
+        <div className="col-span-2">
+          <label htmlFor="address" className="text-sm font-medium">Endereço</label>
+          <input
+            id="address"
+            name="address"
+            value={formData.address}
+            onChange={handleChange}
+            className={`w-full mt-1 px-3 py-2 border border-input rounded-md ${errors.address ? "border-destructive" : ""}`}
+          />
+          {errors.address && (
+            <p className="text-sm text-destructive mt-1">{errors.address}</p>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="city" className="text-sm font-medium">Cidade</label>
+          <input
+            id="city"
+            name="city"
+            value={formData.city}
+            onChange={handleChange}
+            className={`w-full mt-1 px-3 py-2 border border-input rounded-md ${errors.city ? "border-destructive" : ""}`}
+          />
+          {errors.city && (
+            <p className="text-sm text-destructive mt-1">{errors.city}</p>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="state" className="text-sm font-medium">Estado</label>
+          <input
+            id="state"
+            name="state"
+            value={formData.state}
+            onChange={handleChange}
+            maxLength={2}
+            className={`w-full mt-1 px-3 py-2 border border-input rounded-md ${errors.state ? "border-destructive" : ""}`}
+          />
+          {errors.state && (
+            <p className="text-sm text-destructive mt-1">{errors.state}</p>
+          )}
+        </div>
+
+        <div className="col-span-2">
+          <label htmlFor="zip_code" className="text-sm font-medium">CEP</label>
+          <input
+            id="zip_code"
+            name="zip_code"
+            value={formData.zip_code}
+            onChange={handleChange}
+            className={`w-full mt-1 px-3 py-2 border border-input rounded-md ${errors.zip_code ? "border-destructive" : ""}`}
+          />
+          {errors.zip_code && (
+            <p className="text-sm text-destructive mt-1">{errors.zip_code}</p>
+          )}
+        </div>
+
+        <div className="col-span-2">
+          <label htmlFor="notes" className="text-sm font-medium">Observações</label>
+          <textarea
+            id="notes"
+            name="notes"
+            value={formData.notes}
+            onChange={handleChange}
+            rows={3}
+            className={`w-full mt-1 px-3 py-2 border border-input rounded-md ${errors.notes ? "border-destructive" : ""}`}
+          />
+          {errors.notes && (
+            <p className="text-sm text-destructive mt-1">{errors.notes}</p>
+          )}
         </div>
       </div>
 

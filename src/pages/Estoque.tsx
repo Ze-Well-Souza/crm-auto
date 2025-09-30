@@ -1,37 +1,90 @@
 import { useState } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Plus, Search, Package, AlertTriangle, CheckCircle } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Plus, Package, Filter } from "lucide-react";
 import { PartsForm } from "@/components/parts/PartsForm";
+import { PartsCard } from "@/components/parts/PartsCard";
+import { PartsMetrics } from "@/components/parts/PartsMetrics";
+import { SearchAdvanced } from "@/components/common/SearchAdvanced";
+import { Pagination } from "@/components/common/Pagination";
+
 import { usePartsNew } from "@/hooks/usePartsNew";
-import { SearchInput } from "@/components/common/SearchInput";
+import { usePartsSearch } from "@/hooks/useAdvancedSearch";
 import { EmptyState } from "@/components/common/EmptyState";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { ModuleErrorBoundary } from "@/components/ErrorBoundary";
 
 const Estoque = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [showForm, setShowForm] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { parts, loading, error, refetch } = usePartsNew();
+  
+  // Advanced Search Configuration
+  const searchConfig = usePartsSearch(parts || []);
 
-  const getStockStatus = (part: any) => {
-    if (!part.stock_quantity || part.stock_quantity <= 0) {
-      return { status: 'out', label: 'Sem estoque', variant: 'destructive' as const };
-    }
-    if (part.min_stock && part.stock_quantity <= part.min_stock) {
-      return { status: 'low', label: 'Estoque baixo', variant: 'secondary' as const };
-    }
-    return { status: 'ok', label: 'Disponível', variant: 'default' as const };
+  const handleQuickAction = (action: string, part: any) => {
+    console.log(`Ação ${action} para peça:`, part);
+    // Implementar ações específicas aqui
   };
 
-  const filteredParts = parts?.filter(part => 
-    part.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    part.code?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    part.category?.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
+  // Filter Groups Configuration
+  const filterGroups = [
+    {
+      key: 'category',
+      label: 'Categoria',
+      type: 'select' as const,
+      options: [
+        { value: 'motor', label: 'Motor' },
+        { value: 'freios', label: 'Freios' },
+        { value: 'suspensao', label: 'Suspensão' },
+        { value: 'eletrica', label: 'Elétrica' },
+        { value: 'carroceria', label: 'Carroceria' }
+      ]
+    },
+    {
+      key: 'brand',
+      label: 'Marca',
+      type: 'multiselect' as const,
+      options: [
+        { value: 'bosch', label: 'Bosch' },
+        { value: 'continental', label: 'Continental' },
+        { value: 'gates', label: 'Gates' },
+        { value: 'mann', label: 'Mann Filter' },
+        { value: 'mahle', label: 'Mahle' }
+      ]
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      type: 'select' as const,
+      options: [
+        { value: 'active', label: 'Ativo' },
+        { value: 'inactive', label: 'Inativo' },
+        { value: 'discontinued', label: 'Descontinuado' },
+        { value: 'out_of_stock', label: 'Sem Estoque' }
+      ]
+    },
+    {
+      key: 'price_range',
+      label: 'Faixa de Preço',
+      type: 'number-range' as const,
+      placeholder: { min: 'Preço mín.', max: 'Preço máx.' }
+    },
+    {
+      key: 'stock_range',
+      label: 'Quantidade em Estoque',
+      type: 'number-range' as const,
+      placeholder: { min: 'Qtd. mín.', max: 'Qtd. máx.' }
+    }
+  ];
+
+  // Quick Filters Configuration
+  const quickFilters = [
+    { key: 'low_stock', label: 'Estoque Baixo', icon: '⚠️' },
+    { key: 'out_of_stock', label: 'Sem Estoque', icon: '❌' },
+    { key: 'high_margin', label: 'Alta Margem', icon: '💰' },
+    { key: 'fast_moving', label: 'Giro Rápido', icon: '🚀' }
+  ];
 
   if (loading) {
     return (
@@ -49,6 +102,13 @@ const Estoque = () => {
         <Card className="border-destructive bg-destructive/5">
           <CardContent className="pt-6">
             <p className="text-destructive">Erro ao carregar estoque: {error}</p>
+            <Button 
+              variant="outline" 
+              onClick={refetch}
+              className="mt-4"
+            >
+              Tentar Novamente
+            </Button>
           </CardContent>
         </Card>
       </DashboardLayout>
@@ -62,165 +122,120 @@ const Estoque = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-foreground">Controle de Estoque</h1>
-            <p className="text-muted-foreground">Gerencie peças, fornecedores e movimentações</p>
-          </div>
+      <ModuleErrorBoundary 
+        moduleName="Estoque" 
+        moduleIcon={<Package className="h-20 w-20 text-green-500" />}
+        fallbackRoute="/"
+      >
+        <div className="space-y-6">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="space-y-2">
+              <h1 className="text-3xl font-bold text-foreground">Controle de Estoque</h1>
+              <p className="text-muted-foreground">Gerencie peças, fornecedores e movimentações</p>
+            </div>
           
-          <Button className="shadow-primary" onClick={() => setShowForm(true)}>
+          <Button onClick={() => setIsDialogOpen(true)} className="shadow-primary">
             <Plus className="mr-2 h-4 w-4" />
             Nova Peça
           </Button>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="gradient-card">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Package className="h-4 w-4 text-primary" />
-                Total de Peças
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalParts}</div>
-              <p className="text-xs text-muted-foreground">Itens cadastrados</p>
-            </CardContent>
-          </Card>
           
-          <Card className="gradient-card">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-warning" />
-                Estoque Baixo
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{lowStockParts}</div>
-              <p className="text-xs text-muted-foreground">Necessita reposição</p>
-            </CardContent>
-          </Card>
-
-          <Card className="gradient-card">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-destructive" />
-                Sem Estoque
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{outOfStockParts}</div>
-              <p className="text-xs text-muted-foreground">Esgotado</p>
-            </CardContent>
-          </Card>
-
-          <Card className="gradient-card">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-success" />
-                Valor Total
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                R$ {totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-              </div>
-              <p className="text-xs text-muted-foreground">Valor em estoque</p>
-            </CardContent>
-          </Card>
+          <PartsForm 
+            open={isDialogOpen}
+            onOpenChange={setIsDialogOpen}
+            onSuccess={() => {
+              setIsDialogOpen(false);
+              refetch();
+            }} 
+          />
         </div>
 
-        {/* Search */}
-        <SearchInput
-          placeholder="Buscar peças por nome, código ou categoria..."
-          value={searchTerm}
-          onChange={setSearchTerm}
+        {/* Enhanced Metrics */}
+        <PartsMetrics parts={parts || []} />
+
+        {/* Advanced Search */}
+        <SearchAdvanced
+          placeholder="Buscar peças por nome, código, categoria..."
+          filterGroups={filterGroups}
+          quickFilters={quickFilters}
+          onSearch={searchConfig.handleSearch}
+          onReset={searchConfig.handleReset}
+          showQuickFilters={true}
+          showAdvancedFilters={true}
         />
+
+        {/* Search Results Info */}
+        {searchConfig.isFiltered && (
+          <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-blue-600" />
+              <span className="text-sm text-blue-800">
+                {searchConfig.paginationInfo.totalItems} peça(s) encontrada(s)
+                {searchConfig.paginationInfo.totalItems !== parts?.length && 
+                  ` de ${parts?.length} total`
+                }
+              </span>
+            </div>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={searchConfig.handleReset}
+              className="text-blue-600 hover:text-blue-800"
+            >
+              Limpar filtros
+            </Button>
+          </div>
+        )}
 
         {/* Parts List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredParts.length > 0 ? (
-            filteredParts.map((part) => {
-              const stockStatus = getStockStatus(part);
-              return (
-                <Card key={part.id} className="hover:shadow-elevated transition-smooth cursor-pointer">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg">{part.name}</CardTitle>
-                      <Badge variant={stockStatus.variant}>
-                        {stockStatus.label}
-                      </Badge>
-                    </div>
-                    {part.code && (
-                      <CardDescription>Código: {part.code}</CardDescription>
-                    )}
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {part.category && (
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-muted-foreground">Categoria:</span>
-                        <Badge variant="outline">{part.category}</Badge>
-                      </div>
-                    )}
-                    
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Estoque:</span>
-                      <span className="font-semibold">{part.stock_quantity || 0} un.</span>
-                    </div>
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {searchConfig.data.length > 0 ? (
+              searchConfig.data.map((part) => (
+                <PartsCard 
+                  key={part.id} 
+                  part={part} 
+                  onUpdate={refetch}
+                  onQuickAction={handleQuickAction}
+                />
+              ))
+            ) : (
+              <div className="col-span-full">
+                <EmptyState
+                  icon={Package}
+                  title={searchConfig.isFiltered ? "Nenhuma peça encontrada" : "Nenhuma peça cadastrada"}
+                  description={searchConfig.isFiltered 
+                    ? "Tente ajustar os termos de busca ou filtros." 
+                    : "Comece cadastrando a primeira peça do estoque."
+                  }
+                  actionLabel="Nova Peça"
+                  onAction={() => setIsDialogOpen(true)}
+                  showAction={!searchConfig.isFiltered}
+                />
+              </div>
+            )}
+          </div>
 
-                    {part.sale_price && (
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-muted-foreground">Preço:</span>
-                        <span className="font-semibold">
-                          R$ {part.sale_price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                        </span>
-                      </div>
-                    )}
-
-                    {part.location && (
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-muted-foreground">Local:</span>
-                        <span className="text-sm">{part.location}</span>
-                      </div>
-                    )}
-                    
-                    <div className="flex justify-between items-center pt-2 border-t">
-                      <span className="text-xs text-muted-foreground">
-                        Atualizado em {new Date(part.updated_at).toLocaleDateString('pt-BR')}
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })
-          ) : (
-            <div className="col-span-full">
-              <EmptyState
-                icon={Package}
-                title={searchTerm ? "Nenhuma peça encontrada" : "Nenhuma peça cadastrada"}
-                description={searchTerm 
-                  ? "Tente ajustar os termos de busca." 
-                  : "Comece cadastrando a primeira peça do estoque."
-                }
-                actionLabel="Nova Peça"
-                onAction={() => setShowForm(true)}
-                showAction={!searchTerm}
-              />
-            </div>
+          {/* Pagination */}
+          {searchConfig.paginationInfo.totalPages > 1 && (
+            <Pagination
+              paginationInfo={searchConfig.paginationInfo}
+              onPageChange={searchConfig.handlePageChange}
+              onPageSizeChange={searchConfig.handlePageSizeChange}
+              goToFirstPage={searchConfig.goToFirstPage}
+              goToLastPage={searchConfig.goToLastPage}
+              goToNextPage={searchConfig.goToNextPage}
+              goToPreviousPage={searchConfig.goToPreviousPage}
+              showPageSizeSelector={true}
+              showPageInfo={true}
+              showNavigationInfo={true}
+            />
           )}
         </div>
-
-        <PartsForm
-          open={showForm}
-          onOpenChange={setShowForm}
-          onSuccess={refetch}
-        />
-      </div>
-    </DashboardLayout>
-  );
+         </div>
+       </ModuleErrorBoundary>
+     </DashboardLayout>
+   );
 };
 
 export default Estoque;

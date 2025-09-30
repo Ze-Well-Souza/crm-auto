@@ -1,30 +1,26 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useCrudState } from "@/hooks/useStandardState";
 import type { Appointment } from "@/types";
 import { mockAppointments } from "@/utils/mockData";
 import { generateId } from "@/utils/formatters";
 
 export const useAppointmentsNew = () => {
-  const [appointments, setAppointments] = useState<Appointment[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const state = useCrudState<Appointment>();
   const { toast } = useToast();
 
   const fetchAppointments = async () => {
     try {
-      setLoading(true);
-      setError(null);
+      state.setLoading(true);
       
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 500));
       
       // Use centralized mock data
-      setAppointments(mockAppointments);
+      state.setData(mockAppointments);
     } catch (err) {
       console.error('Erro ao buscar agendamentos:', err);
-      setError('Erro inesperado ao carregar agendamentos');
-    } finally {
-      setLoading(false);
+      state.setError('Erro inesperado ao carregar agendamentos');
     }
   };
 
@@ -42,16 +38,17 @@ export const useAppointmentsNew = () => {
       
       // Add to mock data
       mockAppointments.push(newAppointment);
+      state.addItem(newAppointment);
 
       toast({
         title: "Agendamento criado",
         description: "O agendamento foi criado com sucesso.",
       });
 
-      await fetchAppointments();
       return newAppointment;
     } catch (err: any) {
       const errorMessage = err.message || 'Erro ao criar agendamento';
+      state.setError(errorMessage);
       toast({
         title: "Erro",
         description: errorMessage,
@@ -69,11 +66,13 @@ export const useAppointmentsNew = () => {
       // Update in mock data
       const index = mockAppointments.findIndex(a => a.id === id);
       if (index !== -1) {
-        mockAppointments[index] = {
+        const updatedAppointment = {
           ...mockAppointments[index],
           ...appointmentData,
           updated_at: new Date().toISOString()
         };
+        mockAppointments[index] = updatedAppointment;
+        state.updateItem(id, updatedAppointment);
       }
 
       toast({
@@ -81,10 +80,10 @@ export const useAppointmentsNew = () => {
         description: "O agendamento foi atualizado com sucesso.",
       });
 
-      await fetchAppointments();
       return mockAppointments[index];
     } catch (err: any) {
       const errorMessage = err.message || 'Erro ao atualizar agendamento';
+      state.setError(errorMessage);
       toast({
         title: "Erro",
         description: errorMessage,
@@ -103,16 +102,16 @@ export const useAppointmentsNew = () => {
       const index = mockAppointments.findIndex(a => a.id === id);
       if (index !== -1) {
         mockAppointments.splice(index, 1);
+        state.removeItem(id);
       }
 
       toast({
         title: "Agendamento excluído",
         description: "O agendamento foi excluído com sucesso.",
       });
-
-      await fetchAppointments();
     } catch (err: any) {
       const errorMessage = err.message || 'Erro ao excluir agendamento';
+      state.setError(errorMessage);
       toast({
         title: "Erro",
         description: errorMessage,
@@ -127,9 +126,10 @@ export const useAppointmentsNew = () => {
   }, []);
 
   return {
-    appointments,
-    loading,
-    error,
+    appointments: state.data,
+    loading: state.loading,
+    error: state.error,
+    success: state.success,
     refetch: fetchAppointments,
     createAppointment,
     updateAppointment,

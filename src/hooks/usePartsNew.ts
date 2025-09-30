@@ -1,40 +1,39 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useCrudState, useStandardState } from "@/hooks/useStandardState";
 import type { Part, Supplier } from "@/types";
 import { mockParts, mockSuppliers } from "@/utils/mockData";
 import { generateId } from "@/utils/formatters";
 
 export const usePartsNew = () => {
-  const [parts, setParts] = useState<Part[] | null>(null);
-  const [suppliers, setSuppliers] = useState<Supplier[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const partsState = useCrudState<Part>();
+  const suppliersState = useStandardState<Supplier[]>();
   const { toast } = useToast();
 
   const fetchParts = async () => {
     try {
-      setLoading(true);
-      setError(null);
+      partsState.setLoading(true);
       
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 500));
       
       // Use centralized mock data
-      setParts(mockParts);
+      partsState.setData(mockParts);
     } catch (err) {
       console.error('Erro ao buscar peças:', err);
-      setError('Erro inesperado ao carregar peças');
-    } finally {
-      setLoading(false);
+      partsState.setError('Erro inesperado ao carregar peças');
     }
   };
 
   const fetchSuppliers = async () => {
     try {
+      suppliersState.setLoading(true);
+      
       // Use centralized mock data
-      setSuppliers(mockSuppliers);
+      suppliersState.setData(mockSuppliers);
     } catch (err) {
       console.error('Erro ao buscar fornecedores:', err);
+      suppliersState.setError('Erro ao carregar fornecedores');
     }
   };
 
@@ -52,16 +51,17 @@ export const usePartsNew = () => {
       
       // Add to mock data
       mockParts.push(newPart);
+      partsState.addItem(newPart);
 
       toast({
         title: "Peça criada",
         description: "A peça foi criada com sucesso.",
       });
 
-      await fetchParts();
       return newPart;
     } catch (err: any) {
       const errorMessage = err.message || 'Erro ao criar peça';
+      partsState.setError(errorMessage);
       toast({
         title: "Erro",
         description: errorMessage,
@@ -79,11 +79,13 @@ export const usePartsNew = () => {
       // Update in mock data
       const index = mockParts.findIndex(p => p.id === id);
       if (index !== -1) {
-        mockParts[index] = {
+        const updatedPart = {
           ...mockParts[index],
           ...partData,
           updated_at: new Date().toISOString()
         };
+        mockParts[index] = updatedPart;
+        partsState.updateItem(id, updatedPart);
       }
 
       toast({
@@ -91,10 +93,10 @@ export const usePartsNew = () => {
         description: "A peça foi atualizada com sucesso.",
       });
 
-      await fetchParts();
       return mockParts[index];
     } catch (err: any) {
       const errorMessage = err.message || 'Erro ao atualizar peça';
+      partsState.setError(errorMessage);
       toast({
         title: "Erro",
         description: errorMessage,
@@ -113,16 +115,16 @@ export const usePartsNew = () => {
       const index = mockParts.findIndex(p => p.id === id);
       if (index !== -1) {
         mockParts.splice(index, 1);
+        partsState.removeItem(id);
       }
 
       toast({
         title: "Peça excluída",
         description: "A peça foi excluída com sucesso.",
       });
-
-      await fetchParts();
     } catch (err: any) {
       const errorMessage = err.message || 'Erro ao excluir peça';
+      partsState.setError(errorMessage);
       toast({
         title: "Erro",
         description: errorMessage,
@@ -138,10 +140,11 @@ export const usePartsNew = () => {
   }, []);
 
   return {
-    parts,
-    suppliers,
-    loading,
-    error,
+    parts: partsState.data,
+    suppliers: suppliersState.data,
+    loading: partsState.loading || suppliersState.loading,
+    error: partsState.error || suppliersState.error,
+    success: partsState.success,
     refetch: fetchParts,
     createPart,
     updatePart,

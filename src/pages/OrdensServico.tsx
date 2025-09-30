@@ -1,45 +1,77 @@
 import { useState } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Plus, Search, Wrench, Clock, CheckCircle, AlertCircle } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Plus, Wrench, Search, Clock, CircleCheck as CheckCircle } from "lucide-react";
 import { useServiceOrders } from "@/hooks/useServiceOrders";
 import { ServiceOrderForm } from "@/components/service-orders/ServiceOrderForm";
+import { ServiceOrderCard } from "@/components/service-orders/ServiceOrderCard";
+import { ServiceOrderMetrics } from "@/components/service-orders/ServiceOrderMetrics";
+import { ServiceOrderFilters } from "@/components/service-orders/ServiceOrderFilters";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { SearchInput } from "@/components/common/SearchInput";
+import { EmptyState } from "@/components/common/EmptyState";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
 
 const OrdensServico = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [filters, setFilters] = useState({});
   const { serviceOrders, loading, error, refetch } = useServiceOrders();
 
-  const getStatusIcon = (status: string | null) => {
-    switch (status) {
-      case 'concluido':
-        return <CheckCircle className="h-4 w-4 text-success" />;
-      case 'em_andamento':
-        return <Clock className="h-4 w-4 text-warning" />;
-      default:
-        return <AlertCircle className="h-4 w-4 text-muted-foreground" />;
-    }
+  const handleQuickAction = (action: string, order: any) => {
+    console.log(`Ação ${action} para ordem:`, order);
+    // Implementar ações específicas aqui
   };
 
-  const getStatusVariant = (status: string | null): "default" | "secondary" | "destructive" | "outline" => {
-    switch (status) {
-      case 'concluido':
-        return 'default';
-      case 'em_andamento':
-        return 'secondary';
-      case 'cancelado':
-        return 'destructive';
-      default:
-        return 'outline';
+  const applyFilters = (orderList: any[]) => {
+    let filtered = [...orderList];
+
+    // Apply search term
+    if (searchTerm) {
+      filtered = filtered.filter(order => 
+        order.order_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.clients?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     }
+
+    // Apply quick filters
+    if (filters.urgent) {
+      // Mock urgent logic - in real app would check due dates
+      filtered = filtered.filter(() => Math.random() > 0.7);
+    }
+    if (filters.highValue) {
+      filtered = filtered.filter(order => (order.total_amount || 0) > 500);
+    }
+    if (filters.inProgress) {
+      filtered = filtered.filter(order => order.status === 'em_andamento');
+    }
+    if (filters.needsApproval) {
+      filtered = filtered.filter(order => order.status === 'orcamento');
+    }
+
+    // Apply status filters
+    if (filters.status?.length > 0) {
+      filtered = filtered.filter(order => 
+        filters.status.includes(order.status)
+      );
+    }
+
+    // Apply value range filter
+    if (filters.valueRange) {
+      filtered = filtered.filter(order => 
+        (order.total_amount || 0) >= filters.valueRange[0] && 
+        (order.total_amount || 0) <= filters.valueRange[1]
+      );
+    }
+
+    return filtered;
   };
 
-  const filteredOrders = serviceOrders?.filter(order => 
+  const filteredOrders = serviceOrders ? applyFilters(serviceOrders) : serviceOrders?.filter(order =>
     order.order_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     order.description?.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
@@ -129,50 +161,13 @@ const OrdensServico = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="gradient-card">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Wrench className="h-4 w-4 text-primary" />
-                Total de Ordens
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{serviceOrders?.length || 0}</div>
-              <p className="text-xs text-muted-foreground">Todas as ordens</p>
-            </CardContent>
-          </Card>
-          
-          <Card className="gradient-card">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Clock className="h-4 w-4 text-warning" />
-                Em Andamento
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {serviceOrders?.filter(o => o.status === 'em_andamento').length || 0}
-              </div>
-              <p className="text-xs text-muted-foreground">Sendo executadas</p>
-            </CardContent>
-          </Card>
+        <ServiceOrderMetrics serviceOrders={serviceOrders || []} />
 
-          <Card className="gradient-card">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-success" />
-                Concluídas
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {serviceOrders?.filter(o => o.status === 'concluido').length || 0}
-              </div>
-              <p className="text-xs text-muted-foreground">Finalizadas</p>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Advanced Filters */}
+        <ServiceOrderFilters 
+          onFiltersChange={setFilters}
+          activeFilters={filters}
+        />
 
         {/* Search */}
         <Card>
@@ -193,55 +188,26 @@ const OrdensServico = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredOrders.length > 0 ? (
             filteredOrders.map((order) => (
-              <Card key={order.id} className="hover:shadow-elevated transition-smooth cursor-pointer">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">{order.order_number}</CardTitle>
-                    <Badge variant={getStatusVariant(order.status)} className="flex items-center gap-1">
-                      {getStatusIcon(order.status)}
-                      {order.status || 'Pendente'}
-                    </Badge>
-                  </div>
-                  {order.description && (
-                    <CardDescription className="line-clamp-2">
-                      {order.description}
-                    </CardDescription>
-                  )}
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {order.total_amount && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Total:</span>
-                      <span className="font-semibold text-lg">
-                        R$ {order.total_amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                      </span>
-                    </div>
-                  )}
-                  
-                  <div className="flex justify-between items-center pt-2 border-t">
-                    <span className="text-xs text-muted-foreground">
-                      Criada em {new Date(order.created_at).toLocaleDateString('pt-BR')}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
+              <ServiceOrderCard 
+                key={order.id} 
+                serviceOrder={order} 
+                onUpdate={refetch}
+                onQuickAction={handleQuickAction}
+              />
             ))
           ) : (
             <div className="col-span-full">
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <Wrench className="h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-medium text-muted-foreground mb-2">
-                    {searchTerm ? "Nenhuma ordem encontrada" : "Nenhuma ordem cadastrada"}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-4 text-center max-w-sm">
-                    {searchTerm 
-                      ? "Tente ajustar os termos de busca." 
-                      : "Comece criando a primeira ordem de serviço."
-                    }
-                  </p>
-                </CardContent>
-              </Card>
+              <EmptyState
+                icon={Wrench}
+                title={searchTerm ? "Nenhuma ordem encontrada" : "Nenhuma ordem cadastrada"}
+                description={searchTerm 
+                  ? "Tente ajustar os termos de busca." 
+                  : "Comece criando a primeira ordem de serviço."
+                }
+                actionLabel="Nova Ordem"
+                onAction={() => setIsDialogOpen(true)}
+                showAction={!searchTerm}
+              />
             </div>
           )}
         </div>

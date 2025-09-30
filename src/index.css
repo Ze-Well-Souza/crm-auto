@@ -2,240 +2,317 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Oficina Eficiente CRM Design System 
-Modern automotive CRM with vibrant colors and stunning visual effects
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    --background: 220 25% 96%;
-    --foreground: 220 15% 15%;
-
+    /* Modern vibrant color palette */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
-    --card-foreground: 220 15% 15%;
-
+    --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 220 15% 15%;
-
-    /* Vibrant color palette for modern CRM */
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
-    --primary-glow: 217 91% 70%;
-    --primary-light: 217 91% 85%;
-
-    /* Colorful secondary variants */
-    --secondary: 220 15% 96%;
-    --secondary-foreground: 220 15% 25%;
-
-    --muted: 220 15% 94%;
-    --muted-foreground: 220 10% 50%;
-
-    --accent: 217 91% 95%;
-    --accent-foreground: 217 91% 20%;
-
-    /* Vibrant status colors */
-    --success: 142 71% 45%;
-    --success-foreground: 0 0% 100%;
-    --success-light: 142 71% 85%;
-    --success-glow: 142 71% 65%;
-
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
-    --warning-light: 38 92% 85%;
-    --warning-glow: 38 92% 70%;
-
-    --info: 199 89% 48%;
-    --info-foreground: 0 0% 100%;
-    --info-light: 199 89% 85%;
-    --info-glow: 199 89% 68%;
-
-    --purple: 271 81% 56%;
-    --purple-foreground: 0 0% 100%;
-    --purple-light: 271 81% 85%;
-    --purple-glow: 271 81% 76%;
-
-    --pink: 330 81% 60%;
-    --pink-foreground: 0 0% 100%;
-    --pink-light: 330 81% 85%;
-    --pink-glow: 330 81% 80%;
-
-    --orange: 24 95% 53%;
-    --orange-foreground: 0 0% 100%;
-    --orange-light: 24 95% 85%;
-    --orange-glow: 24 95% 73%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-    --destructive-light: 0 84% 85%;
-    --destructive-glow: 0 84% 75%;
-
-    --border: 220 15% 88%;
-    --input: 220 15% 88%;
-    --ring: 217 91% 60%;
-
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
     --radius: 0.75rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
 
-    /* Modern gradients with vibrant colors */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-success: linear-gradient(135deg, hsl(var(--success)), hsl(var(--success-glow)));
-    --gradient-warning: linear-gradient(135deg, hsl(var(--warning)), hsl(var(--warning-glow)));
-    --gradient-info: linear-gradient(135deg, hsl(var(--info)), hsl(var(--info-glow)));
-    --gradient-purple: linear-gradient(135deg, hsl(var(--purple)), hsl(var(--purple-glow)));
-    --gradient-pink: linear-gradient(135deg, hsl(var(--pink)), hsl(var(--pink-glow)));
-    --gradient-orange: linear-gradient(135deg, hsl(var(--orange)), hsl(var(--orange-glow)));
-    
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(220 15% 98%));
-    --gradient-glass: linear-gradient(145deg, hsl(0 0% 100% / 0.9), hsl(220 15% 98% / 0.8));
-    --gradient-dashboard: linear-gradient(135deg, hsl(220 25% 96%), hsl(217 91% 97%));
-    --gradient-mesh: radial-gradient(circle at 25% 25%, hsl(var(--primary) / 0.1) 0%, transparent 50%), 
-                     radial-gradient(circle at 75% 75%, hsl(var(--purple) / 0.1) 0%, transparent 50%),
-                     radial-gradient(circle at 50% 50%, hsl(var(--pink) / 0.05) 0%, transparent 50%);
+    /* Enhanced color palette */
+    --success: 142.1 76.2% 36.3%;
+    --success-foreground: 355.7 100% 97.3%;
+    --warning: 32.5 94.6% 43.7%;
+    --warning-foreground: 355.7 100% 97.3%;
+    --info: 198.6 88.7% 48.4%;
+    --info-foreground: 355.7 100% 97.3%;
+    --purple: 262.1 83.3% 57.8%;
+    --purple-foreground: 355.7 100% 97.3%;
+    --pink: 330.4 81.2% 60.4%;
+    --pink-foreground: 355.7 100% 97.3%;
+    --orange: 24.6 95% 53.1%;
+    --orange-foreground: 355.7 100% 97.3%;
 
-    /* Enhanced shadows with color */
-    --shadow-card: 0 4px 6px -1px hsl(220 15% 15% / 0.1), 0 2px 4px -1px hsl(220 15% 15% / 0.06);
-    --shadow-elevated: 0 10px 15px -3px hsl(220 15% 15% / 0.1), 0 4px 6px -2px hsl(220 15% 15% / 0.05);
-    --shadow-primary: 0 8px 25px -8px hsl(var(--primary) / 0.4);
-    --shadow-success: 0 8px 25px -8px hsl(var(--success) / 0.4);
-    --shadow-warning: 0 8px 25px -8px hsl(var(--warning) / 0.4);
-    --shadow-info: 0 8px 25px -8px hsl(var(--info) / 0.4);
-    --shadow-purple: 0 8px 25px -8px hsl(var(--purple) / 0.4);
-    --shadow-glass: 0 8px 32px 0 hsl(220 15% 15% / 0.1);
-    --shadow-glow: 0 0 20px hsl(var(--primary) / 0.3);
-
-    /* Smooth transitions and animations */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-fast: all 0.15s ease;
-    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-
+    /* Sidebar colors */
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Modern gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--info)) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(var(--success)) 0%, hsl(142.1 70.6% 45.3%) 100%);
+    --gradient-warning: linear-gradient(135deg, hsl(var(--warning)) 0%, hsl(var(--orange)) 100%);
+    --gradient-info: linear-gradient(135deg, hsl(var(--info)) 0%, hsl(var(--primary)) 100%);
+    --gradient-purple: linear-gradient(135deg, hsl(var(--purple)) 0%, hsl(262.1 83.3% 67.8%) 100%);
+    --gradient-pink: linear-gradient(135deg, hsl(var(--pink)) 0%, hsl(330.4 81.2% 70.4%) 100%);
+    --gradient-orange: linear-gradient(135deg, hsl(var(--orange)) 0%, hsl(var(--warning)) 100%);
+
+    /* Card gradients */
+    --gradient-card: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted)) 100%);
+    --gradient-glass: linear-gradient(135deg, hsl(0 0% 100% / 0.1) 0%, hsl(0 0% 100% / 0.05) 100%);
+
+    /* Dashboard gradient */
+    --gradient-dashboard: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--muted)) 50%, hsl(var(--accent)) 100%);
+
+    /* Mesh gradient background */
+    --gradient-mesh: radial-gradient(at 40% 20%, hsl(var(--primary) / 0.1) 0px, transparent 50%),
+                     radial-gradient(at 80% 0%, hsl(var(--success) / 0.1) 0px, transparent 50%),
+                     radial-gradient(at 0% 50%, hsl(var(--warning) / 0.1) 0px, transparent 50%),
+                     radial-gradient(at 80% 50%, hsl(var(--purple) / 0.1) 0px, transparent 50%),
+                     radial-gradient(at 0% 100%, hsl(var(--pink) / 0.1) 0px, transparent 50%),
+                     radial-gradient(at 80% 100%, hsl(var(--info) / 0.1) 0px, transparent 50%),
+                     radial-gradient(at 0% 0%, hsl(var(--orange) / 0.1) 0px, transparent 50%);
+
+    /* Enhanced shadows */
+    --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-elevated: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-primary: 0 10px 15px -3px hsl(var(--primary) / 0.3), 0 4px 6px -4px hsl(var(--primary) / 0.3);
+    --shadow-success: 0 10px 15px -3px hsl(var(--success) / 0.3), 0 4px 6px -4px hsl(var(--success) / 0.3);
+    --shadow-warning: 0 10px 15px -3px hsl(var(--warning) / 0.3), 0 4px 6px -4px hsl(var(--warning) / 0.3);
+    --shadow-info: 0 10px 15px -3px hsl(var(--info) / 0.3), 0 4px 6px -4px hsl(var(--info) / 0.3);
+    --shadow-purple: 0 10px 15px -3px hsl(var(--purple) / 0.3), 0 4px 6px -4px hsl(var(--purple) / 0.3);
+    --shadow-glass: 0 8px 32px 0 rgb(31 38 135 / 0.37);
+    --shadow-glow: 0 0 20px hsl(var(--primary) / 0.5);
+
+    /* Smooth transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   }
 
   .dark {
-    --background: 220 15% 8%;
-    --foreground: 0 0% 95%;
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 83.2% 59.8%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
 
-    --card: 220 15% 10%;
-    --card-foreground: 0 0% 95%;
+    /* Enhanced dark mode colors */
+    --success: 142.1 70.6% 45.3%;
+    --warning: 32.5 94.6% 43.7%;
+    --info: 198.6 88.7% 48.4%;
+    --purple: 262.1 83.3% 67.8%;
+    --pink: 330.4 81.2% 70.4%;
+    --orange: 24.6 95% 53.1%;
 
-    --popover: 220 15% 10%;
-    --popover-foreground: 0 0% 95%;
-
-    --primary: 217 91% 65%;
-    --primary-foreground: 220 15% 8%;
-    --primary-glow: 217 91% 75%;
-    --primary-light: 217 91% 85%;
-
-    --secondary: 220 15% 15%;
-    --secondary-foreground: 0 0% 90%;
-
-    --muted: 220 15% 12%;
-    --muted-foreground: 220 10% 60%;
-
-    --accent: 217 91% 15%;
-    --accent-foreground: 217 91% 80%;
-
-    --success: 142 71% 55%;
-    --success-foreground: 220 15% 8%;
-    --success-light: 142 71% 25%;
-    --success-glow: 142 71% 65%;
-
-    --warning: 38 92% 60%;
-    --warning-foreground: 220 15% 8%;
-    --warning-light: 38 92% 25%;
-    --warning-glow: 38 92% 70%;
-
-    --info: 199 89% 58%;
-    --info-foreground: 220 15% 8%;
-    --info-light: 199 89% 25%;
-    --info-glow: 199 89% 68%;
-
-    --purple: 271 81% 66%;
-    --purple-foreground: 220 15% 8%;
-    --purple-light: 271 81% 25%;
-    --purple-glow: 271 81% 76%;
-
-    --pink: 330 81% 70%;
-    --pink-foreground: 220 15% 8%;
-    --pink-light: 330 81% 25%;
-    --pink-glow: 330 81% 80%;
-
-    --orange: 24 95% 63%;
-    --orange-foreground: 220 15% 8%;
-    --orange-light: 24 95% 25%;
-    --orange-glow: 24 95% 73%;
-
-    --destructive: 0 84% 65%;
-    --destructive-foreground: 0 0% 100%;
-    --destructive-light: 0 84% 25%;
-    --destructive-glow: 0 84% 75%;
-
-    --border: 220 15% 18%;
-    --input: 220 15% 18%;
-    --ring: 217 91% 65%;
+    /* Dark sidebar colors */
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
 
     /* Dark mode gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-success: linear-gradient(135deg, hsl(var(--success)), hsl(var(--success-glow)));
-    --gradient-warning: linear-gradient(135deg, hsl(var(--warning)), hsl(var(--warning-glow)));
-    --gradient-info: linear-gradient(135deg, hsl(var(--info)), hsl(var(--info-glow)));
-    --gradient-purple: linear-gradient(135deg, hsl(var(--purple)), hsl(var(--purple-glow)));
-    --gradient-pink: linear-gradient(135deg, hsl(var(--pink)), hsl(var(--pink-glow)));
-    --gradient-orange: linear-gradient(135deg, hsl(var(--orange)), hsl(var(--orange-glow)));
-    
-    --gradient-card: linear-gradient(145deg, hsl(220 15% 10%), hsl(220 15% 12%));
-    --gradient-glass: linear-gradient(145deg, hsl(220 15% 10% / 0.9), hsl(220 15% 12% / 0.8));
-    --gradient-dashboard: linear-gradient(135deg, hsl(220 15% 8%), hsl(217 91% 12%));
-    --gradient-mesh: radial-gradient(circle at 25% 25%, hsl(var(--primary) / 0.1) 0%, transparent 50%), 
-                     radial-gradient(circle at 75% 75%, hsl(var(--purple) / 0.1) 0%, transparent 50%),
-                     radial-gradient(circle at 50% 50%, hsl(var(--pink) / 0.05) 0%, transparent 50%);
-
-    --sidebar-background: 220 15% 6%;
-    --sidebar-foreground: 0 0% 90%;
-    --sidebar-primary: 217 91% 65%;
-    --sidebar-primary-foreground: 220 15% 8%;
-    --sidebar-accent: 220 15% 12%;
-    --sidebar-accent-foreground: 0 0% 90%;
-    --sidebar-border: 220 15% 15%;
-    --sidebar-ring: 217 91% 65%;
+    --gradient-card: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted)) 100%);
+    --gradient-glass: linear-gradient(135deg, hsl(0 0% 0% / 0.1) 0%, hsl(0 0% 0% / 0.05) 100%);
+    --gradient-dashboard: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--muted)) 50%, hsl(var(--accent)) 100%);
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
 
+  /* Base styles */
+  html {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    line-height: 1.6;
+    font-weight: 400;
+    color-scheme: light dark;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    font-variant-numeric: oldstyle-nums;
+  }
+
   body {
-    @apply bg-background text-foreground antialiased;
-    background: hsl(var(--background));
+    @apply text-foreground antialiased;
+    margin: 0;
+    display: flex;
+    place-items: center;
+    min-width: 320px;
+    min-height: 100vh;
+    background: linear-gradient(135deg, 
+      hsl(var(--background)) 0%, 
+      hsl(var(--background)) 40%,
+      hsl(var(--primary) / 0.02) 60%,
+      hsl(var(--secondary) / 0.03) 80%,
+      hsl(var(--accent) / 0.02) 100%
+    );
+    background-attachment: fixed;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
-  /* Professional typography hierarchy */
-  h1 {
-    @apply text-3xl font-bold tracking-tight;
+  #root {
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    position: relative;
   }
 
-  h2 {
+  /* Background overlay for better content readability */
+  #root::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+      ellipse at top,
+      hsl(var(--primary) / 0.01) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse at bottom right,
+      hsl(var(--secondary) / 0.015) 0%,
+      transparent 50%
+    );
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* Smooth theme transitions */
+  * {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  /* Enhanced transition utilities */
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .transition-theme {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  /* Enhanced Typography Hierarchy */
+  .text-display {
+    @apply text-4xl font-bold tracking-tight;
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .text-headline {
+    @apply text-3xl font-semibold tracking-tight;
+    line-height: 1.2;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+
+  .text-title {
     @apply text-2xl font-semibold tracking-tight;
+    line-height: 1.3;
+    font-weight: 600;
+    letter-spacing: -0.01em;
   }
 
-  h3 {
-    @apply text-lg font-semibold;
+  .text-subtitle {
+    @apply text-lg font-medium;
+    line-height: 1.4;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+  }
+
+  .text-body {
+    @apply text-base;
+    line-height: 1.6;
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+
+  .text-caption {
+    @apply text-sm text-muted-foreground;
+    line-height: 1.4;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+
+  /* Typography Improvements */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  h1 { 
+    font-size: 2.5rem; 
+    font-weight: 700; 
+    letter-spacing: -0.02em; 
+  }
+
+  h2 { 
+    font-size: 2rem; 
+    font-weight: 600; 
+    letter-spacing: -0.015em; 
+  }
+
+  h3 { 
+    font-size: 1.5rem; 
+    font-weight: 600; 
+    letter-spacing: -0.01em; 
+  }
+
+  h4 { 
+    font-size: 1.25rem; 
+    font-weight: 500; 
+    letter-spacing: -0.005em; 
+  }
+
+  p {
+    line-height: 1.6;
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-feature-settings: 'liga' 1, 'calt' 1;
   }
 
   /* Custom utilities for modern CRM design */
@@ -373,12 +450,125 @@ All colors MUST be HSL.
     animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.6s ease-out forwards;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.4s ease-out forwards;
+  }
+
+  .animate-bounce-in {
+    animation: bounceIn 0.6s ease-out forwards;
+  }
+
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  .animate-spin-slow {
+    animation: spin 3s linear infinite;
+  }
+
+  .animate-gradient {
+    animation: gradient 3s ease infinite;
+    background-size: 200% 200%;
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s linear infinite;
+  }
+
   @keyframes float {
     0%, 100% {
       transform: translateY(0px);
     }
     50% {
       transform: translateY(-10px);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes bounceIn {
+    0% {
+      opacity: 0;
+      transform: scale(0.3);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    70% {
+      transform: scale(0.9);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes glow {
+    from {
+      box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+    }
+    to {
+      box-shadow: 0 0 30px hsl(var(--primary) / 0.6);
+    }
+  }
+
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
     }
   }
 
@@ -402,5 +592,110 @@ All colors MUST be HSL.
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  /* Modern loading states */
+  .loading-shimmer {
+    background: linear-gradient(90deg, 
+      hsl(var(--muted)) 25%, 
+      hsl(var(--muted-foreground) / 0.1) 50%, 
+      hsl(var(--muted)) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  /* Interactive elements */
+  .interactive-hover {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .interactive-hover:hover {
+    transform: translateY(-1px) scale(1.02);
+    box-shadow: 0 10px 25px -5px hsl(var(--primary) / 0.25);
+  }
+
+  .interactive-hover:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  /* Pulse animations for status indicators */
+  .pulse-success {
+    animation: pulseSuccess 2s infinite;
+  }
+
+  .pulse-warning {
+    animation: pulseWarning 2s infinite;
+  }
+
+  .pulse-error {
+    animation: pulseError 2s infinite;
+  }
+
+  @keyframes pulseSuccess {
+    0%, 100% {
+      box-shadow: 0 0 0 0 hsl(var(--success) / 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 10px hsl(var(--success) / 0);
+    }
+  }
+
+  @keyframes pulseWarning {
+    0%, 100% {
+      box-shadow: 0 0 0 0 hsl(var(--warning) / 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 10px hsl(var(--warning) / 0);
+    }
+  }
+
+  @keyframes pulseError {
+    0%, 100% {
+      box-shadow: 0 0 0 0 hsl(var(--destructive) / 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 10px hsl(var(--destructive) / 0);
+    }
+  }
+
+  /* Scroll animations */
+  .scroll-fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease-out;
+  }
+
+  .scroll-fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Modern focus states */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background;
+  }
+
+  /* Enhanced button animations */
+  .btn-ripple {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-ripple::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  .btn-ripple:active::before {
+    width: 300px;
+    height: 300px;
   }
 }

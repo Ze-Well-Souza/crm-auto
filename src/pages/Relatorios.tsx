@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CalendarIcon, Download, TrendingUp, TrendingDown, BarChart3, PieChart, FileText } from "lucide-react";
+import { Calendar as CalendarIcon, Download, TrendingUp, TrendingDown, ChartBar as BarChart3, ChartPie as PieChart, FileText, DollarSign, Users, Car, Wrench, FileSpreadsheet, Filter, RefreshCw, Settings, Eye } from "lucide-react";
 import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { formatCurrency } from "@/utils/formatters";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -19,47 +21,150 @@ import { usePartsNew } from "@/hooks/usePartsNew";
 import { useFinancialTransactionsNew } from "@/hooks/useFinancialTransactionsNew";
 import { useAppointmentsNew } from "@/hooks/useAppointmentsNew";
 import { useServiceOrders } from "@/hooks/useServiceOrders";
+import { ReportsChart } from "@/components/reports/ReportsChart";
+import { ReportFilters } from "@/components/reports/ReportFilters";
+import { AdvancedChart } from "@/components/reports/AdvancedChart";
+import { AnalyticsDashboard } from "@/components/reports/AnalyticsDashboard";
+import { exportToPDF, exportToExcel, exportToCSV } from "@/utils/exportUtils";
 
 const Relatorios = () => {
-  const [dateRange, setDateRange] = useState<{from: Date | undefined, to: Date | undefined}>({
-    from: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-    to: new Date()
-  });
+  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [selectedPeriod, setSelectedPeriod] = useState("Este mês");
+  const [showFilters, setShowFilters] = useState(false);
+  const [activeFilters, setActiveFilters] = useState<any[]>([]);
+  const [isExporting, setIsExporting] = useState(false);
 
-  // Data hooks
-  const { clients, loading: clientsLoading } = useClients();
-  const { vehicles, loading: vehiclesLoading } = useVehicles();
-  const { parts, loading: partsLoading } = usePartsNew();
-  const { transactions, loading: transactionsLoading } = useFinancialTransactionsNew();
-  const { appointments, loading: appointmentsLoading } = useAppointmentsNew();
-  const { serviceOrders, loading: serviceOrdersLoading } = useServiceOrders();
+  // Hooks para buscar dados
+  const { clients: clientes = [], loading: loadingClientes } = useClients();
+  const { vehicles: veiculos = [], loading: loadingVeiculos } = useVehicles();
+  const { parts: pecas = [], loading: loadingPecas } = usePartsNew();
+  const { transactions: transacoes = [], loading: loadingTransacoes } = useFinancialTransactionsNew();
+  const { appointments: agendamentos = [], loading: loadingAgendamentos } = useAppointmentsNew();
+  const { serviceOrders: ordensServico = [], loading: loadingOrdens } = useServiceOrders();
 
-  const isLoading = clientsLoading || vehiclesLoading || partsLoading || 
-                   transactionsLoading || appointmentsLoading || serviceOrdersLoading;
+  const isLoading = loadingClientes || loadingVeiculos || loadingPecas || 
+                   loadingTransacoes || loadingAgendamentos || loadingOrdens;
 
   // Calculate metrics based on data
-  const totalClients = clients?.length || 0;
-  const totalVehicles = vehicles?.length || 0;
-  const totalParts = parts?.length || 0;
-  const lowStockParts = parts?.filter(p => p.min_stock && p.stock_quantity && p.stock_quantity <= p.min_stock).length || 0;
+  const totalClients = clientes?.length || 0;
+  const totalVehicles = veiculos?.length || 0;
+  const totalParts = pecas?.length || 0;
+  const lowStockParts = pecas?.filter(p => p.min_stock && p.stock_quantity && p.stock_quantity <= p.min_stock).length || 0;
   
-  const totalReceitas = transactions?.filter(t => t.type === 'receita').reduce((sum, t) => sum + t.amount, 0) || 0;
-  const totalDespesas = transactions?.filter(t => t.type === 'despesa').reduce((sum, t) => sum + t.amount, 0) || 0;
+  const totalReceitas = transacoes?.filter(t => t.type === 'receita').reduce((sum, t) => sum + t.amount, 0) || 0;
+  const totalDespesas = transacoes?.filter(t => t.type === 'despesa').reduce((sum, t) => sum + t.amount, 0) || 0;
   const saldo = totalReceitas - totalDespesas;
   
-  const totalAppointments = appointments?.length || 0;
-  const pendingAppointments = appointments?.filter(a => a.status === 'agendado').length || 0;
-  const completedAppointments = appointments?.filter(a => a.status === 'concluido').length || 0;
+  const totalAppointments = agendamentos?.length || 0;
+  const pendingAppointments = agendamentos?.filter(a => a.status === 'agendado').length || 0;
+  const completedAppointments = agendamentos?.filter(a => a.status === 'concluido').length || 0;
   
-  const totalServiceOrders = serviceOrders?.length || 0;
-  const completedServiceOrders = serviceOrders?.filter(so => so.status === 'finalizado').length || 0;
+  const totalServiceOrders = ordensServico?.length || 0;
+  const completedServiceOrders = ordensServico?.filter(so => so.status === 'concluido').length || 0;
+
+  // Funções de exportação
+  const handleExportPDF = async () => {
+    setIsExporting(true);
+    try {
+      const reportData = {
+        title: 'Relatório Geral',
+        period: selectedPeriod,
+        metrics: {
+          totalRevenue: totalReceitas,
+          totalExpenses: totalDespesas,
+          totalClients,
+          totalVehicles,
+          totalAppointments,
+          totalServiceOrders
+        },
+        data: {
+          clientes,
+          veiculos,
+          transacoes,
+          agendamentos,
+          ordensServico
+        }
+      };
+      await exportToPDF(reportData, 'relatorio-geral');
+    } catch (error) {
+      console.error('Erro ao exportar PDF:', error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleExportExcel = async () => {
+    setIsExporting(true);
+    try {
+      const reportData = {
+        title: 'Relatório Geral',
+        period: selectedPeriod,
+        metrics: {
+          totalRevenue: totalReceitas,
+          totalExpenses: totalDespesas,
+          totalClients,
+          totalVehicles,
+          totalAppointments,
+          totalServiceOrders
+        },
+        data: {
+          clientes,
+          veiculos,
+          transacoes,
+          agendamentos,
+          ordensServico
+        }
+      };
+      await exportToExcel(reportData, 'relatorio-geral');
+    } catch (error) {
+      console.error('Erro ao exportar Excel:', error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleExportCSV = async () => {
+    setIsExporting(true);
+    try {
+      const reportData = {
+        title: 'Relatório Geral',
+        period: selectedPeriod,
+        metrics: {
+          totalRevenue: totalReceitas,
+          totalExpenses: totalDespesas,
+          totalClients,
+          totalVehicles,
+          totalAppointments,
+          totalServiceOrders
+        },
+        data: {
+          clientes,
+          veiculos,
+          transacoes,
+          agendamentos,
+          ordensServico
+        }
+      };
+      await exportToCSV(reportData, 'relatorio-geral');
+    } catch (error) {
+      console.error('Erro ao exportar CSV:', error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleApplyFilters = (filters: any[]) => {
+    setActiveFilters(filters);
+    // Implementar lógica de filtros
+    console.log('Filtros aplicados:', filters);
+  };
 
   const generatePDF = (reportType: string) => {
     // Mock PDF generation - in real app would use jsPDF or similar
     const data = {
       type: reportType,
       date: new Date().toISOString(),
-      period: `${format(dateRange.from || new Date(), 'dd/MM/yyyy')} - ${format(dateRange.to || new Date(), 'dd/MM/yyyy')}`,
+      period: selectedPeriod,
       metrics: {
         totalClients,
         totalVehicles,
@@ -133,45 +238,111 @@ const Relatorios = () => {
     <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-foreground">Relatórios e Análises</h1>
-            <p className="text-muted-foreground">Métricas de performance e relatórios customizáveis</p>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Relatórios Avançados</h1>
+            <p className="text-muted-foreground">
+              Análise detalhada e insights do seu negócio
+            </p>
           </div>
           
           <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              <Filter className="h-4 w-4 mr-2" />
+              Filtros
+              {activeFilters.length > 0 && (
+                <Badge variant="secondary" className="ml-2">
+                  {activeFilters.length}
+                </Badge>
+              )}
+            </Button>
+
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" className="justify-start text-left font-normal">
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {dateRange.from ? (
-                    dateRange.to ? (
-                      <>
-                        {format(dateRange.from, "dd/MM/yyyy")} -{" "}
-                        {format(dateRange.to, "dd/MM/yyyy")}
-                      </>
-                    ) : (
-                      format(dateRange.from, "dd/MM/yyyy")
-                    )
-                  ) : (
-                    <span>Selecionar período</span>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-[240px] justify-start text-left font-normal",
+                    !date && "text-muted-foreground"
                   )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {date ? format(date, "PPP", { locale: ptBR }) : <span>Selecione uma data</span>}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
+              <PopoverContent className="w-auto p-0" align="end">
                 <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={setDate}
                   initialFocus
-                  mode="range"
-                  defaultMonth={dateRange.from}
-                  selected={dateRange}
-                  onSelect={setDateRange as any}
-                  numberOfMonths={2}
-                  className={cn("p-3 pointer-events-auto")}
                 />
               </PopoverContent>
             </Popover>
+            
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm" disabled={isExporting}>
+                  <Download className="h-4 w-4 mr-2" />
+                  Exportar
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-48" align="end">
+                <div className="space-y-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full justify-start"
+                    onClick={handleExportPDF}
+                    disabled={isExporting}
+                  >
+                    <FileText className="h-4 w-4 mr-2" />
+                    PDF
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full justify-start"
+                    onClick={handleExportExcel}
+                    disabled={isExporting}
+                  >
+                    <FileSpreadsheet className="h-4 w-4 mr-2" />
+                    Excel
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full justify-start"
+                    onClick={handleExportCSV}
+                    disabled={isExporting}
+                  >
+                    <FileText className="h-4 w-4 mr-2" />
+                    CSV
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            <Button variant="outline" size="sm">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Atualizar
+            </Button>
           </div>
         </div>
+
+        {/* Filtros Avançados */}
+        {showFilters && (
+          <ReportFilters
+            onApplyFilters={handleApplyFilters}
+            onExportPDF={handleExportPDF}
+            onExportExcel={handleExportExcel}
+            onExportCSV={handleExportCSV}
+          />
+        )}
 
         {/* Key Metrics Summary */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -237,6 +408,65 @@ const Relatorios = () => {
         </div>
 
         {/* Report Generation Section */}
+        {/* Analytics Dashboard Avançado */}
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">Analytics Dashboard</h2>
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                Tempo Real
+              </Badge>
+              <Button variant="outline" size="sm">
+                <Settings className="h-4 w-4 mr-2" />
+                Configurar
+              </Button>
+            </div>
+          </div>
+          
+          <AnalyticsDashboard
+            data={{
+              clientes,
+              veiculos,
+              transacoes,
+              agendamentos,
+              ordensServico
+            }}
+            period={selectedPeriod}
+          />
+        </div>
+
+        {/* Interactive Charts Section */}
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold">Gráficos Detalhados</h2>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <ReportsChart 
+              title="Análise Financeira"
+              type="revenue"
+              period={selectedPeriod}
+            />
+            
+            <ReportsChart 
+              title="Performance de Clientes"
+              type="clients"
+              period={selectedPeriod}
+            />
+            
+            <ReportsChart 
+              title="Análise de Serviços"
+              type="services"
+              period={selectedPeriod}
+            />
+            
+            <ReportsChart 
+              title="Gestão de Veículos"
+              type="vehicles"
+              period={selectedPeriod}
+            />
+          </div>
+        </div>
+
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold">Gerar Relatórios</h2>

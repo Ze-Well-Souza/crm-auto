@@ -1,39 +1,79 @@
 import { useState } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Plus, Search, Users, Phone, Mail, MapPin } from "lucide-react";
+import { Plus, Users, Filter } from "lucide-react";
 import { useClients } from "@/hooks/useClients";
 import { ClientForm } from "@/components/clients/ClientForm";
-import { ClientActions } from "@/components/clients/ClientActions";
+import { ClientCard } from "@/components/clients/ClientCard";
+import { ClientMetrics } from "@/components/clients/ClientMetrics";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { EmptyState } from "@/components/common/EmptyState";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { SearchAdvanced } from "@/components/common/SearchAdvanced";
+import { Pagination } from "@/components/common/Pagination";
+import { useClientSearch } from "@/hooks/useAdvancedSearch";
+import { Card, CardContent } from "@/components/ui/card";
 
 const Clientes = () => {
-  const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { clients, loading, error, refetch } = useClients();
 
-  const filteredClients = clients?.filter(client => 
-    client.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.phone?.includes(searchTerm)
-  ) || [];
+  // Configuração da busca avançada
+  const searchConfig = useClientSearch(clients || []);
+
+  const handleQuickAction = (action: string, client: any) => {
+    console.log(`Ação ${action} para cliente:`, client);
+    // Implementar ações específicas aqui
+  };
+
+  // Configuração dos filtros para busca avançada
+  const filterGroups = [
+    {
+      key: 'status',
+      label: 'Status',
+      type: 'select' as const,
+      options: [
+        { value: 'active', label: 'Ativo' },
+        { value: 'inactive', label: 'Inativo' },
+        { value: 'pending', label: 'Pendente' }
+      ]
+    },
+    {
+      key: 'city',
+      label: 'Cidade',
+      type: 'select' as const,
+      placeholder: 'Filtrar por cidade'
+    },
+    {
+      key: 'created_date',
+      label: 'Data de Cadastro',
+      type: 'date-range' as const
+    }
+  ];
+
+  const quickFilters = [
+    {
+      key: 'hasEmail',
+      label: 'Com Email',
+      color: 'primary' as const
+    },
+    {
+      key: 'hasPhone', 
+      label: 'Com Telefone',
+      color: 'secondary' as const
+    },
+    {
+      key: 'recent',
+      label: 'Recentes',
+      color: 'outline' as const
+    }
+  ];
 
   if (loading) {
     return (
       <DashboardLayout>
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold text-foreground">Gestão de Clientes</h1>
-              <p className="text-muted-foreground">Gerencie informações completas dos seus clientes</p>
-            </div>
-          </div>
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          </div>
+        <div className="flex justify-center items-center h-64">
+          <LoadingSpinner size="lg" />
         </div>
       </DashboardLayout>
     );
@@ -42,19 +82,14 @@ const Clientes = () => {
   if (error) {
     return (
       <DashboardLayout>
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold text-foreground">Gestão de Clientes</h1>
-              <p className="text-muted-foreground">Gerencie informações completas dos seus clientes</p>
-            </div>
-          </div>
-          <Card className="border-destructive bg-destructive/5">
-            <CardContent className="pt-6">
-              <p className="text-destructive">Erro ao carregar clientes: {error}</p>
-            </CardContent>
-          </Card>
-        </div>
+        <Card className="border-destructive bg-destructive/5">
+          <CardContent className="pt-6">
+            <p className="text-destructive">Erro ao carregar clientes: {error}</p>
+            <Button onClick={refetch} className="mt-4">
+              Tentar Novamente
+            </Button>
+          </CardContent>
+        </Card>
       </DashboardLayout>
     );
   }
@@ -88,160 +123,86 @@ const Clientes = () => {
           </Dialog>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="gradient-card">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Users className="h-4 w-4 text-primary" />
-                Total de Clientes
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{clients?.length || 0}</div>
-              <p className="text-xs text-muted-foreground">Cadastrados no sistema</p>
-            </CardContent>
-          </Card>
-          
-          <Card className="gradient-card">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Phone className="h-4 w-4 text-success" />
-                Com Telefone
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {clients?.filter(c => c.phone).length || 0}
-              </div>
-              <p className="text-xs text-muted-foreground">Telefone cadastrado</p>
-            </CardContent>
-          </Card>
+        {/* Enhanced Metrics */}
+        <ClientMetrics clients={clients || []} />
 
-          <Card className="gradient-card">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Mail className="h-4 w-4 text-warning" />
-                Com Email
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {clients?.filter(c => c.email).length || 0}
-              </div>
-              <p className="text-xs text-muted-foreground">Email cadastrado</p>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Advanced Search */}
+        <SearchAdvanced
+          placeholder="Buscar clientes por nome, email, telefone ou documento..."
+          filterGroups={filterGroups}
+          quickFilters={quickFilters}
+          onSearch={searchConfig.handleSearch}
+          onReset={searchConfig.handleReset}
+          showQuickFilters={true}
+          showAdvancedFilters={true}
+        />
 
-        {/* Search */}
-        <Card>
-          <CardContent className="pt-6">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Buscar clientes por nome, email ou telefone..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
+        {/* Search Results Info */}
+        {searchConfig.isFiltered && (
+          <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-blue-600" />
+              <span className="text-sm text-blue-800">
+                {searchConfig.paginationInfo.totalItems} cliente(s) encontrado(s)
+                {searchConfig.paginationInfo.totalItems !== clients?.length && 
+                  ` de ${clients?.length} total`
+                }
+              </span>
             </div>
-          </CardContent>
-        </Card>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={searchConfig.handleReset}
+              className="text-blue-600 hover:text-blue-800"
+            >
+              Limpar filtros
+            </Button>
+          </div>
+        )}
 
         {/* Clients List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredClients.length > 0 ? (
-            filteredClients.map((client) => (
-              <Card key={client.id} className="hover:shadow-elevated transition-smooth cursor-pointer">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">{client.name}</CardTitle>
-                    <div className="flex items-center gap-2">
-                      <Badge variant="secondary">Cliente</Badge>
-                      <ClientActions client={client} onUpdate={refetch} />
-                    </div>
-                  </div>
-                  {client.cpf_cnpj && (
-                    <CardDescription>
-                      CPF/CNPJ: {client.cpf_cnpj}
-                    </CardDescription>
-                  )}
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {client.email && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <Mail className="h-4 w-4 text-muted-foreground" />
-                      <span className="truncate">{client.email}</span>
-                    </div>
-                  )}
-                  
-                  {client.phone && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <Phone className="h-4 w-4 text-muted-foreground" />
-                      <span>{client.phone}</span>
-                    </div>
-                  )}
-                  
-                  {client.city && client.state && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <MapPin className="h-4 w-4 text-muted-foreground" />
-                      <span className="truncate">{client.city}, {client.state}</span>
-                    </div>
-                  )}
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {searchConfig.data.length > 0 ? (
+              searchConfig.data.map((client) => (
+                <ClientCard 
+                  key={client.id} 
+                  client={client} 
+                  onUpdate={refetch}
+                  onQuickAction={handleQuickAction}
+                />
+              ))
+            ) : (
+              <div className="col-span-full">
+                <EmptyState
+                  icon={Users}
+                  title={searchConfig.isFiltered ? "Nenhum cliente encontrado" : "Nenhum cliente cadastrado"}
+                  description={searchConfig.isFiltered 
+                    ? "Tente ajustar os termos de busca ou filtros." 
+                    : "Comece cadastrando o primeiro cliente do sistema."
+                  }
+                  actionLabel="Novo Cliente"
+                  onAction={() => setIsDialogOpen(true)}
+                  showAction={!searchConfig.isFiltered}
+                />
+              </div>
+            )}
+          </div>
 
-                  {client.notes && (
-                    <div className="mt-3 p-2 bg-muted/50 rounded-md">
-                      <p className="text-xs text-muted-foreground line-clamp-2">
-                        {client.notes}
-                      </p>
-                    </div>
-                  )}
-                  
-                  <div className="flex justify-between items-center pt-2 border-t">
-                    <span className="text-xs text-muted-foreground">
-                      Cadastrado em {new Date(client.created_at).toLocaleDateString('pt-BR')}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          ) : (
-            <div className="col-span-full">
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <Users className="h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-medium text-muted-foreground mb-2">
-                    {searchTerm ? "Nenhum cliente encontrado" : "Nenhum cliente cadastrado"}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-4 text-center max-w-sm">
-                    {searchTerm 
-                      ? "Tente ajustar os termos de busca ou cadastre um novo cliente." 
-                      : "Comece cadastrando o primeiro cliente do sistema."
-                    }
-                  </p>
-                  {!searchTerm && (
-                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                      <DialogTrigger asChild>
-                        <Button>
-                          <Plus className="mr-2 h-4 w-4" />
-                          Cadastrar Primeiro Cliente
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="sm:max-w-[500px]">
-                        <DialogHeader>
-                          <DialogTitle>Cadastrar Novo Cliente</DialogTitle>
-                        </DialogHeader>
-                        <ClientForm onSuccess={() => {
-                          setIsDialogOpen(false);
-                          refetch();
-                        }} />
-                      </DialogContent>
-                    </Dialog>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
+          {/* Pagination */}
+          {searchConfig.paginationInfo.totalPages > 1 && (
+            <Pagination
+              paginationInfo={searchConfig.paginationInfo}
+              onPageChange={searchConfig.handlePageChange}
+              onPageSizeChange={searchConfig.handlePageSizeChange}
+              goToFirstPage={searchConfig.goToFirstPage}
+              goToLastPage={searchConfig.goToLastPage}
+              goToNextPage={searchConfig.goToNextPage}
+              goToPreviousPage={searchConfig.goToPreviousPage}
+              showPageSizeSelector={true}
+              showPageInfo={true}
+              showNavigationInfo={true}
+            />
           )}
         </div>
       </div>

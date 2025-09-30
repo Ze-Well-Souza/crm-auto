@@ -9,6 +9,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import { useTheme } from "next-themes";
+import { useThemePreferences } from "@/hooks/useThemePreferences";
+import { PWAManager } from "@/components/pwa/PWAManager";
 import { 
   Settings, 
   User, 
@@ -18,11 +21,27 @@ import {
   Save,
   Download,
   Upload,
-  RefreshCw
+  RefreshCw,
+  Palette,
+  Sun,
+  Moon,
+  Monitor,
+  RotateCcw
 } from "lucide-react";
 
 const Configuracoes = () => {
   const { toast } = useToast();
+  const { theme, setTheme } = useTheme();
+  const { 
+    preferences, 
+    applyTheme, 
+    savePreferences, 
+    isDark, 
+    isLight, 
+    isSystem,
+    exportPreferences,
+    resetPreferences 
+  } = useThemePreferences();
   const [loading, setLoading] = useState(false);
   
   // Company Settings
@@ -266,6 +285,163 @@ const Configuracoes = () => {
           </CardContent>
         </Card>
 
+        {/* Appearance Settings */}
+        <Card className="gradient-card">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Palette className="h-5 w-5" />
+              Aparência
+            </CardTitle>
+            <CardDescription>
+              Personalize a aparência do sistema conforme sua preferência
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-4">
+              <Label className="text-base">Tema do Sistema</Label>
+              <p className="text-sm text-muted-foreground">
+                Escolha entre tema claro, escuro ou automático baseado no sistema
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <Button
+                  variant={isLight ? "default" : "outline"}
+                  onClick={() => applyTheme("light")}
+                  className="flex items-center justify-center gap-2 h-16 transition-theme"
+                >
+                  <Sun className="h-5 w-5" />
+                  <div className="text-left">
+                    <div className="font-medium">Claro</div>
+                    <div className="text-xs text-muted-foreground">Tema claro</div>
+                  </div>
+                </Button>
+                
+                <Button
+                  variant={isDark ? "default" : "outline"}
+                  onClick={() => applyTheme("dark")}
+                  className="flex items-center justify-center gap-2 h-16 transition-theme"
+                >
+                  <Moon className="h-5 w-5" />
+                  <div className="text-left">
+                    <div className="font-medium">Escuro</div>
+                    <div className="text-xs text-muted-foreground">Tema escuro</div>
+                  </div>
+                </Button>
+                
+                <Button
+                  variant={isSystem ? "default" : "outline"}
+                  onClick={() => applyTheme("system")}
+                  className="flex items-center justify-center gap-2 h-16 transition-theme"
+                >
+                  <Monitor className="h-5 w-5" />
+                  <div className="text-left">
+                    <div className="font-medium">Sistema</div>
+                    <div className="text-xs text-muted-foreground">Automático</div>
+                  </div>
+                </Button>
+              </div>
+            </div>
+            
+            <Separator />
+            
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label className="text-base">Transições Suaves</Label>
+                  <div className="text-sm text-muted-foreground">
+                    Ativar animações suaves ao trocar temas
+                  </div>
+                </div>
+                <Switch
+                  checked={preferences.smoothTransitions}
+                  onCheckedChange={(checked) =>
+                    savePreferences({ smoothTransitions: checked })
+                  }
+                />
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label className="text-base">Salvar Automaticamente</Label>
+                  <div className="text-sm text-muted-foreground">
+                    Salvar preferências automaticamente
+                  </div>
+                </div>
+                <Switch
+                  checked={preferences.autoSave}
+                  onCheckedChange={(checked) =>
+                    savePreferences({ autoSave: checked })
+                  }
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label className="text-base">Sincronizar com Sistema</Label>
+                  <div className="text-sm text-muted-foreground">
+                    Seguir tema do sistema operacional
+                  </div>
+                </div>
+                <Switch
+                  checked={preferences.systemSync}
+                  onCheckedChange={(checked) =>
+                    savePreferences({ systemSync: checked })
+                  }
+                />
+              </div>
+            </div>
+            
+            <div className="p-4 bg-muted/50 rounded-lg">
+              <div className="flex items-start gap-3">
+                <Palette className="h-5 w-5 text-primary mt-0.5" />
+                <div className="space-y-1">
+                  <p className="text-sm font-medium">Tema Atual: {
+                    theme === "light" ? "Claro" : 
+                    theme === "dark" ? "Escuro" : 
+                    "Sistema (Automático)"
+                  }</p>
+                  <p className="text-xs text-muted-foreground">
+                    O tema é aplicado automaticamente em todo o sistema e salvo nas suas preferências.
+                  </p>
+                </div>
+              </div>
+
+                <div className="flex gap-2 pt-4 border-t">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const exported = exportPreferences();
+                      navigator.clipboard.writeText(JSON.stringify(exported, null, 2));
+                      toast({
+                        title: "Preferências exportadas",
+                        description: "As configurações de tema foram copiadas para a área de transferência.",
+                      });
+                    }}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Exportar
+                  </Button>
+                  
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      resetPreferences();
+                      toast({
+                        title: "Preferências resetadas",
+                        description: "As configurações de tema foram restauradas para o padrão.",
+                      });
+                    }}
+                  >
+                    <RotateCcw className="h-4 w-4 mr-2" />
+                    Resetar
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
         {/* Business Rules */}
         <Card className="gradient-card">
           <CardHeader>
@@ -358,6 +534,9 @@ const Configuracoes = () => {
             </Button>
           </CardContent>
         </Card>
+
+        {/* PWA Manager */}
+        <PWAManager />
 
         {/* System Status */}
         <Card className="gradient-card">

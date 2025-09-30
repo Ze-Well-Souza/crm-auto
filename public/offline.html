@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - CRM Parceiro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+
+        .offline-container {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 90%;
+            margin: 1rem;
+        }
+
+        .offline-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 2rem;
+            background: #f8fafc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .offline-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 1rem;
+        }
+
+        .offline-message {
+            font-size: 1.1rem;
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .offline-features {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .offline-features h3 {
+            color: #1e293b;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .offline-features ul {
+            list-style: none;
+            space-y: 0.5rem;
+        }
+
+        .offline-features li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            color: #475569;
+        }
+
+        .offline-features li::before {
+            content: "✓";
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .retry-button {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .retry-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .retry-button:active {
+            transform: translateY(0);
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #fef3c7;
+            color: #92400e;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #f59e0b;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .cached-data-info {
+            background: #e0f2fe;
+            border: 1px solid #0284c7;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: #0c4a6e;
+        }
+
+        @media (max-width: 640px) {
+            .offline-container {
+                padding: 2rem 1.5rem;
+            }
+            
+            .offline-title {
+                font-size: 1.5rem;
+            }
+            
+            .offline-icon {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="offline-icon">
+            📡
+        </div>
+        
+        <h1 class="offline-title">Você está offline</h1>
+        
+        <p class="offline-message">
+            Não foi possível conectar ao servidor. Verifique sua conexão com a internet e tente novamente.
+        </p>
+
+        <div class="offline-features">
+            <h3>Funcionalidades disponíveis offline:</h3>
+            <ul>
+                <li>Visualizar dados em cache</li>
+                <li>Navegar entre páginas visitadas</li>
+                <li>Acessar informações de clientes</li>
+                <li>Consultar agendamentos salvos</li>
+                <li>Ver relatórios em cache</li>
+            </ul>
+        </div>
+
+        <div class="status-indicator">
+            <div class="status-dot"></div>
+            Tentando reconectar...
+        </div>
+
+        <button class="retry-button" onclick="retryConnection()">
+            Tentar Novamente
+        </button>
+
+        <div class="cached-data-info">
+            <strong>💡 Dica:</strong> Alguns dados podem estar disponíveis em cache. 
+            Quando a conexão for restaurada, os dados serão sincronizados automaticamente.
+        </div>
+    </div>
+
+    <script>
+        // Função para tentar reconectar
+        function retryConnection() {
+            if (navigator.onLine) {
+                window.location.reload();
+            } else {
+                showConnectionStatus();
+            }
+        }
+
+        // Mostrar status da conexão
+        function showConnectionStatus() {
+            const statusIndicator = document.querySelector('.status-indicator');
+            const statusDot = document.querySelector('.status-dot');
+            
+            if (navigator.onLine) {
+                statusIndicator.style.background = '#d1fae5';
+                statusIndicator.style.color = '#065f46';
+                statusIndicator.innerHTML = '<div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></div> Conectado! Recarregando...';
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                statusIndicator.style.background = '#fee2e2';
+                statusIndicator.style.color = '#991b1b';
+                statusIndicator.innerHTML = '<div style="width: 8px; height: 8px; background: #ef4444; border-radius: 50%;"></div> Ainda offline';
+            }
+        }
+
+        // Monitorar mudanças na conexão
+        window.addEventListener('online', () => {
+            showConnectionStatus();
+        });
+
+        window.addEventListener('offline', () => {
+            showConnectionStatus();
+        });
+
+        // Verificar status inicial
+        document.addEventListener('DOMContentLoaded', () => {
+            showConnectionStatus();
+            
+            // Verificar conexão a cada 5 segundos
+            setInterval(() => {
+                if (navigator.onLine) {
+                    showConnectionStatus();
+                }
+            }, 5000);
+        });
+
+        // Tentar reconectar quando a página ganhar foco
+        window.addEventListener('focus', () => {
+            if (navigator.onLine) {
+                window.location.reload();
+            }
+        });
+    </script>
+</body>
+</html>

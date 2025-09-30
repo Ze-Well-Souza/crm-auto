@@ -1,24 +1,30 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Calendar, Clock, CheckCircle, List, CalendarDays } from "lucide-react";
+import { Plus, Calendar, Clock, CircleCheck as CheckCircle, List, CalendarDays, Filter } from "lucide-react";
 import { AppointmentForm } from "@/components/appointments/AppointmentForm";
 import { CalendarView } from "@/components/appointments/CalendarView";
 import { AppointmentDetails } from "@/components/appointments/AppointmentDetails";
 import { QuickAppointmentForm } from "@/components/appointments/QuickAppointmentForm";
+import { AppointmentCard } from "@/components/appointments/AppointmentCard";
 import { useAppointmentsNew } from "@/hooks/useAppointmentsNew";
-import { SearchInput } from "@/components/common/SearchInput";
+import { useClients } from "@/hooks/useClients";
+import { useVehicles } from "@/hooks/useVehicles";
+import { SearchAdvanced } from "@/components/common/SearchAdvanced";
+import { Pagination } from "@/components/common/Pagination";
+import { useAppointmentSearch } from "@/hooks/useAdvancedSearch";
 import { EmptyState } from "@/components/common/EmptyState";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { StatusBadge } from "@/components/common/StatusBadge";
+import { ModuleErrorBoundary } from "@/components/ErrorBoundary";
 import { formatDate, formatCurrency } from "@/utils/formatters";
+import { isAfter, isBefore, isSameDay, parseISO } from "date-fns";
 import type { Appointment } from "@/types";
 
 const Agendamentos = () => {
-  const [searchTerm, setSearchTerm] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [showQuickForm, setShowQuickForm] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -27,12 +33,74 @@ const Agendamentos = () => {
   const [activeTab, setActiveTab] = useState("calendar");
   
   const { appointments, loading, error, refetch } = useAppointmentsNew();
+  const { clients } = useClients();
+  const { vehicles } = useVehicles();
 
-  const filteredAppointments = appointments?.filter(appointment => 
-    appointment.service_type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    appointment.service_description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    appointment.clients?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
+  // Configuração da busca avançada
+  const searchConfig = useAppointmentSearch(appointments || []);
+
+  // Get unique service types for filter options
+  const serviceTypes = useMemo(() => {
+    if (!appointments) return [];
+    const types = new Set(appointments.map(a => a.service_type).filter(Boolean));
+    return Array.from(types);
+  }, [appointments]);
+
+  // Configuração dos filtros para busca avançada
+  const filterGroups = [
+    {
+      key: 'status',
+      label: 'Status',
+      type: 'select' as const,
+      options: [
+        { value: 'scheduled', label: 'Agendado' },
+        { value: 'confirmed', label: 'Confirmado' },
+        { value: 'in_progress', label: 'Em Andamento' },
+        { value: 'completed', label: 'Concluído' },
+        { value: 'cancelled', label: 'Cancelado' }
+      ]
+    },
+    {
+      key: 'type',
+      label: 'Tipo de Serviço',
+      type: 'select' as const,
+      options: serviceTypes.map(type => ({ value: type, label: type }))
+    },
+    {
+      key: 'priority',
+      label: 'Prioridade',
+      type: 'select' as const,
+      options: [
+        { value: 'low', label: 'Baixa' },
+        { value: 'medium', label: 'Média' },
+        { value: 'high', label: 'Alta' },
+        { value: 'urgent', label: 'Urgente' }
+      ]
+    },
+    {
+      key: 'date_range',
+      label: 'Período',
+      type: 'date-range' as const
+    }
+  ];
+
+  const quickFilters = [
+    {
+      key: 'today',
+      label: 'Hoje',
+      color: 'primary' as const
+    },
+    {
+      key: 'this_week',
+      label: 'Esta Semana',
+      color: 'secondary' as const
+    },
+    {
+      key: 'pending',
+      label: 'Pendentes',
+      color: 'outline' as const
+    }
+  ];
 
   const handleDateSelect = (date: Date) => {
     setSelectedDate(date);
@@ -82,19 +150,24 @@ const Agendamentos = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-foreground">Agendamentos</h1>
-            <p className="text-muted-foreground">Gerencie a agenda de serviços com visualização interativa</p>
+      <ModuleErrorBoundary 
+        moduleName="Agendamentos" 
+        moduleIcon={<Calendar className="h-20 w-20 text-blue-500" />}
+        fallbackRoute="/"
+      >
+        <div className="space-y-6">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="space-y-2">
+              <h1 className="text-3xl font-bold text-foreground">Agendamentos</h1>
+              <p className="text-muted-foreground">Gerencie a agenda de serviços com visualização interativa</p>
+            </div>
+            
+            <Button className="shadow-primary" onClick={() => setShowForm(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Novo Agendamento
+            </Button>
           </div>
-          
-          <Button className="shadow-primary" onClick={() => setShowForm(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Novo Agendamento
-          </Button>
-        </div>
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -176,72 +249,87 @@ const Agendamentos = () => {
 
           {/* List View */}
           <TabsContent value="list" className="space-y-4">
-            {/* Search */}
-            <SearchInput
-              placeholder="Buscar agendamentos por tipo de serviço, descrição ou cliente..."
-              value={searchTerm}
-              onChange={setSearchTerm}
+            {/* Advanced Search */}
+            <SearchAdvanced
+              placeholder="Buscar agendamentos por cliente, serviço, descrição..."
+              filterGroups={filterGroups}
+              quickFilters={quickFilters}
+              onSearch={searchConfig.handleSearch}
+              onReset={searchConfig.handleReset}
+              showQuickFilters={true}
+              showAdvancedFilters={true}
             />
 
-            {/* Appointments List */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredAppointments.length > 0 ? (
-                filteredAppointments.map((appointment) => (
-                  <Card 
-                    key={appointment.id} 
-                    className="hover:shadow-elevated transition-smooth cursor-pointer"
-                    onClick={() => handleAppointmentClick(appointment)}
-                  >
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-lg">
-                          {formatDate(appointment.scheduled_date)} - {appointment.scheduled_time}
-                        </CardTitle>
-                        <StatusBadge status={appointment.status} type="appointment" />
-                      </div>
-                      <CardDescription>
-                        {appointment.service_type} • {appointment.clients?.name || 'N/A'}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      {appointment.estimated_value && (
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-muted-foreground">Valor:</span>
-                          <span className="font-semibold">
-                            {formatCurrency(appointment.estimated_value)}
-                          </span>
-                        </div>
-                      )}
-                      
-                      {appointment.estimated_duration && (
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-muted-foreground">Duração:</span>
-                          <span className="text-sm">{appointment.estimated_duration} min</span>
-                        </div>
-                      )}
-                      
-                      <div className="flex justify-between items-center pt-2 border-t">
-                        <span className="text-xs text-muted-foreground">
-                          Criado em {formatDate(appointment.created_at)}
-                        </span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
-              ) : (
-                <div className="col-span-full">
-                  <EmptyState
-                    icon={Calendar}
-                    title={searchTerm ? "Nenhum agendamento encontrado" : "Nenhum agendamento cadastrado"}
-                    description={searchTerm 
-                      ? "Tente ajustar os termos de busca." 
-                      : "Comece criando o primeiro agendamento."
+            {/* Search Results Info */}
+            {searchConfig.isFiltered && (
+              <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <div className="flex items-center gap-2">
+                  <Filter className="h-4 w-4 text-blue-600" />
+                  <span className="text-sm text-blue-800">
+                    {searchConfig.paginationInfo.totalItems} agendamento(s) encontrado(s)
+                    {searchConfig.paginationInfo.totalItems !== appointments?.length && 
+                      ` de ${appointments?.length} total`
                     }
-                    actionLabel="Novo Agendamento"
-                    onAction={() => setShowForm(true)}
-                    showAction={!searchTerm}
-                  />
+                  </span>
                 </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={searchConfig.handleReset}
+                  className="text-blue-600 hover:text-blue-800"
+                >
+                  Limpar filtros
+                </Button>
+              </div>
+            )}
+
+            {/* Appointments List */}
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {searchConfig.data.length > 0 ? (
+                  searchConfig.data.map((appointment) => (
+                    <AppointmentCard 
+                      key={appointment.id} 
+                      appointment={appointment} 
+                      onUpdate={refetch}
+                      onQuickAction={(action, appt) => {
+                        if (action === 'contact') {
+                          handleAppointmentClick(appt);
+                        }
+                      }}
+                    />
+                  ))
+                ) : (
+                  <div className="col-span-full">
+                    <EmptyState
+                      icon={Calendar}
+                      title={searchConfig.isFiltered ? "Nenhum agendamento encontrado" : "Nenhum agendamento cadastrado"}
+                      description={searchConfig.isFiltered 
+                        ? "Tente ajustar os termos de busca ou filtros." 
+                        : "Comece criando o primeiro agendamento."
+                      }
+                      actionLabel="Novo Agendamento"
+                      onAction={() => setShowForm(true)}
+                      showAction={!searchConfig.isFiltered}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Pagination */}
+              {searchConfig.paginationInfo.totalPages > 1 && (
+                <Pagination
+                  paginationInfo={searchConfig.paginationInfo}
+                  onPageChange={searchConfig.handlePageChange}
+                  onPageSizeChange={searchConfig.handlePageSizeChange}
+                  goToFirstPage={searchConfig.goToFirstPage}
+                  goToLastPage={searchConfig.goToLastPage}
+                  goToNextPage={searchConfig.goToNextPage}
+                  goToPreviousPage={searchConfig.goToPreviousPage}
+                  showPageSizeSelector={true}
+                  showPageInfo={true}
+                  showNavigationInfo={true}
+                />
               )}
             </div>
           </TabsContent>
@@ -267,7 +355,8 @@ const Agendamentos = () => {
           onOpenChange={setShowDetails}
           onUpdate={refetch}
         />
-      </div>
+        </div>
+      </ModuleErrorBoundary>
     </DashboardLayout>
   );
 };

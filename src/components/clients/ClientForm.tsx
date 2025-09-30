@@ -4,6 +4,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useClients } from "@/hooks/useClients";
+import { useZodFormValidation } from "@/hooks/useZodValidation";
+import { createClientSchema, type CreateClient } from "@/schemas/client.schema";
+import { useNotifications } from "@/contexts/NotificationContext";
 
 interface ClientFormProps {
   onSuccess?: () => void;
@@ -12,6 +15,7 @@ interface ClientFormProps {
 export const ClientForm = ({ onSuccess }: ClientFormProps) => {
   const [loading, setLoading] = useState(false);
   const { createClient } = useClients();
+  const notifications = useNotifications();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -25,45 +29,68 @@ export const ClientForm = ({ onSuccess }: ClientFormProps) => {
     notes: ""
   });
 
+  const { validate, validateField, errors, clearErrors } = useZodFormValidation(createClientSchema);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    const result = await createClient({
-      name: formData.name,
-      email: formData.email || null,
-      phone: formData.phone || null,
-      cpf_cnpj: formData.cpf_cnpj || null,
-      address: formData.address || null,
-      city: formData.city || null,
-      state: formData.state || null,
-      zip_code: formData.zip_code || null,
-      notes: formData.notes || null,
-    });
+    try {
+      const validationResult = validate(formData);
+      
+      if (!validationResult.isValid || !validationResult.data) {
+        setLoading(false);
+        return;
+      }
 
-    setLoading(false);
-
-    if (result) {
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        cpf_cnpj: "",
-        address: "",
-        city: "",
-        state: "",
-        zip_code: "",
-        notes: ""
+      const result = await createClient({
+        name: validationResult.data.name,
+        email: validationResult.data.email || null,
+        phone: validationResult.data.phone || null,
+        cpf_cnpj: validationResult.data.cpf_cnpj || null,
+        address: validationResult.data.address || null,
+        city: validationResult.data.city || null,
+        state: validationResult.data.state || null,
+        zip_code: validationResult.data.zip_code || null,
+        notes: validationResult.data.notes || null,
       });
-      onSuccess?.();
+
+      if (result) {
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          cpf_cnpj: "",
+          address: "",
+          city: "",
+          state: "",
+          zip_code: "",
+          notes: ""
+        });
+        clearErrors();
+        notifications.showCreateSuccess("Cliente");
+        onSuccess?.();
+      }
+    } catch (error) {
+      notifications.showOperationError("criar cliente", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [name]: value
     }));
+
+    // Validação em tempo real para campos específicos
+    if (name === 'email' || name === 'cpf_cnpj' || name === 'phone' || name === 'zip_code') {
+      setTimeout(() => {
+        validateField(name, value);
+      }, 500);
+    }
   };
 
   return (
@@ -78,7 +105,11 @@ export const ClientForm = ({ onSuccess }: ClientFormProps) => {
             onChange={handleChange}
             required
             placeholder="João Silva"
+            className={errors.name ? "border-destructive" : ""}
           />
+          {errors.name && (
+            <p className="text-sm text-destructive mt-1">{errors.name}</p>
+          )}
         </div>
 
         <div>
@@ -90,7 +121,11 @@ export const ClientForm = ({ onSuccess }: ClientFormProps) => {
             value={formData.email}
             onChange={handleChange}
             placeholder="joao@email.com"
+            className={errors.email ? "border-destructive" : ""}
           />
+          {errors.email && (
+            <p className="text-sm text-destructive mt-1">{errors.email}</p>
+          )}
         </div>
 
         <div>
@@ -101,7 +136,11 @@ export const ClientForm = ({ onSuccess }: ClientFormProps) => {
             value={formData.phone}
             onChange={handleChange}
             placeholder="(11) 99999-9999"
+            className={errors.phone ? "border-destructive" : ""}
           />
+          {errors.phone && (
+            <p className="text-sm text-destructive mt-1">{errors.phone}</p>
+          )}
         </div>
 
         <div className="col-span-2">
@@ -112,7 +151,11 @@ export const ClientForm = ({ onSuccess }: ClientFormProps) => {
             value={formData.cpf_cnpj}
             onChange={handleChange}
             placeholder="000.000.000-00"
+            className={errors.cpf_cnpj ? "border-destructive" : ""}
           />
+          {errors.cpf_cnpj && (
+            <p className="text-sm text-destructive mt-1">{errors.cpf_cnpj}</p>
+          )}
         </div>
 
         <div className="col-span-2">
@@ -123,7 +166,11 @@ export const ClientForm = ({ onSuccess }: ClientFormProps) => {
             value={formData.address}
             onChange={handleChange}
             placeholder="Rua das Flores, 123"
+            className={errors.address ? "border-destructive" : ""}
           />
+          {errors.address && (
+            <p className="text-sm text-destructive mt-1">{errors.address}</p>
+          )}
         </div>
 
         <div>
@@ -134,7 +181,11 @@ export const ClientForm = ({ onSuccess }: ClientFormProps) => {
             value={formData.city}
             onChange={handleChange}
             placeholder="São Paulo"
+            className={errors.city ? "border-destructive" : ""}
           />
+          {errors.city && (
+            <p className="text-sm text-destructive mt-1">{errors.city}</p>
+          )}
         </div>
 
         <div>
@@ -146,7 +197,11 @@ export const ClientForm = ({ onSuccess }: ClientFormProps) => {
             onChange={handleChange}
             placeholder="SP"
             maxLength={2}
+            className={errors.state ? "border-destructive" : ""}
           />
+          {errors.state && (
+            <p className="text-sm text-destructive mt-1">{errors.state}</p>
+          )}
         </div>
 
         <div className="col-span-2">
@@ -157,7 +212,11 @@ export const ClientForm = ({ onSuccess }: ClientFormProps) => {
             value={formData.zip_code}
             onChange={handleChange}
             placeholder="00000-000"
+            className={errors.zip_code ? "border-destructive" : ""}
           />
+          {errors.zip_code && (
+            <p className="text-sm text-destructive mt-1">{errors.zip_code}</p>
+          )}
         </div>
 
         <div className="col-span-2">
@@ -169,7 +228,11 @@ export const ClientForm = ({ onSuccess }: ClientFormProps) => {
             onChange={handleChange}
             placeholder="Informações adicionais sobre o cliente..."
             rows={3}
+            className={errors.notes ? "border-destructive" : ""}
           />
+          {errors.notes && (
+            <p className="text-sm text-destructive mt-1">{errors.notes}</p>
+          )}
         </div>
       </div>
 
