@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { useToast } from "@/hooks/use-toast";
 import { useCrudState, useStandardState } from "@/hooks/useStandardState";
+import { useNotifications } from "@/contexts/NotificationContext";
 import type { Part, Supplier } from "@/types";
 import { mockParts, mockSuppliers } from "@/utils/mockData";
 import { generateId } from "@/utils/formatters";
@@ -8,7 +8,7 @@ import { generateId } from "@/utils/formatters";
 export const usePartsNew = () => {
   const partsState = useCrudState<Part>();
   const suppliersState = useStandardState<Supplier[]>();
-  const { toast } = useToast();
+  const notifications = useNotifications();
 
   const fetchParts = async () => {
     try {
@@ -53,20 +53,13 @@ export const usePartsNew = () => {
       mockParts.push(newPart);
       partsState.addItem(newPart);
 
-      toast({
-        title: "Peça criada",
-        description: "A peça foi criada com sucesso.",
-      });
+      notifications.showCreateSuccess("Peça");
 
       return newPart;
     } catch (err: any) {
       const errorMessage = err.message || 'Erro ao criar peça';
       partsState.setError(errorMessage);
-      toast({
-        title: "Erro",
-        description: errorMessage,
-        variant: "destructive",
-      });
+      notifications.showOperationError("criar", "peça", errorMessage);
       throw err;
     }
   };
@@ -88,20 +81,13 @@ export const usePartsNew = () => {
         partsState.updateItem(id, updatedPart);
       }
 
-      toast({
-        title: "Peça atualizada",
-        description: "A peça foi atualizada com sucesso.",
-      });
+      notifications.showUpdateSuccess("Peça");
 
       return mockParts[index];
     } catch (err: any) {
       const errorMessage = err.message || 'Erro ao atualizar peça';
       partsState.setError(errorMessage);
-      toast({
-        title: "Erro",
-        description: errorMessage,
-        variant: "destructive",
-      });
+      notifications.showOperationError("atualizar", "peça", errorMessage);
       throw err;
     }
   };
@@ -118,18 +104,11 @@ export const usePartsNew = () => {
         partsState.removeItem(id);
       }
 
-      toast({
-        title: "Peça excluída",
-        description: "A peça foi excluída com sucesso.",
-      });
+      notifications.showDeleteSuccess("Peça");
     } catch (err: any) {
       const errorMessage = err.message || 'Erro ao excluir peça';
       partsState.setError(errorMessage);
-      toast({
-        title: "Erro",
-        description: errorMessage,
-        variant: "destructive",
-      });
+      notifications.showOperationError("excluir", "peça", errorMessage);
       throw err;
     }
   };

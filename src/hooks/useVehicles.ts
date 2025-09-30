@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { useNotifications } from "@/contexts/NotificationContext";
 import type { Vehicle } from "@/types";
 import { mockClients } from "@/utils/mockData";
 import { generateId } from "@/utils/formatters";
@@ -52,7 +52,7 @@ export const useVehicles = () => {
   const [vehicles, setVehicles] = useState<Vehicle[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { toast } = useToast();
+  const notifications = useNotifications();
 
   const fetchVehicles = async () => {
     try {
@@ -94,21 +94,14 @@ export const useVehicles = () => {
       // Add to mock data
       mockVehicles.push(newVehicle);
 
-      toast({
-        title: "Veículo criado com sucesso",
-        description: `${newVehicle.brand} ${newVehicle.model} foi adicionado ao sistema.`,
-      });
+      notifications.showCreateSuccess("Veículo");
 
       // Atualiza a lista de veículos
       fetchVehicles();
       return newVehicle;
     } catch (err) {
       console.error('Erro ao criar veículo:', err);
-      toast({
-        title: "Erro inesperado",
-        description: "Não foi possível criar o veículo.",
-        variant: "destructive",
-      });
+      notifications.showOperationError("criar", "veículo");
       return null;
     }
   };

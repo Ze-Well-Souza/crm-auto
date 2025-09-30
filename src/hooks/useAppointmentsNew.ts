@@ -1,13 +1,13 @@
 import { useEffect } from "react";
-import { useToast } from "@/hooks/use-toast";
 import { useCrudState } from "@/hooks/useStandardState";
+import { useNotifications } from "@/contexts/NotificationContext";
 import type { Appointment } from "@/types";
 import { mockAppointments } from "@/utils/mockData";
 import { generateId } from "@/utils/formatters";
 
 export const useAppointmentsNew = () => {
   const state = useCrudState<Appointment>();
-  const { toast } = useToast();
+  const notifications = useNotifications();
 
   const fetchAppointments = async () => {
     try {
@@ -40,20 +40,13 @@ export const useAppointmentsNew = () => {
       mockAppointments.push(newAppointment);
       state.addItem(newAppointment);
 
-      toast({
-        title: "Agendamento criado",
-        description: "O agendamento foi criado com sucesso.",
-      });
+      notifications.showCreateSuccess("Agendamento");
 
       return newAppointment;
     } catch (err: any) {
       const errorMessage = err.message || 'Erro ao criar agendamento';
       state.setError(errorMessage);
-      toast({
-        title: "Erro",
-        description: errorMessage,
-        variant: "destructive",
-      });
+      notifications.showOperationError("criar", "agendamento", errorMessage);
       throw err;
     }
   };
@@ -75,20 +68,13 @@ export const useAppointmentsNew = () => {
         state.updateItem(id, updatedAppointment);
       }
 
-      toast({
-        title: "Agendamento atualizado",
-        description: "O agendamento foi atualizado com sucesso.",
-      });
+      notifications.showUpdateSuccess("Agendamento");
 
       return mockAppointments[index];
     } catch (err: any) {
       const errorMessage = err.message || 'Erro ao atualizar agendamento';
       state.setError(errorMessage);
-      toast({
-        title: "Erro",
-        description: errorMessage,
-        variant: "destructive",
-      });
+      notifications.showOperationError("atualizar", "agendamento", errorMessage);
       throw err;
     }
   };
@@ -105,18 +91,11 @@ export const useAppointmentsNew = () => {
         state.removeItem(id);
       }
 
-      toast({
-        title: "Agendamento excluído",
-        description: "O agendamento foi excluído com sucesso.",
-      });
+      notifications.showDeleteSuccess("Agendamento");
     } catch (err: any) {
       const errorMessage = err.message || 'Erro ao excluir agendamento';
       state.setError(errorMessage);
-      toast({
-        title: "Erro",
-        description: errorMessage,
-        variant: "destructive",
-      });
+      notifications.showOperationError("excluir", "agendamento", errorMessage);
       throw err;
     }
   };

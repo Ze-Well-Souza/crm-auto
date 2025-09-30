@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { useToast } from "@/hooks/use-toast";
 import { useCrudState, useStandardState } from "@/hooks/useStandardState";
+import { useNotifications } from "@/contexts/NotificationContext";
 import type { FinancialTransaction, PaymentMethod } from "@/types";
 import { mockTransactions, mockPaymentMethods } from "@/utils/mockData";
 import { generateId } from "@/utils/formatters";
@@ -8,7 +8,7 @@ import { generateId } from "@/utils/formatters";
 export const useFinancialTransactionsNew = () => {
   const transactionsState = useCrudState<FinancialTransaction>();
   const paymentMethodsState = useStandardState<PaymentMethod[]>();
-  const { toast } = useToast();
+  const notifications = useNotifications();
 
   const fetchTransactions = async () => {
     try {
@@ -53,20 +53,13 @@ export const useFinancialTransactionsNew = () => {
       mockTransactions.push(newTransaction);
       transactionsState.addItem(newTransaction);
 
-      toast({
-        title: "Transação criada",
-        description: "A transação foi criada com sucesso.",
-      });
+      notifications.showCreateSuccess("Transação");
 
       return newTransaction;
     } catch (err: any) {
       const errorMessage = err.message || 'Erro ao criar transação';
       transactionsState.setError(errorMessage);
-      toast({
-        title: "Erro",
-        description: errorMessage,
-        variant: "destructive",
-      });
+      notifications.showOperationError("criar", "transação", errorMessage);
       throw err;
     }
   };
@@ -88,20 +81,13 @@ export const useFinancialTransactionsNew = () => {
         transactionsState.updateItem(id, updatedTransaction);
       }
 
-      toast({
-        title: "Transação atualizada",
-        description: "A transação foi atualizada com sucesso.",
-      });
+      notifications.showUpdateSuccess("Transação");
 
       return mockTransactions[index];
     } catch (err: any) {
       const errorMessage = err.message || 'Erro ao atualizar transação';
       transactionsState.setError(errorMessage);
-      toast({
-        title: "Erro",
-        description: errorMessage,
-        variant: "destructive",
-      });
+      notifications.showOperationError("atualizar", "transação", errorMessage);
       throw err;
     }
   };
@@ -118,18 +104,11 @@ export const useFinancialTransactionsNew = () => {
         transactionsState.removeItem(id);
       }
 
-      toast({
-        title: "Transação excluída",
-        description: "A transação foi excluída com sucesso.",
-      });
+      notifications.showDeleteSuccess("Transação");
     } catch (err: any) {
       const errorMessage = err.message || 'Erro ao excluir transação';
       transactionsState.setError(errorMessage);
-      toast({
-        title: "Erro",
-        description: errorMessage,
-        variant: "destructive",
-      });
+      notifications.showOperationError("excluir", "transação", errorMessage);
       throw err;
     }
   };

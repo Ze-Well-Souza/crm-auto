@@ -327,3 +327,71 @@ export const usePartsSearch = (parts: any[]) => {
     }
   });
 };
+
+// Hook para busca avançada em Ordens de Serviço
+export const useServiceOrdersSearch = (serviceOrders: any[]) => {
+  return useAdvancedSearch({
+    data: serviceOrders,
+    searchFields: ['order_number', 'description', 'clients.name'],
+    filterFunctions: {
+      status: (order, value) => order.status === value,
+      value_range: (order, range) => {
+        if (!range.min && !range.max) return true;
+        const totalAmount = parseFloat(order.total_amount || 0);
+        if (range.min && totalAmount < range.min) return false;
+        if (range.max && totalAmount > range.max) return false;
+        return true;
+      },
+      date_range: (order, dateRange) => {
+        if (!dateRange.from || !dateRange.to) return true;
+        const orderDate = new Date(order.created_at);
+        return orderDate >= dateRange.from && orderDate <= dateRange.to;
+      },
+      urgent: (order) => {
+        return order.status === 'orcamento' || order.status === 'aguardando_aprovacao';
+      },
+      high_value: (order) => {
+        const totalAmount = parseFloat(order.total_amount || 0);
+        return totalAmount > 500;
+      },
+      in_progress: (order) => {
+        return order.status === 'em_andamento';
+      },
+      needs_approval: (order) => {
+        return order.status === 'orcamento';
+      }
+    }
+  });
+};
+
+// Hook para busca avançada em Veículos
+export const useVehiclesSearch = (vehicles: any[]) => {
+  return useAdvancedSearch({
+    data: vehicles,
+    searchFields: ['brand', 'model', 'license_plate', 'clients.name'],
+    filterFunctions: {
+      fuel_type: (vehicle, value) => vehicle.fuel_type === value,
+      year_range: (vehicle, range) => {
+        if (!range.min && !range.max) return true;
+        const year = parseInt(vehicle.year || 0);
+        if (range.min && year < range.min) return false;
+        if (range.max && year > range.max) return false;
+        return true;
+      },
+      mileage_range: (vehicle, range) => {
+        if (!range.min && !range.max) return true;
+        const mileage = parseInt(vehicle.mileage || 0);
+        if (range.min && mileage < range.min) return false;
+        if (range.max && mileage > range.max) return false;
+        return true;
+      },
+      high_mileage: (vehicle) => {
+        const mileage = parseInt(vehicle.mileage || 0);
+        return mileage > 100000;
+      },
+      flex_fuel: (vehicle) => {
+        return vehicle.fuel_type === 'Flex';
+      }
+    }
+  });
+};

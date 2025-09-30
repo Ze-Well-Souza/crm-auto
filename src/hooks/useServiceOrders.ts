@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { useNotifications } from "@/contexts/NotificationContext";
 import type { ServiceOrder } from "@/types";
 import { mockClients } from "@/utils/mockData";
 import { generateId } from "@/utils/formatters";
@@ -40,7 +40,7 @@ export const useServiceOrders = () => {
   const [serviceOrders, setServiceOrders] = useState<ServiceOrder[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { toast } = useToast();
+  const notifications = useNotifications();
 
   const fetchServiceOrders = async () => {
     try {
@@ -86,21 +86,14 @@ export const useServiceOrders = () => {
       // Add to mock data
       mockServiceOrders.push(newOrder);
 
-      toast({
-        title: "Ordem de serviço criada",
-        description: `Ordem ${newOrder.order_number} foi criada com sucesso.`,
-      });
+      notifications.showCreateSuccess("Ordem de serviço");
 
       // Atualiza a lista
       fetchServiceOrders();
       return newOrder;
     } catch (err) {
       console.error('Erro ao criar ordem de serviço:', err);
-      toast({
-        title: "Erro inesperado",
-        description: "Não foi possível criar a ordem de serviço.",
-        variant: "destructive",
-      });
+      notifications.showOperationError("criar", "ordem de serviço");
       return null;
     }
   };
