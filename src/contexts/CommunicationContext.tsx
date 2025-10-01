@@ -246,18 +246,21 @@ export const CommunicationProvider: React.FC<CommunicationProviderProps> = ({ ch
     }
   };
 
-  const sendEmail = async (to: string, subject: string, body: string, attachments?: File[]) => {
+  const sendEmail = async (params: { to: string[]; subject: string; content: string; isHtml?: boolean; attachments?: File[] }) => {
     try {
       setLoading(true);
-      
+
       // Simular envio de email
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Criar mensagem no histórico
-      const emailContent = `Assunto: ${subject}\n\n${body}`;
-      await sendMessage(emailContent, 'email-user', 'text', 'email');
-      
-      showSuccess(`Email enviado para ${to}`);
+
+      // Criar mensagens no histórico para cada destinatário
+      const emailContent = `Assunto: ${params.subject}\n\n${params.content}`;
+      for (const recipient of params.to) {
+        await sendMessage(emailContent, 'email-user', 'text', 'email');
+      }
+
+      const toLabel = params.to.length === 1 ? params.to[0] : `${params.to.length} destinatários`;
+      showSuccess(`Email enviado para ${toLabel}`);
     } catch (err) {
       showError('Erro ao enviar email');
     } finally {
@@ -304,10 +307,6 @@ export const CommunicationProvider: React.FC<CommunicationProviderProps> = ({ ch
     showInfo('Notificações push desativadas');
   };
 
-  // Wrapper para compatibilidade com nova assinatura
-  const sendEmailWrapper = async (params: { to: string[]; subject: string; content: string; isHtml?: boolean; attachments?: File[] }) => {
-    return sendEmail(params.to[0], params.subject, params.content, params.attachments);
-  };
 
   const value: CommunicationContextType = {
     messages,
@@ -318,7 +317,7 @@ export const CommunicationProvider: React.FC<CommunicationProviderProps> = ({ ch
     markConversationAsRead,
     setActiveConversation,
     sendWhatsAppMessage,
-    sendEmail: sendEmailWrapper,
+    sendEmail,
     sendSMS,
     enablePushNotifications,
     disablePushNotifications,
