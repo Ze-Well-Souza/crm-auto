@@ -22,6 +22,7 @@ import { MoveHorizontal as MoreHorizontal, CreditCard as Edit, Trash2, CircleChe
 import { AppointmentForm } from "./AppointmentForm";
 import { useAppointmentsNew } from "@/hooks/useAppointmentsNew";
 import { useToast } from "@/hooks/use-toast";
+import { formatDate } from "@/utils/formatters";
 import type { Appointment } from "@/types";
 
 interface AppointmentActionsProps {

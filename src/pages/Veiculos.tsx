@@ -16,7 +16,7 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 const Veiculos = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState<any>({});
   const { vehicles, loading, error, refetch } = useVehicles();
 
   const handleQuickAction = (action: string, vehicle: any) => {

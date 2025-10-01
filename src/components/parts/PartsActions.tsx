@@ -193,6 +193,8 @@ export const PartsActions = ({ part, onUpdate }: PartsActionsProps) => {
           </DialogHeader>
           <PartsForm 
             part={part}
+            open={isEditDialogOpen}
+            onOpenChange={setIsEditDialogOpen}
             onSuccess={() => {
               setIsEditDialogOpen(false);
               onUpdate();

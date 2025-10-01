@@ -33,6 +33,11 @@ const quantityValidation = z.number()
   .int("Quantidade deve ser um número inteiro")
   .min(0, "Quantidade não pode ser negativa");
 
+const stockValidation = z.number()
+  .int("Quantidade de estoque deve ser um número inteiro")
+  .min(0, "Quantidade de estoque não pode ser negativa")
+  .max(999999, "Quantidade de estoque muito alta");
+
 const skuValidation = z.string()
   .min(3, "SKU deve ter pelo menos 3 caracteres")
   .max(50, "SKU deve ter no máximo 50 caracteres")
@@ -140,9 +145,44 @@ export const createPartSchema = partBaseSchema
     path: ["max_stock_level"]
   });
 
-// Schema para atualização de peça
-export const updatePartSchema = createPartSchema.partial().extend({
-  id: z.string().uuid("ID deve ser um UUID válido")
+// Schema para atualização de peça - sem usar partial() em schemas com refinements
+export const updatePartSchema = z.object({
+  id: z.string().uuid("ID deve ser um UUID válido"),
+  sku: z.string().optional(),
+  name: z.string().optional(),
+  description: z.string().optional(),
+  category: z.enum([
+    PART_CATEGORIES.ENGINE,
+    PART_CATEGORIES.TRANSMISSION,
+    PART_CATEGORIES.BRAKES,
+    PART_CATEGORIES.SUSPENSION,
+    PART_CATEGORIES.ELECTRICAL,
+    PART_CATEGORIES.BODY,
+    PART_CATEGORIES.INTERIOR,
+    PART_CATEGORIES.FILTERS,
+    PART_CATEGORIES.FLUIDS,
+    PART_CATEGORIES.TIRES,
+    PART_CATEGORIES.ACCESSORIES,
+    PART_CATEGORIES.TOOLS
+  ]).optional(),
+  supplier_id: z.string().uuid().optional(),
+  brand: z.string().optional(),
+  cost_price: priceValidation.optional(),
+  sale_price: priceValidation.optional(),
+  min_stock_level: stockValidation.optional(),
+  max_stock_level: stockValidation.optional(),
+  current_stock: stockValidation.optional(),
+  location: z.string().optional(),
+  weight: z.number().optional(),
+  dimensions: z.string().optional(),
+  warranty_months: z.number().optional(),
+  status: z.enum([
+    PART_STATUS.ACTIVE,
+    PART_STATUS.INACTIVE,
+    PART_STATUS.DISCONTINUED,
+    PART_STATUS.OUT_OF_STOCK
+  ]).optional(),
+  notes: z.string().optional()
 });
 
 // Schema para busca de peças

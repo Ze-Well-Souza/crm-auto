@@ -157,7 +157,7 @@ const Financeiro = () => {
         {/* Advanced Search */}
         <SearchAdvanced
           placeholder="Buscar transações por descrição, categoria..."
-          filterGroups={filterGroups}
+          filterGroups={filterGroups as any}
           quickFilters={quickFilters}
           onSearch={searchConfig.handleSearch}
           onReset={searchConfig.handleReset}

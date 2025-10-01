@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useClients } from "@/hooks/useClients";
 import { useZodFormValidation } from "@/hooks/useZodValidation";
-import { createClientSchema, type CreateClient } from "@/schemas/client.schema";
+import { createClientSchema, type CreateClientData } from "@/schemas/client.schema";
 import { useNotifications } from "@/contexts/NotificationContext";
 
 interface ClientFormProps {

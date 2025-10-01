@@ -200,7 +200,11 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         <TabsContent value="performance" className="space-y-6">
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Performance Geral</h3>
-            <RevenueChart loading={loading} error={error} />
+            <RevenueChart 
+              data={[]} 
+              loading={loading} 
+              error={error} 
+            />
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

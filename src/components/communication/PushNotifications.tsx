@@ -38,11 +38,22 @@ interface PushNotificationsProps {
 export const PushNotifications: React.FC<PushNotificationsProps> = ({ 
   className = "" 
 }) => {
-  const { pushNotificationsEnabled, togglePushNotifications } = useCommunication();
+  const { enablePushNotifications, disablePushNotifications } = useCommunication();
   const { showSuccess, showError, showInfo } = useNotifications();
   
+  const [pushNotificationsEnabled, setPushNotificationsEnabled] = useState(false);
   const [permission, setPermission] = useState<NotificationPermission>('default');
   const [isSupported, setIsSupported] = useState(false);
+
+  const togglePushNotifications = async () => {
+    if (pushNotificationsEnabled) {
+      disablePushNotifications();
+      setPushNotificationsEnabled(false);
+    } else {
+      const enabled = await enablePushNotifications();
+      setPushNotificationsEnabled(enabled);
+    }
+  };
   const [settings, setSettings] = useState<NotificationSettings>({
     appointments: true,
     payments: true,

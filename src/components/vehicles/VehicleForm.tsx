@@ -10,6 +10,9 @@ import { FUEL_TYPES } from "@/utils/constants";
 import type { Vehicle } from "@/types";
 
 interface VehicleFormProps {
+  vehicle?: Vehicle;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   onSuccess?: () => void;
 }
 

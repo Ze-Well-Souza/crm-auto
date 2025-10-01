@@ -11,6 +11,9 @@ import { useToast } from "@/hooks/use-toast";
 import { useServiceOrders } from "@/hooks/useServiceOrders";
 
 interface ServiceOrderFormProps {
+  serviceOrder?: any;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   onSuccess?: () => void;
 }
 

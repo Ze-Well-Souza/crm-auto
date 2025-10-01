@@ -284,7 +284,7 @@ export const FinancialFilters = ({
                   <div className="px-2">
                     <Slider
                       value={amountRange}
-                      onValueChange={setAmountRange}
+                      onValueChange={(value) => setAmountRange(value as [number, number])}
                       onValueCommit={(value) => updateFilters({ amountRange: value as [number, number] })}
                       max={10000}
                       min={0}

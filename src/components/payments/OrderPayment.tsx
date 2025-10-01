@@ -273,17 +273,10 @@ export const OrderPayment: React.FC<OrderPaymentProps> = ({
                 </DialogHeader>
                 <PaymentForm
                   amount={order.total}
-                  currency="BRL"
                   description={`Pagamento da Ordem de Serviço #${order.id}`}
-                  metadata={{
-                    order_id: order.id,
-                    customer_name: order.customer_name,
-                    customer_email: order.customer_email
-                  }}
+                  orderId={order.id}
                   onSuccess={handlePaymentSuccess}
                   onError={handlePaymentError}
-                  isProcessing={isProcessing}
-                  onProcessingChange={setIsProcessing}
                 />
               </DialogContent>
             </Dialog>

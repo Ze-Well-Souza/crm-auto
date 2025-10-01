@@ -51,8 +51,8 @@ export interface CommunicationContextType {
   // WhatsApp Integration
   sendWhatsAppMessage: (phoneNumber: string, message: string) => Promise<void>;
   
-  // Email Integration
-  sendEmail: (to: string, subject: string, body: string, attachments?: File[]) => Promise<void>;
+  // Email Integration - wrapper para compatibilidade
+  sendEmail: (params: { to: string[]; subject: string; content: string; isHtml?: boolean; attachments?: File[] }) => Promise<void>;
   
   // SMS Integration
   sendSMS: (phoneNumber: string, message: string) => Promise<void>;
@@ -304,6 +304,11 @@ export const CommunicationProvider: React.FC<CommunicationProviderProps> = ({ ch
     showInfo('Notificações push desativadas');
   };
 
+  // Wrapper para compatibilidade com nova assinatura
+  const sendEmailWrapper = async (params: { to: string[]; subject: string; content: string; isHtml?: boolean; attachments?: File[] }) => {
+    return sendEmail(params.to[0], params.subject, params.content, params.attachments);
+  };
+
   const value: CommunicationContextType = {
     messages,
     conversations,
@@ -313,7 +318,7 @@ export const CommunicationProvider: React.FC<CommunicationProviderProps> = ({ ch
     markConversationAsRead,
     setActiveConversation,
     sendWhatsAppMessage,
-    sendEmail,
+    sendEmail: sendEmailWrapper,
     sendSMS,
     enablePushNotifications,
     disablePushNotifications,

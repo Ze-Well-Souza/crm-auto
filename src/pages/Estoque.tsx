@@ -156,7 +156,7 @@ const Estoque = () => {
         {/* Advanced Search */}
         <SearchAdvanced
           placeholder="Buscar peças por nome, código, categoria..."
-          filterGroups={filterGroups}
+          filterGroups={filterGroups as any}
           quickFilters={quickFilters}
           onSearch={searchConfig.handleSearch}
           onReset={searchConfig.handleReset}

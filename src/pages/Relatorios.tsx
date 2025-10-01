@@ -85,7 +85,7 @@ const Relatorios = () => {
           ordensServico
         }
       };
-      await exportToPDF(reportData, 'relatorio-geral');
+      await exportToPDF([reportData] as any, { filename: 'relatorio-geral' });
     } catch (error) {
       console.error('Erro ao exportar PDF:', error);
     } finally {
@@ -115,7 +115,7 @@ const Relatorios = () => {
           ordensServico
         }
       };
-      await exportToExcel(reportData, 'relatorio-geral');
+      await exportToExcel([reportData] as any, { filename: 'relatorio-geral' });
     } catch (error) {
       console.error('Erro ao exportar Excel:', error);
     } finally {
@@ -145,7 +145,7 @@ const Relatorios = () => {
           ordensServico
         }
       };
-      await exportToCSV(reportData, 'relatorio-geral');
+      await exportToCSV([reportData] as any, { filename: 'relatorio-geral' });
     } catch (error) {
       console.error('Erro ao exportar CSV:', error);
     } finally {
@@ -337,10 +337,14 @@ const Relatorios = () => {
         {/* Filtros Avançados */}
         {showFilters && (
           <ReportFilters
-            onApplyFilters={handleApplyFilters}
-            onExportPDF={handleExportPDF}
-            onExportExcel={handleExportExcel}
-            onExportCSV={handleExportCSV}
+            filters={[]}
+            onFiltersChange={() => {}}
+            onApplyFilters={() => handleApplyFilters([])}
+            onExport={(format) => {
+              if (format === 'pdf') handleExportPDF();
+              else if (format === 'excel') handleExportExcel();
+              else handleExportCSV();
+            }}
           />
         )}
 

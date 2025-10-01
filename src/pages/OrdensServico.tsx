@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input";
 const OrdensServico = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState<any>({});
   const { serviceOrders, loading, error, refetch } = useServiceOrders();
 
   const handleQuickAction = (action: string, order: any) => {

@@ -165,7 +165,7 @@ export const usePayments = (): UsePaymentsReturn => {
           id: paymentIntentId,
           status: 'requires_action',
           metadata: { pix_code: pixCode }
-        } as PaymentIntent
+        } as unknown as PaymentIntent
       };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Erro no pagamento PIX';
@@ -204,7 +204,7 @@ export const usePayments = (): UsePaymentsReturn => {
             boleto_url: boletoUrl,
             boleto_code: boletoCode
           }
-        } as PaymentIntent
+        } as unknown as PaymentIntent
       };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Erro na geração do boleto';

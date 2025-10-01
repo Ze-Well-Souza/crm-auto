@@ -295,9 +295,7 @@ export const FinancialCard = ({ transaction, onUpdate, onQuickAction }: Financia
 
       {/* Financial Dashboard Modal */}
       <FinancialDashboard
-        transaction={transaction}
-        open={showDashboard}
-        onOpenChange={setShowDashboard}
+        transactions={transaction ? [transaction] : []}
       />
     </>
   );

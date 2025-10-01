@@ -216,10 +216,12 @@ export const useOfflineData = () => {
     const handleOnline = () => {
       setIsOffline(false);
       // Tentar sincronizar dados pendentes
-      if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
-        navigator.serviceWorker.ready.then((registration) => {
-          return registration.sync.register('sync-offline-data');
-        });
+      if ('serviceWorker' in navigator && 'SyncManager' in window) {
+        navigator.serviceWorker.ready.then((registration: any) => {
+          if (registration.sync) {
+            return registration.sync.register('sync-offline-data');
+          }
+        }).catch(console.error);
       }
     };
 

@@ -74,9 +74,9 @@ export function useZodValidation<T>(schema: z.ZodSchema<T>): UseZodValidationRet
 
   const validateField = (fieldName: string, value: any): string | null => {
     try {
-      // Cria um schema parcial apenas para o campo específico
-      const fieldSchema = schema.pick({ [fieldName]: true } as any);
-      fieldSchema.parse({ [fieldName]: value });
+      // Valida o valor diretamente sem usar pick
+      const testData = { [fieldName]: value };
+      schema.parse(testData);
       
       // Remove o erro do campo se a validação passou
       setErrors(prev => {

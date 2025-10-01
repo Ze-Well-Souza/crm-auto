@@ -264,8 +264,8 @@ export const SearchAdvanced = ({
                   initialFocus
                   mode="range"
                   defaultMonth={dateRange.from}
-                  selected={dateRange}
-                  onSelect={(range) => handleDateRangeChange(group.key, range || {})}
+                  selected={dateRange.from && dateRange.to ? { from: dateRange.from, to: dateRange.to } : undefined}
+                  onSelect={(range) => handleDateRangeChange(group.key, range || { from: undefined, to: undefined })}
                   numberOfMonths={2}
                   locale={ptBR}
                 />

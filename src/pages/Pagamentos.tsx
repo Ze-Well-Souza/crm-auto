@@ -307,7 +307,6 @@ export default function Pagamentos() {
             <CardContent>
               <PaymentForm
                 amount={100}
-                currency="BRL"
                 description="Pagamento avulso"
                 onSuccess={(paymentId) => {
                   console.log('Payment successful:', paymentId);
