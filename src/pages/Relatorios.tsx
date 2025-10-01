@@ -85,7 +85,7 @@ const Relatorios = () => {
           ordensServico
         }
       };
-      await exportToPDF([reportData] as any, { filename: 'relatorio-geral' });
+      await exportToPDF([reportData], { filename: 'relatorio-geral' });
     } catch (error) {
       console.error('Erro ao exportar PDF:', error);
     } finally {
@@ -115,7 +115,7 @@ const Relatorios = () => {
           ordensServico
         }
       };
-      await exportToExcel([reportData] as any, { filename: 'relatorio-geral' });
+      await exportToExcel([reportData], { filename: 'relatorio-geral' });
     } catch (error) {
       console.error('Erro ao exportar Excel:', error);
     } finally {
@@ -145,7 +145,7 @@ const Relatorios = () => {
           ordensServico
         }
       };
-      await exportToCSV([reportData] as any, { filename: 'relatorio-geral' });
+      await exportToCSV([reportData], { filename: 'relatorio-geral' });
     } catch (error) {
       console.error('Erro ao exportar CSV:', error);
     } finally {

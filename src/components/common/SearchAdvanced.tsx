@@ -43,7 +43,7 @@ export interface FilterGroup {
   label: string;
   type: 'select' | 'multiselect' | 'checkbox' | 'date-range' | 'number-range';
   options?: FilterOption[];
-  placeholder?: string;
+  placeholder?: string | { min?: string; max?: string; start?: string; end?: string };
 }
 
 export interface QuickFilter {
@@ -163,6 +163,7 @@ export const SearchAdvanced = ({
   const renderFilterGroup = (group: FilterGroup) => {
     switch (group.type) {
       case 'select':
+        const selectPlaceholder = typeof group.placeholder === 'string' ? group.placeholder : `Selecionar ${group.label.toLowerCase()}`;
         return (
           <div key={group.key} className="space-y-2">
             <Label>{group.label}</Label>
@@ -171,7 +172,7 @@ export const SearchAdvanced = ({
               onValueChange={(value) => handleFilterChange(group.key, value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder={group.placeholder || `Selecionar ${group.label.toLowerCase()}`} />
+                <SelectValue placeholder={selectPlaceholder} />
               </SelectTrigger>
               <SelectContent>
                 {group.options?.map((option) => (
@@ -193,6 +194,7 @@ export const SearchAdvanced = ({
 
       case 'multiselect':
         const selectedValues = filters[group.key] || [];
+        const multiselectPlaceholder = typeof group.placeholder === 'string' ? group.placeholder : `Selecionar ${group.label.toLowerCase()}`;
         return (
           <div key={group.key} className="space-y-2">
             <Label>{group.label}</Label>
@@ -201,7 +203,7 @@ export const SearchAdvanced = ({
                 <Button variant="outline" className="w-full justify-between">
                   {selectedValues.length > 0 
                     ? `${selectedValues.length} selecionado(s)`
-                    : group.placeholder || `Selecionar ${group.label.toLowerCase()}`
+                    : multiselectPlaceholder
                   }
                   <ChevronDown className="h-4 w-4" />
                 </Button>

@@ -7,6 +7,17 @@ export interface ExportData {
   [key: string]: any;
 }
 
+export interface ReportData {
+  title: string;
+  period: string;
+  metrics: {
+    [key: string]: number;
+  };
+  data: {
+    [key: string]: any[];
+  };
+}
+
 export interface ExportOptions {
   filename?: string;
   title?: string;
@@ -18,7 +29,7 @@ export interface ExportOptions {
 
 // PDF Export
 export const exportToPDF = async (
-  data: ExportData[],
+  data: ReportData[] | ExportData[],
   options: ExportOptions = {}
 ): Promise<void> => {
   const {
@@ -112,7 +123,7 @@ export const exportToPDF = async (
 
 // Excel Export
 export const exportToExcel = (
-  data: ExportData[],
+  data: ReportData[] | ExportData[],
   options: ExportOptions = {}
 ): void => {
   const {
@@ -182,7 +193,7 @@ export const exportToExcel = (
 
 // CSV Export
 export const exportToCSV = (
-  data: ExportData[],
+  data: ReportData[] | ExportData[],
   options: ExportOptions = {}
 ): void => {
   const {

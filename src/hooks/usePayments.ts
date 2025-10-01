@@ -2,6 +2,15 @@ import { useState, useCallback } from 'react';
 import { useStripe, useElements } from '@stripe/react-stripe-js';
 import { PaymentIntent, PaymentMethod } from '@stripe/stripe-js';
 
+// Interface para o resultado mock de PaymentIntent
+interface MockPaymentIntent extends Partial<PaymentIntent> {
+  id: string;
+  status: PaymentIntent.Status;
+  metadata?: {
+    [key: string]: string;
+  };
+}
+
 interface PaymentData {
   amount: number;
   currency: string;
@@ -11,7 +20,7 @@ interface PaymentData {
 
 interface PaymentResult {
   success: boolean;
-  paymentIntent?: PaymentIntent;
+  paymentIntent?: MockPaymentIntent;
   error?: string;
 }
 
@@ -165,7 +174,7 @@ export const usePayments = (): UsePaymentsReturn => {
           id: paymentIntentId,
           status: 'requires_action',
           metadata: { pix_code: pixCode }
-        } as unknown as PaymentIntent
+        }
       };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Erro no pagamento PIX';
@@ -204,7 +213,7 @@ export const usePayments = (): UsePaymentsReturn => {
             boleto_url: boletoUrl,
             boleto_code: boletoCode
           }
-        } as unknown as PaymentIntent
+        }
       };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Erro na geração do boleto';
