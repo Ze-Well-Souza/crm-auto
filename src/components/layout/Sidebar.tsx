@@ -9,7 +9,8 @@ import {
   MessageCircle,
   Settings,
   Home,
-  CreditCard
+  CreditCard,
+  Store
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
@@ -23,6 +24,7 @@ const navigation = [
   { name: "Estoque", href: "/estoque", icon: Package, current: false, color: "green" },
   { name: "Financeiro", href: "/financeiro", icon: DollarSign, current: false, color: "yellow" },
   { name: "Pagamentos", href: "/pagamentos", icon: CreditCard, current: false, color: "pink" },
+  { name: "Parceiros", href: "/parceiros", icon: Store, current: false, color: "amber" },
   { name: "Relatórios", href: "/relatorios", icon: BarChart3, current: false, color: "indigo" },
   { name: "Comunicação", href: "/comunicacao", icon: MessageCircle, current: false, color: "teal" },
   { name: "Configurações", href: "/configuracoes", icon: Settings, current: false, color: "slate" },
@@ -84,6 +86,11 @@ const getColorClasses = (color: string, isActive: boolean) => {
       active: "bg-gradient-to-r from-slate-500/20 to-slate-600/10 text-slate-600 border-slate-500/30 shadow-slate-500/20",
       icon: "text-slate-600",
       indicator: "bg-gradient-to-b from-slate-500 to-slate-600"
+    },
+    amber: {
+      active: "bg-gradient-to-r from-amber-500/20 to-amber-600/10 text-amber-600 border-amber-500/30 shadow-amber-500/20",
+      icon: "text-amber-600",
+      indicator: "bg-gradient-to-b from-amber-500 to-amber-600"
     }
   };
 
@@ -95,12 +102,6 @@ export const Sidebar = () => {
   
   return (
     <div className="flex h-full w-64 flex-col bg-gradient-to-b from-white/95 to-slate-50/95 dark:from-slate-900/95 dark:to-slate-800/95 backdrop-blur-xl border-r border-white/20 dark:border-slate-700/30 shadow-2xl relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute top-0 left-0 w-full h-full opacity-10">
-        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-24 h-24 bg-gradient-to-r from-emerald-500 to-cyan-600 rounded-full animate-bounce"></div>
-        <div className="absolute top-3/4 left-1/2 w-16 h-16 bg-gradient-to-r from-orange-500 to-pink-600 rounded-full animate-ping"></div>
-      </div>
 
       {/* Logo with enhanced styling */}
       <div className="flex h-20 shrink-0 items-center px-6 border-b border-white/20 dark:border-slate-700/30 relative z-10">

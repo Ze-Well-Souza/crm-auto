@@ -196,3 +196,79 @@ export enum TransactionType {
   RECEITA = 'receita',
   DESPESA = 'despesa'
 }
+
+// Marketplace Integration Types
+export interface Partner {
+  id: string;
+  name: string;
+  cnpj: string | null;
+  email: string | null;
+  phone: string | null;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  zip_code: string | null;
+  category: string | null;
+  status: string | null;
+  rating: number | null;
+  orders_count: number | null;
+  total_revenue: number | null;
+  marketplace_id: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface MarketplaceOrder {
+  id: string;
+  partner_id: string;
+  order_number: string;
+  customer_name: string;
+  customer_phone: string | null;
+  customer_email: string | null;
+  items: OrderItem[];
+  total_amount: number;
+  status: string | null;
+  payment_status: string | null;
+  payment_method: string | null;
+  delivery_date: string | null;
+  delivery_address: string | null;
+  notes: string | null;
+  marketplace_reference: string | null;
+  created_at: string;
+  updated_at: string;
+  partners?: {
+    name: string;
+    email: string | null;
+  };
+}
+
+export interface OrderItem {
+  id?: string;
+  name: string;
+  quantity: number;
+  unit_price: number;
+  total: number;
+}
+
+export enum PartnerStatus {
+  ATIVO = 'ativo',
+  PENDENTE = 'pendente',
+  INATIVO = 'inativo'
+}
+
+export enum MarketplaceOrderStatus {
+  PENDENTE = 'pendente',
+  CONFIRMADO = 'confirmado',
+  EM_PREPARACAO = 'em_preparacao',
+  PRONTO = 'pronto',
+  EM_ENTREGA = 'em_entrega',
+  ENTREGUE = 'entregue',
+  CANCELADO = 'cancelado'
+}
+
+export enum PaymentStatus {
+  PENDENTE = 'pendente',
+  PAGO = 'pago',
+  ESTORNADO = 'estornado'
+}
