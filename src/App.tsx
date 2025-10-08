@@ -11,20 +11,31 @@ import { StripeProvider } from "@/contexts/StripeContext";
 import { ThemeTransitionManager } from "@/components/theme/ThemeTransitionManager";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import Index from "./pages/Index";
-import Auth from "./pages/Auth";
-import Clientes from "./pages/Clientes";
-import Veiculos from "./pages/Veiculos";
-import OrdensServico from "./pages/OrdensServico";
-import Agendamentos from "./pages/Agendamentos";
-import Estoque from "./pages/Estoque";
-import Financeiro from "./pages/Financeiro";
-import Relatorios from "./pages/Relatorios";
-import Pagamentos from "./pages/Pagamentos";
-import Comunicacao from "./pages/Comunicacao";
-import Configuracoes from "./pages/Configuracoes";
-import Parceiros from "./pages/Parceiros";
-import NotFound from "./pages/NotFound";
+import { Suspense, lazy } from "react";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+
+// Lazy load pages for better performance
+const Index = lazy(() => import("./pages/Index"));
+const Auth = lazy(() => import("./pages/Auth"));
+const Clientes = lazy(() => import("./pages/Clientes"));
+const Veiculos = lazy(() => import("./pages/Veiculos"));
+const OrdensServico = lazy(() => import("./pages/OrdensServico"));
+const Agendamentos = lazy(() => import("./pages/Agendamentos"));
+const Estoque = lazy(() => import("./pages/Estoque"));
+const Financeiro = lazy(() => import("./pages/Financeiro"));
+const Relatorios = lazy(() => import("./pages/Relatorios"));
+const Pagamentos = lazy(() => import("./pages/Pagamentos"));
+const Comunicacao = lazy(() => import("./pages/Comunicacao"));
+const Configuracoes = lazy(() => import("./pages/Configuracoes"));
+const Parceiros = lazy(() => import("./pages/Parceiros"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+
+// Loading fallback component
+const PageLoadingFallback = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <LoadingSpinner size="lg" />
+  </div>
+);
 
 const queryClient = new QueryClient();
 
@@ -46,24 +57,25 @@ const App = () => (
               <Toaster />
               <Sonner />
               <BrowserRouter>
-              <Routes>
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/" element={<Index />} />
-                <Route path="/clientes" element={<Clientes />} />
-                <Route path="/veiculos" element={<Veiculos />} />
-                <Route path="/ordens" element={<OrdensServico />} />
-                <Route path="/agendamentos" element={<Agendamentos />} />
-                <Route path="/estoque" element={<Estoque />} />
-                <Route path="/financeiro" element={<Financeiro />} />
-                <Route path="/relatorios" element={<Relatorios />} />
-                <Route path="/pagamentos" element={<Pagamentos />} />
-                <Route path="/parceiros" element={<Parceiros />} />
-                <Route path="/comunicacao" element={<Comunicacao />} />
-                <Route path="/configuracoes" element={<Configuracoes />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
+                <Suspense fallback={<PageLoadingFallback />}>
+                  <Routes>
+                    <Route path="/auth" element={<Auth />} />
+                    <Route path="/" element={<Index />} />
+                    <Route path="/clientes" element={<Clientes />} />
+                    <Route path="/veiculos" element={<Veiculos />} />
+                    <Route path="/ordens" element={<OrdensServico />} />
+                    <Route path="/agendamentos" element={<Agendamentos />} />
+                    <Route path="/estoque" element={<Estoque />} />
+                    <Route path="/financeiro" element={<Financeiro />} />
+                    <Route path="/relatorios" element={<Relatorios />} />
+                    <Route path="/pagamentos" element={<Pagamentos />} />
+                    <Route path="/parceiros" element={<Parceiros />} />
+                    <Route path="/comunicacao" element={<Comunicacao />} />
+                    <Route path="/configuracoes" element={<Configuracoes />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Suspense>
+              </BrowserRouter>
                 </TooltipProvider>
               </StripeProvider>
             </CommunicationProvider>

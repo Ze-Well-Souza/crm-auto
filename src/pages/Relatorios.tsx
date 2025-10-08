@@ -25,6 +25,7 @@ import { ReportsChart } from "@/components/reports/ReportsChart";
 import { ReportFilters } from "@/components/reports/ReportFilters";
 import { AdvancedChart } from "@/components/reports/AdvancedChart";
 import { AnalyticsDashboard } from "@/components/reports/AnalyticsDashboard";
+import { InteractiveAnalyticsDashboard } from "@/components/analytics/InteractiveAnalyticsDashboard";
 import { exportToPDF, exportToExcel, exportToCSV } from "@/utils/exportUtils";
 
 const Relatorios = () => {
@@ -627,6 +628,22 @@ const Relatorios = () => {
               </div>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Dashboard Analytics Avançado */}
+        <div className="mt-8">
+          <InteractiveAnalyticsDashboard
+            data={{
+              clientes: clientes || [],
+              veiculos: veiculos || [],
+              transacoes: transacoes || [],
+              agendamentos: agendamentos || [],
+              ordensServico: ordensServico || [],
+              pecas: pecas || []
+            }}
+            period={selectedPeriod}
+            onPeriodChange={setSelectedPeriod}
+          />
         </div>
       </div>
     </DashboardLayout>

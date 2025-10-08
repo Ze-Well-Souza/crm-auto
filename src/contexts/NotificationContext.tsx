@@ -30,6 +30,11 @@ export interface NotificationContextType {
   showSystemAlert: (message: string, type?: 'maintenance' | 'update' | 'security') => void;
   showPerformanceAlert: (message: string) => void;
   showDataSyncAlert: (status: 'syncing' | 'synced' | 'error') => void;
+  
+  // WhatsApp notifications
+  showWhatsAppSuccess: (message: string) => void;
+  showWhatsAppError: (message: string) => void;
+  showWhatsAppConfigAlert: () => void;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -169,6 +174,28 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     });
   };
 
+  // WhatsApp notifications
+  const showWhatsAppSuccess = (message: string) => {
+    showSuccess(message, {
+      title: "WhatsApp",
+      duration: 4000
+    });
+  };
+
+  const showWhatsAppError = (message: string) => {
+    showError(message, {
+      title: "Erro no WhatsApp",
+      duration: 5000
+    });
+  };
+
+  const showWhatsAppConfigAlert = () => {
+    showWarning("Configure o número e token do WhatsApp Business para ativar as notificações.", {
+      title: "Configuração Necessária",
+      duration: 6000
+    });
+  };
+
   const value: NotificationContextType = {
     showSuccess,
     showError,
@@ -185,6 +212,9 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     showSystemAlert,
     showPerformanceAlert,
     showDataSyncAlert,
+    showWhatsAppSuccess,
+    showWhatsAppError,
+    showWhatsAppConfigAlert,
   };
 
   return (
@@ -201,6 +231,9 @@ export const useNotifications = (): NotificationContextType => {
   }
   return context;
 };
+
+// Alias para compatibilidade (caso alguém esteja usando o nome singular)
+export const useNotification = useNotifications;
 
 // Utility functions for common patterns
 export const withNotifications = <T extends any[]>(

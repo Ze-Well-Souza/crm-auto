@@ -98,24 +98,24 @@
   }
 
   .dark {
-    --background: 222.2 90% 3%;
+    --background: 222.2 95% 2%;
     --foreground: 210 40% 98%;
-    --card: 222.2 84% 5.5%;
+    --card: 222.2 90% 4%;
     --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 5.5%;
+    --popover: 222.2 90% 4%;
     --popover-foreground: 210 40% 98%;
     --primary: 217.2 91% 65%;
     --primary-foreground: 222.2 84% 4.9%;
     --secondary: 217.2 32.6% 22%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 20%;
-    --muted-foreground: 215 20.2% 70%;
+    --muted: 217.2 40% 15%;
+    --muted-foreground: 215 25% 75%;
     --accent: 217.2 32.6% 22%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 72% 45%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 22%;
-    --input: 217.2 32.6% 22%;
+    --border: 217.2 40% 18%;
+    --input: 217.2 40% 18%;
     --ring: 224.3 76.3% 55%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
@@ -132,7 +132,7 @@
     --orange: 24.6 95% 53.1%;
 
     /* Dark sidebar colors */
-    --sidebar-background: 240 5.9% 10%;
+    --sidebar-background: 240 10% 8%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
     --sidebar-primary-foreground: 0 0% 100%;

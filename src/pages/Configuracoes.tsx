@@ -26,7 +26,11 @@ import {
   Sun,
   Moon,
   Monitor,
-  RotateCcw
+  RotateCcw,
+  MessageCircle,
+  Phone,
+  Key,
+  CheckCircle
 } from "lucide-react";
 
 const Configuracoes = () => {
@@ -59,9 +63,23 @@ const Configuracoes = () => {
     notifications: true,
     emailNotifications: true,
     smsNotifications: false,
+    whatsappNotifications: false,
     autoBackup: true,
     darkMode: false,
     language: "pt-BR"
+  });
+
+  // WhatsApp Settings
+  const [whatsappSettings, setWhatsappSettings] = useState({
+    enabled: false,
+    businessNumber: "",
+    apiToken: "",
+    notificationTypes: {
+      appointments: true,
+      reminders: true,
+      serviceStatus: true,
+      payments: false
+    }
   });
 
   // Business Settings
@@ -277,6 +295,150 @@ const Configuracoes = () => {
                 }
               />
             </div>
+            
+            <Separator />
+            
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label className="text-base flex items-center gap-2">
+                  <MessageCircle className="h-4 w-4 text-green-600" />
+                  Notificações por WhatsApp
+                </Label>
+                <p className="text-sm text-muted-foreground">
+                  Enviar notificações via WhatsApp Business
+                </p>
+              </div>
+              <Switch
+                checked={whatsappSettings.enabled}
+                onCheckedChange={(checked) => {
+                  setWhatsappSettings({...whatsappSettings, enabled: checked});
+                  setSystemSettings({...systemSettings, whatsappNotifications: checked});
+                }}
+              />
+            </div>
+            
+            {whatsappSettings.enabled && (
+              <div className="ml-6 space-y-4 p-4 border rounded-lg bg-muted/30">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="whatsapp-number" className="flex items-center gap-2">
+                      <Phone className="h-4 w-4" />
+                      Número do WhatsApp Business
+                    </Label>
+                    <Input
+                      id="whatsapp-number"
+                      placeholder="+55 11 99999-9999"
+                      value={whatsappSettings.businessNumber}
+                      onChange={(e) => setWhatsappSettings({
+                        ...whatsappSettings, 
+                        businessNumber: e.target.value
+                      })}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="whatsapp-token" className="flex items-center gap-2">
+                      <Key className="h-4 w-4" />
+                      Token da API
+                    </Label>
+                    <Input
+                      id="whatsapp-token"
+                      type="password"
+                      placeholder="Token da API do WhatsApp"
+                      value={whatsappSettings.apiToken}
+                      onChange={(e) => setWhatsappSettings({
+                        ...whatsappSettings, 
+                        apiToken: e.target.value
+                      })}
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-3">
+                  <Label className="text-sm font-medium">Tipos de Notificação</Label>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="flex items-center justify-between p-2 border rounded">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-blue-600" />
+                        <span className="text-sm">Agendamentos</span>
+                      </div>
+                      <Switch
+                        checked={whatsappSettings.notificationTypes.appointments}
+                        onCheckedChange={(checked) => setWhatsappSettings({
+                          ...whatsappSettings,
+                          notificationTypes: {
+                            ...whatsappSettings.notificationTypes,
+                            appointments: checked
+                          }
+                        })}
+                      />
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-2 border rounded">
+                      <div className="flex items-center gap-2">
+                        <Bell className="h-4 w-4 text-yellow-600" />
+                        <span className="text-sm">Lembretes</span>
+                      </div>
+                      <Switch
+                        checked={whatsappSettings.notificationTypes.reminders}
+                        onCheckedChange={(checked) => setWhatsappSettings({
+                          ...whatsappSettings,
+                          notificationTypes: {
+                            ...whatsappSettings.notificationTypes,
+                            reminders: checked
+                          }
+                        })}
+                      />
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-2 border rounded">
+                      <div className="flex items-center gap-2">
+                        <Settings className="h-4 w-4 text-green-600" />
+                        <span className="text-sm">Status de Serviços</span>
+                      </div>
+                      <Switch
+                        checked={whatsappSettings.notificationTypes.serviceStatus}
+                        onCheckedChange={(checked) => setWhatsappSettings({
+                          ...whatsappSettings,
+                          notificationTypes: {
+                            ...whatsappSettings.notificationTypes,
+                            serviceStatus: checked
+                          }
+                        })}
+                      />
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-2 border rounded">
+                      <div className="flex items-center gap-2">
+                        <Database className="h-4 w-4 text-purple-600" />
+                        <span className="text-sm">Pagamentos</span>
+                      </div>
+                      <Switch
+                        checked={whatsappSettings.notificationTypes.payments}
+                        onCheckedChange={(checked) => setWhatsappSettings({
+                          ...whatsappSettings,
+                          notificationTypes: {
+                            ...whatsappSettings.notificationTypes,
+                            payments: checked
+                          }
+                        })}
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="p-3 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+                  <div className="flex items-start gap-2">
+                    <MessageCircle className="h-4 w-4 text-blue-600 mt-0.5" />
+                    <div className="text-xs text-blue-700 dark:text-blue-300">
+                      <p className="font-medium">Configuração do WhatsApp Business API</p>
+                      <p>Para usar esta funcionalidade, você precisa ter uma conta do WhatsApp Business API configurada. O token pode ser obtido no Meta for Developers.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
             
             <Button onClick={() => handleSaveSettings("notificações")} disabled={loading}>
               <Save className="mr-2 h-4 w-4" />

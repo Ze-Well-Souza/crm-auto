@@ -117,7 +117,7 @@ export const Sidebar = () => {
       </div>
 
       {/* Enhanced Navigation */}
-      <nav className="flex flex-1 flex-col px-4 py-6 relative z-10">
+      <nav className="flex flex-1 flex-col px-4 py-6 relative z-10 overflow-y-auto">
         <ul role="list" className="flex flex-1 flex-col gap-y-2">
           {navigation.map((item, index) => {
             const isActive = location.pathname === item.href;
