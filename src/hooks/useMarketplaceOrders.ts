@@ -37,7 +37,13 @@ export const useMarketplaceOrders = () => {
         customer_name: data.customer_name,
         customer_phone: data.customer_phone || null,
         customer_email: data.customer_email || null,
-        items: data.items,
+        items: data.items.map(item => ({
+          id: item.id || crypto.randomUUID(),
+          name: item.name || '',
+          quantity: item.quantity || 0,
+          unit_price: item.unit_price || 0,
+          total: item.total || 0
+        })),
         total_amount: data.total_amount,
         status: data.status || null,
         payment_status: data.payment_status || null,

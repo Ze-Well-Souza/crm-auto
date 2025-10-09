@@ -301,7 +301,7 @@ export const InteractiveAnalyticsDashboard = ({
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={350}>
-                  {chartType === 'line' && (
+                  {chartType === 'line' ? (
                     <LineChart data={timeSeriesData}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="month" />
@@ -312,8 +312,7 @@ export const InteractiveAnalyticsDashboard = ({
                       <Line type="monotone" dataKey="expenses" stroke="#ff7300" strokeWidth={3} name="Despesas" />
                       <Line type="monotone" dataKey="profit" stroke="#82ca9d" strokeWidth={3} name="Lucro" />
                     </LineChart>
-                  )}
-                  {chartType === 'bar' && (
+                  ) : chartType === 'bar' ? (
                     <BarChart data={timeSeriesData}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="month" />
@@ -324,8 +323,7 @@ export const InteractiveAnalyticsDashboard = ({
                       <Bar dataKey="expenses" fill="#ff7300" name="Despesas" />
                       <Bar dataKey="profit" fill="#82ca9d" name="Lucro" />
                     </BarChart>
-                  )}
-                  {chartType === 'area' && (
+                  ) : (
                     <AreaChart data={timeSeriesData}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="month" />

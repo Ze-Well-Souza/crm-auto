@@ -73,7 +73,7 @@ export const useOfflineStorage = () => {
       return { ...prev, pendingSync: updated };
     });
 
-    showInfo('Dados salvos offline', 'Será sincronizado quando a conexão for restabelecida');
+    showInfo('Dados salvos offline');
     return newItem.id;
   }, [saveOfflineData, showInfo]);
 
@@ -108,11 +108,11 @@ export const useOfflineStorage = () => {
       localStorage.removeItem(STORAGE_KEY);
 
       if (unsyncedItems.length > 0) {
-        showSuccess('Sincronização concluída', `${unsyncedItems.length} item(s) sincronizado(s)`);
+        showSuccess(`Sincronização concluída: ${unsyncedItems.length} item(s)`);
       }
     } catch (error) {
       console.error('Erro na sincronização:', error);
-      showError('Erro na sincronização', 'Alguns dados não puderam ser sincronizados');
+      showError('Erro na sincronização');
     } finally {
       setState(prev => ({ ...prev, isSyncing: false }));
     }
@@ -131,7 +131,7 @@ export const useOfflineStorage = () => {
 
     const handleOffline = () => {
       setState(prev => ({ ...prev, isOffline: true }));
-      showInfo('Modo offline ativado', 'Suas alterações serão salvas localmente');
+      showInfo('Modo offline ativado');
     };
 
     window.addEventListener('online', handleOnline);
