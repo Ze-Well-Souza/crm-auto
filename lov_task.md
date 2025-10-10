@@ -530,3 +530,473 @@ gantt
 
 **Status do Projeto:** 📋 **PLANEJADO** - Pronto para execução
 **Próxima Ação:** 🔧 **INICIAR FASE 1** - Arquitetura
+
+---
+---
+
+# 📸 PLANO MÓDULO: BIBLIOTECA DE IMAGENS
+
+**Data de Criação:** 10/10/2025  
+**Versão do Plano:** 1.0.0  
+**Metodologia:** Desenvolvimento Assíncrono por Fases  
+**Tecnologias:** React 18, TypeScript, Supabase Storage, Recharts  
+
+---
+
+## 📋 ÍNDICE DE EXECUÇÃO
+
+- [FASE 1: BACKEND E SQL](#fase-1-backend-e-sql) ⏱️ 12h
+- [FASE 2: TYPES E SCHEMAS](#fase-2-types-e-schemas) ⏱️ 4h  
+- [FASE 3: HOOKS CUSTOMIZADOS](#fase-3-hooks-customizados) ⏱️ 10h
+- [FASE 4: COMPONENTES UI](#fase-4-componentes-ui) ⏱️ 18h
+- [FASE 5: INTEGRAÇÃO](#fase-5-integração-com-módulos) ⏱️ 8h
+- [FASE 6: FEATURES AVANÇADAS](#fase-6-features-avançadas) ⏱️ 12h
+- [FASE 7: NAVEGAÇÃO](#fase-7-navegação-e-rotas) ⏱️ 2h
+
+**⏱️ TEMPO TOTAL ESTIMADO:** 66 horas de desenvolvimento
+
+---
+
+## 🎯 VISÃO GERAL
+
+### **Objetivo**
+Criar um módulo completo para gerenciar imagens, fotos e links de imagens da internet, permitindo que clientes (oficinas) organizem, editem e utilizem estas imagens em seus anúncios, relatórios e comunicação com clientes.
+
+### **Diferenciais do Módulo**
+- 📤 Upload de imagens locais (drag & drop)
+- 🔗 Importação de imagens via URL
+- 🎨 Editor de imagens integrado
+- 🏷️ Sistema de tags e categorias
+- 📁 Organização em coleções/álbuns
+- 🔍 Busca avançada por tags/metadata
+- 📊 Analytics de uso de imagens
+- 🎨 Templates prontos para anúncios
+- 🤖 Compressão automática e otimização
+- ☁️ Sincronização com Supabase Storage
+
+---
+
+## 🗄️ FASE 1: BACKEND E SQL
+
+### **Prioridade:** 🔴 **CRÍTICA**
+### **Tempo:** 12h
+
+### **1.1 - Tabelas do Supabase**
+
+#### **Tabela: image_library**
+```sql
+CREATE TABLE image_library (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  
+  -- Informações da Imagem
+  title TEXT NOT NULL,
+  description TEXT,
+  alt_text TEXT, -- Para SEO e acessibilidade
+  
+  -- Armazenamento
+  storage_type TEXT NOT NULL CHECK (storage_type IN ('upload', 'url')),
+  file_path TEXT, -- Caminho no Supabase Storage (se upload)
+  external_url TEXT, -- URL externa (se tipo = url)
+  thumbnail_url TEXT,
+  
+  -- Metadata
+  file_size INTEGER, -- em bytes
+  file_type TEXT, -- image/jpeg, image/png, etc
+  width INTEGER,
+  height INTEGER,
+  dominant_colors JSONB, -- ["#FF5733", "#C70039"]
+  
+  -- Organização
+  category TEXT, -- 'veiculos', 'pecas', 'servicos', 'anuncios', 'outros'
+  tags TEXT[], -- ['carro', 'sedan', 'vermelho']
+  collection_id UUID REFERENCES image_collections(id),
+  
+  -- Controle
+  is_favorite BOOLEAN DEFAULT false,
+  is_public BOOLEAN DEFAULT false,
+  usage_count INTEGER DEFAULT 0,
+  last_used_at TIMESTAMPTZ,
+  
+  -- Timestamps
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  
+  -- Validação
+  CONSTRAINT valid_storage CHECK (
+    (storage_type = 'upload' AND file_path IS NOT NULL) OR
+    (storage_type = 'url' AND external_url IS NOT NULL)
+  )
+);
+
+-- Índices para performance
+CREATE INDEX idx_image_library_user ON image_library(user_id);
+CREATE INDEX idx_image_library_category ON image_library(category);
+CREATE INDEX idx_image_library_tags ON image_library USING GIN(tags);
+CREATE INDEX idx_image_library_created ON image_library(created_at DESC);
+```
+
+#### **Tabela: image_collections**
+```sql
+CREATE TABLE image_collections (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  
+  name TEXT NOT NULL,
+  description TEXT,
+  cover_image_id UUID REFERENCES image_library(id),
+  
+  -- Metadata
+  image_count INTEGER DEFAULT 0,
+  total_size INTEGER DEFAULT 0, -- em bytes
+  
+  -- Controle
+  is_public BOOLEAN DEFAULT false,
+  
+  -- Timestamps
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_collections_user ON image_collections(user_id);
+```
+
+#### **Tabela: image_templates**
+```sql
+CREATE TABLE image_templates (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  
+  name TEXT NOT NULL,
+  description TEXT,
+  category TEXT, -- 'olx', 'facebook', 'instagram', 'whatsapp'
+  
+  -- Template Data (JSON com estrutura do template)
+  template_data JSONB NOT NULL,
+  
+  preview_image TEXT,
+  is_favorite BOOLEAN DEFAULT false,
+  usage_count INTEGER DEFAULT 0,
+  
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_templates_user ON image_templates(user_id);
+CREATE INDEX idx_templates_category ON image_templates(category);
+```
+
+#### **Tabela: image_usage_log**
+```sql
+CREATE TABLE image_usage_log (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  image_id UUID REFERENCES image_library(id) ON DELETE CASCADE NOT NULL,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  
+  -- Onde foi usado
+  usage_context TEXT NOT NULL, -- 'ad', 'email', 'whatsapp', 'report', 'service_order'
+  reference_id UUID, -- ID do anúncio, email, etc
+  
+  used_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_usage_image ON image_usage_log(image_id);
+CREATE INDEX idx_usage_user ON image_usage_log(user_id);
+```
+
+### **1.2 - RLS Policies**
+
+```sql
+-- RLS para image_library
+ALTER TABLE image_library ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view their own images"
+  ON image_library FOR SELECT
+  USING (auth.uid() = user_id OR is_public = true);
+
+CREATE POLICY "Users can insert their own images"
+  ON image_library FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own images"
+  ON image_library FOR UPDATE
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete their own images"
+  ON image_library FOR DELETE
+  USING (auth.uid() = user_id);
+
+-- RLS para image_collections
+ALTER TABLE image_collections ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage their own collections"
+  ON image_collections FOR ALL
+  USING (auth.uid() = user_id);
+
+-- RLS para image_templates
+ALTER TABLE image_templates ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view all templates"
+  ON image_templates FOR SELECT
+  USING (true);
+
+CREATE POLICY "Users can manage their own templates"
+  ON image_templates FOR ALL
+  USING (auth.uid() = user_id);
+
+-- RLS para image_usage_log
+ALTER TABLE image_usage_log ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view their own usage logs"
+  ON image_usage_log FOR SELECT
+  USING (auth.uid() = user_id);
+```
+
+### **1.3 - Supabase Storage**
+
+```sql
+-- Criar bucket para biblioteca de imagens
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+  'image-library',
+  'image-library',
+  true,
+  10485760, -- 10MB por imagem
+  ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+);
+
+-- Policies do Storage
+CREATE POLICY "Users can upload images"
+  ON storage.objects FOR INSERT
+  WITH CHECK (
+    bucket_id = 'image-library' AND
+    auth.uid()::text = (storage.foldername(name))[1]
+  );
+
+CREATE POLICY "Users can view their images"
+  ON storage.objects FOR SELECT
+  USING (
+    bucket_id = 'image-library' AND
+    auth.uid()::text = (storage.foldername(name))[1]
+  );
+
+CREATE POLICY "Users can delete their images"
+  ON storage.objects FOR DELETE
+  USING (
+    bucket_id = 'image-library' AND
+    auth.uid()::text = (storage.foldername(name))[1]
+  );
+```
+
+### **1.4 - Funções SQL**
+
+```sql
+-- Função para atualizar contador de uso
+CREATE OR REPLACE FUNCTION increment_image_usage(image_uuid UUID)
+RETURNS VOID AS $$
+BEGIN
+  UPDATE image_library
+  SET 
+    usage_count = usage_count + 1,
+    last_used_at = NOW()
+  WHERE id = image_uuid;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger para atualizar contador de imagens em coleção
+CREATE OR REPLACE FUNCTION update_collection_counts()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF TG_OP = 'INSERT' THEN
+    UPDATE image_collections
+    SET image_count = image_count + 1
+    WHERE id = NEW.collection_id;
+  ELSIF TG_OP = 'DELETE' THEN
+    UPDATE image_collections
+    SET image_count = image_count - 1
+    WHERE id = OLD.collection_id;
+  END IF;
+  RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER collection_counter_trigger
+AFTER INSERT OR DELETE ON image_library
+FOR EACH ROW
+EXECUTE FUNCTION update_collection_counts();
+```
+
+---
+
+## 🎨 FASE 2: TYPES E SCHEMAS
+
+### **Prioridade:** 🔴 **CRÍTICA**
+### **Tempo:** 4h
+
+### **2.1 - Types TypeScript**
+
+Arquivo: `src/types/image-library.ts`
+
+```typescript
+export type StorageType = 'upload' | 'url';
+export type ImageCategory = 'veiculos' | 'pecas' | 'servicos' | 'anuncios' | 'outros';
+export type TemplateCategory = 'olx' | 'facebook' | 'instagram' | 'whatsapp' | 'custom';
+
+export interface ImageLibraryItem {
+  id: string;
+  user_id: string;
+  title: string;
+  description?: string;
+  alt_text?: string;
+  storage_type: StorageType;
+  file_path?: string;
+  external_url?: string;
+  thumbnail_url?: string;
+  file_size?: number;
+  file_type?: string;
+  width?: number;
+  height?: number;
+  dominant_colors?: string[];
+  category?: ImageCategory;
+  tags: string[];
+  collection_id?: string;
+  is_favorite: boolean;
+  is_public: boolean;
+  usage_count: number;
+  last_used_at?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ImageCollection {
+  id: string;
+  user_id: string;
+  name: string;
+  description?: string;
+  cover_image_id?: string;
+  image_count: number;
+  total_size: number;
+  is_public: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ImageFilters {
+  category?: ImageCategory;
+  tags?: string[];
+  collection_id?: string;
+  is_favorite?: boolean;
+  search?: string;
+  date_from?: string;
+  date_to?: string;
+}
+```
+
+### **2.2 - Schemas Zod**
+
+Arquivo: `src/schemas/image-library.schema.ts`
+
+```typescript
+import { z } from 'zod';
+
+export const imageUploadSchema = z.object({
+  title: z.string().min(3).max(100),
+  description: z.string().max(500).optional(),
+  alt_text: z.string().max(200).optional(),
+  category: z.enum(['veiculos', 'pecas', 'servicos', 'anuncios', 'outros']).optional(),
+  tags: z.array(z.string()).max(10).optional(),
+  collection_id: z.string().uuid().optional(),
+  is_favorite: z.boolean().default(false),
+  is_public: z.boolean().default(false)
+});
+
+export const imageUrlSchema = z.object({
+  external_url: z.string().url().regex(/\.(jpg|jpeg|png|webp|gif)$/i),
+  title: z.string().min(3).max(100),
+  description: z.string().max(500).optional(),
+  category: z.enum(['veiculos', 'pecas', 'servicos', 'anuncios', 'outros']).optional(),
+  tags: z.array(z.string()).max(10).optional()
+});
+
+export const collectionSchema = z.object({
+  name: z.string().min(3).max(50),
+  description: z.string().max(300).optional(),
+  is_public: z.boolean().default(false)
+});
+```
+
+---
+
+## 🔧 FASE 3: HOOKS CUSTOMIZADOS
+
+### **Prioridade:** 🔴 **CRÍTICA**
+### **Tempo:** 10h
+
+### **Arquivos:**
+- `src/hooks/useImageLibrary.ts` (4h)
+- `src/hooks/useImageCollections.ts` (3h)
+- `src/hooks/useImageTemplates.ts` (3h)
+
+---
+
+## 🎨 FASE 4: COMPONENTES UI
+
+### **Prioridade:** 🟠 **ALTA**
+### **Tempo:** 18h
+
+### **Componentes:**
+- `src/pages/BibliotecaImagens.tsx` - Página principal (2h)
+- `src/components/image-library/ImageUploadZone.tsx` - Upload drag & drop (4h)
+- `src/components/image-library/ImageGallery.tsx` - Galeria grid (4h)
+- `src/components/image-library/ImageCard.tsx` - Card de imagem (3h)
+- `src/components/image-library/ImageLightbox.tsx` - Visualização fullscreen (3h)
+- `src/components/image-library/ImageFiltersPanel.tsx` - Filtros (2h)
+
+---
+
+## 🔌 FASE 5: INTEGRAÇÃO COM MÓDULOS
+
+### **Prioridade:** 🟠 **ALTA**
+### **Tempo:** 8h
+
+- Integração com Anúncios/Marketplace (3h)
+- Integração com Comunicação (3h)
+- Integração com Relatórios (2h)
+
+---
+
+## 🎯 FASE 6: FEATURES AVANÇADAS
+
+### **Prioridade:** 🟡 **MÉDIA**
+### **Tempo:** 12h
+
+- Editor de Imagens Básico (6h)
+- Gerador de Templates (4h)
+- Analytics de Uso (2h)
+
+---
+
+## 🚀 FASE 7: NAVEGAÇÃO E ROTAS
+
+### **Prioridade:** 🟠 **ALTA**
+### **Tempo:** 2h
+
+- Adicionar item no Sidebar
+- Adicionar rota em App.tsx
+
+---
+
+## ✅ CRITÉRIOS DE SUCESSO
+
+### **MVP (Versão 1.0)**
+- ✅ Upload de imagens (drag & drop)
+- ✅ Adicionar imagens por URL
+- ✅ Galeria com visualização em grid
+- ✅ Busca e filtros básicos
+- ✅ Organização por coleções
+- ✅ Sistema de tags
+- ✅ Deletar e favoritar imagens
+
+---
+
+**Status do Módulo:** 📋 **PLANEJADO** - Pronto para execução
+**Próxima Ação:** 🔧 **INICIAR FASE 1** - Estrutura do Banco de Dados
