@@ -16,15 +16,15 @@ export default function ImageFilters({ filters, onFiltersChange, collections }: 
   };
 
   const handleCategoryChange = (category: string) => {
-    onFiltersChange({ ...filters, category: category as any });
+    onFiltersChange({ ...filters, category: category === 'all' ? undefined : category as any });
   };
 
   const handleCollectionChange = (collection_id: string) => {
-    onFiltersChange({ ...filters, collection_id });
+    onFiltersChange({ ...filters, collection_id: collection_id === 'all' ? undefined : collection_id });
   };
 
   const handleStorageTypeChange = (storage_type: string) => {
-    onFiltersChange({ ...filters, storage_type: storage_type as any });
+    onFiltersChange({ ...filters, storage_type: storage_type === 'all' ? undefined : storage_type as any });
   };
 
   const clearFilters = () => {
@@ -42,12 +42,12 @@ export default function ImageFilters({ filters, onFiltersChange, collections }: 
         className="max-w-xs"
       />
 
-      <Select value={filters.category || ''} onValueChange={handleCategoryChange}>
+      <Select value={filters.category || 'all'} onValueChange={handleCategoryChange}>
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="Todas as categorias" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">Todas</SelectItem>
+          <SelectItem value="all">Todas</SelectItem>
           <SelectItem value="logo">Logo</SelectItem>
           <SelectItem value="banner">Banner</SelectItem>
           <SelectItem value="product">Produto</SelectItem>
@@ -57,24 +57,24 @@ export default function ImageFilters({ filters, onFiltersChange, collections }: 
         </SelectContent>
       </Select>
 
-      <Select value={filters.collection_id || ''} onValueChange={handleCollectionChange}>
+      <Select value={filters.collection_id || 'all'} onValueChange={handleCollectionChange}>
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="Todas as coleções" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">Todas</SelectItem>
+          <SelectItem value="all">Todas</SelectItem>
           {collections.map((col) => (
             <SelectItem key={col.id} value={col.id}>{col.name}</SelectItem>
           ))}
         </SelectContent>
       </Select>
 
-      <Select value={filters.storage_type || ''} onValueChange={handleStorageTypeChange}>
+      <Select value={filters.storage_type || 'all'} onValueChange={handleStorageTypeChange}>
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="Tipo de storage" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">Todos</SelectItem>
+          <SelectItem value="all">Todos</SelectItem>
           <SelectItem value="supabase">Supabase</SelectItem>
           <SelectItem value="url">URL Externa</SelectItem>
         </SelectContent>

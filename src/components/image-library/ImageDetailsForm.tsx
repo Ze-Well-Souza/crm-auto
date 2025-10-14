@@ -29,7 +29,7 @@ export default function ImageDetailsForm({ image, onSave }: ImageDetailsFormProp
       title: data.title,
       description: data.description,
       category: data.category,
-      collection_id: data.collection_id || undefined,
+      collection_id: data.collection_id === 'none' ? undefined : data.collection_id,
       alt_text: data.alt_text,
     });
   };
@@ -74,14 +74,14 @@ export default function ImageDetailsForm({ image, onSave }: ImageDetailsFormProp
       <div>
         <Label htmlFor="collection">Coleção</Label>
         <Select
-          value={watch('collection_id')}
+          value={watch('collection_id') || 'none'}
           onValueChange={(value) => setValue('collection_id', value)}
         >
           <SelectTrigger>
             <SelectValue placeholder="Sem coleção" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Sem coleção</SelectItem>
+            <SelectItem value="none">Sem coleção</SelectItem>
             {collections.map((col) => (
               <SelectItem key={col.id} value={col.id}>{col.name}</SelectItem>
             ))}
