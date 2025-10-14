@@ -1,5 +1,5 @@
 // Service Worker para PWA - CRM Parceiro
-const CACHE_NAME = 'crm-parceiro-v1.0.0';
+const CACHE_NAME = 'crm-parceiro-v1.0.1'; // Atualizado para forçar nova instalação
 const OFFLINE_URL = '/offline.html';
 
 // Recursos essenciais para cache
@@ -67,16 +67,28 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
+  // Não cachear URLs externas (Supabase, etc.)
+  const isExternalURL = !url.origin.includes(self.location.origin);
+  const isSupabaseURL = url.origin.includes('supabase.co');
+  
+  // Ignorar requisições do Supabase para evitar erros de cache
+  if (isSupabaseURL) {
+    event.respondWith(fetch(request));
+    return;
+  }
+
   // Estratégia para navegação (páginas HTML)
   if (request.mode === 'navigate') {
     event.respondWith(
       fetch(request)
         .then((response) => {
           // Se a resposta for bem-sucedida, cache e retorna
-          if (response.status === 200) {
+          if (response.status === 200 && !isExternalURL) {
             const responseClone = response.clone();
             caches.open(CACHE_NAME).then((cache) => {
-              cache.put(request, responseClone);
+              cache.put(request, responseClone).catch(err => {
+                console.log('[SW] Failed to cache navigation:', err);
+              });
             });
           }
           return response;
@@ -145,6 +157,13 @@ self.addEventListener('fetch', (event) => {
   if (request.destination === 'style' || 
       request.destination === 'script' || 
       request.destination === 'image') {
+    
+    // Não cachear recursos externos
+    if (isExternalURL) {
+      event.respondWith(fetch(request));
+      return;
+    }
+    
     event.respondWith(
       caches.match(request)
         .then((cachedResponse) => {
@@ -157,7 +176,9 @@ self.addEventListener('fetch', (event) => {
               if (response.status === 200) {
                 const responseClone = response.clone();
                 caches.open(CACHE_NAME).then((cache) => {
-                  cache.put(request, responseClone);
+                  cache.put(request, responseClone).catch(err => {
+                    console.log('[SW] Failed to cache resource:', err);
+                  });
                 });
               }
               return response;
@@ -178,13 +199,21 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Para outras requisições, usa estratégia network-first
+  // Mas apenas para recursos do mesmo domínio
+  if (isExternalURL) {
+    event.respondWith(fetch(request));
+    return;
+  }
+  
   event.respondWith(
     fetch(request)
       .then((response) => {
         if (response.status === 200) {
           const responseClone = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
-            cache.put(request, responseClone);
+            cache.put(request, responseClone).catch(err => {
+              console.log('[SW] Failed to cache request:', err);
+            });
           });
         }
         return response;

@@ -68,9 +68,13 @@ export const useImageLibrary = () => {
     setIsLoading(true);
 
     try {
+      console.log('[ImageLibrary] Starting upload:', { fileName: file.name, fileSize: file.size, fileType: file.type });
+      
       // Upload do arquivo para o storage
       const fileExt = file.name.split('.').pop();
       const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+
+      console.log('[ImageLibrary] Uploading to storage:', fileName);
 
       const { error: uploadError } = await supabase.storage
         .from('image-library')
@@ -79,37 +83,53 @@ export const useImageLibrary = () => {
           upsert: false
         });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('[ImageLibrary] Upload error:', uploadError);
+        throw uploadError;
+      }
+
+      console.log('[ImageLibrary] Upload successful, getting public URL');
 
       // Obter URL pública
       const { data: { publicUrl } } = supabase.storage
         .from('image-library')
         .getPublicUrl(fileName);
 
+      console.log('[ImageLibrary] Public URL:', publicUrl);
+
       // Criar registro no banco
+      const insertData = {
+        user_id: user.id,
+        storage_type: 'supabase',
+        file_path: publicUrl,
+        file_size: file.size,
+        file_type: file.type,
+        is_favorite: false,
+        is_public: false,
+        ...metadata
+      };
+
+      console.log('[ImageLibrary] Creating database record:', insertData);
+
       const { data, error: insertError } = await supabase
         .from('image_library')
-        .insert({
-          user_id: user.id,
-          storage_type: 'supabase',
-          file_path: publicUrl,
-          file_size: file.size,
-          file_type: file.type,
-          is_favorite: false,
-          is_public: false,
-          ...metadata
-        })
+        .insert(insertData)
         .select()
         .single();
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        console.error('[ImageLibrary] Database insert error:', insertError);
+        throw insertError;
+      }
+
+      console.log('[ImageLibrary] Database record created:', data);
 
       setImages(prev => [data, ...prev]);
       toast.success('Imagem enviada com sucesso!');
       return data;
     } catch (err: any) {
-      console.error('Erro ao enviar imagem:', err);
-      toast.error('Erro ao enviar imagem');
+      console.error('[ImageLibrary] Upload failed:', err);
+      toast.error(err.message || 'Erro ao enviar imagem');
       return null;
     } finally {
       setIsLoading(false);
