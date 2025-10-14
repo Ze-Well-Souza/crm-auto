@@ -137,14 +137,14 @@ export default function ImageUploadForm({ onSuccess }: ImageUploadFormProps) {
           <div>
             <Label htmlFor="collection">Coleção (opcional)</Label>
             <Select
-              value={uploadForm.watch('collection_id')}
-              onValueChange={(value) => uploadForm.setValue('collection_id', value)}
+              value={uploadForm.watch('collection_id') || 'none'}
+              onValueChange={(value) => uploadForm.setValue('collection_id', value === 'none' ? undefined : value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Sem coleção" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Sem coleção</SelectItem>
+                <SelectItem value="none">Sem coleção</SelectItem>
                 {collections.map((col) => (
                   <SelectItem key={col.id} value={col.id}>{col.name}</SelectItem>
                 ))}
@@ -204,14 +204,14 @@ export default function ImageUploadForm({ onSuccess }: ImageUploadFormProps) {
           <div>
             <Label htmlFor="collection">Coleção (opcional)</Label>
             <Select
-              value={urlForm.watch('collection_id')}
-              onValueChange={(value) => urlForm.setValue('collection_id', value)}
+              value={urlForm.watch('collection_id') || 'none'}
+              onValueChange={(value) => urlForm.setValue('collection_id', value === 'none' ? undefined : value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Sem coleção" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Sem coleção</SelectItem>
+                <SelectItem value="none">Sem coleção</SelectItem>
                 {collections.map((col) => (
                   <SelectItem key={col.id} value={col.id}>{col.name}</SelectItem>
                 ))}

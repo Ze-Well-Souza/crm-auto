@@ -8,7 +8,7 @@ import ImageGrid from './ImageGrid';
 import ImageUploadForm from './ImageUploadForm';
 import ImageFilters from './ImageFilters';
 import CollectionManager from './CollectionManager';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import type { ImageFilters as ImageFiltersType } from '@/types/image-library';
 
 export default function ImageLibraryDashboard() {
@@ -121,6 +121,7 @@ export default function ImageLibraryDashboard() {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Upload de Imagem</DialogTitle>
+            <DialogDescription>Selecione um arquivo ou informe uma URL para adicionar à biblioteca.</DialogDescription>
           </DialogHeader>
           <ImageUploadForm onSuccess={() => setUploadDialogOpen(false)} />
         </DialogContent>
@@ -130,6 +131,7 @@ export default function ImageLibraryDashboard() {
         <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle>Gerenciar Coleções</DialogTitle>
+            <DialogDescription>Crie, renomeie e remova coleções para organizar suas imagens.</DialogDescription>
           </DialogHeader>
           <CollectionManager />
         </DialogContent>

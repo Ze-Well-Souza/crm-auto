@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Plus, Trash2, Edit, Folder } from 'lucide-react';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
@@ -101,6 +101,7 @@ export default function CollectionManager() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Nova Coleção</DialogTitle>
+            <DialogDescription>Defina um nome e, se desejar, uma descrição para a nova coleção.</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
@@ -130,6 +131,7 @@ export default function CollectionManager() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Editar Coleção</DialogTitle>
+            <DialogDescription>Atualize o nome e a descrição desta coleção.</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>

@@ -3,8 +3,8 @@ import { loadStripe } from '@stripe/stripe-js';
 // Configuração do Stripe
 const stripePublishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
 
-// Inicializar Stripe
-export const stripePromise = loadStripe(stripePublishableKey);
+// Inicializar Stripe somente se houver chave
+export const stripePromise = stripePublishableKey ? loadStripe(stripePublishableKey) : null;
 
 // Configurações do Stripe
 export const stripeConfig = {

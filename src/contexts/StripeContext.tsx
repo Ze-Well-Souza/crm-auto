@@ -17,9 +17,18 @@ export const StripeProvider: React.FC<StripeProviderProps> = ({ children }) => {
     // Implementar métodos específicos se necessário
   };
 
+  if (!stripePromise) {
+    // Stripe não configurado: retorna filhos sem Elements para evitar erros no console
+    return (
+      <StripeContext.Provider value={contextValue}>
+        {children}
+      </StripeContext.Provider>
+    );
+  }
+
   return (
     <Elements 
-      stripe={stripePromise} 
+      stripe={stripePromise!} 
       options={{
         appearance: stripeConfig.appearance,
         locale: stripeConfig.locale,
