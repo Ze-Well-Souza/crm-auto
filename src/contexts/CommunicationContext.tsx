@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { useNotifications } from './NotificationContext';
 
 export interface Message {
@@ -232,15 +233,23 @@ export const CommunicationProvider: React.FC<CommunicationProviderProps> = ({ ch
     try {
       setLoading(true);
       
-      // Simular integração com WhatsApp API
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Call WhatsApp edge function
+      const { data, error: functionError } = await supabase.functions.invoke('send-whatsapp', {
+        body: { to: phoneNumber, message }
+      });
       
-      // Criar mensagem no histórico
-      await sendMessage(message, 'whatsapp-user', 'text', 'whatsapp');
+      if (functionError) throw functionError;
       
-      showSuccess(`Mensagem enviada via WhatsApp para ${phoneNumber}`);
-    } catch (err) {
-      showError('Erro ao enviar mensagem via WhatsApp');
+      if (data?.success) {
+        // Criar mensagem no histórico
+        await sendMessage(message, 'whatsapp-user', 'text', 'whatsapp');
+        showSuccess(`Mensagem enviada via WhatsApp Business para ${phoneNumber}`);
+      } else {
+        throw new Error(data?.error || 'Erro ao enviar mensagem');
+      }
+    } catch (err: any) {
+      console.error('WhatsApp send error:', err);
+      showError(err.message || 'Erro ao enviar mensagem via WhatsApp');
     } finally {
       setLoading(false);
     }

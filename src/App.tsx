@@ -29,6 +29,7 @@ const Comunicacao = lazy(() => import("./pages/Comunicacao"));
 const Configuracoes = lazy(() => import("./pages/Configuracoes"));
 const Parceiros = lazy(() => import("./pages/Parceiros"));
 const ImageLibrary = lazy(() => import("./pages/ImageLibrary"));
+const InstallPWA = lazy(() => import("./pages/InstallPWA"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Loading fallback component
@@ -73,6 +74,7 @@ const App = () => (
                     <Route path="/parceiros" element={<Parceiros />} />
                     <Route path="/comunicacao" element={<Comunicacao />} />
                     <Route path="/biblioteca-imagens" element={<ImageLibrary />} />
+                    <Route path="/install" element={<InstallPWA />} />
                     <Route path="/configuracoes" element={<Configuracoes />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>

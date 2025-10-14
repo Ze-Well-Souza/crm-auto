@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Generate PWA Icons</title>
+</head>
+<body>
+  <h1>Gerando ícones PWA...</h1>
+  <canvas id="canvas" style="display:none;"></canvas>
+  
+  <script>
+    // Sizes needed for PWA
+    const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+    
+    sizes.forEach(size => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = size;
+      canvas.height = size;
+      
+      // Gradient background
+      const gradient = ctx.createLinearGradient(0, 0, size, size);
+      gradient.addColorStop(0, '#3b82f6');
+      gradient.addColorStop(1, '#1d4ed8');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, size, size);
+      
+      // White wrench icon in center
+      ctx.fillStyle = '#ffffff';
+      ctx.font = `${size * 0.5}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('🔧', size / 2, size / 2);
+      
+      // Download
+      canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `icon-${size}x${size}.png`;
+        a.click();
+      });
+    });
+    
+    document.body.innerHTML += '<p>✅ Ícones gerados! Verifique seus downloads.</p>';
+  </script>
+</body>
+</html>

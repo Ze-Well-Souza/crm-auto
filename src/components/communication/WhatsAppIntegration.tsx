@@ -82,6 +82,19 @@ export const WhatsAppIntegration: React.FC<WhatsAppIntegrationProps> = ({
     setPhoneNumber("");
   };
 
+  const handleWhatsAppWebClick = () => {
+    if (!phoneNumber || !message) return;
+    
+    // Remove formatting, keep only digits
+    const cleanPhone = phoneNumber.replace(/\D/g, '');
+    
+    // Encode message for URL
+    const encodedMessage = encodeURIComponent(message);
+    
+    // Open WhatsApp Web with pre-filled message
+    window.open(`https://wa.me/55${cleanPhone}?text=${encodedMessage}`, '_blank');
+  };
+
   const handleSendTemplate = async () => {
     const template = templates.find(t => t.id === selectedTemplate);
     if (!template || !phoneNumber) return;
@@ -168,14 +181,28 @@ export const WhatsAppIntegration: React.FC<WhatsAppIntegrationProps> = ({
                     </div>
                   </div>
 
-                  <Button 
-                    onClick={handleSendMessage}
-                    disabled={!phoneNumber || !message || loading}
-                    className="w-full"
-                  >
-                    <Send className="w-4 h-4 mr-2" />
-                    {loading ? 'Enviando...' : 'Enviar Mensagem'}
-                  </Button>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button 
+                      onClick={handleWhatsAppWebClick}
+                      disabled={!phoneNumber || !message}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      <MessageCircle className="w-4 h-4 mr-2" />
+                      WhatsApp Web
+                    </Button>
+                    <Button 
+                      onClick={handleSendMessage}
+                      disabled={!phoneNumber || !message || loading}
+                      className="w-full"
+                    >
+                      <Send className="w-4 h-4 mr-2" />
+                      {loading ? 'Enviando...' : 'API Business'}
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground text-center mt-2">
+                    WhatsApp Web: abre conversa • API Business: envia automaticamente
+                  </p>
                 </div>
 
                 <div className="bg-gray-50 p-4 rounded-lg">
