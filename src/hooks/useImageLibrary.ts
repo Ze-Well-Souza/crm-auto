@@ -59,7 +59,7 @@ export const useImageLibrary = () => {
   }, [user]);
 
   // Upload de imagem
-  const uploadImage = useCallback(async (file: File, metadata: Omit<ImageLibraryItem, 'id' | 'user_id' | 'storage_url' | 'thumbnail_url' | 'usage_count' | 'created_at' | 'updated_at'>) => {
+  const uploadImage = useCallback(async (file: File, metadata: Pick<ImageLibraryItem, 'title' | 'description' | 'alt_text' | 'category' | 'tags' | 'collection_id'>) => {
     if (!user) {
       toast.error('Usuário não autenticado');
       return null;
@@ -92,9 +92,11 @@ export const useImageLibrary = () => {
         .insert({
           user_id: user.id,
           storage_type: 'supabase',
-          storage_url: publicUrl,
+          file_path: publicUrl,
           file_size: file.size,
-          format: file.type,
+          file_type: file.type,
+          is_favorite: false,
+          is_public: false,
           ...metadata
         })
         .select()
@@ -115,7 +117,7 @@ export const useImageLibrary = () => {
   }, [user]);
 
   // Adicionar imagem via URL
-  const addImageUrl = useCallback(async (url: string, metadata: Omit<ImageLibraryItem, 'id' | 'user_id' | 'storage_url' | 'thumbnail_url' | 'usage_count' | 'created_at' | 'updated_at' | 'file_size' | 'format'>) => {
+  const addImageUrl = useCallback(async (url: string, metadata: Pick<ImageLibraryItem, 'title' | 'description' | 'alt_text' | 'category' | 'tags' | 'collection_id'>) => {
     if (!user) {
       toast.error('Usuário não autenticado');
       return null;
@@ -129,7 +131,9 @@ export const useImageLibrary = () => {
         .insert({
           user_id: user.id,
           storage_type: 'url',
-          storage_url: url,
+          external_url: url,
+          is_favorite: false,
+          is_public: false,
           ...metadata
         })
         .select()
@@ -186,8 +190,8 @@ export const useImageLibrary = () => {
 
     try {
       // Se for storage do Supabase, deletar arquivo
-      if (storageUrl && storageUrl.includes('image-library')) {
-        const path = storageUrl.split('/image-library/').pop();
+      if (storageUrl && storageUrl.includes('image-library/object/public')) {
+        const path = storageUrl.split('/image-library/object/public/image-library/').pop();
         if (path) {
           await supabase.storage.from('image-library').remove([path]);
         }

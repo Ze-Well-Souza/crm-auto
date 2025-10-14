@@ -8,17 +8,23 @@ export interface ImageLibraryItem {
   user_id: string;
   title: string;
   description?: string;
+  alt_text?: string;
   storage_type: StorageType;
-  storage_url: string;
+  file_path?: string;
+  external_url?: string;
   thumbnail_url?: string;
   file_size?: number;
+  file_type?: string;
   width?: number;
   height?: number;
-  format?: string;
   category: ImageCategory;
   tags?: string[];
+  dominant_colors?: any;
   collection_id?: string;
+  is_favorite: boolean;
+  is_public: boolean;
   usage_count: number;
+  last_used_at?: string;
   created_at: string;
   updated_at: string;
 }
