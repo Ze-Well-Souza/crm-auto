@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "next-themes";
 import { useThemePreferences } from "@/hooks/useThemePreferences";
 import { PWAManager } from "@/components/pwa/PWAManager";
+import { EmailConfigurationForm } from "@/components/communication/EmailConfigurationForm";
 import { 
   Settings, 
   User, 
@@ -446,6 +447,9 @@ const Configuracoes = () => {
             </Button>
           </CardContent>
         </Card>
+
+        {/* Email Configuration */}
+        <EmailConfigurationForm />
 
         {/* Appearance Settings */}
         <Card className="gradient-card">

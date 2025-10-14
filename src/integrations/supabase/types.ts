@@ -893,6 +893,54 @@ export type Database = {
           },
         ]
       }
+      email_configurations: {
+        Row: {
+          created_at: string
+          email: string
+          from_name: string | null
+          id: string
+          is_active: boolean | null
+          provider: string
+          smtp_host: string
+          smtp_password_encrypted: string
+          smtp_port: number
+          smtp_secure: boolean | null
+          smtp_username: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          from_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          provider: string
+          smtp_host: string
+          smtp_password_encrypted: string
+          smtp_port: number
+          smtp_secure?: boolean | null
+          smtp_username: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          from_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          provider?: string
+          smtp_host?: string
+          smtp_password_encrypted?: string
+          smtp_port?: number
+          smtp_secure?: boolean | null
+          smtp_username?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       email_logs: {
         Row: {
           body: string
@@ -1015,7 +1063,7 @@ export type Database = {
             foreignKeyName: "establishments_application_id_fkey"
             columns: ["application_id"]
             isOneToOne: false
-            referencedRelation: "partner_applications"
+            referencedRelation: "partner_applications_old"
             referencedColumns: ["id"]
           },
           {
@@ -1787,6 +1835,57 @@ export type Database = {
         Relationships: []
       }
       partner_applications: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          cnpj: string
+          created_at: string | null
+          email: string
+          id: string
+          nome_fantasia: string
+          onboarding_code: string | null
+          razao_social: string
+          rejection_reason: string | null
+          responsavel_nome: string
+          status: string
+          telefone: string
+          updated_at: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          cnpj: string
+          created_at?: string | null
+          email: string
+          id?: string
+          nome_fantasia: string
+          onboarding_code?: string | null
+          razao_social: string
+          rejection_reason?: string | null
+          responsavel_nome: string
+          status?: string
+          telefone: string
+          updated_at?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          cnpj?: string
+          created_at?: string | null
+          email?: string
+          id?: string
+          nome_fantasia?: string
+          onboarding_code?: string | null
+          razao_social?: string
+          rejection_reason?: string | null
+          responsavel_nome?: string
+          status?: string
+          telefone?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      partner_applications_old: {
         Row: {
           address: string
           category: string
@@ -2974,11 +3073,72 @@ export type Database = {
           },
         ]
       }
+      vouchers: {
+        Row: {
+          appointment_id: string
+          created_at: string | null
+          establishment_data: Json
+          establishment_id: string
+          expires_at: string | null
+          id: string
+          payment_id: string
+          status: string | null
+          updated_at: string | null
+          user_id: string
+          voucher_code: string
+        }
+        Insert: {
+          appointment_id: string
+          created_at?: string | null
+          establishment_data: Json
+          establishment_id: string
+          expires_at?: string | null
+          id?: string
+          payment_id: string
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+          voucher_code: string
+        }
+        Update: {
+          appointment_id?: string
+          created_at?: string | null
+          establishment_data?: Json
+          establishment_id?: string
+          expires_at?: string | null
+          id?: string
+          payment_id?: string
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+          voucher_code?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vouchers_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vouchers_establishment_id_fkey"
+            columns: ["establishment_id"]
+            isOneToOne: false
+            referencedRelation: "establishments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      approve_partner_application: {
+        Args: { application_id: string; approver_id: string }
+        Returns: string
+      }
       check_subscription_limit: {
         Args: {
           p_current_count: number
@@ -2990,6 +3150,10 @@ export type Database = {
       executar_testes_sistema: {
         Args: Record<PropertyKey, never>
         Returns: Json
+      }
+      generate_onboarding_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
       gerenciar_cron_job: {
         Args: { acao: string; job_name: string }
@@ -3139,6 +3303,10 @@ export type Database = {
       processar_fila_manual: {
         Args: Record<PropertyKey, never>
         Returns: Json
+      }
+      reject_partner_application: {
+        Args: { application_id: string; reason: string; rejector_id: string }
+        Returns: boolean
       }
       reprocessar_notificacoes_agendamento: {
         Args: { agendamento_id: number }

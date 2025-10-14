@@ -259,19 +259,33 @@ export const CommunicationProvider: React.FC<CommunicationProviderProps> = ({ ch
     try {
       setLoading(true);
 
-      // Simular envio de email
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Chamar edge function de email SMTP
+      const { data, error: functionError } = await supabase.functions.invoke('send-email-smtp', {
+        body: {
+          to: params.to,
+          subject: params.subject,
+          content: params.content,
+          isHtml: params.isHtml || false,
+        }
+      });
 
-      // Criar mensagens no histórico para cada destinatário
-      const emailContent = `Assunto: ${params.subject}\n\n${params.content}`;
-      for (const recipient of params.to) {
-        await sendMessage(emailContent, 'email-user', 'text', 'email');
+      if (functionError) throw functionError;
+
+      if (data?.success) {
+        // Criar mensagens no histórico para cada destinatário
+        const emailContent = `Assunto: ${params.subject}\n\n${params.content}`;
+        for (const recipient of params.to) {
+          await sendMessage(emailContent, 'email-user', 'text', 'email');
+        }
+
+        const toLabel = params.to.length === 1 ? params.to[0] : `${params.to.length} destinatários`;
+        showSuccess(`Email enviado para ${toLabel}`);
+      } else {
+        throw new Error(data?.error || 'Erro ao enviar email');
       }
-
-      const toLabel = params.to.length === 1 ? params.to[0] : `${params.to.length} destinatários`;
-      showSuccess(`Email enviado para ${toLabel}`);
-    } catch (err) {
-      showError('Erro ao enviar email');
+    } catch (err: any) {
+      console.error('Email send error:', err);
+      showError(err.message || 'Erro ao enviar email. Verifique suas configurações de email.');
     } finally {
       setLoading(false);
     }
