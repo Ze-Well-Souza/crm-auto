@@ -28,6 +28,7 @@ const Pagamentos = lazy(() => import("./pages/Pagamentos"));
 const Comunicacao = lazy(() => import("./pages/Comunicacao"));
 const Configuracoes = lazy(() => import("./pages/Configuracoes"));
 const Parceiros = lazy(() => import("./pages/Parceiros"));
+const ImageLibrary = lazy(() => import("./pages/ImageLibrary"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Loading fallback component
@@ -71,6 +72,7 @@ const App = () => (
                     <Route path="/pagamentos" element={<Pagamentos />} />
                     <Route path="/parceiros" element={<Parceiros />} />
                     <Route path="/comunicacao" element={<Comunicacao />} />
+                    <Route path="/biblioteca-imagens" element={<ImageLibrary />} />
                     <Route path="/configuracoes" element={<Configuracoes />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>

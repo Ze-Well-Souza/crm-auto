@@ -10,7 +10,8 @@ import {
   Settings,
   Home,
   CreditCard,
-  Store
+  Store,
+  Image
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
@@ -27,6 +28,7 @@ const navigation = [
   { name: "Parceiros", href: "/parceiros", icon: Store, current: false, color: "amber" },
   { name: "Relatórios", href: "/relatorios", icon: BarChart3, current: false, color: "indigo" },
   { name: "Comunicação", href: "/comunicacao", icon: MessageCircle, current: false, color: "teal" },
+  { name: "Biblioteca de Imagens", href: "/biblioteca-imagens", icon: Image, current: false, color: "rose" },
   { name: "Configurações", href: "/configuracoes", icon: Settings, current: false, color: "slate" },
 ];
 
@@ -91,6 +93,11 @@ const getColorClasses = (color: string, isActive: boolean) => {
       active: "bg-gradient-to-r from-amber-500/20 to-amber-600/10 text-amber-600 border-amber-500/30 shadow-amber-500/20",
       icon: "text-amber-600",
       indicator: "bg-gradient-to-b from-amber-500 to-amber-600"
+    },
+    rose: {
+      active: "bg-gradient-to-r from-rose-500/20 to-rose-600/10 text-rose-600 border-rose-500/30 shadow-rose-500/20",
+      icon: "text-rose-600",
+      indicator: "bg-gradient-to-b from-rose-500 to-rose-600"
     }
   };
 
