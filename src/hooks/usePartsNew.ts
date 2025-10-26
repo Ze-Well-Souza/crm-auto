@@ -1,9 +1,8 @@
 import { useEffect } from "react";
 import { useCrudState, useStandardState } from "@/hooks/useStandardState";
 import { useNotifications } from "@/contexts/NotificationContext";
+import { supabase } from "@/integrations/supabase/client";
 import type { Part, Supplier } from "@/types";
-import { mockParts, mockSuppliers } from "@/utils/mockData";
-import { generateId } from "@/utils/formatters";
 
 export const usePartsNew = () => {
   const partsState = useCrudState<Part>();
@@ -14,14 +13,24 @@ export const usePartsNew = () => {
     try {
       partsState.setLoading(true);
       
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        partsState.setError('Usuário não autenticado');
+        partsState.setData([]);
+        return;
+      }
+
+      const { data, error: fetchError } = await supabase
+        .from('parts')
+        .select('*')
+        .order('name', { ascending: true });
+
+      if (fetchError) throw fetchError;
       
-      // Use centralized mock data
-      partsState.setData(mockParts);
-    } catch (err) {
+      partsState.setData(data || []);
+    } catch (err: any) {
       console.error('Erro ao buscar peças:', err);
-      partsState.setError('Erro inesperado ao carregar peças');
+      partsState.setError(err.message || 'Erro inesperado ao carregar peças');
     }
   };
 
@@ -29,33 +38,49 @@ export const usePartsNew = () => {
     try {
       suppliersState.setLoading(true);
       
-      // Use centralized mock data
-      suppliersState.setData(mockSuppliers);
-    } catch (err) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        suppliersState.setError('Usuário não autenticado');
+        suppliersState.setData([]);
+        return;
+      }
+
+      const { data, error: fetchError } = await supabase
+        .from('suppliers')
+        .select('*')
+        .order('name', { ascending: true });
+
+      if (fetchError) throw fetchError;
+      
+      suppliersState.setData(data || []);
+    } catch (err: any) {
       console.error('Erro ao buscar fornecedores:', err);
-      suppliersState.setError('Erro ao carregar fornecedores');
+      suppliersState.setError(err.message || 'Erro ao carregar fornecedores');
     }
   };
 
-  const createPart = async (partData: Omit<Part, 'id' | 'created_at' | 'updated_at'>) => {
+  const createPart = async (partData: Omit<Part, 'id' | 'created_at' | 'updated_at' | 'user_id'>) => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      const newPart: Part = {
-        ...partData,
-        id: generateId(),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-      
-      // Add to mock data
-      mockParts.push(newPart);
-      partsState.addItem(newPart);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('Usuário não autenticado');
+      }
 
+      const { data, error: insertError } = await supabase
+        .from('parts')
+        .insert([{
+          ...partData,
+          user_id: user.id
+        }])
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+      
+      partsState.addItem(data);
       notifications.showCreateSuccess("Peça");
 
-      return newPart;
+      return data;
     } catch (err: any) {
       const errorMessage = err.message || 'Erro ao criar peça';
       partsState.setError(errorMessage);
@@ -66,24 +91,19 @@ export const usePartsNew = () => {
 
   const updatePart = async (id: string, partData: Partial<Part>) => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      // Update in mock data
-      const index = mockParts.findIndex(p => p.id === id);
-      if (index !== -1) {
-        const updatedPart = {
-          ...mockParts[index],
-          ...partData,
-          updated_at: new Date().toISOString()
-        };
-        mockParts[index] = updatedPart;
-        partsState.updateItem(id, updatedPart);
-      }
+      const { data, error: updateError } = await supabase
+        .from('parts')
+        .update(partData)
+        .eq('id', id)
+        .select()
+        .single();
 
+      if (updateError) throw updateError;
+
+      partsState.updateItem(id, data);
       notifications.showUpdateSuccess("Peça");
 
-      return mockParts[index];
+      return data;
     } catch (err: any) {
       const errorMessage = err.message || 'Erro ao atualizar peça';
       partsState.setError(errorMessage);
@@ -94,16 +114,14 @@ export const usePartsNew = () => {
 
   const deletePart = async (id: string) => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      // Remove from mock data
-      const index = mockParts.findIndex(p => p.id === id);
-      if (index !== -1) {
-        mockParts.splice(index, 1);
-        partsState.removeItem(id);
-      }
+      const { error: deleteError } = await supabase
+        .from('parts')
+        .delete()
+        .eq('id', id);
 
+      if (deleteError) throw deleteError;
+
+      partsState.removeItem(id);
       notifications.showDeleteSuccess("Peça");
     } catch (err: any) {
       const errorMessage = err.message || 'Erro ao excluir peça';

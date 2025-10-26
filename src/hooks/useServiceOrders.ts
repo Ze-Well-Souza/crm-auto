@@ -1,40 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNotifications } from "@/contexts/NotificationContext";
+import { supabase } from "@/integrations/supabase/client";
 import type { ServiceOrder } from "@/types";
-import { mockClients } from "@/utils/mockData";
-import { generateId } from "@/utils/formatters";
-
-// Mock service orders data
-const mockServiceOrders: ServiceOrder[] = [
-  {
-    id: generateId(),
-    order_number: `OS-${Date.now()}`,
-    client_id: mockClients[0]?.id || generateId(),
-    vehicle_id: generateId(),
-    description: 'Troca de óleo e filtros',
-    total_labor: 80.00,
-    total_parts: 70.00,
-    total_amount: 150.00,
-    discount: 0,
-    status: 'concluido',
-    mechanic_id: 'mec-001',
-    notes: 'Serviço realizado conforme agendado',
-    delivered_at: new Date().toISOString(),
-    finished_at: new Date().toISOString(),
-    started_at: new Date().toISOString(),
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    clients: {
-      name: mockClients[0]?.name || 'João Silva',
-      email: mockClients[0]?.email || 'joao@email.com'
-    },
-    vehicles: {
-      brand: 'Toyota',
-      model: 'Corolla',
-      license_plate: 'ABC-1234'
-    }
-  }
-];
 
 export const useServiceOrders = () => {
   const [serviceOrders, setServiceOrders] = useState<ServiceOrder[] | null>(null);
@@ -47,51 +14,74 @@ export const useServiceOrders = () => {
       setLoading(true);
       setError(null);
       
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setError('Usuário não autenticado');
+        setServiceOrders([]);
+        return;
+      }
+
+      const { data, error: fetchError } = await supabase
+        .from('service_orders')
+        .select(`
+          *,
+          clients:client_id (
+            name,
+            email
+          ),
+          vehicles:vehicle_id (
+            brand,
+            model,
+            license_plate
+          )
+        `)
+        .order('created_at', { ascending: false });
+
+      if (fetchError) throw fetchError;
       
-      // Use mock data sorted by creation date
-      const sortedOrders = [...mockServiceOrders].sort((a, b) => 
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
-      setServiceOrders(sortedOrders);
-    } catch (err) {
+      setServiceOrders(data || []);
+    } catch (err: any) {
       console.error('Erro ao buscar ordens de serviço:', err);
-      setError('Erro inesperado ao carregar ordens de serviço');
+      setError(err.message || 'Erro inesperado ao carregar ordens de serviço');
     } finally {
       setLoading(false);
     }
   };
 
-  const createServiceOrder = async (orderData: Omit<ServiceOrder, 'id' | 'created_at' | 'updated_at' | 'clients' | 'vehicles'>) => {
+  const createServiceOrder = async (orderData: Omit<ServiceOrder, 'id' | 'created_at' | 'updated_at' | 'clients' | 'vehicles' | 'user_id' | 'order_number'>) => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      const clientData = mockClients.find(c => c.id === orderData.client_id);
-      
-      const newOrder: ServiceOrder = {
-        ...orderData,
-        id: generateId(),
-        order_number: `OS-${Date.now()}`,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        clients: clientData ? {
-          name: clientData.name,
-          email: clientData.email
-        } : undefined,
-        vehicles: undefined
-      };
-      
-      // Add to mock data
-      mockServiceOrders.push(newOrder);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('Usuário não autenticado');
+      }
+
+      const { data, error: insertError } = await supabase
+        .from('service_orders')
+        .insert([{
+          ...orderData,
+          user_id: user.id
+        }])
+        .select(`
+          *,
+          clients:client_id (
+            name,
+            email
+          ),
+          vehicles:vehicle_id (
+            brand,
+            model,
+            license_plate
+          )
+        `)
+        .single();
+
+      if (insertError) throw insertError;
 
       notifications.showCreateSuccess("Ordem de serviço");
 
-      // Atualiza a lista
-      fetchServiceOrders();
-      return newOrder;
-    } catch (err) {
+      await fetchServiceOrders();
+      return data;
+    } catch (err: any) {
       console.error('Erro ao criar ordem de serviço:', err);
       notifications.showOperationError("criar", "ordem de serviço");
       return null;

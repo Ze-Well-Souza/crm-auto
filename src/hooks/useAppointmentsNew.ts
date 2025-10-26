@@ -1,9 +1,8 @@
 import { useEffect } from "react";
 import { useCrudState } from "@/hooks/useStandardState";
 import { useNotifications } from "@/contexts/NotificationContext";
+import { supabase } from "@/integrations/supabase/client";
 import type { Appointment } from "@/types";
-import { mockAppointments } from "@/utils/mockData";
-import { generateId } from "@/utils/formatters";
 
 export const useAppointmentsNew = () => {
   const state = useCrudState<Appointment>();
@@ -13,36 +12,49 @@ export const useAppointmentsNew = () => {
     try {
       state.setLoading(true);
       
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        state.setError('Usuário não autenticado');
+        state.setData([]);
+        return;
+      }
+
+      const { data, error: fetchError } = await supabase
+        .from('appointments')
+        .select('*')
+        .order('scheduled_date', { ascending: false });
+
+      if (fetchError) throw fetchError;
       
-      // Use centralized mock data
-      state.setData(mockAppointments);
-    } catch (err) {
+      state.setData(data || []);
+    } catch (err: any) {
       console.error('Erro ao buscar agendamentos:', err);
-      state.setError('Erro inesperado ao carregar agendamentos');
+      state.setError(err.message || 'Erro inesperado ao carregar agendamentos');
     }
   };
 
-  const createAppointment = async (appointmentData: Omit<Appointment, 'id' | 'created_at' | 'updated_at'>) => {
+  const createAppointment = async (appointmentData: Omit<Appointment, 'id' | 'created_at' | 'updated_at' | 'user_id'>) => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      const newAppointment: Appointment = {
-        ...appointmentData,
-        id: generateId(),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-      
-      // Add to mock data
-      mockAppointments.push(newAppointment);
-      state.addItem(newAppointment);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('Usuário não autenticado');
+      }
 
+      const { data, error: insertError } = await supabase
+        .from('appointments')
+        .insert([{
+          ...appointmentData,
+          user_id: user.id
+        }])
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+      
+      state.addItem(data);
       notifications.showCreateSuccess("Agendamento");
 
-      return newAppointment;
+      return data;
     } catch (err: any) {
       const errorMessage = err.message || 'Erro ao criar agendamento';
       state.setError(errorMessage);
@@ -53,24 +65,19 @@ export const useAppointmentsNew = () => {
 
   const updateAppointment = async (id: string, appointmentData: Partial<Appointment>) => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      // Update in mock data
-      const index = mockAppointments.findIndex(a => a.id === id);
-      if (index !== -1) {
-        const updatedAppointment = {
-          ...mockAppointments[index],
-          ...appointmentData,
-          updated_at: new Date().toISOString()
-        };
-        mockAppointments[index] = updatedAppointment;
-        state.updateItem(id, updatedAppointment);
-      }
+      const { data, error: updateError } = await supabase
+        .from('appointments')
+        .update(appointmentData)
+        .eq('id', id)
+        .select()
+        .single();
 
+      if (updateError) throw updateError;
+
+      state.updateItem(id, data);
       notifications.showUpdateSuccess("Agendamento");
 
-      return mockAppointments[index];
+      return data;
     } catch (err: any) {
       const errorMessage = err.message || 'Erro ao atualizar agendamento';
       state.setError(errorMessage);
@@ -81,16 +88,14 @@ export const useAppointmentsNew = () => {
 
   const deleteAppointment = async (id: string) => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      // Remove from mock data
-      const index = mockAppointments.findIndex(a => a.id === id);
-      if (index !== -1) {
-        mockAppointments.splice(index, 1);
-        state.removeItem(id);
-      }
+      const { error: deleteError } = await supabase
+        .from('appointments')
+        .delete()
+        .eq('id', id);
 
+      if (deleteError) throw deleteError;
+
+      state.removeItem(id);
       notifications.showDeleteSuccess("Agendamento");
     } catch (err: any) {
       const errorMessage = err.message || 'Erro ao excluir agendamento';

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import type { Client } from "@/types";
-import { mockClients } from "@/utils/mockData";
 
 export const useClients = () => {
   const [clients, setClients] = useState<Client[] | null>(null);
@@ -14,48 +14,59 @@ export const useClients = () => {
       setLoading(true);
       setError(null);
       
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setError('Usuário não autenticado');
+        setClients([]);
+        return;
+      }
+
+      const { data, error: fetchError } = await supabase
+        .from('clients')
+        .select('*')
+        .order('name', { ascending: true });
+
+      if (fetchError) throw fetchError;
       
-      // Use mock data for demonstration
-      const sortedClients = [...mockClients].sort((a, b) => a.name.localeCompare(b.name));
-      setClients(sortedClients);
-    } catch (err) {
+      setClients(data || []);
+    } catch (err: any) {
       console.error('Erro ao buscar clientes:', err);
-      setError('Erro inesperado ao carregar clientes');
+      setError(err.message || 'Erro inesperado ao carregar clientes');
     } finally {
       setLoading(false);
     }
   };
 
-  const createClient = async (clientData: Omit<Client, 'id' | 'created_at' | 'updated_at'>) => {
+  const createClient = async (clientData: Omit<Client, 'id' | 'created_at' | 'updated_at' | 'user_id'>) => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      const newClient: Client = {
-        ...clientData,
-        id: Math.random().toString(36).substr(2, 9),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-      
-      // Add to mock data
-      mockClients.push(newClient);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('Usuário não autenticado');
+      }
+
+      const { data, error: insertError } = await supabase
+        .from('clients')
+        .insert([{
+          ...clientData,
+          user_id: user.id
+        }])
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
 
       toast({
         title: "Cliente criado com sucesso",
-        description: `${newClient.name} foi adicionado ao sistema.`,
+        description: `${data.name} foi adicionado ao sistema.`,
       });
 
-      // Atualiza a lista de clientes
-      fetchClients();
-      return newClient;
-    } catch (err) {
+      await fetchClients();
+      return data;
+    } catch (err: any) {
       console.error('Erro ao criar cliente:', err);
       toast({
-        title: "Erro inesperado",
-        description: "Não foi possível criar o cliente.",
+        title: "Erro ao criar cliente",
+        description: err.message || "Não foi possível criar o cliente.",
         variant: "destructive",
       });
       return null;

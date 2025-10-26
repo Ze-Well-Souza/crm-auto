@@ -1,52 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNotifications } from "@/contexts/NotificationContext";
+import { supabase } from "@/integrations/supabase/client";
 import type { Vehicle } from "@/types";
-import { mockClients } from "@/utils/mockData";
-import { generateId } from "@/utils/formatters";
-
-// Mock vehicles data
-const mockVehicles: Vehicle[] = [
-  {
-    id: generateId(),
-    client_id: mockClients[0]?.id || generateId(),
-    brand: 'Toyota',
-    model: 'Corolla',
-    year: 2020,
-    license_plate: 'ABC-1234',
-    vin: '9BWZZZ377VT012345',
-    color: 'Branco',
-    fuel_type: 'Flex',
-    engine: '2.0 16V',
-    mileage: 45000,
-    notes: 'Veículo em bom estado',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    clients: {
-      name: mockClients[0]?.name || 'João Silva',
-      email: mockClients[0]?.email || 'joao@email.com'
-    }
-  },
-  {
-    id: generateId(),
-    client_id: mockClients[1]?.id || generateId(),
-    brand: 'Honda',
-    model: 'Civic',
-    year: 2019,
-    license_plate: 'DEF-5678',
-    vin: '1HGBH41JXMN109186',
-    color: 'Prata',
-    fuel_type: 'Gasolina',
-    engine: '1.8 16V',
-    mileage: 62000,
-    notes: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    clients: {
-      name: mockClients[1]?.name || 'Maria Santos',
-      email: mockClients[1]?.email || 'maria@email.com'
-    }
-  }
-];
 
 export const useVehicles = () => {
   const [vehicles, setVehicles] = useState<Vehicle[] | null>(null);
@@ -59,47 +14,64 @@ export const useVehicles = () => {
       setLoading(true);
       setError(null);
       
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setError('Usuário não autenticado');
+        setVehicles([]);
+        return;
+      }
+
+      const { data, error: fetchError } = await supabase
+        .from('vehicles')
+        .select(`
+          *,
+          clients:client_id (
+            name,
+            email
+          )
+        `)
+        .order('brand', { ascending: true });
+
+      if (fetchError) throw fetchError;
       
-      // Use mock data sorted by brand
-      const sortedVehicles = [...mockVehicles].sort((a, b) => a.brand.localeCompare(b.brand));
-      setVehicles(sortedVehicles);
-    } catch (err) {
+      setVehicles(data || []);
+    } catch (err: any) {
       console.error('Erro ao buscar veículos:', err);
-      setError('Erro inesperado ao carregar veículos');
+      setError(err.message || 'Erro inesperado ao carregar veículos');
     } finally {
       setLoading(false);
     }
   };
 
-  const createVehicle = async (vehicleData: Omit<Vehicle, 'id' | 'created_at' | 'updated_at' | 'clients'>) => {
+  const createVehicle = async (vehicleData: Omit<Vehicle, 'id' | 'created_at' | 'updated_at' | 'clients' | 'user_id'>) => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      const clientData = mockClients.find(c => c.id === vehicleData.client_id);
-      
-      const newVehicle: Vehicle = {
-        ...vehicleData,
-        id: generateId(),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        clients: clientData ? {
-          name: clientData.name,
-          email: clientData.email
-        } : undefined
-      };
-      
-      // Add to mock data
-      mockVehicles.push(newVehicle);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('Usuário não autenticado');
+      }
+
+      const { data, error: insertError } = await supabase
+        .from('vehicles')
+        .insert([{
+          ...vehicleData,
+          user_id: user.id
+        }])
+        .select(`
+          *,
+          clients:client_id (
+            name,
+            email
+          )
+        `)
+        .single();
+
+      if (insertError) throw insertError;
 
       notifications.showCreateSuccess("Veículo");
 
-      // Atualiza a lista de veículos
-      fetchVehicles();
-      return newVehicle;
-    } catch (err) {
+      await fetchVehicles();
+      return data;
+    } catch (err: any) {
       console.error('Erro ao criar veículo:', err);
       notifications.showOperationError("criar", "veículo");
       return null;
