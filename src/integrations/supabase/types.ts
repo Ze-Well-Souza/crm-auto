@@ -205,6 +205,7 @@ export type Database = {
           service_type: string
           status: string | null
           updated_at: string
+          user_id: string | null
           vehicle_id: string | null
         }
         Insert: {
@@ -224,6 +225,7 @@ export type Database = {
           service_type: string
           status?: string | null
           updated_at?: string
+          user_id?: string | null
           vehicle_id?: string | null
         }
         Update: {
@@ -243,6 +245,7 @@ export type Database = {
           service_type?: string
           status?: string | null
           updated_at?: string
+          user_id?: string | null
           vehicle_id?: string | null
         }
         Relationships: [
@@ -345,6 +348,7 @@ export type Database = {
           phone: string | null
           state: string | null
           updated_at: string
+          user_id: string | null
           zip_code: string | null
         }
         Insert: {
@@ -359,6 +363,7 @@ export type Database = {
           phone?: string | null
           state?: string | null
           updated_at?: string
+          user_id?: string | null
           zip_code?: string | null
         }
         Update: {
@@ -373,472 +378,10 @@ export type Database = {
           phone?: string | null
           state?: string | null
           updated_at?: string
+          user_id?: string | null
           zip_code?: string | null
         }
         Relationships: []
-      }
-      crm_appointments: {
-        Row: {
-          cancellation_reason: string | null
-          cancelled_at: string | null
-          cancelled_by: string | null
-          client_id: string
-          created_at: string
-          estimated_duration: number | null
-          estimated_value: number | null
-          final_value: number | null
-          id: string
-          notes: string | null
-          scheduled_date: string
-          scheduled_time: string
-          service_description: string | null
-          service_type: string
-          status: string | null
-          updated_at: string
-          vehicle_id: string | null
-        }
-        Insert: {
-          cancellation_reason?: string | null
-          cancelled_at?: string | null
-          cancelled_by?: string | null
-          client_id: string
-          created_at?: string
-          estimated_duration?: number | null
-          estimated_value?: number | null
-          final_value?: number | null
-          id?: string
-          notes?: string | null
-          scheduled_date: string
-          scheduled_time: string
-          service_description?: string | null
-          service_type: string
-          status?: string | null
-          updated_at?: string
-          vehicle_id?: string | null
-        }
-        Update: {
-          cancellation_reason?: string | null
-          cancelled_at?: string | null
-          cancelled_by?: string | null
-          client_id?: string
-          created_at?: string
-          estimated_duration?: number | null
-          estimated_value?: number | null
-          final_value?: number | null
-          id?: string
-          notes?: string | null
-          scheduled_date?: string
-          scheduled_time?: string
-          service_description?: string | null
-          service_type?: string
-          status?: string | null
-          updated_at?: string
-          vehicle_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "crm_appointments_client_id_fkey"
-            columns: ["client_id"]
-            isOneToOne: false
-            referencedRelation: "crm_clients"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_appointments_vehicle_id_fkey"
-            columns: ["vehicle_id"]
-            isOneToOne: false
-            referencedRelation: "crm_vehicles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      crm_clients: {
-        Row: {
-          address: string | null
-          city: string | null
-          cpf_cnpj: string | null
-          created_at: string
-          email: string | null
-          id: string
-          name: string
-          notes: string | null
-          phone: string | null
-          state: string | null
-          updated_at: string
-          zip_code: string | null
-        }
-        Insert: {
-          address?: string | null
-          city?: string | null
-          cpf_cnpj?: string | null
-          created_at?: string
-          email?: string | null
-          id?: string
-          name: string
-          notes?: string | null
-          phone?: string | null
-          state?: string | null
-          updated_at?: string
-          zip_code?: string | null
-        }
-        Update: {
-          address?: string | null
-          city?: string | null
-          cpf_cnpj?: string | null
-          created_at?: string
-          email?: string | null
-          id?: string
-          name?: string
-          notes?: string | null
-          phone?: string | null
-          state?: string | null
-          updated_at?: string
-          zip_code?: string | null
-        }
-        Relationships: []
-      }
-      crm_financial_transactions: {
-        Row: {
-          amount: number
-          category: string | null
-          client_id: string | null
-          created_at: string
-          created_by: string | null
-          description: string
-          due_date: string | null
-          id: string
-          notes: string | null
-          payment_date: string | null
-          payment_method: string | null
-          service_order_id: string | null
-          status: string | null
-          type: string
-          updated_at: string
-        }
-        Insert: {
-          amount: number
-          category?: string | null
-          client_id?: string | null
-          created_at?: string
-          created_by?: string | null
-          description: string
-          due_date?: string | null
-          id?: string
-          notes?: string | null
-          payment_date?: string | null
-          payment_method?: string | null
-          service_order_id?: string | null
-          status?: string | null
-          type: string
-          updated_at?: string
-        }
-        Update: {
-          amount?: number
-          category?: string | null
-          client_id?: string | null
-          created_at?: string
-          created_by?: string | null
-          description?: string
-          due_date?: string | null
-          id?: string
-          notes?: string | null
-          payment_date?: string | null
-          payment_method?: string | null
-          service_order_id?: string | null
-          status?: string | null
-          type?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "crm_financial_transactions_client_id_fkey"
-            columns: ["client_id"]
-            isOneToOne: false
-            referencedRelation: "crm_clients"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_financial_transactions_service_order_id_fkey"
-            columns: ["service_order_id"]
-            isOneToOne: false
-            referencedRelation: "crm_service_orders"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      crm_parts: {
-        Row: {
-          active: boolean | null
-          brand: string | null
-          category: string | null
-          code: string | null
-          cost_price: number | null
-          created_at: string
-          description: string | null
-          id: string
-          location: string | null
-          max_stock: number | null
-          min_stock: number | null
-          name: string
-          sale_price: number | null
-          stock_quantity: number | null
-          supplier_id: string | null
-          updated_at: string
-        }
-        Insert: {
-          active?: boolean | null
-          brand?: string | null
-          category?: string | null
-          code?: string | null
-          cost_price?: number | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          location?: string | null
-          max_stock?: number | null
-          min_stock?: number | null
-          name: string
-          sale_price?: number | null
-          stock_quantity?: number | null
-          supplier_id?: string | null
-          updated_at?: string
-        }
-        Update: {
-          active?: boolean | null
-          brand?: string | null
-          category?: string | null
-          code?: string | null
-          cost_price?: number | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          location?: string | null
-          max_stock?: number | null
-          min_stock?: number | null
-          name?: string
-          sale_price?: number | null
-          stock_quantity?: number | null
-          supplier_id?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "crm_parts_supplier_id_fkey"
-            columns: ["supplier_id"]
-            isOneToOne: false
-            referencedRelation: "crm_suppliers"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      crm_payment_methods: {
-        Row: {
-          active: boolean | null
-          created_at: string
-          id: string
-          name: string
-          type: string | null
-        }
-        Insert: {
-          active?: boolean | null
-          created_at?: string
-          id?: string
-          name: string
-          type?: string | null
-        }
-        Update: {
-          active?: boolean | null
-          created_at?: string
-          id?: string
-          name?: string
-          type?: string | null
-        }
-        Relationships: []
-      }
-      crm_service_orders: {
-        Row: {
-          client_id: string
-          created_at: string
-          delivered_at: string | null
-          description: string | null
-          discount: number | null
-          finished_at: string | null
-          id: string
-          mechanic_id: string | null
-          notes: string | null
-          order_number: string
-          started_at: string | null
-          status: string | null
-          total_amount: number | null
-          total_labor: number | null
-          total_parts: number | null
-          updated_at: string
-          vehicle_id: string | null
-        }
-        Insert: {
-          client_id: string
-          created_at?: string
-          delivered_at?: string | null
-          description?: string | null
-          discount?: number | null
-          finished_at?: string | null
-          id?: string
-          mechanic_id?: string | null
-          notes?: string | null
-          order_number: string
-          started_at?: string | null
-          status?: string | null
-          total_amount?: number | null
-          total_labor?: number | null
-          total_parts?: number | null
-          updated_at?: string
-          vehicle_id?: string | null
-        }
-        Update: {
-          client_id?: string
-          created_at?: string
-          delivered_at?: string | null
-          description?: string | null
-          discount?: number | null
-          finished_at?: string | null
-          id?: string
-          mechanic_id?: string | null
-          notes?: string | null
-          order_number?: string
-          started_at?: string | null
-          status?: string | null
-          total_amount?: number | null
-          total_labor?: number | null
-          total_parts?: number | null
-          updated_at?: string
-          vehicle_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "crm_service_orders_client_id_fkey"
-            columns: ["client_id"]
-            isOneToOne: false
-            referencedRelation: "crm_clients"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_service_orders_vehicle_id_fkey"
-            columns: ["vehicle_id"]
-            isOneToOne: false
-            referencedRelation: "crm_vehicles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      crm_suppliers: {
-        Row: {
-          active: boolean | null
-          address: string | null
-          city: string | null
-          cnpj: string | null
-          contact_name: string | null
-          created_at: string
-          email: string | null
-          id: string
-          name: string
-          notes: string | null
-          phone: string | null
-          state: string | null
-          updated_at: string
-          zip_code: string | null
-        }
-        Insert: {
-          active?: boolean | null
-          address?: string | null
-          city?: string | null
-          cnpj?: string | null
-          contact_name?: string | null
-          created_at?: string
-          email?: string | null
-          id?: string
-          name: string
-          notes?: string | null
-          phone?: string | null
-          state?: string | null
-          updated_at?: string
-          zip_code?: string | null
-        }
-        Update: {
-          active?: boolean | null
-          address?: string | null
-          city?: string | null
-          cnpj?: string | null
-          contact_name?: string | null
-          created_at?: string
-          email?: string | null
-          id?: string
-          name?: string
-          notes?: string | null
-          phone?: string | null
-          state?: string | null
-          updated_at?: string
-          zip_code?: string | null
-        }
-        Relationships: []
-      }
-      crm_vehicles: {
-        Row: {
-          brand: string
-          client_id: string
-          color: string | null
-          created_at: string
-          engine: string | null
-          fuel_type: string | null
-          id: string
-          license_plate: string | null
-          mileage: number | null
-          model: string
-          notes: string | null
-          updated_at: string
-          vin: string | null
-          year: number | null
-        }
-        Insert: {
-          brand: string
-          client_id: string
-          color?: string | null
-          created_at?: string
-          engine?: string | null
-          fuel_type?: string | null
-          id?: string
-          license_plate?: string | null
-          mileage?: number | null
-          model: string
-          notes?: string | null
-          updated_at?: string
-          vin?: string | null
-          year?: number | null
-        }
-        Update: {
-          brand?: string
-          client_id?: string
-          color?: string | null
-          created_at?: string
-          engine?: string | null
-          fuel_type?: string | null
-          id?: string
-          license_plate?: string | null
-          mileage?: number | null
-          model?: string
-          notes?: string | null
-          updated_at?: string
-          vin?: string | null
-          year?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "crm_vehicles_client_id_fkey"
-            columns: ["client_id"]
-            isOneToOne: false
-            referencedRelation: "crm_clients"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       customer_profiles: {
         Row: {
@@ -1167,6 +710,7 @@ export type Database = {
           status: string | null
           type: string
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           amount: number
@@ -1184,6 +728,7 @@ export type Database = {
           status?: string | null
           type: string
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           amount?: number
@@ -1201,6 +746,7 @@ export type Database = {
           status?: string | null
           type?: string
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -1772,7 +1318,7 @@ export type Database = {
           ativo: boolean | null
           auth_id: string | null
           cnpj: string | null
-          coordenadas: unknown | null
+          coordenadas: unknown
           created_at: string | null
           documentos: Json | null
           email: string | null
@@ -1794,7 +1340,7 @@ export type Database = {
           ativo?: boolean | null
           auth_id?: string | null
           cnpj?: string | null
-          coordenadas?: unknown | null
+          coordenadas?: unknown
           created_at?: string | null
           documentos?: Json | null
           email?: string | null
@@ -1816,7 +1362,7 @@ export type Database = {
           ativo?: boolean | null
           auth_id?: string | null
           cnpj?: string | null
-          coordenadas?: unknown | null
+          coordenadas?: unknown
           created_at?: string | null
           documentos?: Json | null
           email?: string | null
@@ -2235,6 +1781,7 @@ export type Database = {
           stock_quantity: number | null
           supplier_id: string | null
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           active?: boolean | null
@@ -2253,6 +1800,7 @@ export type Database = {
           stock_quantity?: number | null
           supplier_id?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           active?: boolean | null
@@ -2271,6 +1819,7 @@ export type Database = {
           stock_quantity?: number | null
           supplier_id?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -2523,6 +2072,7 @@ export type Database = {
           total_labor: number | null
           total_parts: number | null
           updated_at: string
+          user_id: string | null
           vehicle_id: string | null
         }
         Insert: {
@@ -2542,6 +2092,7 @@ export type Database = {
           total_labor?: number | null
           total_parts?: number | null
           updated_at?: string
+          user_id?: string | null
           vehicle_id?: string | null
         }
         Update: {
@@ -2561,6 +2112,7 @@ export type Database = {
           total_labor?: number | null
           total_parts?: number | null
           updated_at?: string
+          user_id?: string | null
           vehicle_id?: string | null
         }
         Relationships: [
@@ -2796,6 +2348,7 @@ export type Database = {
           phone: string | null
           state: string | null
           updated_at: string
+          user_id: string | null
           zip_code: string | null
         }
         Insert: {
@@ -2812,6 +2365,7 @@ export type Database = {
           phone?: string | null
           state?: string | null
           updated_at?: string
+          user_id?: string | null
           zip_code?: string | null
         }
         Update: {
@@ -2828,6 +2382,7 @@ export type Database = {
           phone?: string | null
           state?: string | null
           updated_at?: string
+          user_id?: string | null
           zip_code?: string | null
         }
         Relationships: []
@@ -3028,6 +2583,7 @@ export type Database = {
           model: string
           notes: string | null
           updated_at: string
+          user_id: string | null
           vin: string | null
           year: number | null
         }
@@ -3044,6 +2600,7 @@ export type Database = {
           model: string
           notes?: string | null
           updated_at?: string
+          user_id?: string | null
           vin?: string | null
           year?: number | null
         }
@@ -3060,6 +2617,7 @@ export type Database = {
           model?: string
           notes?: string | null
           updated_at?: string
+          user_id?: string | null
           vin?: string | null
           year?: number | null
         }
@@ -3147,24 +2705,15 @@ export type Database = {
         }
         Returns: boolean
       }
-      executar_testes_sistema: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
-      generate_onboarding_code: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
+      executar_testes_sistema: { Args: never; Returns: Json }
+      generate_onboarding_code: { Args: never; Returns: string }
       gerenciar_cron_job: {
         Args: { acao: string; job_name: string }
         Returns: boolean
       }
-      get_current_user_role: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
+      get_current_user_role: { Args: never; Returns: string }
       get_hourly_performance: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           concluidas: number
           falhadas: number
@@ -3175,7 +2724,7 @@ export type Database = {
         }[]
       }
       get_metrics_by_task_type: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           concluidas: number
           falhadas: number
@@ -3201,7 +2750,7 @@ export type Database = {
         }[]
       }
       get_partner_directory: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           average_rating: number
           business_name: string
@@ -3211,7 +2760,7 @@ export type Database = {
         }[]
       }
       get_partner_statistics: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           aprovado_em: string
           created_at: string
@@ -3226,7 +2775,7 @@ export type Database = {
         }[]
       }
       get_problematic_tasks: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           created_at: string
           id: number
@@ -3239,7 +2788,7 @@ export type Database = {
         }[]
       }
       get_public_partner_directory: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           average_rating: number
           business_name: string
@@ -3249,7 +2798,7 @@ export type Database = {
         }[]
       }
       get_task_queue_metrics: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           tarefas_concluidas: number
           tarefas_falhadas: number
@@ -3261,10 +2810,9 @@ export type Database = {
           total_tarefas: number
         }[]
       }
-      get_user_role: {
-        Args: Record<PropertyKey, never> | { user_id_param: string }
-        Returns: string
-      }
+      get_user_role:
+        | { Args: { user_id_param: string }; Returns: string }
+        | { Args: never; Returns: Database["public"]["Enums"]["user_role"] }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["user_role"]
@@ -3276,34 +2824,13 @@ export type Database = {
         Args: { image_uuid: string }
         Returns: undefined
       }
-      is_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      is_partner_approved: {
-        Args: { partner_id: number }
-        Returns: boolean
-      }
-      is_partner_owner: {
-        Args: { partner_id: number }
-        Returns: boolean
-      }
-      limpar_dados_antigos: {
-        Args: { dias_retencao?: number }
-        Returns: Json
-      }
-      limpar_dados_teste: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
-      obter_estatisticas_sistema: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
-      processar_fila_manual: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
+      is_admin: { Args: never; Returns: boolean }
+      is_partner_approved: { Args: { partner_id: number }; Returns: boolean }
+      is_partner_owner: { Args: { partner_id: number }; Returns: boolean }
+      limpar_dados_antigos: { Args: { dias_retencao?: number }; Returns: Json }
+      limpar_dados_teste: { Args: never; Returns: Json }
+      obter_estatisticas_sistema: { Args: never; Returns: Json }
+      processar_fila_manual: { Args: never; Returns: Json }
       reject_partner_application: {
         Args: { application_id: string; reason: string; rejector_id: string }
         Returns: boolean
@@ -3312,24 +2839,12 @@ export type Database = {
         Args: { agendamento_id: number }
         Returns: boolean
       }
-      reprocessar_tarefas_falhadas: {
-        Args: { limite?: number }
-        Returns: Json
-      }
-      reset_subscription_usage: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      temp_disable_rls: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      temp_enable_rls: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      reprocessar_tarefas_falhadas: { Args: { limite?: number }; Returns: Json }
+      reset_subscription_usage: { Args: never; Returns: undefined }
+      temp_disable_rls: { Args: never; Returns: undefined }
+      temp_enable_rls: { Args: never; Returns: undefined }
       verificar_status_cron_jobs: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           active: boolean
           job_name: string
