@@ -14,8 +14,8 @@ export const useVehicles = () => {
       setLoading(true);
       setError(null);
       
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
         setError('Usuário não autenticado');
         setVehicles([]);
         return;
@@ -45,8 +45,8 @@ export const useVehicles = () => {
 
   const createVehicle = async (vehicleData: Omit<Vehicle, 'id' | 'created_at' | 'updated_at' | 'clients' | 'user_id'>) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
         throw new Error('Usuário não autenticado');
       }
 
@@ -54,7 +54,7 @@ export const useVehicles = () => {
         .from('vehicles')
         .insert([{
           ...vehicleData,
-          user_id: user.id
+          user_id: session.user.id
         }])
         .select(`
           *,

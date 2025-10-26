@@ -12,8 +12,8 @@ export const useAppointmentsNew = () => {
     try {
       state.setLoading(true);
       
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
         state.setError('Usuário não autenticado');
         state.setData([]);
         return;
@@ -35,8 +35,8 @@ export const useAppointmentsNew = () => {
 
   const createAppointment = async (appointmentData: Omit<Appointment, 'id' | 'created_at' | 'updated_at' | 'user_id'>) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
         throw new Error('Usuário não autenticado');
       }
 
@@ -44,7 +44,7 @@ export const useAppointmentsNew = () => {
         .from('appointments')
         .insert([{
           ...appointmentData,
-          user_id: user.id
+          user_id: session.user.id
         }])
         .select()
         .single();

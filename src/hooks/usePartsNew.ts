@@ -13,8 +13,8 @@ export const usePartsNew = () => {
     try {
       partsState.setLoading(true);
       
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
         partsState.setError('Usuário não autenticado');
         partsState.setData([]);
         return;
@@ -38,8 +38,8 @@ export const usePartsNew = () => {
     try {
       suppliersState.setLoading(true);
       
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
         suppliersState.setError('Usuário não autenticado');
         suppliersState.setData([]);
         return;
@@ -61,8 +61,8 @@ export const usePartsNew = () => {
 
   const createPart = async (partData: Omit<Part, 'id' | 'created_at' | 'updated_at' | 'user_id'>) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
         throw new Error('Usuário não autenticado');
       }
 
@@ -70,7 +70,7 @@ export const usePartsNew = () => {
         .from('parts')
         .insert([{
           ...partData,
-          user_id: user.id
+          user_id: session.user.id
         }])
         .select()
         .single();
