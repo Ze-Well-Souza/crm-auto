@@ -1,72 +1,55 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { 
   Calendar, 
-  Car, 
   DollarSign, 
   Phone, 
-  Mail, 
-  MessageCircle,
   Wrench,
   Clock
 } from "lucide-react";
 import { formatDate, formatCurrency } from "@/utils/formatters";
 import { cn } from "@/lib/utils";
-
-interface TimelineEvent {
-  id: string;
-  type: 'service' | 'appointment' | 'contact' | 'payment' | 'note';
-  title: string;
-  description: string;
-  date: Date;
-  value?: number;
-  status?: string;
-}
+import { useClientTimeline } from "@/hooks/useClientTimeline";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 interface ClientTimelineProps {
   clientId: string;
-  events?: TimelineEvent[];
 }
 
-export const ClientTimeline = ({ clientId, events }: ClientTimelineProps) => {
-  // Mock timeline events - in real app would fetch from database
-  const mockEvents: TimelineEvent[] = [
-    {
-      id: '1',
-      type: 'service',
-      title: 'Troca de óleo realizada',
-      description: 'Serviço de troca de óleo e filtros concluído',
-      date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-      value: 150.00,
-      status: 'concluido'
-    },
-    {
-      id: '2',
-      type: 'contact',
-      title: 'Ligação realizada',
-      description: 'Cliente contatado para agendamento de revisão',
-      date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-    },
-    {
-      id: '3',
-      type: 'appointment',
-      title: 'Agendamento criado',
-      description: 'Revisão dos 60.000 km agendada',
-      date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
-      value: 450.00,
-      status: 'agendado'
-    },
-    {
-      id: '4',
-      type: 'payment',
-      title: 'Pagamento recebido',
-      description: 'Pagamento da ordem de serviço #OS-001',
-      date: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000),
-      value: 280.00,
-      status: 'pago'
-    }
-  ];
+export const ClientTimeline = ({ clientId }: ClientTimelineProps) => {
+  const { events, loading, error } = useClientTimeline(clientId);
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Clock className="h-5 w-5" />
+            Histórico de Interações
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <LoadingSpinner />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Clock className="h-5 w-5" />
+            Histórico de Interações
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-destructive">{error}</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const getEventIcon = (type: string) => {
     switch (type) {
@@ -108,10 +91,10 @@ export const ClientTimeline = ({ clientId, events }: ClientTimelineProps) => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {mockEvents.map((event, index) => (
+          {events.map((event, index) => (
             <div key={event.id} className="flex gap-4 relative">
               {/* Timeline line */}
-              {index < mockEvents.length - 1 && (
+              {index < events.length - 1 && (
                 <div className="absolute left-6 top-12 w-px h-8 bg-border" />
               )}
               
@@ -158,7 +141,7 @@ export const ClientTimeline = ({ clientId, events }: ClientTimelineProps) => {
             </div>
           ))}
           
-          {mockEvents.length === 0 && (
+          {events.length === 0 && (
             <div className="text-center py-8">
               <Clock className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
               <p className="text-sm text-muted-foreground">

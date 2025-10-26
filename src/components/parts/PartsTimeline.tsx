@@ -1,94 +1,49 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Package, DollarSign, TrendingUp, TrendingDown, Clock, Truck, ShoppingCart, TriangleAlert as AlertTriangle, CircleCheck as CheckCircle, RefreshCw, User, ChartBar as BarChart3 } from "lucide-react";
+import { Calendar, Package, DollarSign, TrendingUp, TrendingDown, Clock, Truck, ShoppingCart, TriangleAlert as AlertTriangle, RefreshCw, User, ChartBar as BarChart3 } from "lucide-react";
 import { formatDate, formatCurrency } from "@/utils/formatters";
 import { cn } from "@/lib/utils";
-
-interface TimelineEvent {
-  id: string;
-  type: 'stock_in' | 'stock_out' | 'price_change' | 'reorder' | 'adjustment' | 'sale' | 'return';
-  title: string;
-  description: string;
-  date: Date;
-  quantity?: number;
-  value?: number;
-  user?: string;
-  reference?: string;
-}
+import { usePartsTimeline } from "@/hooks/usePartsTimeline";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 interface PartsTimelineProps {
   partId: string;
-  events?: TimelineEvent[];
 }
 
-export const PartsTimeline = ({ partId, events }: PartsTimelineProps) => {
-  // Mock timeline events - in real app would fetch from database
-  const mockEvents: TimelineEvent[] = [
-    {
-      id: '1',
-      type: 'sale',
-      title: 'Venda realizada',
-      description: 'Peça vendida na ordem de serviço #OS-001',
-      date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-      quantity: -2,
-      value: 71.80,
-      user: 'Carlos (Mecânico)',
-      reference: 'OS-001'
-    },
-    {
-      id: '2',
-      type: 'stock_in',
-      title: 'Entrada de estoque',
-      description: 'Recebimento de mercadoria do fornecedor ABC',
-      date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-      quantity: 20,
-      value: 518.00,
-      user: 'Maria (Estoque)',
-      reference: 'NF-12345'
-    },
-    {
-      id: '3',
-      type: 'price_change',
-      title: 'Atualização de preço',
-      description: 'Preço de venda atualizado conforme tabela do fornecedor',
-      date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-      value: 35.90,
-      user: 'João (Gerente)',
-      reference: 'Tabela-2024-Q4'
-    },
-    {
-      id: '4',
-      type: 'adjustment',
-      title: 'Ajuste de estoque',
-      description: 'Correção após inventário físico',
-      date: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-      quantity: -1,
-      user: 'Maria (Estoque)',
-      reference: 'INV-2024-001'
-    },
-    {
-      id: '5',
-      type: 'reorder',
-      title: 'Pedido de reposição',
-      description: 'Solicitação de compra enviada ao fornecedor',
-      date: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
-      quantity: 25,
-      value: 647.50,
-      user: 'João (Gerente)',
-      reference: 'PC-2024-089'
-    },
-    {
-      id: '6',
-      type: 'return',
-      title: 'Devolução de cliente',
-      description: 'Peça devolvida por defeito de fabricação',
-      date: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000),
-      quantity: 1,
-      value: -35.90,
-      user: 'Ana (Atendimento)',
-      reference: 'DEV-001'
-    }
-  ];
+export const PartsTimeline = ({ partId }: PartsTimelineProps) => {
+  const { events, loading, error } = usePartsTimeline(partId);
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BarChart3 className="h-5 w-5" />
+            Histórico de Movimentações
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <LoadingSpinner />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BarChart3 className="h-5 w-5" />
+            Histórico de Movimentações
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-destructive">{error}</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const getEventIcon = (type: string) => {
     switch (type) {
@@ -169,10 +124,10 @@ export const PartsTimeline = ({ partId, events }: PartsTimelineProps) => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {mockEvents.map((event, index) => (
+          {events.map((event, index) => (
             <div key={event.id} className="flex gap-4 relative">
               {/* Timeline line */}
-              {index < mockEvents.length - 1 && (
+              {index < events.length - 1 && (
                 <div className="absolute left-6 top-12 w-px h-16 bg-border" />
               )}
               
@@ -234,7 +189,7 @@ export const PartsTimeline = ({ partId, events }: PartsTimelineProps) => {
             </div>
           ))}
           
-          {mockEvents.length === 0 && (
+          {events.length === 0 && (
             <div className="text-center py-8">
               <Package className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
               <p className="text-sm text-muted-foreground">

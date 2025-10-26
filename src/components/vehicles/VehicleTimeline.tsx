@@ -1,78 +1,49 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Wrench, DollarSign, TriangleAlert as AlertTriangle, CircleCheck as CheckCircle, Clock, Fuel, Settings, FileText } from "lucide-react";
+import { Calendar, Wrench, DollarSign, TriangleAlert as AlertTriangle, CircleCheck as CheckCircle, Clock, Settings, FileText } from "lucide-react";
 import { formatDate, formatCurrency } from "@/utils/formatters";
 import { cn } from "@/lib/utils";
-
-interface TimelineEvent {
-  id: string;
-  type: 'service' | 'maintenance' | 'repair' | 'inspection' | 'document';
-  title: string;
-  description: string;
-  date: Date;
-  value?: number;
-  mileage?: number;
-  status?: string;
-}
+import { useVehicleTimeline } from "@/hooks/useVehicleTimeline";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 interface VehicleTimelineProps {
   vehicleId: string;
-  events?: TimelineEvent[];
 }
 
-export const VehicleTimeline = ({ vehicleId, events }: VehicleTimelineProps) => {
-  // Mock timeline events - in real app would fetch from database
-  const mockEvents: TimelineEvent[] = [
-    {
-      id: '1',
-      type: 'service',
-      title: 'Troca de óleo e filtros',
-      description: 'Manutenção preventiva realizada conforme programação',
-      date: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-      value: 180.00,
-      mileage: 45000,
-      status: 'concluido'
-    },
-    {
-      id: '2',
-      type: 'repair',
-      title: 'Reparo no sistema de freios',
-      description: 'Substituição de pastilhas e discos de freio dianteiros',
-      date: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000),
-      value: 450.00,
-      mileage: 42000,
-      status: 'concluido'
-    },
-    {
-      id: '3',
-      type: 'inspection',
-      title: 'Inspeção veicular',
-      description: 'Inspeção anual obrigatória aprovada',
-      date: new Date(Date.now() - 120 * 24 * 60 * 60 * 1000),
-      value: 85.00,
-      mileage: 38000,
-      status: 'aprovado'
-    },
-    {
-      id: '4',
-      type: 'maintenance',
-      title: 'Revisão dos 40.000 km',
-      description: 'Revisão completa conforme manual do fabricante',
-      date: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000),
-      value: 650.00,
-      mileage: 40000,
-      status: 'concluido'
-    },
-    {
-      id: '5',
-      type: 'document',
-      title: 'Renovação do IPVA',
-      description: 'IPVA 2024 pago em dia',
-      date: new Date(Date.now() - 300 * 24 * 60 * 60 * 1000),
-      value: 1200.00,
-      status: 'pago'
-    }
-  ];
+export const VehicleTimeline = ({ vehicleId }: VehicleTimelineProps) => {
+  const { events, loading, error } = useVehicleTimeline(vehicleId);
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Clock className="h-5 w-5" />
+            Histórico Completo do Veículo
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <LoadingSpinner />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Clock className="h-5 w-5" />
+            Histórico Completo do Veículo
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-destructive">{error}</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const getEventIcon = (type: string) => {
     switch (type) {
@@ -129,10 +100,10 @@ export const VehicleTimeline = ({ vehicleId, events }: VehicleTimelineProps) => 
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {mockEvents.map((event, index) => (
+          {events.map((event, index) => (
             <div key={event.id} className="flex gap-4 relative">
               {/* Timeline line */}
-              {index < mockEvents.length - 1 && (
+              {index < events.length - 1 && (
                 <div className="absolute left-6 top-12 w-px h-16 bg-border" />
               )}
               
@@ -201,7 +172,7 @@ export const VehicleTimeline = ({ vehicleId, events }: VehicleTimelineProps) => 
             </div>
           ))}
           
-          {mockEvents.length === 0 && (
+          {events.length === 0 && (
             <div className="text-center py-8">
               <Clock className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
               <p className="text-sm text-muted-foreground">
