@@ -3,10 +3,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Car, Fuel, Calendar, Gauge, TriangleAlert as AlertTriangle, CircleCheck as CheckCircle, Clock, DollarSign, Wrench, FileText, Phone, User, MapPin, TrendingUp, Settings } from "lucide-react";
 import { VehicleActions } from "./VehicleActions";
 import { VehicleDashboard } from "./VehicleDashboard";
 import { VehicleQuickActions } from "./VehicleQuickActions";
+import { useVehicleMetrics } from "@/hooks/useVehicleMetrics";
 import { formatDate, formatCurrency } from "@/utils/formatters";
 import { cn } from "@/lib/utils";
 import type { Vehicle } from "@/types";
@@ -19,30 +21,32 @@ interface VehicleCardProps {
 
 export const VehicleCard = ({ vehicle, onUpdate, onQuickAction }: VehicleCardProps) => {
   const [showDashboard, setShowDashboard] = useState(false);
+  const { metrics, loading: metricsLoading } = useVehicleMetrics(vehicle.id);
   
-  // Mock data for demonstration - in real app would come from database
-  const vehicleMetrics = {
-    totalSpent: Math.random() * 3000 + 200,
-    serviceCount: Math.floor(Math.random() * 15) + 1,
-    lastService: new Date(Date.now() - Math.random() * 60 * 24 * 60 * 60 * 1000),
-    nextMaintenance: Math.floor(Math.random() * 10000) + 5000, // km até próxima manutenção
-    marketValue: Math.random() * 50000 + 20000,
-    maintenanceStatus: Math.random() > 0.7 ? 'atrasada' : Math.random() > 0.4 ? 'em_dia' : 'proxima'
+  // Usar métricas reais ou valores padrão durante carregamento
+  const vehicleMetrics = metrics || {
+    totalSpent: 0,
+    totalServices: 0,
+    lastService: null,
+    nextService: null,
+    maintenanceStatus: 'em_dia' as const,
+    estimatedNextMileage: null,
+    averageServiceCost: 0
   };
 
-  const getMaintenanceStatus = (status: string) => {
+  const getMaintenanceStatus = (status: 'em_dia' | 'atencao' | 'atrasado') => {
     switch (status) {
-      case 'atrasada':
+      case 'atrasado':
         return { 
           label: 'Atrasada', 
           variant: 'destructive' as const, 
           icon: AlertTriangle,
           color: 'text-destructive'
         };
-      case 'proxima':
+      case 'atencao':
         return { 
-          label: 'Próxima', 
-          variant: 'secondary' as const, 
+          label: 'Atenção', 
+          variant: 'secondary' as const,
           icon: Clock,
           color: 'text-warning'
         };
@@ -94,8 +98,8 @@ export const VehicleCard = ({ vehicle, onUpdate, onQuickAction }: VehicleCardPro
         {/* Background gradient based on maintenance status */}
         <div className={cn(
           "absolute inset-0 opacity-5 transition-opacity group-hover:opacity-10",
-          vehicleMetrics.maintenanceStatus === 'atrasada' && "bg-gradient-to-br from-red-400 to-red-500",
-          vehicleMetrics.maintenanceStatus === 'proxima' && "bg-gradient-to-br from-yellow-400 to-orange-500",
+          vehicleMetrics.maintenanceStatus === 'atrasado' && "bg-gradient-to-br from-red-400 to-red-500",
+          vehicleMetrics.maintenanceStatus === 'atencao' && "bg-gradient-to-br from-yellow-400 to-orange-500",
           vehicleMetrics.maintenanceStatus === 'em_dia' && "bg-gradient-to-br from-green-400 to-emerald-500"
         )} />
 
@@ -206,10 +210,10 @@ export const VehicleCard = ({ vehicle, onUpdate, onQuickAction }: VehicleCardPro
               <div className="flex items-center justify-center gap-1">
                 <DollarSign className="h-3 w-3 text-success" />
                 <span className="text-xs font-semibold text-success">
-                  {formatCurrency(vehicleMetrics.marketValue)}
+                  {formatCurrency(vehicleMetrics.totalSpent)}
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground">Valor estimado</p>
+              <p className="text-xs text-muted-foreground">Total gasto</p>
             </div>
           </div>
 
@@ -219,7 +223,7 @@ export const VehicleCard = ({ vehicle, onUpdate, onQuickAction }: VehicleCardPro
               <div className="flex items-center justify-center gap-1">
                 <Wrench className="h-3 w-3 text-primary" />
                 <span className="text-xs font-semibold">
-                  {vehicleMetrics.serviceCount} serviços
+                  {vehicleMetrics.totalServices} serviços
                 </span>
               </div>
               <p className="text-xs text-muted-foreground">Total realizados</p>
@@ -237,27 +241,27 @@ export const VehicleCard = ({ vehicle, onUpdate, onQuickAction }: VehicleCardPro
           </div>
 
           {/* Maintenance Alert */}
-          {vehicleMetrics.maintenanceStatus === 'atrasada' && (
+          {vehicleMetrics.maintenanceStatus === 'atrasado' && (
             <div className="bg-destructive/10 border border-destructive/20 rounded-md p-3">
               <div className="flex items-center gap-2">
                 <AlertTriangle className="h-4 w-4 text-destructive" />
                 <span className="text-sm font-medium text-destructive">Manutenção Atrasada</span>
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                Última revisão há mais de 6 meses
+                Última revisão há mais de 4 meses
               </p>
             </div>
           )}
 
           {/* Next Maintenance */}
-          {vehicleMetrics.maintenanceStatus !== 'atrasada' && (
+          {vehicleMetrics.maintenanceStatus !== 'atrasado' && vehicleMetrics.estimatedNextMileage && (
             <div className="bg-info/10 border border-info/20 rounded-md p-3">
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-info" />
                 <span className="text-sm font-medium text-info">Próxima Manutenção</span>
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                Em {vehicleMetrics.nextMaintenance.toLocaleString('pt-BR')} km
+                Em {vehicleMetrics.estimatedNextMileage.toLocaleString('pt-BR')} km
               </p>
             </div>
           )}
@@ -276,11 +280,11 @@ export const VehicleCard = ({ vehicle, onUpdate, onQuickAction }: VehicleCardPro
           <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
             <div className="flex items-center gap-1">
               <Clock className="h-3 w-3" />
-              <span>Último serviço: {formatDate(vehicleMetrics.lastService)}</span>
+              <span>Último serviço: {vehicleMetrics.lastService ? formatDate(vehicleMetrics.lastService) : 'N/A'}</span>
             </div>
             <div className="flex items-center gap-1">
               <FileText className="h-3 w-3" />
-              <span>OS #{vehicleMetrics.serviceCount.toString().padStart(3, '0')}</span>
+              <span>OS #{vehicleMetrics.totalServices.toString().padStart(3, '0')}</span>
             </div>
           </div>
 

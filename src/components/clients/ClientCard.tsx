@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { 
   Phone, 
   Mail, 
@@ -18,6 +19,7 @@ import {
 import { ClientActions } from "./ClientActions";
 import { ClientDashboard } from "./ClientDashboard";
 import { ClientQuickActions } from "./ClientQuickActions";
+import { useClientMetrics } from "@/hooks/useClientMetrics";
 import { formatPhone, formatDate, formatCurrency } from "@/utils/formatters";
 import { cn } from "@/lib/utils";
 import type { Client } from "@/types";
@@ -30,14 +32,15 @@ interface ClientCardProps {
 
 export const ClientCard = ({ client, onUpdate, onQuickAction }: ClientCardProps) => {
   const [showDashboard, setShowDashboard] = useState(false);
+  const { metrics, loading: metricsLoading } = useClientMetrics(client.id);
   
-  // Mock data for demonstration - in real app would come from database
-  const clientMetrics = {
-    totalSpent: Math.random() * 5000 + 500,
-    serviceCount: Math.floor(Math.random() * 20) + 1,
-    vehicleCount: Math.floor(Math.random() * 3) + 1,
-    lastService: new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000),
-    score: Math.floor(Math.random() * 100) + 1
+  // Usar métricas reais ou valores padrão durante carregamento
+  const clientMetrics = metrics || {
+    totalSpent: 0,
+    serviceCount: 0,
+    vehicleCount: 0,
+    lastService: null,
+    score: 0
   };
 
   const getClientTier = (score: number) => {

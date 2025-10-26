@@ -3,10 +3,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Wrench, Clock, DollarSign, User, Car, Calendar, CircleCheck as CheckCircle, TriangleAlert as AlertTriangle, Play as PlayCircle, Pause as PauseCircle, FileText, Phone, MessageCircle, TrendingUp, Settings, Circle as XCircle } from "lucide-react";
 import { ServiceOrderActions } from "./ServiceOrderActions";
 import { ServiceOrderDashboard } from "./ServiceOrderDashboard";
 import { ServiceOrderQuickActions } from "./ServiceOrderQuickActions";
+import { useServiceOrderMetrics } from "@/hooks/useServiceOrderMetrics";
 import { formatDate, formatCurrency } from "@/utils/formatters";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { cn } from "@/lib/utils";
@@ -20,15 +22,15 @@ interface ServiceOrderCardProps {
 
 export const ServiceOrderCard = ({ serviceOrder, onUpdate, onQuickAction }: ServiceOrderCardProps) => {
   const [showDashboard, setShowDashboard] = useState(false);
+  const { metrics, loading: metricsLoading } = useServiceOrderMetrics(serviceOrder.id);
   
-  // Mock data for demonstration - in real app would come from database
-  const orderMetrics = {
-    profitMargin: Math.random() * 40 + 20, // 20-60%
-    timeSpent: Math.floor(Math.random() * 480) + 60, // 60-540 minutes
-    estimatedTime: Math.floor(Math.random() * 360) + 120, // 120-480 minutes
-    approvalTime: Math.floor(Math.random() * 48) + 1, // 1-48 hours
-    customerSatisfaction: Math.floor(Math.random() * 30) + 70, // 70-100%
-    complexity: Math.random() > 0.7 ? 'alta' : Math.random() > 0.4 ? 'media' : 'baixa'
+  // Usar métricas reais ou valores padrão durante carregamento
+  const orderMetrics = metrics || {
+    profitMargin: 0,
+    timeSpent: null,
+    estimatedTime: null,
+    approvalTime: null,
+    complexity: 'media' as const
   };
 
   const getStatusConfig = (status: string | null) => {
