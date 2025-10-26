@@ -54,8 +54,26 @@ export const PlanSelector = () => {
   };
 
   const handleSelectPlan = async (planId: string) => {
-    toast.info('Redirecionando para pagamento...');
-    // Aqui será integrado com Stripe na Etapa 4.5
+    try {
+      toast.info('Redirecionando para checkout...', {
+        description: 'Aguarde enquanto preparamos seu checkout.'
+      });
+
+      const { createCheckoutSession } = await import('@/lib/stripe-client');
+      const { url } = await createCheckoutSession({
+        planId,
+        billingCycle
+      });
+
+      if (url) {
+        window.location.href = url;
+      }
+    } catch (error) {
+      console.error('Erro ao criar checkout:', error);
+      toast.error('Erro ao processar pagamento', {
+        description: 'Por favor, tente novamente.'
+      });
+    }
   };
 
   if (loading) {

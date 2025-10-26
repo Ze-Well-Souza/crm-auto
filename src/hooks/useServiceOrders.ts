@@ -2,12 +2,15 @@ import { useState, useEffect } from "react";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { supabase } from "@/integrations/supabase/client";
 import type { ServiceOrder } from "@/types";
+import { useSubscriptionContext } from "@/contexts/SubscriptionContext";
+import { toast } from "sonner";
 
 export const useServiceOrders = () => {
   const [serviceOrders, setServiceOrders] = useState<ServiceOrder[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const notifications = useNotifications();
+  const { hasFeature } = useSubscriptionContext();
 
   const fetchServiceOrders = async () => {
     try {
@@ -50,6 +53,17 @@ export const useServiceOrders = () => {
 
   const createServiceOrder = async (orderData: Omit<ServiceOrder, 'id' | 'created_at' | 'updated_at' | 'clients' | 'vehicles' | 'user_id' | 'order_number'>) => {
     try {
+      // Verificar acesso ao módulo
+      if (!hasFeature('crm_service_orders')) {
+        toast.error('Ordens de Serviço disponíveis no plano Profissional', {
+          action: {
+            label: 'Ver Planos',
+            onClick: () => window.location.href = '/planos'
+          }
+        });
+        return null;
+      }
+
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) {
         throw new Error('Usuário não autenticado');

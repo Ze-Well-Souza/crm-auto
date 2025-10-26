@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import type { Client } from "@/types";
+import { usePlanLimits } from "./usePlanLimits";
 
 export const useClients = () => {
   const [clients, setClients] = useState<Client[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+  const { checkAndIncrement } = usePlanLimits();
 
   const fetchClients = async () => {
     try {
@@ -39,6 +41,13 @@ export const useClients = () => {
 
   const createClient = async (clientData: Omit<Client, 'id' | 'created_at' | 'updated_at' | 'user_id'>) => {
     try {
+      // Verificar limite ANTES de criar
+      const canCreate = await checkAndIncrement('clients', 'clientes');
+      
+      if (!canCreate) {
+        return null;
+      }
+
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) {
         throw new Error('Usuário não autenticado');
