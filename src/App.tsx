@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { CommunicationProvider } from "@/contexts/CommunicationContext";
 import { StripeProvider } from "@/contexts/StripeContext";
+import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import { ThemeTransitionManager } from "@/components/theme/ThemeTransitionManager";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -19,6 +20,7 @@ const Index = lazy(() => import("./pages/Index"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Clientes = lazy(() => import("./pages/Clientes"));
 const Veiculos = lazy(() => import("./pages/Veiculos"));
+const Planos = lazy(() => import("./pages/Planos"));
 const OrdensServico = lazy(() => import("./pages/OrdensServico"));
 const Agendamentos = lazy(() => import("./pages/Agendamentos"));
 const Estoque = lazy(() => import("./pages/Estoque"));
@@ -54,33 +56,36 @@ const App = () => (
           <NotificationProvider>
             <CommunicationProvider>
               <StripeProvider>
-                <ThemeTransitionManager />
-                <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
-                  <Suspense fallback={<PageLoadingFallback />}>
-                  <Routes>
-                    <Route path="/auth" element={<Auth />} />
-                    <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-                    <Route path="/clientes" element={<ProtectedRoute><Clientes /></ProtectedRoute>} />
-                    <Route path="/veiculos" element={<ProtectedRoute><Veiculos /></ProtectedRoute>} />
-                    <Route path="/ordens" element={<ProtectedRoute><OrdensServico /></ProtectedRoute>} />
-                    <Route path="/agendamentos" element={<ProtectedRoute><Agendamentos /></ProtectedRoute>} />
-                    <Route path="/estoque" element={<ProtectedRoute><Estoque /></ProtectedRoute>} />
-                    <Route path="/financeiro" element={<ProtectedRoute><Financeiro /></ProtectedRoute>} />
-                    <Route path="/relatorios" element={<ProtectedRoute><Relatorios /></ProtectedRoute>} />
-                    <Route path="/pagamentos" element={<ProtectedRoute><Pagamentos /></ProtectedRoute>} />
-                    <Route path="/parceiros" element={<ProtectedRoute><Parceiros /></ProtectedRoute>} />
-                    <Route path="/comunicacao" element={<ProtectedRoute><Comunicacao /></ProtectedRoute>} />
-                    <Route path="/biblioteca-imagens" element={<ProtectedRoute><ImageLibrary /></ProtectedRoute>} />
-                    <Route path="/install" element={<InstallPWA />} />
-                    <Route path="/configuracoes" element={<ProtectedRoute><Configuracoes /></ProtectedRoute>} />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </Suspense>
-              </BrowserRouter>
-                </TooltipProvider>
+                <SubscriptionProvider>
+                  <ThemeTransitionManager />
+                  <Toaster />
+                  <Sonner />
+                  <TooltipProvider>
+                    <BrowserRouter>
+                      <Suspense fallback={<PageLoadingFallback />}>
+                        <Routes>
+                          <Route path="/auth" element={<Auth />} />
+                          <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+                          <Route path="/clientes" element={<ProtectedRoute><Clientes /></ProtectedRoute>} />
+                          <Route path="/veiculos" element={<ProtectedRoute><Veiculos /></ProtectedRoute>} />
+                          <Route path="/planos" element={<ProtectedRoute><Planos /></ProtectedRoute>} />
+                          <Route path="/ordens" element={<ProtectedRoute><OrdensServico /></ProtectedRoute>} />
+                          <Route path="/agendamentos" element={<ProtectedRoute><Agendamentos /></ProtectedRoute>} />
+                          <Route path="/estoque" element={<ProtectedRoute><Estoque /></ProtectedRoute>} />
+                          <Route path="/financeiro" element={<ProtectedRoute><Financeiro /></ProtectedRoute>} />
+                          <Route path="/relatorios" element={<ProtectedRoute><Relatorios /></ProtectedRoute>} />
+                          <Route path="/pagamentos" element={<ProtectedRoute><Pagamentos /></ProtectedRoute>} />
+                          <Route path="/parceiros" element={<ProtectedRoute><Parceiros /></ProtectedRoute>} />
+                          <Route path="/comunicacao" element={<ProtectedRoute><Comunicacao /></ProtectedRoute>} />
+                          <Route path="/biblioteca-imagens" element={<ProtectedRoute><ImageLibrary /></ProtectedRoute>} />
+                          <Route path="/install" element={<InstallPWA />} />
+                          <Route path="/configuracoes" element={<ProtectedRoute><Configuracoes /></ProtectedRoute>} />
+                          <Route path="*" element={<NotFound />} />
+                        </Routes>
+                      </Suspense>
+                    </BrowserRouter>
+                  </TooltipProvider>
+                </SubscriptionProvider>
               </StripeProvider>
             </CommunicationProvider>
           </NotificationProvider>

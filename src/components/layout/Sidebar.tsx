@@ -11,13 +11,15 @@ import {
   Home,
   CreditCard,
   Store,
-  Image
+  Image,
+  Crown
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: Home, current: true, color: "blue" },
+  { name: "Planos", href: "/planos", icon: Crown, current: false, color: "violet" },
   { name: "Clientes", href: "/clientes", icon: Users, current: false, color: "emerald" },
   { name: "Veículos", href: "/veiculos", icon: Car, current: false, color: "purple" },
   { name: "Ordens de Serviço", href: "/ordens", icon: Wrench, current: false, color: "orange" },
@@ -98,6 +100,11 @@ const getColorClasses = (color: string, isActive: boolean) => {
       active: "bg-gradient-to-r from-rose-500/20 to-rose-600/10 text-rose-600 border-rose-500/30 shadow-rose-500/20",
       icon: "text-rose-600",
       indicator: "bg-gradient-to-b from-rose-500 to-rose-600"
+    },
+    violet: {
+      active: "bg-gradient-to-r from-violet-500/20 to-violet-600/10 text-violet-600 border-violet-500/30 shadow-violet-500/20",
+      icon: "text-violet-600",
+      indicator: "bg-gradient-to-b from-violet-500 to-violet-600"
     }
   };
 
