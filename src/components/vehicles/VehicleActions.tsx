@@ -20,7 +20,7 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MoveHorizontal as MoreHorizontal, CreditCard as Edit, Trash2, Eye, Calendar, Wrench, FileText, TriangleAlert as AlertTriangle, Download } from "lucide-react";
 import { VehicleForm } from "./VehicleForm";
-import { useToast } from "@/hooks/use-toast";
+import { useVehicles } from "@/hooks/useVehicles";
 import type { Vehicle } from "@/types";
 
 interface VehicleActionsProps {
@@ -32,28 +32,17 @@ export const VehicleActions = ({ vehicle, onUpdate }: VehicleActionsProps) => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
+  const { deleteVehicle } = useVehicles();
 
   const handleDelete = async () => {
     setLoading(true);
     
     try {
-      // Mock delete - in real app would delete from database
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const success = await deleteVehicle(vehicle.id);
       
-      toast({
-        title: "Veículo excluído",
-        description: `${vehicle.brand} ${vehicle.model} foi excluído com sucesso.`,
-      });
-      
-      onUpdate();
-    } catch (err) {
-      console.error('Erro ao excluir veículo:', err);
-      toast({
-        title: "Erro",
-        description: "Erro inesperado. Tente novamente.",
-        variant: "destructive",
-      });
+      if (success) {
+        onUpdate();
+      }
     } finally {
       setLoading(false);
       setIsDeleteDialogOpen(false);
@@ -61,34 +50,22 @@ export const VehicleActions = ({ vehicle, onUpdate }: VehicleActionsProps) => {
   };
 
   const handleScheduleService = () => {
-    toast({
-      title: "Agendamento",
-      description: "Redirecionando para agendamento de serviço...",
-    });
+    console.log('Scheduling service for vehicle:', vehicle.id);
     // In real app would navigate to appointment form with vehicle pre-selected
   };
 
   const handleCreateServiceOrder = () => {
-    toast({
-      title: "Nova Ordem",
-      description: "Criando nova ordem de serviço...",
-    });
+    console.log('Creating service order for vehicle:', vehicle.id);
     // In real app would navigate to service order form with vehicle pre-selected
   };
 
   const handleViewHistory = () => {
-    toast({
-      title: "Histórico",
-      description: "Carregando histórico de manutenção...",
-    });
+    console.log('Viewing history for vehicle:', vehicle.id);
     // In real app would show maintenance history
   };
 
   const handleExportReport = () => {
-    toast({
-      title: "Relatório",
-      description: "Gerando relatório do veículo...",
-    });
+    console.log('Exporting report for vehicle:', vehicle.id);
     // In real app would generate PDF report
   };
 

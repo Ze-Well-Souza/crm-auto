@@ -78,6 +78,66 @@ export const useVehicles = () => {
     }
   };
 
+  const updateVehicle = async (id: string, vehicleData: Partial<Vehicle>) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        throw new Error('Usuário não autenticado');
+      }
+
+      const { data, error: updateError } = await supabase
+        .from('vehicles')
+        .update(vehicleData)
+        .eq('id', id)
+        .eq('user_id', session.user.id)
+        .select(`
+          *,
+          clients:client_id (
+            name,
+            email
+          )
+        `)
+        .single();
+
+      if (updateError) throw updateError;
+
+      notifications.showUpdateSuccess("Veículo");
+
+      await fetchVehicles();
+      return data;
+    } catch (err: any) {
+      console.error('Erro ao atualizar veículo:', err);
+      notifications.showOperationError("atualizar", "veículo");
+      return null;
+    }
+  };
+
+  const deleteVehicle = async (id: string) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        throw new Error('Usuário não autenticado');
+      }
+
+      const { error: deleteError } = await supabase
+        .from('vehicles')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', session.user.id);
+
+      if (deleteError) throw deleteError;
+
+      notifications.showDeleteSuccess("Veículo");
+
+      await fetchVehicles();
+      return true;
+    } catch (err: any) {
+      console.error('Erro ao excluir veículo:', err);
+      notifications.showOperationError("excluir", "veículo");
+      return false;
+    }
+  };
+
   useEffect(() => {
     fetchVehicles();
   }, []);
@@ -87,6 +147,8 @@ export const useVehicles = () => {
     loading,
     error,
     createVehicle,
+    updateVehicle,
+    deleteVehicle,
     refetch: fetchVehicles
   };
 };

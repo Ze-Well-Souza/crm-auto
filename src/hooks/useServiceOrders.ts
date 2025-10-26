@@ -88,6 +88,110 @@ export const useServiceOrders = () => {
     }
   };
 
+  const updateServiceOrder = async (id: string, orderData: Partial<ServiceOrder>) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        throw new Error('Usuário não autenticado');
+      }
+
+      const { data, error: updateError } = await supabase
+        .from('service_orders')
+        .update(orderData)
+        .eq('id', id)
+        .eq('user_id', session.user.id)
+        .select(`
+          *,
+          clients:client_id (
+            name,
+            email
+          ),
+          vehicles:vehicle_id (
+            brand,
+            model,
+            license_plate
+          )
+        `)
+        .single();
+
+      if (updateError) throw updateError;
+
+      notifications.showUpdateSuccess("Ordem de serviço");
+
+      await fetchServiceOrders();
+      return data;
+    } catch (err: any) {
+      console.error('Erro ao atualizar ordem de serviço:', err);
+      notifications.showOperationError("atualizar", "ordem de serviço");
+      return null;
+    }
+  };
+
+  const updateStatus = async (id: string, newStatus: string) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        throw new Error('Usuário não autenticado');
+      }
+
+      const { data, error: updateError } = await supabase
+        .from('service_orders')
+        .update({ status: newStatus })
+        .eq('id', id)
+        .eq('user_id', session.user.id)
+        .select(`
+          *,
+          clients:client_id (
+            name,
+            email
+          ),
+          vehicles:vehicle_id (
+            brand,
+            model,
+            license_plate
+          )
+        `)
+        .single();
+
+      if (updateError) throw updateError;
+
+      notifications.showUpdateSuccess("Status");
+
+      await fetchServiceOrders();
+      return data;
+    } catch (err: any) {
+      console.error('Erro ao atualizar status:', err);
+      notifications.showOperationError("atualizar", "status");
+      return null;
+    }
+  };
+
+  const deleteServiceOrder = async (id: string) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        throw new Error('Usuário não autenticado');
+      }
+
+      const { error: deleteError } = await supabase
+        .from('service_orders')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', session.user.id);
+
+      if (deleteError) throw deleteError;
+
+      notifications.showDeleteSuccess("Ordem de serviço");
+
+      await fetchServiceOrders();
+      return true;
+    } catch (err: any) {
+      console.error('Erro ao excluir ordem de serviço:', err);
+      notifications.showOperationError("excluir", "ordem de serviço");
+      return false;
+    }
+  };
+
   useEffect(() => {
     fetchServiceOrders();
   }, []);
@@ -97,6 +201,9 @@ export const useServiceOrders = () => {
     loading,
     error,
     createServiceOrder,
+    updateServiceOrder,
+    updateStatus,
+    deleteServiceOrder,
     refetch: fetchServiceOrders
   };
 };

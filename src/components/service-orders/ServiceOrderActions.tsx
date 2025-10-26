@@ -20,7 +20,7 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MoveHorizontal as MoreHorizontal, CreditCard as Edit, Trash2, Eye, CircleCheck as CheckCircle, Play as PlayCircle, Pause as PauseCircle, Circle as XCircle, FileText, Download, Send, Clock } from "lucide-react";
 import { ServiceOrderForm } from "./ServiceOrderForm";
-import { useToast } from "@/hooks/use-toast";
+import { useServiceOrders } from "@/hooks/useServiceOrders";
 import type { ServiceOrder } from "@/types";
 
 interface ServiceOrderActionsProps {
@@ -32,28 +32,17 @@ export const ServiceOrderActions = ({ serviceOrder, onUpdate }: ServiceOrderActi
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
+  const { deleteServiceOrder, updateStatus } = useServiceOrders();
 
   const handleDelete = async () => {
     setLoading(true);
     
     try {
-      // Mock delete - in real app would delete from database
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const success = await deleteServiceOrder(serviceOrder.id);
       
-      toast({
-        title: "Ordem excluída",
-        description: `Ordem ${serviceOrder.order_number} foi excluída com sucesso.`,
-      });
-      
-      onUpdate();
-    } catch (err) {
-      console.error('Erro ao excluir ordem:', err);
-      toast({
-        title: "Erro",
-        description: "Erro inesperado. Tente novamente.",
-        variant: "destructive",
-      });
+      if (success) {
+        onUpdate();
+      }
     } finally {
       setLoading(false);
       setIsDeleteDialogOpen(false);
@@ -62,39 +51,24 @@ export const ServiceOrderActions = ({ serviceOrder, onUpdate }: ServiceOrderActi
 
   const handleStatusChange = async (newStatus: string) => {
     try {
-      // Mock status update - in real app would update database
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const result = await updateStatus(serviceOrder.id, newStatus);
       
-      toast({
-        title: "Status atualizado",
-        description: `Ordem ${serviceOrder.order_number} marcada como ${newStatus}.`,
-      });
-      
-      onUpdate();
+      if (result) {
+        onUpdate();
+      }
     } catch (err) {
       console.error('Erro ao atualizar status:', err);
-      toast({
-        title: "Erro",
-        description: "Erro ao atualizar status.",
-        variant: "destructive",
-      });
     }
   };
 
   const handleGenerateInvoice = () => {
-    toast({
-      title: "Fatura gerada",
-      description: "Fatura da ordem de serviço foi gerada com sucesso.",
-    });
     // In real app would generate PDF invoice
+    console.log('Generating invoice for order:', serviceOrder.order_number);
   };
 
   const handleSendToClient = () => {
-    toast({
-      title: "Enviado para cliente",
-      description: "Orçamento enviado por email para o cliente.",
-    });
     // In real app would send email with order details
+    console.log('Sending order to client:', serviceOrder.order_number);
   };
 
   const canApprove = serviceOrder.status === 'orcamento';

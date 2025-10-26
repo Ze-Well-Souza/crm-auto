@@ -73,6 +73,74 @@ export const useClients = () => {
     }
   };
 
+  const updateClient = async (id: string, clientData: Partial<Client>) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        throw new Error('Usuário não autenticado');
+      }
+
+      const { data, error: updateError } = await supabase
+        .from('clients')
+        .update(clientData)
+        .eq('id', id)
+        .eq('user_id', session.user.id)
+        .select()
+        .single();
+
+      if (updateError) throw updateError;
+
+      toast({
+        title: "Cliente atualizado com sucesso",
+        description: `${data.name} foi atualizado.`,
+      });
+
+      await fetchClients();
+      return data;
+    } catch (err: any) {
+      console.error('Erro ao atualizar cliente:', err);
+      toast({
+        title: "Erro ao atualizar cliente",
+        description: err.message || "Não foi possível atualizar o cliente.",
+        variant: "destructive",
+      });
+      return null;
+    }
+  };
+
+  const deleteClient = async (id: string) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        throw new Error('Usuário não autenticado');
+      }
+
+      const { error: deleteError } = await supabase
+        .from('clients')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', session.user.id);
+
+      if (deleteError) throw deleteError;
+
+      toast({
+        title: "Cliente excluído com sucesso",
+        description: "O cliente foi removido do sistema.",
+      });
+
+      await fetchClients();
+      return true;
+    } catch (err: any) {
+      console.error('Erro ao excluir cliente:', err);
+      toast({
+        title: "Erro ao excluir cliente",
+        description: err.message || "Não foi possível excluir o cliente.",
+        variant: "destructive",
+      });
+      return false;
+    }
+  };
+
   useEffect(() => {
     fetchClients();
   }, []);
@@ -82,6 +150,8 @@ export const useClients = () => {
     loading,
     error,
     createClient,
+    updateClient,
+    deleteClient,
     refetch: fetchClients
   };
 };

@@ -19,9 +19,12 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MoreHorizontal, Edit, Trash2, Eye } from "lucide-react";
 import { ClientForm } from "./ClientForm";
-import { supabase } from "@/integrations/supabase/client";
-import { useNotifications } from "@/contexts/NotificationContext";
-import { useZodFormValidation } from "@/hooks/useZodValidation";
+import { useClients } from "@/hooks/useClients";
+import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useZodValidation } from "@/hooks/useZodValidation";
 import { updateClientSchema } from "@/schemas/client.schema";
 
 interface Client {
@@ -46,27 +49,17 @@ export const ClientActions = ({ client, onUpdate }: ClientActionsProps) => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const notifications = useNotifications();
+  const { deleteClient } = useClients();
 
   const handleDelete = async () => {
     setLoading(true);
     
     try {
-      const { error } = await supabase
-        .from('clients_deprecated')
-        .delete()
-        .eq('id', client.id);
-
-      if (error) {
-        console.error('Erro ao excluir cliente:', error);
-        notifications.showOperationError("Excluir", "cliente", error.message);
-      } else {
-        notifications.showDeleteSuccess("Cliente");
+      const success = await deleteClient(client.id);
+      
+      if (success) {
         onUpdate();
       }
-    } catch (err) {
-      console.error('Erro ao excluir cliente:', err);
-      notifications.showOperationError("Excluir", "cliente", "Erro inesperado");
     } finally {
       setLoading(false);
       setIsDeleteDialogOpen(false);
@@ -142,7 +135,7 @@ export const ClientActions = ({ client, onUpdate }: ClientActionsProps) => {
 // Formulário de edição do cliente
 const ClientEditForm = ({ client, onSuccess }: { client: Client; onSuccess: () => void }) => {
   const [loading, setLoading] = useState(false);
-  const notifications = useNotifications();
+  const { updateClient } = useClients();
 
   const [formData, setFormData] = useState({
     name: client.name || "",
@@ -156,7 +149,7 @@ const ClientEditForm = ({ client, onSuccess }: { client: Client; onSuccess: () =
     notes: client.notes || ""
   });
 
-  const { validate, validateField, errors, clearErrors } = useZodFormValidation(updateClientSchema);
+  const { validate, validateField, errors, clearErrors } = useZodValidation(updateClientSchema);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -170,29 +163,23 @@ const ClientEditForm = ({ client, onSuccess }: { client: Client; onSuccess: () =
         return;
       }
 
-      const { error } = await supabase
-        .from('clients')
-        .update({
-          name: validationResult.data.name,
-          email: validationResult.data.email || null,
-          phone: validationResult.data.phone || null,
-          cpf_cnpj: validationResult.data.cpf_cnpj || null,
-          address: validationResult.data.address || null,
-          city: validationResult.data.city || null,
-          state: validationResult.data.state || null,
-          zip_code: validationResult.data.zip_code || null,
-          notes: validationResult.data.notes || null,
-        })
-        .eq('id', client.id);
+      const result = await updateClient(client.id, {
+        name: validationResult.data.name,
+        email: validationResult.data.email || null,
+        phone: validationResult.data.phone || null,
+        cpf_cnpj: validationResult.data.cpf_cnpj || null,
+        address: validationResult.data.address || null,
+        city: validationResult.data.city || null,
+        state: validationResult.data.state || null,
+        zip_code: validationResult.data.zip_code || null,
+        notes: validationResult.data.notes || null,
+      });
 
-      if (error) {
-        throw error;
+      if (result) {
+        onSuccess();
       }
-
-      notifications.showUpdateSuccess("Cliente");
-      onSuccess();
     } catch (error) {
-      notifications.showOperationError("atualizar cliente", error);
+      console.error('Error updating client:', error);
     } finally {
       setLoading(false);
     }
