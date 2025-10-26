@@ -59,23 +59,23 @@ const App = () => (
               <Toaster />
               <Sonner />
               <BrowserRouter>
-                <Suspense fallback={<PageLoadingFallback />}>
+                  <Suspense fallback={<PageLoadingFallback />}>
                   <Routes>
                     <Route path="/auth" element={<Auth />} />
-                    <Route path="/" element={<Index />} />
-                    <Route path="/clientes" element={<Clientes />} />
-                    <Route path="/veiculos" element={<Veiculos />} />
-                    <Route path="/ordens" element={<OrdensServico />} />
-                    <Route path="/agendamentos" element={<Agendamentos />} />
-                    <Route path="/estoque" element={<Estoque />} />
-                    <Route path="/financeiro" element={<Financeiro />} />
-                    <Route path="/relatorios" element={<Relatorios />} />
-                    <Route path="/pagamentos" element={<Pagamentos />} />
-                    <Route path="/parceiros" element={<Parceiros />} />
-                    <Route path="/comunicacao" element={<Comunicacao />} />
-                    <Route path="/biblioteca-imagens" element={<ImageLibrary />} />
+                    <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+                    <Route path="/clientes" element={<ProtectedRoute><Clientes /></ProtectedRoute>} />
+                    <Route path="/veiculos" element={<ProtectedRoute><Veiculos /></ProtectedRoute>} />
+                    <Route path="/ordens" element={<ProtectedRoute><OrdensServico /></ProtectedRoute>} />
+                    <Route path="/agendamentos" element={<ProtectedRoute><Agendamentos /></ProtectedRoute>} />
+                    <Route path="/estoque" element={<ProtectedRoute><Estoque /></ProtectedRoute>} />
+                    <Route path="/financeiro" element={<ProtectedRoute><Financeiro /></ProtectedRoute>} />
+                    <Route path="/relatorios" element={<ProtectedRoute><Relatorios /></ProtectedRoute>} />
+                    <Route path="/pagamentos" element={<ProtectedRoute><Pagamentos /></ProtectedRoute>} />
+                    <Route path="/parceiros" element={<ProtectedRoute><Parceiros /></ProtectedRoute>} />
+                    <Route path="/comunicacao" element={<ProtectedRoute><Comunicacao /></ProtectedRoute>} />
+                    <Route path="/biblioteca-imagens" element={<ProtectedRoute><ImageLibrary /></ProtectedRoute>} />
                     <Route path="/install" element={<InstallPWA />} />
-                    <Route path="/configuracoes" element={<Configuracoes />} />
+                    <Route path="/configuracoes" element={<ProtectedRoute><Configuracoes /></ProtectedRoute>} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
