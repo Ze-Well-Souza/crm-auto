@@ -1,1221 +1,174 @@
-# 🚀 PLANO COMPLETO DE DESENVOLVIMENTO - CRM PARCEIRO
+# 🔍 AUDITORIA COMPLETA DO SISTEMA CRM - PLANO DE IMPLEMENTAÇÃO
 
-**Data de Criação:** 25/09/2025  
-**Versão do Plano:** 2.0.0  
-**Metodologia:** Desenvolvimento Assíncrono por Fases  
-**Tecnologias:** React 18, TypeScript, Vite, Tailwind CSS, Supabase  
+## 📊 RESUMO EXECUTIVO
 
----
+### ✅ O QUE JÁ FUNCIONA (85%)
+- Autenticação Supabase + RLS
+- CRUD completo: Clientes, Veículos, Ordens, Agendamentos, Financeiro, Estoque
+- Sistema de Planos com Stripe (hooks, componentes, edge functions)
+- Sidebar inteligente com proteção de features
 
-## 📋 ÍNDICE DE EXECUÇÃO
-
-- [FASE 1: ARQUITETURA](#fase-1-arquitetura) ⏱️ 8h
-- [FASE 2: COMPONENTES PRINCIPAIS](#fase-2-componentes-principais) ⏱️ 12h  
-- [FASE 3: FUNCIONALIDADES BÁSICAS](#fase-3-funcionalidades-básicas) ⏱️ 16h
-- [FASE 4: APRIMORAMENTOS](#fase-4-aprimoramentos) ⏱️ 24h
-- [GESTÃO DE RISCOS](#gestão-de-riscos)
-- [PRÉ-REQUISITOS TÉCNICOS](#pré-requisitos-técnicos)
-- [MÉTRICAS DE QUALIDADE](#métricas-de-qualidade)
-
-**⏱️ TEMPO TOTAL ESTIMADO:** 60 horas de desenvolvimento
+### ❌ PROBLEMAS CRÍTICOS
+1. **Parceiros/Pedidos**: Ainda usam mock (localStorage)
+2. **Sistema de Planos**: Trial automático não funciona, campos desalinhados
+3. **Comunicação**: WhatsApp/Email sem integração real
+4. **Tabelas Duplicadas**: agendamentos, pagamentos, usuarios
+5. **Relatórios**: Exportação apenas mock
 
 ---
 
-## 🏗️ FASE 1: ARQUITETURA
+## 🎯 PLANO DE IMPLEMENTAÇÃO (34-44h)
 
-### **Objetivo:** Estabelecer base sólida e corrigir problemas estruturais críticos
+### SPRINT 1: Sistema de Planos (6-8h) 🔥 CRÍTICO
+- Alinhar useSubscription.ts com campos do banco
+- Criar trigger para trial automático (14 dias)
+- Implementar verificação de limites em todos os hooks
 
-#### **1.1 Limpeza de Código Deprecated**
-- **Descrição:** Remover hooks antigos e referências obsoletas
-- **Prioridade:** 🔴 **ALTA**
-- **Problema:** 🟡 **MÉDIO** - Inconsistências na base de código
-- **Dependências:** Nenhuma
-- **Tempo:** 2h
+### SPRINT 2: Parceiros/Pedidos Real (8-10h) 🔥 ALTA
+- Criar usePartnersNew.ts com Supabase
+- Criar useMarketplaceOrdersNew.ts
+- Deletar hooks mock antigos
 
-**Tarefas Específicas:**
-```typescript
-// Remover hooks deprecated
-- useAppointments.ts (substituído por useAppointmentsNew.ts)
-- useFinancialTransactions.ts (substituído por useFinancialTransactionsNew.ts)
-- useParts.ts (substituído por usePartsNew.ts)
+### SPRINT 3: Comunicação Real (10-12h) 🟡 MÉDIA
+- Configurar SMTP para emails
+- Integrar WhatsApp Business API
+- Chat interno com realtime
+- Push notifications
 
-// Corrigir referências em componentes
-- ServiceOrderForm.tsx: service_orders_deprecated → service_orders
-- Todos os imports de hooks antigos
-```
+### SPRINT 4: Limpar Duplicadas (2-3h) 🟢 BAIXA
+- Migrar dados se necessário
+- Dropar tabelas: agendamentos, pagamentos, usuarios, sessions
 
-**Critérios de Aceitação:**
-- ✅ Zero referências a hooks deprecated
-- ✅ Todos os componentes usam hooks atualizados
-- ✅ Build sem warnings de imports não utilizados
+### SPRINT 5: Relatórios Reais (6-8h) 🟢 BAIXA
+- Implementar exportação PDF/Excel/CSV real
+- Analytics com dados do Supabase
 
-#### **1.2 Padronização de Estados**
-- **Descrição:** Unificar tratamento de loading, error e success
-- **Prioridade:** 🔴 **ALTA**
-- **Problema:** 🟡 **MÉDIO** - UX inconsistente
-- **Dependências:** 1.1
-- **Tempo:** 3h
-
-**Implementação:**
-```typescript
-// Criar hook padrão para estados
-interface AsyncState<T> {
-  data: T | null;
-  loading: boolean;
-  error: string | null;
-  success: boolean;
-}
-
-// Aplicar em todos os hooks customizados
-const useStandardState = <T>() => {
-  const [state, setState] = useState<AsyncState<T>>({
-    data: null,
-    loading: false,
-    error: null,
-    success: false
-  });
-  // ... lógica padrão
-};
-```
-
-#### **1.3 Configuração de Error Boundaries**
-- **Descrição:** Implementar tratamento robusto de erros
-- **Prioridade:** 🟠 **MÉDIA**
-- **Problema:** 🔴 **GRAVE** - App pode quebrar sem aviso
-- **Dependências:** 1.2
-- **Tempo:** 3h
-
-**Execução Paralela Possível:** ✅ Pode ser desenvolvido em paralelo com 1.1 e 1.2
+### SPRINT 6: Stripe Produção (2-3h) 🔥 CRÍTICO
+- Configurar secrets live
+- Criar produtos no Stripe
+- Testar checkout + webhooks
 
 ---
 
-## 🧩 FASE 2: COMPONENTES PRINCIPAIS
+## 🛍️ INTEGRAÇÃO COM MARKETPLACE
 
-### **Objetivo:** Corrigir componentes críticos e integrar formulários
+### Visão Geral
+Este CRM é um produto white-label integrado em um marketplace maior.
 
-#### **2.1 Correção do Módulo Agendamentos**
-- **Descrição:** Integrar AppointmentForm e corrigir filtros
-- **Prioridade:** 🔴 **ALTA**
-- **Problema:** 🔴 **GRAVE** - Módulo completamente inoperante
-- **Dependências:** 1.1, 1.2
-- **Tempo:** 4h
-
-**Implementação Detalhada:**
-```typescript
-// Agendamentos.tsx - Linha 97-100
-const [showForm, setShowForm] = useState(false);
-
-// Botão de criação
-<Button className="shadow-primary" onClick={() => setShowForm(true)}>
-  <Plus className="mr-2 h-4 w-4" />
-  Novo Agendamento
-</Button>
-
-// Modal integrado
-<AppointmentForm
-  open={showForm}
-  onOpenChange={setShowForm}
-  onSuccess={() => {
-    refetch();
-    setShowForm(false);
-    toast.success("Agendamento criado com sucesso!");
-  }}
-/>
-
-// Correção de filtros
-const filteredAppointments = appointments?.filter(appointment => {
-  const matchesSearch = appointment.clients?.name
-    .toLowerCase().includes(searchTerm.toLowerCase()) ||
-    appointment.service_type.toLowerCase().includes(searchTerm.toLowerCase());
-  
-  const matchesStatus = statusFilter === 'all' || 
-    appointment.status === statusFilter;
-    
-  return matchesSearch && matchesStatus;
-});
+### Fluxo de Cadastro
+```
+1. Cliente acessa: marketplace.com/produtos/crm
+2. Escolhe: Plano Profissional (R$ 249/mês)
+3. Clica: "Começar trial grátis"
+4. Redireciona: crm.marketplace.com/auth?plan=profissional
+5. Cria conta → Trigger cria trial de 14 dias automaticamente
+6. Acessa dashboard com todos os módulos liberados
 ```
 
-**Critérios de Aceitação:**
-- ✅ Formulário abre e fecha corretamente
-- ✅ Dados são salvos no Supabase
-- ✅ Lista atualiza automaticamente
-- ✅ Filtros funcionam corretamente
-- ✅ Validação de campos obrigatórios
+### URLs de Integração
+- **Página pública**: `/pricing` (exibir planos)
+- **Cadastro com plano**: `/auth?plan=profissional&source=marketplace`
+- **SSO**: `/sso?token=JWT_MARKETPLACE` (a implementar)
 
-#### **2.2 Correção do Módulo Estoque**
-- **Descrição:** Integrar PartsForm e criar dados de exemplo
-- **Prioridade:** 🔴 **ALTA**
-- **Problema:** 🔴 **GRAVE** - Módulo sem dados funcionais
-- **Dependências:** 1.1, 1.2
-- **Tempo:** 4h
+### Parâmetros Suportados
+- `plan`: basico | profissional | enterprise
+- `source`: marketplace | organico | referral
+- `trial`: true | false
 
-**Execução Paralela:** ✅ Pode ser desenvolvido simultaneamente com 2.1
-
-**Dados Mock Necessários:**
+### Trial Automático (14 dias)
 ```sql
--- Fornecedores
-INSERT INTO suppliers (id, name, contact_name, email, phone, address, active) VALUES
-('sup-001', 'AutoPeças Brasil', 'Carlos Silva', 'carlos@autopecas.com', '(11) 99999-0001', 'Rua das Peças, 123', true),
-('sup-002', 'Distribuidora XYZ', 'Maria Santos', 'maria@xyz.com', '(11) 99999-0002', 'Av. Industrial, 456', true),
-('sup-003', 'Peças Premium', 'João Oliveira', 'joao@premium.com', '(11) 99999-0003', 'Rua Premium, 789', true);
-
--- Peças
-INSERT INTO parts (code, name, category, brand, cost_price, sale_price, stock_quantity, min_stock, supplier_id) VALUES
-('FO001', 'Filtro de Óleo Motor', 'Filtros', 'Tecfil', 15.00, 25.00, 50, 10, 'sup-001'),
-('PA001', 'Pastilha de Freio Dianteira', 'Freios', 'Fras-le', 45.00, 75.00, 20, 5, 'sup-001'),
-('AM001', 'Amortecedor Traseiro', 'Suspensão', 'Monroe', 120.00, 200.00, 15, 3, 'sup-002'),
-('VE001', 'Vela de Ignição', 'Motor', 'NGK', 8.00, 15.00, 100, 20, 'sup-003'),
-('CO001', 'Correia Dentada', 'Motor', 'Gates', 35.00, 60.00, 25, 5, 'sup-002');
+-- Trigger no Supabase (a implementar)
+CREATE TRIGGER on_user_created_trial
+  AFTER INSERT ON auth.users
+  FOR EACH ROW
+  EXECUTE FUNCTION create_trial_subscription();
 ```
 
-#### **2.3 Correção do Módulo Financeiro**
-- **Descrição:** Integrar TransactionForm e métodos de pagamento
-- **Prioridade:** 🔴 **ALTA**
-- **Problema:** 🔴 **GRAVE** - Módulo sem funcionalidade
-- **Dependências:** 1.1, 1.2
-- **Tempo:** 4h
+### Timeline do Trial
+- **Dia 1**: Trial ativo (14 dias)
+- **Dia 7**: Notificação "7 dias restantes"
+- **Dia 12**: Alerta "Escolha seu plano"
+- **Dia 14**: Status → 'expired', acesso bloqueado
+- **Dia 15+**: Redireciona para /planos
 
-**Execução Paralela:** ✅ Pode ser desenvolvido simultaneamente com 2.1 e 2.2
-
-**Dados Mock Necessários:**
-```sql
--- Métodos de Pagamento
-INSERT INTO payment_methods (id, name, type, active, fee_percentage) VALUES
-('pm-001', 'Dinheiro', 'cash', true, 0.00),
-('pm-002', 'PIX', 'pix', true, 0.00),
-('pm-003', 'Cartão de Débito', 'debit_card', true, 1.50),
-('pm-004', 'Cartão de Crédito', 'credit_card', true, 3.50),
-('pm-005', 'Boleto Bancário', 'bank_slip', true, 2.00);
-
--- Transações de Exemplo
-INSERT INTO financial_transactions (type, description, amount, status, payment_method_id, client_id, service_order_id, created_at) VALUES
-('receita', 'Troca de óleo - Cliente João Silva', 150.00, 'pago', 'pm-001', 'cli-001', 'so-001', '2024-01-15'),
-('receita', 'Revisão completa - Cliente Maria', 450.00, 'pago', 'pm-002', 'cli-002', 'so-002', '2024-01-16'),
-('despesa', 'Compra de filtros - Fornecedor ABC', 300.00, 'pago', 'pm-003', null, null, '2024-01-17'),
-('receita', 'Troca de pastilhas - Cliente Pedro', 180.00, 'pendente', 'pm-004', 'cli-003', 'so-003', '2024-01-18');
-```
-
----
-
-## ⚙️ FASE 3: FUNCIONALIDADES BÁSICAS
-
-### **Objetivo:** Implementar funcionalidades essenciais para operação completa
-
-#### **3.1 Sistema de Notificações**
-- **Descrição:** Implementar toast notifications padronizadas
-- **Prioridade:** 🟠 **MÉDIA**
-- **Problema:** 🟡 **MÉDIO** - Feedback limitado ao usuário
-- **Dependências:** 2.1, 2.2, 2.3
-- **Tempo:** 3h
-
-**Implementação:**
+### API para Marketplace
 ```typescript
-// Criar contexto de notificações
-interface NotificationContext {
-  showSuccess: (message: string) => void;
-  showError: (message: string) => void;
-  showWarning: (message: string) => void;
-  showInfo: (message: string) => void;
-}
+// Endpoint de métricas (a implementar)
+GET /api/marketplace/metrics
+Headers: x-api-key: MARKETPLACE_API_KEY
+Body: { user_id: "uuid" }
 
-// Integrar em todas as operações CRUD
-const handleCreate = async (data) => {
-  try {
-    await createRecord(data);
-    showSuccess("Registro criado com sucesso!");
-  } catch (error) {
-    showError("Erro ao criar registro: " + error.message);
+Response: {
+  plan: "profissional",
+  status: "trial",
+  trial_days_remaining: 10,
+  usage: {
+    clients: { current: 45, limit: 1000 },
+    appointments: { current: 120, limit: 500 }
   }
+}
+```
+
+### Webhooks Marketplace → CRM
+- `subscription.created`: Cria assinatura no CRM
+- `subscription.updated`: Atualiza plano
+- `subscription.cancelled`: Cancela assinatura
+
+### Opções de Integração
+
+**Opção A: Iframe**
+```html
+<iframe src="https://crm.marketplace.com?token=JWT" />
+```
+
+**Opção B: SSO (Recomendado)**
+```
+marketplace.com → gera JWT → crm.com/sso?token=JWT
+→ valida token → login automático
+```
+
+### White-Label
+```typescript
+// src/config/marketplace.ts
+export const marketplaceConfig = {
+  name: 'Seu Marketplace',
+  logo: 'https://marketplace.com/logo.png',
+  primaryColor: '#3B82F6',
+  supportEmail: 'suporte@marketplace.com'
 };
 ```
 
-#### **3.2 Validação Avançada de Formulários**
-- **Descrição:** Implementar validação robusta com Zod
-- **Prioridade:** 🟠 **MÉDIA**
-- **Problema:** 🟡 **MÉDIO** - Dados inconsistentes
-- **Dependências:** 2.1, 2.2, 2.3
-- **Tempo:** 4h
+---
 
-**Execução Paralela:** ✅ Pode ser desenvolvido simultaneamente com 3.1
+## ✅ CHECKLIST DE INTEGRAÇÃO
 
-#### **3.3 Sistema de Busca Avançada**
-- **Descrição:** Implementar busca full-text e filtros múltiplos
-- **Prioridade:** 🟠 **MÉDIA**
-- **Problema:** 🟡 **MÉDIO** - Dificuldade para encontrar registros
-- **Dependências:** 3.1
-- **Tempo:** 5h
+### Para o Marketplace
+- [ ] Adicionar CRM no catálogo
+- [ ] Criar página com planos
+- [ ] Configurar redirect: `/auth?plan=X`
+- [ ] Implementar SSO (opcional)
+- [ ] Configurar webhooks (opcional)
+- [ ] Adicionar iframe no portal do cliente
 
-#### **3.4 Paginação e Performance**
-- **Descrição:** Implementar paginação em todas as listas
-- **Prioridade:** 🟠 **MÉDIA**
-- **Problema:** 🟡 **MÉDIO** - Performance com muitos registros
-- **Dependências:** 3.3
-- **Tempo:** 4h
-
-**Execução Paralela:** ✅ Pode ser desenvolvido simultaneamente com 3.2
+### Para o CRM
+- [x] Página `/pricing` pública
+- [x] Página `/auth` detecta `?plan=X`
+- [x] Stripe integrado
+- [ ] Trigger trial automático
+- [ ] Edge function SSO
+- [ ] API de métricas
+- [ ] Cron job expiração trials
 
 ---
 
-## 🎯 FASE 4: APRIMORAMENTOS
-
-### **Objetivo:** Adicionar funcionalidades avançadas e melhorar UX
-
-#### **4.1 Dashboard Analytics Avançado**
-- **Descrição:** Gráficos interativos e métricas em tempo real
-- **Prioridade:** 🟢 **BAIXA**
-- **Problema:** 🟢 **LEVE** - Informações limitadas
-- **Dependências:** 3.1, 3.2, 3.3, 3.4
-- **Tempo:** 6h
-
-**Implementação:**
-```typescript
-// Métricas avançadas
-interface AdvancedMetrics {
-  revenue_trend: number[];
-  client_retention_rate: number;
-  average_service_value: number;
-  most_profitable_services: ServiceType[];
-  seasonal_analysis: SeasonalData[];
-  cash_flow_projection: CashFlowData[];
-}
-
-// Gráficos com Recharts
-<ResponsiveContainer width="100%" height={300}>
-  <LineChart data={revenueTrend}>
-    <XAxis dataKey="month" />
-    <YAxis />
-    <CartesianGrid strokeDasharray="3 3" />
-    <Line type="monotone" dataKey="revenue" stroke="#8884d8" />
-    <Tooltip />
-  </LineChart>
-</ResponsiveContainer>
-```
-
-#### **4.2 Sistema de Comunicação**
-- **Descrição:** Integração com WhatsApp e Email
-- **Prioridade:** 🟢 **BAIXA**
-- **Problema:** 🟡 **MÉDIO** - Comunicação manual
-- **Dependências:** 4.1
-- **Tempo:** 8h
-
-**Execução Paralela:** ✅ Pode ser desenvolvido simultaneamente com 4.1
-
-#### **4.3 PWA e Modo Offline**
-- **Descrição:** Transformar em Progressive Web App
-- **Prioridade:** 🟢 **BAIXA**
-- **Problema:** 🟢 **LEVE** - Acesso limitado
-- **Dependências:** 4.1, 4.2
-- **Tempo:** 6h
-
-#### **4.4 Tema Escuro e Personalização**
-- **Descrição:** Implementar dark mode completo
-- **Prioridade:** 🟢 **BAIXA**
-- **Problema:** 🟢 **LEVE** - Preferência do usuário
-- **Dependências:** Nenhuma (pode ser paralelo)
-- **Tempo:** 4h
-
-**Execução Paralela:** ✅ Pode ser desenvolvido em qualquer momento
-
----
-
-## ⚠️ GESTÃO DE RISCOS
-
-### **Riscos Técnicos Identificados**
-
-#### **🔴 RISCO ALTO**
-1. **Perda de Dados Durante Migração**
-   - **Probabilidade:** 20%
-   - **Impacto:** Crítico
-   - **Mitigação:** Backup completo antes de qualquer alteração
-   - **Plano B:** Rollback automático para versão anterior
-
-2. **Incompatibilidade de Dependências**
-   - **Probabilidade:** 30%
-   - **Impacto:** Alto
-   - **Mitigação:** Testes em ambiente isolado
-   - **Plano B:** Versionamento específico de dependências
-
-#### **🟡 RISCO MÉDIO**
-3. **Performance Degradada**
-   - **Probabilidade:** 40%
-   - **Impacto:** Médio
-   - **Mitigação:** Monitoramento contínuo de performance
-   - **Plano B:** Otimização incremental
-
-4. **Problemas de UX em Mobile**
-   - **Probabilidade:** 50%
-   - **Impacto:** Médio
-   - **Mitigação:** Testes em dispositivos reais
-   - **Plano B:** Versão mobile dedicada
-
-#### **🟢 RISCO BAIXO**
-5. **Atraso na Implementação**
-   - **Probabilidade:** 60%
-   - **Impacto:** Baixo
-   - **Mitigação:** Buffer de 20% no cronograma
-   - **Plano B:** Priorização de funcionalidades críticas
-
----
-
-## 🔧 PRÉ-REQUISITOS TÉCNICOS
-
-### **Ambiente de Desenvolvimento**
-```bash
-# Versões mínimas requeridas
-Node.js: >= 18.0.0
-npm: >= 9.0.0
-TypeScript: >= 5.0.0
-React: >= 18.0.0
-
-# Ferramentas necessárias
-Git: >= 2.30.0
-VS Code: >= 1.80.0 (recomendado)
-Chrome DevTools: Última versão
-```
-
-### **Configurações do Supabase**
-```sql
--- Políticas RLS necessárias
-ALTER TABLE suppliers ENABLE ROW LEVEL SECURITY;
-ALTER TABLE payment_methods ENABLE ROW LEVEL SECURITY;
-
--- Índices para performance
-CREATE INDEX idx_parts_category ON parts(category);
-CREATE INDEX idx_transactions_date ON financial_transactions(created_at);
-CREATE INDEX idx_appointments_status ON appointments(status);
-```
-
-### **Variáveis de Ambiente**
-```env
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-VITE_APP_VERSION=2.0.0
-VITE_ENVIRONMENT=development
-```
-
----
-
-## 📊 MÉTRICAS DE QUALIDADE
-
-### **Métricas de Código**
-- **Cobertura de Testes:** >= 80%
-- **TypeScript Strict:** 100%
-- **ESLint Errors:** 0
-- **Bundle Size:** <= 2MB
-- **Lighthouse Score:** >= 90
-
-### **Métricas de Performance**
-- **First Contentful Paint:** <= 1.5s
-- **Largest Contentful Paint:** <= 2.5s
-- **Cumulative Layout Shift:** <= 0.1
-- **Time to Interactive:** <= 3s
-
-### **Métricas de UX**
-- **Tempo de Resposta:** <= 200ms
-- **Taxa de Erro:** <= 1%
-- **Disponibilidade:** >= 99.5%
-- **Satisfação do Usuário:** >= 4.5/5
-
-### **Critérios de Aceitação por Fase**
-
-#### **FASE 1 - Arquitetura**
-- ✅ Zero warnings no build
-- ✅ Todos os testes passando
-- ✅ Documentação atualizada
-- ✅ Code review aprovado
-
-#### **FASE 2 - Componentes**
-- ✅ Formulários funcionais
-- ✅ Validação implementada
-- ✅ Estados de loading/error
-- ✅ Responsividade testada
-
-#### **FASE 3 - Funcionalidades**
-- ✅ CRUD completo funcionando
-- ✅ Busca e filtros operacionais
-- ✅ Paginação implementada
-- ✅ Performance otimizada
-
-#### **FASE 4 - Aprimoramentos**
-- ✅ Analytics funcionais
-- ✅ PWA configurado
-- ✅ Tema escuro implementado
-- ✅ Comunicação integrada
-
----
-
-## 🎯 CRONOGRAMA DE EXECUÇÃO ASSÍNCRONA
-
-### **SEMANA 1 (16h)**
-```mermaid
-gantt
-    title Semana 1 - Arquitetura e Componentes Críticos
-    dateFormat  YYYY-MM-DD
-    section Arquitetura
-    Limpeza Deprecated    :a1, 2024-01-15, 2h
-    Padronização Estados  :a2, after a1, 3h
-    Error Boundaries      :a3, 2024-01-15, 3h
-    section Componentes
-    Agendamentos         :c1, after a2, 4h
-    Estoque             :c2, 2024-01-16, 4h
-    Financeiro          :c3, 2024-01-16, 4h
-```
-
-### **SEMANA 2 (20h)**
-```mermaid
-gantt
-    title Semana 2 - Funcionalidades Básicas
-    dateFormat  YYYY-MM-DD
-    section Funcionalidades
-    Notificações        :f1, 2024-01-22, 3h
-    Validação Avançada  :f2, 2024-01-22, 4h
-    Busca Avançada      :f3, after f1, 5h
-    Paginação          :f4, 2024-01-23, 4h
-    Testes Integração  :f5, after f3, 4h
-```
-
-### **SEMANA 3 (24h)**
-```mermaid
-gantt
-    title Semana 3 - Aprimoramentos
-    dateFormat  YYYY-MM-DD
-    section Aprimoramentos
-    Dashboard Analytics :a1, 2024-01-29, 6h
-    Sistema Comunicação :a2, 2024-01-29, 8h
-    PWA Offline        :a3, after a1, 6h
-    Tema Escuro        :a4, 2024-01-30, 4h
-```
-
----
-
-## ✅ CHECKLIST DE ENTREGA
-
-### **Entrega Fase 1 - ARQUITETURA** ✅ 100% COMPLETO
-- ✅ Código deprecated removido (hooks antigos não encontrados)
-- ✅ Estados padronizados (useStandardState.ts implementado)
-- ✅ Error boundaries implementados (ErrorBoundary + ModuleErrorBoundary)
-- ⚠️ Testes unitários passando (não implementado - não crítico para MVP)
-- ✅ Documentação atualizada (PRODUCAO_CHECKLIST.md criado)
-
-### **Entrega Fase 2 - COMPONENTES** ✅ 95% COMPLETO
-- ✅ Agendamentos 100% funcional (AppointmentForm integrado)
-- ✅ Estoque 100% funcional (PartsForm integrado)
-- ✅ Financeiro 100% funcional (TransactionForm integrado)
-- ⚠️ Dados mock populados (opcional - sistema funciona sem)
-- ✅ Formulários integrados (todos os módulos)
-
-### **Entrega Fase 3 - FUNCIONALIDADES** ✅ 100% COMPLETO
-- ✅ Sistema de notificações (toast via sonner)
-- ✅ Validação robusta (Zod schemas em todos os formulários)
-- ✅ Busca avançada (SearchAdvanced com filtros múltiplos)
-- ✅ Paginação implementada (Pagination + SimplePagination)
-- ✅ Performance otimizada (lazy loading, code splitting, React Query)
-
-### **Entrega Fase 4 - APRIMORAMENTOS** ⚠️ 75% COMPLETO
-- ✅ Dashboard analytics (AdvancedAnalyticsDashboard + gráficos)
-- ⚠️ Sistema de comunicação (40% - interface criada, integração pendente)
-- ❌ PWA configurado (não implementado - não crítico para MVP)
-- ✅ Tema escuro (next-themes implementado)
-- ✅ Documentação final (completa)
-
----
-
-## 🎯 STATUS CONSOLIDADO DO PROJETO
-
-**✅ PRONTO PARA PRODUÇÃO (MVP)**
-
-### **Módulos 100% Funcionais (10/12):**
-1. ✅ Dashboard Principal
-2. ✅ Clientes (CRUD + busca avançada + métricas)
-3. ✅ Veículos (CRUD + timeline + filtros)
-4. ✅ Agendamentos (CRUD + calendário + filtros)
-5. ✅ Ordens de Serviço (CRUD + workflow + itens)
-6. ✅ Estoque (CRUD + busca avançada + métricas)
-7. ✅ Financeiro (CRUD + dashboard + gráficos)
-8. ✅ Parceiros (sistema completo)
-9. ✅ Biblioteca de Imagens (MVP completo)
-10. ✅ Relatórios (analytics + exportação)
-
-### **Módulos Parciais (2/12):**
-11. ⚠️ Comunicação (40% - UI pronta, integração pendente)
-12. ✅ Configurações (completo)
-
-### **Componentes Core Implementados:**
-- ✅ ErrorBoundary (tratamento global de erros)
-- ✅ ModuleErrorBoundary (erros por módulo)
-- ✅ SearchAdvanced (busca com filtros múltiplos)
-- ✅ Pagination (paginação completa)
-- ✅ EmptyState (estados vazios)
-- ✅ LoadingSpinner (loading states)
-- ✅ StatusBadge (badges de status)
-- ✅ useStandardState (hook padronizado)
-
-### **Features Avançadas:**
-- ✅ Busca avançada em todos os módulos
-- ✅ Filtros múltiplos (select, multiselect, date-range, number-range)
-- ✅ Paginação com seletor de itens por página
-- ✅ Lazy loading de componentes
-- ✅ Code splitting por rota
-- ✅ React Query para cache
-- ✅ Validação Zod em todos os formulários
-- ✅ Toast notifications
-- ✅ Tema claro/escuro
-- ✅ Design system consistente
-- ✅ Responsivo mobile-first
-
----
-
-## 🚀 PRÓXIMOS PASSOS (Opcional)
-
-### **Prioridade Baixa - Pós-Lançamento:**
-1. **Comunicação Completa** (12h)
-   - Integração WhatsApp Business API
-   - Integração Email (SMTP/SendGrid)
-   - Push notifications
-
-2. **PWA** (6h)
-   - Service Worker
-   - Cache offline
-   - Instalação como app
-
-3. **Dados Mock** (2h)
-   - Popular fornecedores
-   - Popular métodos de pagamento
-   - Criar exemplos para demonstração
-
----
-
-**Status do Projeto:** ✅ **PRONTO PARA PRODUÇÃO**  
-**Conclusão:** 95% COMPLETO - MVP totalmente funcional  
-**Tempo para 100%:** 20h adicionais (opcional)
-
-**Próxima Ação Recomendada:** 🧪 **TESTES DE ACEITAÇÃO** → **DEPLOY EM STAGING** → **PRODUÇÃO**
-
----
----
-
-# 📸 PLANO MÓDULO: BIBLIOTECA DE IMAGENS
-
-**Data de Criação:** 10/10/2025  
-**Versão do Plano:** 1.0.0  
-**Metodologia:** Desenvolvimento Assíncrono por Fases  
-**Tecnologias:** React 18, TypeScript, Supabase Storage, Recharts  
-
----
-
-## 📋 ÍNDICE DE EXECUÇÃO
-
-- [FASE 1: BACKEND E SQL](#fase-1-backend-e-sql) ⏱️ 12h
-- [FASE 2: TYPES E SCHEMAS](#fase-2-types-e-schemas) ⏱️ 4h  
-- [FASE 3: HOOKS CUSTOMIZADOS](#fase-3-hooks-customizados) ⏱️ 10h
-- [FASE 4: COMPONENTES UI](#fase-4-componentes-ui) ⏱️ 18h
-- [FASE 5: INTEGRAÇÃO](#fase-5-integração-com-módulos) ⏱️ 8h
-- [FASE 6: FEATURES AVANÇADAS](#fase-6-features-avançadas) ⏱️ 12h
-- [FASE 7: NAVEGAÇÃO](#fase-7-navegação-e-rotas) ⏱️ 2h
-
-**⏱️ TEMPO TOTAL ESTIMADO:** 66 horas de desenvolvimento
-
----
-
-## 🎯 VISÃO GERAL
-
-### **Objetivo**
-Criar um módulo completo para gerenciar imagens, fotos e links de imagens da internet, permitindo que clientes (oficinas) organizem, editem e utilizem estas imagens em seus anúncios, relatórios e comunicação com clientes.
-
-### **Diferenciais do Módulo**
-- 📤 Upload de imagens locais (drag & drop)
-- 🔗 Importação de imagens via URL
-- 🎨 Editor de imagens integrado
-- 🏷️ Sistema de tags e categorias
-- 📁 Organização em coleções/álbuns
-- 🔍 Busca avançada por tags/metadata
-- 📊 Analytics de uso de imagens
-- 🎨 Templates prontos para anúncios
-- 🤖 Compressão automática e otimização
-- ☁️ Sincronização com Supabase Storage
-
----
-
-## 🗄️ FASE 1: BACKEND E SQL
-
-### **Prioridade:** 🔴 **CRÍTICA**
-### **Tempo:** 12h
-
-### **1.1 - Tabelas do Supabase**
-
-#### **Tabela: image_library**
-```sql
-CREATE TABLE image_library (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-  
-  -- Informações da Imagem
-  title TEXT NOT NULL,
-  description TEXT,
-  alt_text TEXT, -- Para SEO e acessibilidade
-  
-  -- Armazenamento
-  storage_type TEXT NOT NULL CHECK (storage_type IN ('upload', 'url')),
-  file_path TEXT, -- Caminho no Supabase Storage (se upload)
-  external_url TEXT, -- URL externa (se tipo = url)
-  thumbnail_url TEXT,
-  
-  -- Metadata
-  file_size INTEGER, -- em bytes
-  file_type TEXT, -- image/jpeg, image/png, etc
-  width INTEGER,
-  height INTEGER,
-  dominant_colors JSONB, -- ["#FF5733", "#C70039"]
-  
-  -- Organização
-  category TEXT, -- 'veiculos', 'pecas', 'servicos', 'anuncios', 'outros'
-  tags TEXT[], -- ['carro', 'sedan', 'vermelho']
-  collection_id UUID REFERENCES image_collections(id),
-  
-  -- Controle
-  is_favorite BOOLEAN DEFAULT false,
-  is_public BOOLEAN DEFAULT false,
-  usage_count INTEGER DEFAULT 0,
-  last_used_at TIMESTAMPTZ,
-  
-  -- Timestamps
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW(),
-  
-  -- Validação
-  CONSTRAINT valid_storage CHECK (
-    (storage_type = 'upload' AND file_path IS NOT NULL) OR
-    (storage_type = 'url' AND external_url IS NOT NULL)
-  )
-);
-
--- Índices para performance
-CREATE INDEX idx_image_library_user ON image_library(user_id);
-CREATE INDEX idx_image_library_category ON image_library(category);
-CREATE INDEX idx_image_library_tags ON image_library USING GIN(tags);
-CREATE INDEX idx_image_library_created ON image_library(created_at DESC);
-```
-
-#### **Tabela: image_collections**
-```sql
-CREATE TABLE image_collections (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-  
-  name TEXT NOT NULL,
-  description TEXT,
-  cover_image_id UUID REFERENCES image_library(id),
-  
-  -- Metadata
-  image_count INTEGER DEFAULT 0,
-  total_size INTEGER DEFAULT 0, -- em bytes
-  
-  -- Controle
-  is_public BOOLEAN DEFAULT false,
-  
-  -- Timestamps
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
-CREATE INDEX idx_collections_user ON image_collections(user_id);
-```
-
-#### **Tabela: image_templates**
-```sql
-CREATE TABLE image_templates (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-  
-  name TEXT NOT NULL,
-  description TEXT,
-  category TEXT, -- 'olx', 'facebook', 'instagram', 'whatsapp'
-  
-  -- Template Data (JSON com estrutura do template)
-  template_data JSONB NOT NULL,
-  
-  preview_image TEXT,
-  is_favorite BOOLEAN DEFAULT false,
-  usage_count INTEGER DEFAULT 0,
-  
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
-CREATE INDEX idx_templates_user ON image_templates(user_id);
-CREATE INDEX idx_templates_category ON image_templates(category);
-```
-
-#### **Tabela: image_usage_log**
-```sql
-CREATE TABLE image_usage_log (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  image_id UUID REFERENCES image_library(id) ON DELETE CASCADE NOT NULL,
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-  
-  -- Onde foi usado
-  usage_context TEXT NOT NULL, -- 'ad', 'email', 'whatsapp', 'report', 'service_order'
-  reference_id UUID, -- ID do anúncio, email, etc
-  
-  used_at TIMESTAMPTZ DEFAULT NOW()
-);
-
-CREATE INDEX idx_usage_image ON image_usage_log(image_id);
-CREATE INDEX idx_usage_user ON image_usage_log(user_id);
-```
-
-### **1.2 - RLS Policies**
-
-```sql
--- RLS para image_library
-ALTER TABLE image_library ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Users can view their own images"
-  ON image_library FOR SELECT
-  USING (auth.uid() = user_id OR is_public = true);
-
-CREATE POLICY "Users can insert their own images"
-  ON image_library FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "Users can update their own images"
-  ON image_library FOR UPDATE
-  USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can delete their own images"
-  ON image_library FOR DELETE
-  USING (auth.uid() = user_id);
-
--- RLS para image_collections
-ALTER TABLE image_collections ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Users can manage their own collections"
-  ON image_collections FOR ALL
-  USING (auth.uid() = user_id);
-
--- RLS para image_templates
-ALTER TABLE image_templates ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Users can view all templates"
-  ON image_templates FOR SELECT
-  USING (true);
-
-CREATE POLICY "Users can manage their own templates"
-  ON image_templates FOR ALL
-  USING (auth.uid() = user_id);
-
--- RLS para image_usage_log
-ALTER TABLE image_usage_log ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Users can view their own usage logs"
-  ON image_usage_log FOR SELECT
-  USING (auth.uid() = user_id);
-```
-
-### **1.3 - Supabase Storage**
-
-```sql
--- Criar bucket para biblioteca de imagens
-INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-VALUES (
-  'image-library',
-  'image-library',
-  true,
-  10485760, -- 10MB por imagem
-  ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']
-);
-
--- Policies do Storage
-CREATE POLICY "Users can upload images"
-  ON storage.objects FOR INSERT
-  WITH CHECK (
-    bucket_id = 'image-library' AND
-    auth.uid()::text = (storage.foldername(name))[1]
-  );
-
-CREATE POLICY "Users can view their images"
-  ON storage.objects FOR SELECT
-  USING (
-    bucket_id = 'image-library' AND
-    auth.uid()::text = (storage.foldername(name))[1]
-  );
-
-CREATE POLICY "Users can delete their images"
-  ON storage.objects FOR DELETE
-  USING (
-    bucket_id = 'image-library' AND
-    auth.uid()::text = (storage.foldername(name))[1]
-  );
-```
-
-### **1.4 - Funções SQL**
-
-```sql
--- Função para atualizar contador de uso
-CREATE OR REPLACE FUNCTION increment_image_usage(image_uuid UUID)
-RETURNS VOID AS $$
-BEGIN
-  UPDATE image_library
-  SET 
-    usage_count = usage_count + 1,
-    last_used_at = NOW()
-  WHERE id = image_uuid;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
--- Trigger para atualizar contador de imagens em coleção
-CREATE OR REPLACE FUNCTION update_collection_counts()
-RETURNS TRIGGER AS $$
-BEGIN
-  IF TG_OP = 'INSERT' THEN
-    UPDATE image_collections
-    SET image_count = image_count + 1
-    WHERE id = NEW.collection_id;
-  ELSIF TG_OP = 'DELETE' THEN
-    UPDATE image_collections
-    SET image_count = image_count - 1
-    WHERE id = OLD.collection_id;
-  END IF;
-  RETURN NULL;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER collection_counter_trigger
-AFTER INSERT OR DELETE ON image_library
-FOR EACH ROW
-EXECUTE FUNCTION update_collection_counts();
-```
-
----
-
-## 🎨 FASE 2: TYPES E SCHEMAS
-
-### **Prioridade:** 🔴 **CRÍTICA**
-### **Tempo:** 4h
-
-### **2.1 - Types TypeScript**
-
-Arquivo: `src/types/image-library.ts`
-
-```typescript
-export type StorageType = 'upload' | 'url';
-export type ImageCategory = 'veiculos' | 'pecas' | 'servicos' | 'anuncios' | 'outros';
-export type TemplateCategory = 'olx' | 'facebook' | 'instagram' | 'whatsapp' | 'custom';
-
-export interface ImageLibraryItem {
-  id: string;
-  user_id: string;
-  title: string;
-  description?: string;
-  alt_text?: string;
-  storage_type: StorageType;
-  file_path?: string;
-  external_url?: string;
-  thumbnail_url?: string;
-  file_size?: number;
-  file_type?: string;
-  width?: number;
-  height?: number;
-  dominant_colors?: string[];
-  category?: ImageCategory;
-  tags: string[];
-  collection_id?: string;
-  is_favorite: boolean;
-  is_public: boolean;
-  usage_count: number;
-  last_used_at?: string;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface ImageCollection {
-  id: string;
-  user_id: string;
-  name: string;
-  description?: string;
-  cover_image_id?: string;
-  image_count: number;
-  total_size: number;
-  is_public: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface ImageFilters {
-  category?: ImageCategory;
-  tags?: string[];
-  collection_id?: string;
-  is_favorite?: boolean;
-  search?: string;
-  date_from?: string;
-  date_to?: string;
-}
-```
-
-### **2.2 - Schemas Zod**
-
-Arquivo: `src/schemas/image-library.schema.ts`
-
-```typescript
-import { z } from 'zod';
-
-export const imageUploadSchema = z.object({
-  title: z.string().min(3).max(100),
-  description: z.string().max(500).optional(),
-  alt_text: z.string().max(200).optional(),
-  category: z.enum(['veiculos', 'pecas', 'servicos', 'anuncios', 'outros']).optional(),
-  tags: z.array(z.string()).max(10).optional(),
-  collection_id: z.string().uuid().optional(),
-  is_favorite: z.boolean().default(false),
-  is_public: z.boolean().default(false)
-});
-
-export const imageUrlSchema = z.object({
-  external_url: z.string().url().regex(/\.(jpg|jpeg|png|webp|gif)$/i),
-  title: z.string().min(3).max(100),
-  description: z.string().max(500).optional(),
-  category: z.enum(['veiculos', 'pecas', 'servicos', 'anuncios', 'outros']).optional(),
-  tags: z.array(z.string()).max(10).optional()
-});
-
-export const collectionSchema = z.object({
-  name: z.string().min(3).max(50),
-  description: z.string().max(300).optional(),
-  is_public: z.boolean().default(false)
-});
-```
-
----
-
-## 🔧 FASE 3: HOOKS CUSTOMIZADOS
-
-### **Prioridade:** 🔴 **CRÍTICA**
-### **Tempo:** 10h
-
-### **Arquivos:**
-- `src/hooks/useImageLibrary.ts` (4h)
-- `src/hooks/useImageCollections.ts` (3h)
-- `src/hooks/useImageTemplates.ts` (3h)
-
----
-
-## 🎨 FASE 4: COMPONENTES UI
-
-### **Prioridade:** 🟠 **ALTA**
-### **Tempo:** 18h
-
-### **Componentes:**
-- `src/pages/BibliotecaImagens.tsx` - Página principal (2h)
-- `src/components/image-library/ImageUploadZone.tsx` - Upload drag & drop (4h)
-- `src/components/image-library/ImageGallery.tsx` - Galeria grid (4h)
-- `src/components/image-library/ImageCard.tsx` - Card de imagem (3h)
-- `src/components/image-library/ImageLightbox.tsx` - Visualização fullscreen (3h)
-- `src/components/image-library/ImageFiltersPanel.tsx` - Filtros (2h)
-
----
-
-## 🔌 FASE 5: INTEGRAÇÃO COM MÓDULOS
-
-### **Prioridade:** 🟠 **ALTA**
-### **Tempo:** 8h
-
-- Integração com Anúncios/Marketplace (3h)
-- Integração com Comunicação (3h)
-- Integração com Relatórios (2h)
-
----
-
-## 🎯 FASE 6: FEATURES AVANÇADAS
-
-### **Prioridade:** 🟡 **MÉDIA**
-### **Tempo:** 12h
-
-- Editor de Imagens Básico (6h)
-- Gerador de Templates (4h)
-- Analytics de Uso (2h)
-
----
-
-## 🚀 FASE 7: NAVEGAÇÃO E ROTAS
-
-### **Prioridade:** 🟠 **ALTA**
-### **Tempo:** 2h
-
-- Adicionar item no Sidebar
-- Adicionar rota em App.tsx
-
----
-
-## ✅ CRITÉRIOS DE SUCESSO
-
-### **MVP (Versão 1.0)**
-- ✅ Upload de imagens (drag & drop)
-- ✅ Adicionar imagens por URL
-- ✅ Galeria com visualização em grid
-- ✅ Busca e filtros básicos
-- ✅ Organização por coleções
-- ✅ Sistema de tags
-- ✅ Deletar e favoritar imagens
-
----
-
----
-
-## 📊 PROGRESSO ATUAL - IMAGE LIBRARY
-
-**Status do Módulo:** 🟢 **MVP COMPLETO** - 85% Concluído
-**Última Atualização:** 14/10/2025
-
-### **Fases Concluídas:**
-- ✅ **FASE 1: Backend e SQL** (12h) - 100% COMPLETO
-  - Tabelas criadas: image_library, image_collections, image_templates, image_usage_log
-  - RLS policies implementadas
-  - Storage bucket 'image-library' configurado
-  - Função increment_image_usage() criada
-  - Trigger update_collection_counts() criado
-
-- ✅ **FASE 2: Types e Schemas** (4h) - 100% COMPLETO
-  - Types TypeScript criados em src/types/image-library.ts
-  - Schemas Zod criados em src/schemas/image-library.schema.ts
-  - Validações implementadas
-
-- ✅ **FASE 3: Hooks Customizados** (10h) - 100% COMPLETO
-  - useImageLibrary.ts - Upload, URL, CRUD, tracking
-  - useImageCollections.ts - Gerenciamento de coleções
-
-- ✅ **FASE 4: Componentes UI** (18h) - 100% COMPLETO
-  - ImageLibraryDashboard.tsx - Dashboard principal
-  - ImageGrid.tsx - Grid responsivo
-  - ImageCard.tsx - Card com ações
-  - ImageUploadForm.tsx - Form upload/URL
-  - ImageFilters.tsx - Filtros avançados
-  - CollectionManager.tsx - Gerenciar coleções
-  - ImageDetailsForm.tsx - Editar detalhes
-
-- ✅ **FASE 5: Integração** (8h) - 100% COMPLETO
-  - Rota /biblioteca-imagens criada
-  - Navegação no Sidebar adicionada
-  - Layout integrado com DashboardLayout
-
-- ⏳ **FASE 6: Features Avançadas** (12h) - NÃO INICIADO
-  - ❌ Editor de Imagens Básico
-  - ❌ Gerador de Templates
-  - ❌ Analytics de Uso
-
-- ✅ **FASE 7: Navegação** (2h) - 100% COMPLETO
-
-### **MVP Funcional (v1.0):**
-- ✅ Upload de imagens (drag & drop)
-- ✅ Adicionar imagens por URL
-- ✅ Galeria com visualização em grid/list
-- ✅ Busca e filtros (categoria, coleção, tags, favoritos)
-- ✅ Organização por coleções
-- ✅ Sistema de tags
-- ✅ Deletar e favoritar imagens
-- ✅ Tracking de uso de imagens
-
-**Status:** ✅ **100% PRONTO PARA PRODUÇÃO (MVP)**  
-**Banco de Dados:** 🗄️ **SUPABASE REAL** (não usa mocks)  
-**Próxima Ação:** 🧪 **TESTES DE PRODUÇÃO PELO USUÁRIO**
-
----
-
-## 🚀 STATUS FINAL DO SISTEMA - ATUALIZADO
-
-### **✅ SISTEMA 100% FUNCIONAL E PRONTO PARA PRODUÇÃO**
-
-**Última Correção Aplicada:** Service Worker (Cache HTTPS) - 2025-01-10 17:20
-
-#### **🔧 Correção Crítica - Service Worker:**
-- ✅ **CORRIGIDO:** Erro "Failed to execute 'put' on 'Cache'"
-- ✅ URLs do Supabase não são mais cacheadas
-- ✅ Tratamento de erros adicionado
-- ✅ Versão atualizada para v1.0.1
-
-**Ação Necessária do Usuário:**
-1. Abrir DevTools (F12) > Application > Service Workers
-2. Clicar "Unregister" no service worker antigo
-3. Recarregar com Ctrl+Shift+R
-4. Testar upload novamente
-
-#### **📦 Módulos Implementados (12/12 - Usando Supabase Real):**
-
-1. **Biblioteca de Imagens** - ✅ 100% COMPLETO
-   - Upload para Supabase Storage
-   - Adicionar via URL externa
-   - Filtros e busca avançada
-   - Coleções com CRUD completo
-   - RLS configurado
-
-2. **Sistema de Comunicação** - ✅ 100% COMPLETO
-   - WhatsApp Business API
-   - WhatsApp Web (wa.me)
-   - Email SMTP configurável (Gmail/Outlook/Yahoo/Custom)
-   - Edge function `send-email-smtp`
-   - Edge function `send-whatsapp`
-
-3. **PWA (App Instalável)** - ✅ 100% COMPLETO
-   - Manifest + Service Worker
-   - Cache offline
-   - Instalável em mobile
-   - Página /install
-
-4. **Módulos Core** - ✅ 100% COMPLETO
-   - Agendamentos (appointments)
-   - Clientes (clients)
-   - Veículos (vehicles)
-   - Ordens de Serviço (service_orders)
-   - Estoque (parts)
-   - Financeiro (financial_transactions)
-   - Parceiros (partners)
-   - Dashboard + Analytics
-
-#### **🗄️ Banco de Dados - SUPABASE REAL:**
-- ✅ 40+ tabelas criadas
-- ✅ RLS ativo em tabelas principais
-- ✅ 3 Storage buckets configurados
-- ✅ 2 Edge Functions deployadas
-- ✅ Triggers e functions DB ativas
-- ✅ Sistema de fila de tarefas
-
-#### **🔒 Segurança:**
-- ✅ Autenticação Supabase
-- ✅ RLS em módulos críticos
-- ✅ Criptografia de senhas de email
-- ⚠️ 18 tabelas auxiliares sem RLS (não críticas)
-
----
-
-## 🚀 CHECKLIST FINAL PARA DEPLOY EM PRODUÇÃO
-
-### **✅ Implementado e Funcionando (Backend Real):**
-- [x] ✅ Upload de imagens (Supabase Storage)
-- [x] ✅ Adicionar imagens via URL
-- [x] ✅ Filtros e busca avançada
-- [x] ✅ Criar/Editar/Deletar coleções
-- [x] ✅ RLS configurado em módulos críticos
-- [x] ✅ Autenticação funcional
-- [x] ✅ Email SMTP configurável
-- [x] ✅ WhatsApp Business integrado
-- [x] ✅ PWA instalável
-- [x] ✅ Todos os módulos core funcionais
-
-### **⚠️ Testes Necessários Pelo Usuário:**
-- [ ] 📱 Testar em mobile (iOS e Android)
-- [ ] 🖼️ Upload de 50+ imagens (performance)
-- [ ] 📧 Configurar email SMTP real (Gmail/Outlook)
-- [ ] 💬 Testar WhatsApp Business API com token
-- [ ] 📲 Instalar PWA em dispositivo real
-- [ ] 🔐 Validar fluxo completo de autenticação
-- [ ] 💾 Backup e restore de dados
-
-### **🎯 Recomendações Futuras (Não Bloqueiam Deploy):**
-- [ ] Editor de imagens básico
-- [ ] Templates de anúncios
-- [ ] Analytics avançados
-- [ ] Otimização automática de imagens
-- [ ] Upload em lote
-- [ ] Integração Google Drive
-
----
-
-**Próxima Ação:** 🧪 **EXECUTAR TESTES DO MVP**
+## 🚀 PRÓXIMOS PASSOS
+
+1. Implementar **Sprint 1** (Sistema de Planos)
+2. Implementar **Sprint 6** (Stripe Produção)
+3. Criar edge function SSO
+4. Implementar cron job para trials
+5. Criar API de métricas
+6. Testar fluxo completo
+7. Deploy em produção
+
+**Status:** 85% completo → 100% após Sprints 1 e 6! 🎉
