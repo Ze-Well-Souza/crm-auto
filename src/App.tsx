@@ -11,6 +11,7 @@ import { StripeProvider } from "@/contexts/StripeContext";
 import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import { ThemeTransitionManager } from "@/components/theme/ThemeTransitionManager";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { AdminRoute } from "@/components/auth/AdminRoute";
 import { FeatureRoute } from "@/components/auth/FeatureRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Suspense, lazy } from "react";
@@ -19,6 +20,7 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 // Lazy load pages
 const Index = lazy(() => import("./pages/Index"));
 const Auth = lazy(() => import("./pages/Auth"));
+const Admin = lazy(() => import("./pages/Admin"));
 const Clientes = lazy(() => import("./pages/Clientes"));
 const Veiculos = lazy(() => import("./pages/Veiculos"));
 const Planos = lazy(() => import("./pages/Planos"));
@@ -72,6 +74,9 @@ const App = () => (
                           
                           {/* Dashboard */}
                           <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+                          
+                          {/* Admin */}
+                          <Route path="/admin" element={<ProtectedRoute><AdminRoute><Admin /></AdminRoute></ProtectedRoute>} />
                           
                           {/* Rotas com Proteção de Features */}
                           <Route path="/clientes" element={<ProtectedRoute><FeatureRoute feature="crm_clients"><Clientes /></FeatureRoute></ProtectedRoute>} />

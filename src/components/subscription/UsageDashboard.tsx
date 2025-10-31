@@ -3,12 +3,24 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useSubscriptionContext } from '@/contexts/SubscriptionContext';
-import { Users, Calendar, FileText, Crown, ArrowUpRight } from 'lucide-react';
+import { createPortalSession } from '@/lib/stripe-client';
+import { Users, Calendar, FileText, Crown, ArrowUpRight, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 export const UsageDashboard = () => {
   const { subscription, plan, usage, isTrialActive, getTrialDaysRemaining } = useSubscriptionContext();
   const navigate = useNavigate();
+
+  const handleManageSubscription = async () => {
+    try {
+      toast.info('Abrindo portal de gerenciamento...');
+      const { url } = await createPortalSession();
+      window.location.href = url;
+    } catch (error: any) {
+      toast.error('Erro ao abrir portal: ' + error.message);
+    }
+  };
 
   if (!subscription || !usage) {
     return <div>Carregando...</div>;
@@ -59,10 +71,18 @@ export const UsageDashboard = () => {
                 </p>
               </div>
             </div>
-            <Button onClick={() => navigate('/planos')} size="sm">
-              <ArrowUpRight className="h-4 w-4 mr-2" />
-              Fazer Upgrade
-            </Button>
+            <div className="flex gap-2">
+              <Button onClick={() => navigate('/planos')} size="sm">
+                <ArrowUpRight className="h-4 w-4 mr-2" />
+                Fazer Upgrade
+              </Button>
+              {subscription.status !== 'trial' && plan.name !== 'Gratuito' && (
+                <Button onClick={handleManageSubscription} variant="outline" size="sm">
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Gerenciar
+                </Button>
+              )}
+            </div>
           </div>
         </CardHeader>
         <CardContent>

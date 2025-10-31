@@ -9,7 +9,8 @@ import { toast } from 'sonner';
 interface Plan {
   id: string;
   name: string;
-  price: number;
+  price_monthly: number;
+  price_yearly: number;
   billing_cycle: string;
   max_appointments_per_month: number | null;
   max_active_clients: number | null;
@@ -32,9 +33,8 @@ export const PlanSelector = () => {
       const { data, error } = await supabase
         .from('subscription_plans')
         .select('*')
-        .eq('billing_cycle', billingCycle)
         .eq('is_active', true)
-        .order('price', { ascending: true });
+        .order('price_monthly', { ascending: true });
 
       if (error) throw error;
       setPlans(data || []);
@@ -118,7 +118,7 @@ export const PlanSelector = () => {
               </div>
               <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
               <div className="text-3xl font-bold mb-1">
-                R$ {plan.price}
+                R$ {billingCycle === 'monthly' ? plan.price_monthly : plan.price_yearly}
                 <span className="text-base font-normal text-muted-foreground">
                   /{billingCycle === 'monthly' ? 'mês' : 'ano'}
                 </span>

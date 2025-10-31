@@ -13,29 +13,33 @@ import {
   MessageSquare,
   Settings,
   Crown,
-  Lock
+  Lock,
+  Shield
 } from "lucide-react";
 import { useSubscriptionContext } from "@/contexts/SubscriptionContext";
+import { useUserRole } from "@/hooks/useUserRole";
 import { toast } from "sonner";
 
 export const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { hasFeature, loading } = useSubscriptionContext();
+  const { isAdmin } = useUserRole();
 
   const navigation = [
-    { name: "Dashboard", href: "/", icon: Home, feature: null },
-    { name: "Planos", href: "/planos", icon: Crown, color: "text-violet-600", feature: null },
-    { name: "Clientes", href: "/clientes", icon: Users, feature: 'crm_clients' },
-    { name: "Veículos", href: "/veiculos", icon: Car, feature: 'crm_vehicles' },
-    { name: "Agendamentos", href: "/agendamentos", icon: Calendar, feature: 'crm_appointments' },
-    { name: "Ordens de Serviço", href: "/ordens", icon: Wrench, feature: 'crm_service_orders' },
-    { name: "Estoque", href: "/estoque", icon: Package, feature: 'crm_parts' },
-    { name: "Financeiro", href: "/financeiro", icon: DollarSign, feature: 'crm_financial' },
-    { name: "Relatórios", href: "/relatorios", icon: BarChart3, feature: 'crm_reports' },
-    { name: "Parceiros", href: "/parceiros", icon: HandshakeIcon, feature: null },
-    { name: "Comunicação", href: "/comunicacao", icon: MessageSquare, feature: null },
-    { name: "Configurações", href: "/configuracoes", icon: Settings, feature: null },
+    { name: "Dashboard", href: "/", icon: Home, feature: null, adminOnly: false },
+    { name: "Planos", href: "/planos", icon: Crown, color: "text-violet-600", feature: null, adminOnly: false },
+    { name: "Clientes", href: "/clientes", icon: Users, feature: 'crm_clients', adminOnly: false },
+    { name: "Veículos", href: "/veiculos", icon: Car, feature: 'crm_vehicles', adminOnly: false },
+    { name: "Agendamentos", href: "/agendamentos", icon: Calendar, feature: 'crm_appointments', adminOnly: false },
+    { name: "Ordens de Serviço", href: "/ordens", icon: Wrench, feature: 'crm_service_orders', adminOnly: false },
+    { name: "Estoque", href: "/estoque", icon: Package, feature: 'crm_parts', adminOnly: false },
+    { name: "Financeiro", href: "/financeiro", icon: DollarSign, feature: 'crm_financial', adminOnly: false },
+    { name: "Relatórios", href: "/relatorios", icon: BarChart3, feature: 'crm_reports', adminOnly: false },
+    { name: "Parceiros", href: "/parceiros", icon: HandshakeIcon, feature: null, adminOnly: false },
+    { name: "Comunicação", href: "/comunicacao", icon: MessageSquare, feature: null, adminOnly: false },
+    { name: "Configurações", href: "/configuracoes", icon: Settings, feature: null, adminOnly: false },
+    { name: "Admin", href: "/admin", icon: Shield, color: "text-red-600", feature: null, adminOnly: true },
   ];
 
   return (
@@ -57,6 +61,9 @@ export const Sidebar = () => {
       <nav className="flex flex-1 flex-col px-4 py-6 relative z-10 overflow-y-auto">
         <ul role="list" className="flex flex-1 flex-col gap-y-2">
           {navigation.map((item) => {
+            // Ocultar item admin se não for admin
+            if (item.adminOnly && !isAdmin) return null;
+
             const isActive = location.pathname === item.href;
             const hasAccess = !item.feature || hasFeature(item.feature);
             const isLocked = !hasAccess;
