@@ -7,6 +7,28 @@ import { Link } from "react-router-dom";
 const PlanosPublicos = () => {
   const plans = [
     {
+      id: 'gratuito',
+      name: 'Gratuito',
+      price: 'R$ 0',
+      period: '/mês',
+      description: 'Experimente grátis para sempre',
+      icon: Star,
+      color: 'from-green-500 to-emerald-600',
+      free: true,
+      features: [
+        '40 clientes ativos',
+        '40 agendamentos/mês',
+        '5 relatórios/mês',
+        'Gestão de clientes e veículos',
+        'Agendamentos básicos',
+        '1 usuário',
+        'Suporte por email',
+        '✨ Grátis para sempre!'
+      ],
+      cta: 'Começar Grátis',
+      href: '/auth?plan=gratuito'
+    },
+    {
       id: 'basico',
       name: 'Básico',
       price: 'R$ 99',
@@ -99,8 +121,8 @@ const PlanosPublicos = () => {
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-16 text-center">
-        <Badge className="mb-4 bg-violet-100 text-violet-700 border-violet-200">
-          🎉 Trial grátis de 14 dias no plano Profissional
+        <Badge className="mb-4 bg-green-100 text-green-700 border-green-200">
+          ✨ Plano GRATUITO disponível - Use para sempre sem pagar nada!
         </Badge>
         <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent">
           Escolha o plano ideal para sua oficina
@@ -113,7 +135,7 @@ const PlanosPublicos = () => {
 
       {/* Plans Grid */}
       <section className="container mx-auto px-4 pb-20">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-7xl mx-auto">
           {plans.map((plan) => (
             <Card 
               key={plan.id}
@@ -127,6 +149,13 @@ const PlanosPublicos = () => {
                 <div className="absolute top-0 right-0 bg-gradient-to-r from-violet-500 to-purple-600 text-white px-4 py-1 text-sm font-bold rounded-bl-lg flex items-center gap-1">
                   <Star className="h-4 w-4" />
                   Mais Popular
+                </div>
+              )}
+              
+              {plan.free && (
+                <div className="absolute top-0 right-0 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-1 text-sm font-bold rounded-bl-lg flex items-center gap-1">
+                  <Star className="h-4 w-4" />
+                  100% Grátis
                 </div>
               )}
 
@@ -188,6 +217,19 @@ const PlanosPublicos = () => {
         <div className="max-w-3xl mx-auto">
           <h3 className="text-3xl font-bold text-center mb-12">Perguntas Frequentes</h3>
           <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">O plano gratuito é realmente grátis para sempre?</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-slate-600 dark:text-slate-400">
+                  Sim! O plano gratuito não tem custo e pode ser usado para sempre. Você tem acesso a
+                  40 clientes ativos, 40 agendamentos por mês e 5 relatórios mensais sem pagar nada.
+                  Perfeito para começar ou para pequenas oficinas.
+                </p>
+              </CardContent>
+            </Card>
+
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Como funciona o trial gratuito?</CardTitle>
