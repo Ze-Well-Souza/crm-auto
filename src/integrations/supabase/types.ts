@@ -2244,6 +2244,45 @@ export type Database = {
           },
         ]
       }
+      subscription_audit_log: {
+        Row: {
+          action: string
+          created_at: string | null
+          details: Json | null
+          id: string
+          limit_value: number | null
+          plan_name: string | null
+          resource_count: number | null
+          resource_type: string
+          success: boolean | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          limit_value?: number | null
+          plan_name?: string | null
+          resource_count?: number | null
+          resource_type: string
+          success?: boolean | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          limit_value?: number | null
+          plan_name?: string | null
+          resource_count?: number | null
+          resource_type?: string
+          success?: boolean | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       subscription_plans: {
         Row: {
           created_at: string
@@ -2701,7 +2740,7 @@ export type Database = {
         Args: {
           p_current_count: number
           p_limit_type: string
-          p_partner_id: string
+          p_user_id: string
         }
         Returns: boolean
       }

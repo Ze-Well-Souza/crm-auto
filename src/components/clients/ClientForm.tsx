@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useClients } from "@/hooks/useClients";
 import { useZodFormValidation } from "@/hooks/useZodValidation";
 import { createClientSchema, type CreateClientData } from "@/schemas/client.schema";
-import { useNotifications } from "@/contexts/NotificationContext";
+import { toast } from 'sonner';
 
 interface ClientFormProps {
   onSuccess?: () => void;
@@ -15,7 +15,6 @@ interface ClientFormProps {
 export const ClientForm = ({ onSuccess }: ClientFormProps) => {
   const [loading, setLoading] = useState(false);
   const { createClient } = useClients();
-  const notifications = useNotifications();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -43,6 +42,16 @@ export const ClientForm = ({ onSuccess }: ClientFormProps) => {
         return;
       }
 
+      // ✅ VERIFICAR LIMITE ANTES DE CRIAR
+      const { usePlanLimits } = await import('@/hooks/usePlanLimits');
+      const { checkAndIncrement } = usePlanLimits();
+      
+      const canCreate = await checkAndIncrement('clients', 'clientes');
+      if (!canCreate) {
+        setLoading(false);
+        return; // Bloqueia criação se limite foi atingido
+      }
+
       const result = await createClient({
         name: validationResult.data.name,
         email: validationResult.data.email || null,
@@ -68,11 +77,20 @@ export const ClientForm = ({ onSuccess }: ClientFormProps) => {
           notes: ""
         });
         clearErrors();
-        notifications.showCreateSuccess("Cliente");
+        toast.success('Cliente cadastrado com sucesso!');
         onSuccess?.();
       }
-    } catch (error) {
-      notifications.showOperationError("criar cliente", error);
+    } catch (error: any) {
+      // Verificar se o erro é de RLS (limite atingido)
+      if (error?.message?.includes('row-level security') || error?.message?.includes('policy')) {
+        toast.error('Limite atingido', {
+          description: "Você atingiu o limite de clientes do seu plano. Faça upgrade para continuar.",
+        });
+      } else {
+        toast.error('Erro ao criar cliente', {
+          description: error?.message || 'Tente novamente mais tarde.',
+        });
+      }
     } finally {
       setLoading(false);
     }

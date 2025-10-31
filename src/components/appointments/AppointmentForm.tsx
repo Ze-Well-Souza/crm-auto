@@ -97,6 +97,18 @@ export const AppointmentForm = ({
     try {
       setLoading(true);
 
+      // ✅ VERIFICAR LIMITE ANTES DE CRIAR (apenas para novos agendamentos)
+      if (!appointment) {
+        const { usePlanLimits } = await import('@/hooks/usePlanLimits');
+        const { checkAndIncrement } = usePlanLimits();
+        
+        const canCreate = await checkAndIncrement('appointments', 'agendamentos');
+        if (!canCreate) {
+          setLoading(false);
+          return; // Bloqueia criação se limite foi atingido
+        }
+      }
+
       const appointmentData = {
         ...data,
         scheduled_date: format(data.scheduled_date, 'yyyy-MM-dd'),
@@ -116,8 +128,13 @@ export const AppointmentForm = ({
       onSuccess?.();
       onOpenChange(false);
       form.reset();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao salvar agendamento:", error);
+      
+      // Verificar se o erro é de RLS (limite atingido)
+      if (error?.message?.includes('row-level security') || error?.message?.includes('policy')) {
+        alert("Você atingiu o limite de agendamentos do seu plano. Faça upgrade para continuar.");
+      }
     } finally {
       setLoading(false);
     }

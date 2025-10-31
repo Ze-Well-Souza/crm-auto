@@ -1,24 +1,42 @@
-import { useSubscription } from './useSubscription';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 export const usePlanLimits = () => {
-  const { subscription, usage, canPerformAction, incrementUsage } = useSubscription();
+  // Validação server-side via Edge Function
+  const validateLimit = async (
+    actionType: 'clients' | 'appointments' | 'reports'
+  ): Promise<{ canProceed: boolean; current: number; limit: string | number; percentage?: number; message?: string }> => {
+    try {
+      const { data, error } = await supabase.functions.invoke('validate-plan-limit', {
+        body: { action_type: actionType }
+      });
 
-  const checkLimit = (
+      if (error) {
+        console.error('Error validating limit:', error);
+        return { canProceed: false, current: 0, limit: 0, message: 'Erro ao validar limite' };
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Error in validateLimit:', error);
+      return { canProceed: false, current: 0, limit: 0, message: 'Erro ao validar limite' };
+    }
+  };
+
+  const checkLimit = async (
     actionType: 'clients' | 'appointments' | 'reports',
     actionName: string
-  ): boolean => {
-    if (!canPerformAction(actionType)) {
-      const resource = usage?.[actionType];
-      
-      toast.error(`Limite atingido`, {
-        description: `Você atingiu o limite de ${resource?.limit} ${actionName}. Faça upgrade do seu plano para continuar.`,
+  ): Promise<boolean> => {
+    const result = await validateLimit(actionType);
+    
+    if (!result.canProceed) {
+      toast.error('Limite atingido', {
+        description: result.message || `Você atingiu o limite de ${actionName} do seu plano atual.`,
         action: {
-          label: 'Fazer Upgrade',
+          label: 'Ver Planos',
           onClick: () => window.location.href = '/planos',
         },
       });
-      
       return false;
     }
     
@@ -29,48 +47,42 @@ export const usePlanLimits = () => {
     actionType: 'clients' | 'appointments' | 'reports',
     actionName: string
   ): Promise<boolean> => {
-    if (!checkLimit(actionType, actionName)) {
-      return false;
-    }
-    
-    await incrementUsage(actionType);
-    return true;
+    // A validação server-side via RLS já garante que o limite não será ultrapassado
+    // Este método agora apenas verifica e exibe mensagem ao usuário antes da tentativa
+    const canProceed = await checkLimit(actionType, actionName);
+    return canProceed;
   };
 
-  const showLimitWarning = (actionType: 'clients' | 'appointments' | 'reports') => {
-    const resource = usage?.[actionType];
+  const showLimitWarning = async (actionType: 'clients' | 'appointments' | 'reports') => {
+    const result = await validateLimit(actionType);
     
-    if (!resource || resource.limit === null) return;
-    
-    if (resource.percentage >= 80 && resource.percentage < 100) {
-      toast.warning('Atenção: Limite próximo', {
-        description: `Você usou ${resource.percentage}% do limite de ${actionType}. Considere fazer upgrade.`,
+    if (result.percentage && result.percentage >= 80 && result.percentage < 100) {
+      toast.warning('Atenção ao limite', {
+        description: `Você está usando ${result.percentage}% do seu limite de ${actionType}. Considere fazer upgrade.`,
       });
     }
   };
 
-  const getLimitStatus = (actionType: 'clients' | 'appointments' | 'reports') => {
-    const resource = usage?.[actionType];
-    
-    if (!resource) {
-      return { status: 'unknown', message: 'Carregando...' };
+  const getLimitStatus = async (actionType: 'clients' | 'appointments' | 'reports') => {
+    const result = await validateLimit(actionType);
+
+    if (!result) {
+      return { status: 'unknown', message: 'Carregando informações do plano...' };
     }
-    
-    if (resource.limit === null) {
-      return { status: 'unlimited', message: 'Ilimitado' };
+
+    if (result.limit === 'unlimited' || result.limit === null) {
+      return { status: 'unlimited', message: 'Uso ilimitado' };
     }
-    
-    const remaining = resource.limit - resource.current;
-    
-    if (remaining <= 0) {
+
+    if (result.current >= Number(result.limit)) {
       return { status: 'exceeded', message: 'Limite atingido' };
     }
-    
-    if (resource.percentage >= 80) {
-      return { status: 'warning', message: `${remaining} restantes` };
+
+    if (result.percentage && result.percentage >= 80) {
+      return { status: 'warning', message: `${result.current} de ${result.limit} (${result.percentage}%)` };
     }
-    
-    return { status: 'ok', message: `${remaining}/${resource.limit}` };
+
+    return { status: 'ok', message: `${result.current} de ${result.limit}` };
   };
 
   return {
@@ -78,7 +90,6 @@ export const usePlanLimits = () => {
     checkAndIncrement,
     showLimitWarning,
     getLimitStatus,
-    subscription,
-    usage,
+    validateLimit, // Expor para uso direto
   };
 };
