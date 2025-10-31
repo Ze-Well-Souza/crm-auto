@@ -1,10 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, Crown, Zap, Rocket, ArrowRight, Star } from "lucide-react";
+import { Check, Crown, Zap, Rocket, ArrowRight, Star, Moon, Sun } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useTheme } from "next-themes";
 
 const PlanosPublicos = () => {
+  const { theme, setTheme } = useTheme();
+  
   const plans = [
     {
       id: 'gratuito',
@@ -111,19 +114,34 @@ const PlanosPublicos = () => {
               CRM Oficina
             </h1>
           </div>
-          <Link to="/auth">
-            <Button variant="outline">
-              Já tem conta? Entrar
+          <div className="flex items-center gap-3">
+            {/* Theme Toggle */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="relative"
+            >
+              <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+              <span className="sr-only">Alternar tema</span>
             </Button>
-          </Link>
+            <Link to="/auth">
+              <Button variant="outline">
+                Já tem conta? Entrar
+              </Button>
+            </Link>
+          </div>
         </div>
       </header>
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-16 text-center">
-        <Badge className="mb-4 bg-green-100 text-green-700 border-green-200">
-          ✨ Plano GRATUITO disponível - Use para sempre sem pagar nada!
-        </Badge>
+        <div className="inline-block mb-4 px-6 py-2.5 bg-gradient-to-r from-green-500/10 via-emerald-500/10 to-green-500/10 rounded-full animate-pulse-slow">
+          <span className="text-sm font-bold bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent animate-shimmer">
+            ✨ Plano GRATUITO disponível - Use para sempre sem pagar nada!
+          </span>
+        </div>
         <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent">
           Escolha o plano ideal para sua oficina
         </h2>

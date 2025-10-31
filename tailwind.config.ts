@@ -187,6 +187,14 @@ export default {
           "100%": {
             transform: "rotate(360deg)"
           }
+        },
+        "shimmer": {
+          "0%": {
+            backgroundPosition: "-200% center"
+          },
+          "100%": {
+            backgroundPosition: "200% center"
+          }
         }
       },
       animation: {
@@ -200,6 +208,7 @@ export default {
         "float": "float 6s ease-in-out infinite",
         "spin-slow": "spin-slow 8s linear infinite",
         "pulse-slow": "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "shimmer": "shimmer 3s linear infinite",
       },
     },
   },
