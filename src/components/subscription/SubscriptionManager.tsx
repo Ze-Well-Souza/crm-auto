@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useSubscriptionContext } from '@/contexts/SubscriptionContext';
 import { createPortalSession } from '@/lib/stripe-client';
+import { supabase } from '@/integrations/supabase/client';
 import { Crown, ExternalLink, Calendar, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -29,6 +30,34 @@ export const SubscriptionManager = () => {
       window.location.href = url;
     } catch (error: any) {
       toast.error('Erro ao abrir portal: ' + error.message);
+    }
+  };
+
+  const handleCancelSubscription = async () => {
+    try {
+      toast.info('Processando cancelamento...');
+      
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Usuário não autenticado');
+
+      const { error } = await supabase.functions.invoke('handle-subscription-change', {
+        body: { 
+          action: 'cancel', 
+          userId: user.id,
+          reason: 'User requested cancellation'
+        }
+      });
+
+      if (error) throw error;
+
+      toast.success('Assinatura cancelada', {
+        description: `Seu acesso continua até ${new Date(subscription.current_period_end).toLocaleDateString('pt-BR')}`
+      });
+
+      // Refresh para atualizar status
+      window.location.reload();
+    } catch (error: any) {
+      toast.error('Erro ao cancelar: ' + error.message);
     }
   };
 
@@ -154,7 +183,7 @@ export const SubscriptionManager = () => {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Voltar</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleManageSubscription}>
+                  <AlertDialogAction onClick={handleCancelSubscription}>
                     Confirmar Cancelamento
                   </AlertDialogAction>
                 </AlertDialogFooter>
