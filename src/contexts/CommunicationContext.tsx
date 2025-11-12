@@ -86,86 +86,98 @@ export const CommunicationProvider: React.FC<CommunicationProviderProps> = ({ ch
   
   const { showSuccess, showError, showInfo } = useNotifications();
 
-  // Simular dados iniciais
+  // Carregar mensagens reais do Supabase
   useEffect(() => {
-    const mockConversations: Conversation[] = [
-      {
-        id: 'conv-1',
-        participants: ['user-1', 'user-2'],
-        participantNames: ['João Silva', 'Maria Santos'],
-        unreadCount: 2,
-        type: 'direct',
-        title: 'João Silva',
-        createdAt: new Date('2024-01-15'),
-        updatedAt: new Date('2024-01-20'),
-      },
-      {
-        id: 'conv-2',
-        participants: ['user-1', 'user-3'],
-        participantNames: ['Pedro Costa', 'Ana Lima'],
-        unreadCount: 0,
-        type: 'direct',
-        title: 'Pedro Costa',
-        createdAt: new Date('2024-01-10'),
-        updatedAt: new Date('2024-01-18'),
-      },
-      {
-        id: 'conv-3',
-        participants: ['user-1', 'user-2', 'user-3', 'user-4'],
-        participantNames: ['Equipe Técnica'],
-        unreadCount: 5,
-        type: 'group',
-        title: 'Equipe Técnica',
-        createdAt: new Date('2024-01-05'),
-        updatedAt: new Date('2024-01-21'),
-      }
-    ];
+    fetchMessagesAndConversations();
 
-    const mockMessages: Message[] = [
-      {
-        id: 'msg-1',
-        senderId: 'user-2',
-        senderName: 'João Silva',
-        recipientId: 'user-1',
-        recipientName: 'Você',
-        content: 'Olá! Gostaria de agendar um serviço para amanhã.',
-        type: 'text',
-        timestamp: new Date('2024-01-20T10:30:00'),
-        read: false,
-        delivered: true,
-        channel: 'internal'
-      },
-      {
-        id: 'msg-2',
-        senderId: 'user-1',
-        senderName: 'Você',
-        recipientId: 'user-2',
-        recipientName: 'João Silva',
-        content: 'Claro! Que tipo de serviço você precisa?',
-        type: 'text',
-        timestamp: new Date('2024-01-20T10:35:00'),
-        read: true,
-        delivered: true,
-        channel: 'internal'
-      },
-      {
-        id: 'msg-3',
-        senderId: 'user-2',
-        senderName: 'João Silva',
-        recipientId: 'user-1',
-        recipientName: 'Você',
-        content: 'Preciso de uma revisão completa no meu carro.',
-        type: 'text',
-        timestamp: new Date('2024-01-20T10:40:00'),
-        read: false,
-        delivered: true,
-        channel: 'internal'
-      }
-    ];
+    // Subscribe to real-time updates
+    const subscription = supabase
+      .channel('chat_messages_changes')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'chat_messages'
+      }, () => {
+        fetchMessagesAndConversations();
+      })
+      .subscribe();
 
-    setConversations(mockConversations);
-    setMessages(mockMessages);
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
+
+  const fetchMessagesAndConversations = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: messagesData, error: messagesError } = await supabase
+        .from('chat_messages')
+        .select('*')
+        .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`)
+        .order('created_at', { ascending: false })
+        .limit(100);
+
+      if (messagesError) throw messagesError;
+
+      if (messagesData && messagesData.length > 0) {
+        const transformedMessages: Message[] = messagesData.map(msg => ({
+          id: msg.id,
+          senderId: msg.sender_id,
+          senderName: msg.sender_name || 'Usuário',
+          recipientId: msg.receiver_id || '',
+          recipientName: 'Destinatário',
+          content: msg.content,
+          type: (msg.message_type as any) || 'text',
+          timestamp: new Date(msg.created_at),
+          read: msg.is_read || false,
+          delivered: msg.status === 'sent' || msg.status === 'delivered',
+          channel: 'internal'
+        }));
+
+        setMessages(transformedMessages);
+
+        // Agrupar mensagens em conversas
+        const grouped = groupMessagesByConversation(transformedMessages, user.id);
+        setConversations(grouped);
+      }
+    } catch (err) {
+      console.error('Error fetching messages:', err);
+    }
+  };
+
+  const groupMessagesByConversation = (msgs: Message[], currentUserId: string): Conversation[] => {
+    const conversationMap = new Map<string, Message[]>();
+
+    msgs.forEach(msg => {
+      const otherUserId = msg.senderId === currentUserId ? msg.recipientId : msg.senderId;
+      if (!conversationMap.has(otherUserId)) {
+        conversationMap.set(otherUserId, []);
+      }
+      conversationMap.get(otherUserId)!.push(msg);
+    });
+
+    return Array.from(conversationMap.entries()).map(([userId, messages]) => {
+      const sortedMessages = messages.sort((a, b) => 
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      );
+      const lastMessage = sortedMessages[0];
+      const unreadCount = messages.filter(m => !m.read && m.recipientId === currentUserId).length;
+
+      return {
+        id: `conv-${userId}`,
+        participants: [currentUserId, userId],
+        participantNames: [lastMessage.senderName],
+        lastMessage,
+        unreadCount,
+        type: 'direct',
+        title: lastMessage.senderName,
+        createdAt: new Date(sortedMessages[sortedMessages.length - 1].timestamp),
+        updatedAt: new Date(lastMessage.timestamp)
+      };
+    });
+  };
 
   const sendMessage = async (
     content: string, 
