@@ -1,6 +1,11 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
+import { initSentry } from "./integrations/sentry";
+// import { ErrorBoundary } from "./components/ErrorBoundary";
+
+// Initialize Sentry for error monitoring
+// initSentry(); // temporariamente desabilitado
 
 // Service Worker temporariamente desabilitado para debug
 // if ('serviceWorker' in navigator) {

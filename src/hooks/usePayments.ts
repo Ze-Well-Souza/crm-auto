@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import * as Sentry from '@sentry/react';
 import { useStripe, useElements } from '@stripe/react-stripe-js';
 import { PaymentIntent, PaymentMethod } from '@stripe/stripe-js';
 

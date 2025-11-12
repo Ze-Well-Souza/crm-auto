@@ -82,3 +82,27 @@ export const calculatePercentage = (value: number, total: number): number => {
 export const generateId = (): string => {
   return Math.random().toString(36).substr(2, 9);
 };
+
+/**
+ * Format relative time (e.g., "2 hours ago", "1 day ago")
+ */
+export const formatRelativeTime = (date: string | Date): string => {
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - dateObj.getTime()) / 1000);
+  
+  if (diffInSeconds < 60) {
+    return 'agora mesmo';
+  } else if (diffInSeconds < 3600) {
+    const minutes = Math.floor(diffInSeconds / 60);
+    return `${minutes} ${minutes === 1 ? 'minuto' : 'minutos'} atrás`;
+  } else if (diffInSeconds < 86400) {
+    const hours = Math.floor(diffInSeconds / 3600);
+    return `${hours} ${hours === 1 ? 'hora' : 'horas'} atrás`;
+  } else if (diffInSeconds < 2592000) {
+    const days = Math.floor(diffInSeconds / 86400);
+    return `${days} ${days === 1 ? 'dia' : 'dias'} atrás`;
+  } else {
+    return formatDate(dateObj);
+  }
+};

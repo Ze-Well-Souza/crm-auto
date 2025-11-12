@@ -13,13 +13,14 @@ import { ThemeTransitionManager } from "@/components/theme/ThemeTransitionManage
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AdminRoute } from "@/components/auth/AdminRoute";
 import { FeatureRoute } from "@/components/auth/FeatureRoute";
-import { ErrorBoundary } from "@/components/ErrorBoundary";
+// import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Suspense, lazy } from "react";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 // Lazy load pages
 const Index = lazy(() => import("./pages/Index"));
 const Auth = lazy(() => import("./pages/Auth"));
+const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const Admin = lazy(() => import("./pages/Admin"));
 const Clientes = lazy(() => import("./pages/Clientes"));
 const Veiculos = lazy(() => import("./pages/Veiculos"));
@@ -47,7 +48,7 @@ const PageLoadingFallback = () => (
 const queryClient = new QueryClient();
 
 const App = () => (
-  <ErrorBoundary>
+  // <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider
         attribute="class"
@@ -69,6 +70,7 @@ const App = () => (
                         <Routes>
                           {/* Rotas Públicas */}
                           <Route path="/auth" element={<Auth />} />
+                          <Route path="/auth/callback" element={<AuthCallback />} />
                           <Route path="/pricing" element={<PlanosPublicos />} />
                           <Route path="/install" element={<InstallPWA />} />
                           
@@ -107,7 +109,7 @@ const App = () => (
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>
-  </ErrorBoundary>
+  // </ErrorBoundary>
 );
 
 export default App;

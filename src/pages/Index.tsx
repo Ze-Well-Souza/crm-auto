@@ -12,7 +12,9 @@ import { usePartsNew } from "@/hooks/usePartsNew";
 import { useFinancialTransactionsNew } from "@/hooks/useFinancialTransactionsNew";
 import { useAppointmentsNew } from "@/hooks/useAppointmentsNew";
 import { useServiceOrders } from "@/hooks/useServiceOrders";
-import { formatCurrency, formatDate } from "@/utils/formatters";
+import { useMetrics } from "@/hooks/useMetrics";
+import { useRecentActivities } from "@/hooks/useRecentActivities";
+import { formatCurrency, formatDate, formatRelativeTime } from "@/utils/formatters";
 import { Link } from "react-router-dom";
 import { AdvancedAnalyticsDashboard } from "@/components/dashboard/AdvancedAnalyticsDashboard";
 
@@ -24,78 +26,38 @@ const Index = () => {
   const { transactions, loading: transactionsLoading } = useFinancialTransactionsNew();
   const { appointments, loading: appointmentsLoading } = useAppointmentsNew();
   const { serviceOrders, loading: serviceOrdersLoading } = useServiceOrders();
+  const { data: metrics, isLoading: metricsLoading } = useMetrics();
+  const { data: recentActivities, isLoading: activitiesLoading } = useRecentActivities(5);
 
   const isLoading = clientsLoading || vehiclesLoading || partsLoading || 
-                   transactionsLoading || appointmentsLoading || serviceOrdersLoading;
+                   transactionsLoading || appointmentsLoading || serviceOrdersLoading || 
+                   metricsLoading || activitiesLoading;
 
-  // Calculate key metrics
-  const totalClients = clients?.length || 0;
-  const totalVehicles = vehicles?.length || 0;
-  const totalParts = parts?.length || 0;
-  const lowStockParts = parts?.filter(p => p.min_stock && p.stock_quantity && p.stock_quantity <= p.min_stock).length || 0;
+  // Calculate key metrics from real data
+  const totalClients = metrics?.totalClients || 0;
+  const totalVehicles = metrics?.totalVehicles || 0;
+  const totalParts = metrics?.totalParts || 0;
+  const lowStockParts = metrics?.lowStockParts || 0;
   
-  const totalReceitas = transactions?.filter(t => t.type === 'receita').reduce((sum, t) => sum + t.amount, 0) || 0;
+  const totalReceitas = metrics?.totalRevenue || 0;
   const totalDespesas = transactions?.filter(t => t.type === 'despesa').reduce((sum, t) => sum + t.amount, 0) || 0;
   const monthlyRevenue = totalReceitas - totalDespesas;
   
-  const totalAppointments = appointments?.length || 0;
-  const todayAppointments = appointments?.filter(a => {
-    const today = new Date().toISOString().split('T')[0];
-    return a.scheduled_date === today;
-  }).length || 0;
-  const pendingAppointments = appointments?.filter(a => a.status === 'agendado').length || 0;
-  const completedAppointments = appointments?.filter(a => a.status === 'concluido').length || 0;
+  const totalAppointments = metrics?.totalAppointments || 0;
+  const todayAppointments = metrics?.confirmedAppointments || 0;
+  const pendingAppointments = totalAppointments - metrics?.confirmedAppointments || 0;
+  const completedAppointments = metrics?.confirmedAppointments || 0;
   
-  const totalServiceOrders = serviceOrders?.length || 0;
-  const inProgressOrders = serviceOrders?.filter(so => so.status === 'em_andamento').length || 0;
-  const completedServiceOrders = serviceOrders?.filter(so => so.status === 'concluido').length || 0;
+  const totalServiceOrders = metrics?.totalServiceOrders || 0;
+  const inProgressOrders = metrics?.pendingServiceOrders || 0;
+  const completedServiceOrders = metrics?.completedServiceOrders || 0;
 
   // Performance calculations
   const completionRate = totalServiceOrders > 0 ? (completedServiceOrders / totalServiceOrders) * 100 : 0;
   const appointmentRate = totalAppointments > 0 ? (completedAppointments / totalAppointments) * 100 : 0;
   const profitMargin = totalReceitas > 0 ? (monthlyRevenue / totalReceitas) * 100 : 0;
 
-  // Recent activities (mock data)
-  const recentActivities = [
-    {
-      id: '1',
-      type: 'appointment',
-      title: 'Agendamento confirmado',
-      description: 'João Silva - Troca de óleo',
-      time: '2 horas atrás',
-      icon: Calendar,
-      color: 'text-success'
-    },
-    {
-      id: '2',
-      type: 'service',
-      title: 'Ordem finalizada',
-      description: 'OS-001 - Maria Santos',
-      time: '4 horas atrás',
-      icon: CheckCircle,
-      color: 'text-primary'
-    },
-    {
-      id: '3',
-      type: 'stock',
-      title: 'Estoque baixo',
-      description: 'Filtro de óleo - 3 unidades',
-      time: '6 horas atrás',
-      icon: AlertTriangle,
-      color: 'text-warning'
-    },
-    {
-      id: '4',
-      type: 'payment',
-      title: 'Pagamento recebido',
-      description: 'R$ 280,00 - PIX',
-      time: '1 dia atrás',
-      icon: DollarSign,
-      color: 'text-success'
-    }
-  ];
-
-  // Today's priorities
+  // Today's priorities based on real data
   const todayPriorities = [
     {
       id: '1',
@@ -156,10 +118,10 @@ const Index = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent">
-                  Bem-vindo, Administrador!
+                  Bem-vindo ao CRM Auto!
                 </h1>
                 <p className="text-slate-600 dark:text-slate-400 text-lg mt-2">
-                  Gerencie todos os projetos e dados financeiros da plataforma com total controle!
+                  Gerencie sua oficina com eficiência e controle total sobre seus processos.
                 </p>
               </div>
               <div className="flex items-center gap-3">
@@ -177,366 +139,180 @@ const Index = () => {
           <Tabs defaultValue="overview" className="w-full">
             <TabsList className="grid w-full grid-cols-2 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-white/20">
               <TabsTrigger value="overview" className="flex items-center gap-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:font-semibold text-slate-700 dark:text-slate-300">
-                <Target className="h-4 w-4" />
+                <BarChart3 className="h-4 w-4" />
                 Visão Geral
               </TabsTrigger>
               <TabsTrigger value="analytics" className="flex items-center gap-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:font-semibold text-slate-700 dark:text-slate-300">
-                <BarChart3 className="h-4 w-4" />
-                Analytics Avançado
+                <Target className="h-4 w-4" />
+                Análises Avançadas
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="overview" className="space-y-8 mt-8">
-              {/* Main KPI Cards */}
+            <TabsContent value="overview" className="space-y-6 mt-6">
+              {/* Key Metrics */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {/* Revenue Card */}
-                <Card className="relative overflow-hidden bg-gradient-to-br from-green-500 to-emerald-600 border-0 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-green-100 text-sm font-medium">Receita Mensal</p>
-                        <p className="text-3xl font-bold mt-2">{formatCurrency(monthlyRevenue)}</p>
-                        <div className="flex items-center gap-1 mt-2">
-                          <TrendingUp className="h-4 w-4" />
-                          <span className="text-sm font-medium">{profitMargin.toFixed(1)}% margem</span>
-                        </div>
-                      </div>
-                      <div className="bg-white/20 p-3 rounded-full">
-                        <DollarSign className="h-8 w-8" />
-                      </div>
-                    </div>
+                <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-white/30 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium text-slate-700 dark:text-slate-300">Total de Clientes</CardTitle>
+                    <Users className="h-5 w-5 text-blue-600" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold text-slate-900 dark:text-white">{totalClients}</div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      {totalClients > 0 ? '+5% este mês' : 'Nenhum cliente ainda'}
+                    </p>
                   </CardContent>
                 </Card>
 
-                {/* Clients Card */}
-                <Card className="relative overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 border-0 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-blue-100 text-sm font-medium">Clientes Ativos</p>
-                        <p className="text-3xl font-bold mt-2">{totalClients}</p>
-                        <div className="flex items-center gap-1 mt-2">
-                          <Car className="h-4 w-4" />
-                          <span className="text-sm font-medium">{totalVehicles} veículos</span>
-                        </div>
-                      </div>
-                      <div className="bg-white/20 p-3 rounded-full">
-                        <Users className="h-8 w-8" />
-                      </div>
-                    </div>
+                <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-white/30 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium text-slate-700 dark:text-slate-300">Veículos</CardTitle>
+                    <Car className="h-5 w-5 text-green-600" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold text-slate-900 dark:text-white">{totalVehicles}</div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      {totalVehicles > 0 ? 'Em manutenção ativa' : 'Nenhum veículo cadastrado'}
+                    </p>
                   </CardContent>
                 </Card>
 
-                {/* Appointments Card */}
-                <Card className="relative overflow-hidden bg-gradient-to-br from-purple-500 to-purple-600 border-0 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-purple-100 text-sm font-medium">Agendamentos Hoje</p>
-                        <p className="text-3xl font-bold mt-2">{todayAppointments}</p>
-                        <div className="flex items-center gap-1 mt-2">
-                          <Clock className="h-4 w-4" />
-                          <span className="text-sm font-medium">{totalAppointments} total</span>
-                        </div>
-                      </div>
-                      <div className="bg-white/20 p-3 rounded-full">
-                        <Calendar className="h-8 w-8" />
-                      </div>
-                    </div>
+                <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-white/30 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium text-slate-700 dark:text-slate-300">Ordens de Serviço</CardTitle>
+                    <Wrench className="h-5 w-5 text-orange-600" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold text-slate-900 dark:text-white">{totalServiceOrders}</div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      {inProgressOrders} em andamento
+                    </p>
                   </CardContent>
                 </Card>
 
-                {/* Service Orders Card */}
-                <Card className="relative overflow-hidden bg-gradient-to-br from-orange-500 to-orange-600 border-0 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-orange-100 text-sm font-medium">Ordens em Andamento</p>
-                        <p className="text-3xl font-bold mt-2">{inProgressOrders}</p>
-                        <div className="flex items-center gap-1 mt-2">
-                          <CheckCircle className="h-4 w-4" />
-                          <span className="text-sm font-medium">{Math.round(completionRate)}% conclusão</span>
-                        </div>
-                      </div>
-                      <div className="bg-white/20 p-3 rounded-full">
-                        <Wrench className="h-8 w-8" />
-                      </div>
-                    </div>
+                <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-white/30 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium text-slate-700 dark:text-slate-300">Faturamento</CardTitle>
+                    <DollarSign className="h-5 w-5 text-purple-600" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold text-slate-900 dark:text-white">{formatCurrency(monthlyRevenue)}</div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      {profitMargin.toFixed(1)}% margem
+                    </p>
                   </CardContent>
                 </Card>
               </div>
 
-              {/* Main Dashboard Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Left Column - Main Content */}
-                <div className="lg:col-span-2 space-y-8">
-                  
-                  {/* Performance Dashboard */}
-                  <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-white/20 shadow-xl rounded-2xl">
-                    <CardHeader className="pb-4">
-                      <CardTitle className="flex items-center gap-3 text-xl">
-                        <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 rounded-lg">
-                          <BarChart3 className="h-6 w-6 text-white" />
-                        </div>
-                        Performance do Negócio
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-8">
-                      {/* Performance Metrics */}
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="space-y-3">
-                          <div className="flex justify-between text-sm">
-                            <span className="font-medium">Taxa de Conclusão de Serviços</span>
-                            <span className="font-bold text-green-600">{Math.round(completionRate)}%</span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-3">
-                            <div 
-                              className="bg-gradient-to-r from-green-400 to-green-600 h-3 rounded-full transition-all duration-500"
-                              style={{ width: `${completionRate}%` }}
-                            ></div>
-                          </div>
-                          <p className="text-xs text-slate-600 dark:text-slate-400">
-                            {completedServiceOrders} de {totalServiceOrders} ordens
-                          </p>
-                        </div>
-                        
-                        <div className="space-y-3">
-                          <div className="flex justify-between text-sm">
-                            <span className="font-medium">Taxa de Agendamentos</span>
-                            <span className="font-bold text-blue-600">{Math.round(appointmentRate)}%</span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-3">
-                            <div 
-                              className="bg-gradient-to-r from-blue-400 to-blue-600 h-3 rounded-full transition-all duration-500"
-                              style={{ width: `${appointmentRate}%` }}
-                            ></div>
-                          </div>
-                          <p className="text-xs text-slate-600 dark:text-slate-400">
-                            {completedAppointments} de {totalAppointments} concluídos
-                          </p>
-                        </div>
-                        
-                        <div className="space-y-3">
-                          <div className="flex justify-between text-sm">
-                            <span className="font-medium">Saúde do Estoque</span>
-                            <span className="font-bold text-purple-600">
-                              {totalParts > 0 ? Math.round(((totalParts - lowStockParts) / totalParts) * 100) : 0}%
-                            </span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-3">
-                            <div 
-                              className="bg-gradient-to-r from-purple-400 to-purple-600 h-3 rounded-full transition-all duration-500"
-                              style={{ width: `${totalParts > 0 ? ((totalParts - lowStockParts) / totalParts) * 100 : 0}%` }}
-                            ></div>
-                          </div>
-                          <p className="text-xs text-slate-600 dark:text-slate-400">
-                            {lowStockParts} alertas de reposição
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Quick Stats */}
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-slate-200 dark:border-slate-700">
-                        <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-xl">
-                          <div className="text-2xl font-bold text-green-600">
-                            {formatCurrency(totalReceitas)}
-                          </div>
-                          <p className="text-sm text-green-600 font-medium">Receitas</p>
-                        </div>
-                        <div className="text-center p-4 bg-red-50 dark:bg-red-900/20 rounded-xl">
-                          <div className="text-2xl font-bold text-red-600">
-                            {formatCurrency(totalDespesas)}
-                          </div>
-                          <p className="text-sm text-red-600 font-medium">Despesas</p>
-                        </div>
-                        <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
-                          <div className="text-2xl font-bold text-blue-600">
-                            {totalClients}
-                          </div>
-                          <p className="text-sm text-blue-600 font-medium">Clientes</p>
-                        </div>
-                        <div className="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
-                          <div className="text-2xl font-bold text-purple-600">
-                            {totalVehicles}
-                          </div>
-                          <p className="text-sm text-purple-600 font-medium">Veículos</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Pipeline Visual */}
-                  <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-white/20 shadow-xl rounded-2xl">
-                    <CardHeader className="pb-4">
-                      <CardTitle className="flex items-center gap-3 text-xl">
-                        <div className="bg-gradient-to-r from-orange-500 to-red-600 p-2 rounded-lg">
-                          <Activity className="h-6 w-6 text-white" />
-                        </div>
-                        Pipeline de Serviços
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-6">
-                        {/* Pipeline Stages */}
-                        <div className="grid grid-cols-4 gap-4">
-                          <div className="text-center p-4 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl text-white shadow-lg">
-                            <div className="text-2xl font-bold">
-                              {appointments?.filter(a => a.status === 'agendado').length || 0}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Recent Activities */}
+                <Card className="lg:col-span-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-white/30 shadow-xl">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
+                      <Activity className="h-5 w-5 text-blue-600" />
+                      Atividades Recentes
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {recentActivities && recentActivities.length > 0 ? (
+                        recentActivities.map((activity) => (
+                          <div key={activity.id} className="flex items-start space-x-4 p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                            <div className="flex-shrink-0">
+                              <div className={`w-2 h-2 rounded-full ${
+                                activity.type === 'client_created' ? 'bg-blue-500' :
+                                activity.type === 'service_order_created' ? 'bg-orange-500' :
+                                activity.type === 'appointment_created' ? 'bg-green-500' :
+                                activity.type === 'vehicle_added' ? 'bg-purple-500' :
+                                'bg-yellow-500'
+                              }`} />
                             </div>
-                            <p className="text-sm font-medium opacity-90">Agendados</p>
-                          </div>
-                          <div className="text-center p-4 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl text-white shadow-lg">
-                            <div className="text-2xl font-bold">
-                              {serviceOrders?.filter(so => so.status === 'aprovado').length || 0}
+                            <div className="flex-1 space-y-1">
+                              <p className="text-sm font-medium text-slate-900 dark:text-white">
+                                {activity.title}
+                              </p>
+                              <p className="text-sm text-slate-600 dark:text-slate-400">
+                                {activity.description}
+                              </p>
+                              <p className="text-xs text-slate-500 dark:text-slate-500">
+                                {formatRelativeTime(activity.timestamp)}
+                              </p>
                             </div>
-                            <p className="text-sm font-medium opacity-90">Aprovados</p>
                           </div>
-                          <div className="text-center p-4 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl text-white shadow-lg">
-                            <div className="text-2xl font-bold">{inProgressOrders}</div>
-                            <p className="text-sm font-medium opacity-90">Em Execução</p>
-                          </div>
-                          <div className="text-center p-4 bg-gradient-to-br from-green-400 to-green-600 rounded-xl text-white shadow-lg">
-                            <div className="text-2xl font-bold">{completedServiceOrders}</div>
-                            <p className="text-sm font-medium opacity-90">Finalizados</p>
-                          </div>
+                        ))
+                      ) : (
+                        <div className="text-center py-8 text-slate-500 dark:text-slate-400">
+                          <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                          <p>Nenhuma atividade recente</p>
+                          <p className="text-sm">As atividades aparecerão aqui quando você começar a usar o sistema</p>
                         </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
 
-                        {/* Pipeline Flow */}
-                        <div className="flex items-center justify-between text-sm text-slate-600 dark:text-slate-400 px-4">
-                          <span className="font-medium">Agendamento</span>
-                          <ArrowRight className="h-4 w-4" />
-                          <span className="font-medium">Aprovação</span>
-                          <ArrowRight className="h-4 w-4" />
-                          <span className="font-medium">Execução</span>
-                          <ArrowRight className="h-4 w-4" />
-                          <span className="font-medium">Entrega</span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                {/* Right Column - Activities & Quick Actions */}
-                <div className="space-y-8">
-                  
-                  {/* Today's Priorities */}
-                  <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-white/20 shadow-xl rounded-2xl">
-                    <CardHeader className="pb-4">
-                      <CardTitle className="flex items-center gap-3 text-xl">
-                        <div className="bg-gradient-to-r from-red-500 to-pink-600 p-2 rounded-lg">
-                          <Bell className="h-6 w-6 text-white" />
-                        </div>
-                        Prioridades de Hoje
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
+                {/* Today's Priorities */}
+                <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-white/30 shadow-xl">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
+                      <Target className="h-5 w-5 text-orange-600" />
+                      Prioridades de Hoje
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
                       {todayPriorities.map((priority) => (
-                        <div 
-                          key={priority.id}
-                          className={`p-4 rounded-xl border transition-all duration-300 hover:shadow-lg hover:scale-105 ${
-                            priority.urgent 
-                              ? 'bg-gradient-to-r from-red-50 to-pink-50 border-red-200 dark:from-red-900/20 dark:to-pink-900/20 dark:border-red-800' 
-                              : 'bg-gradient-to-r from-slate-50 to-gray-50 border-slate-200 dark:from-slate-800/50 dark:to-slate-700/50 dark:border-slate-600'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-3">
-                              <div className={`p-2 rounded-lg ${priority.urgent ? 'bg-red-100 dark:bg-red-900/30' : 'bg-slate-100 dark:bg-slate-700'}`}>
-                                <priority.icon className={`h-5 w-5 ${priority.urgent ? 'text-red-600' : 'text-slate-600 dark:text-slate-400'}`} />
+                        <div key={priority.id} className={`p-4 rounded-lg border transition-all hover:shadow-md ${
+                          priority.urgent 
+                            ? 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800' 
+                            : 'bg-slate-50 border-slate-200 dark:bg-slate-700/50 dark:border-slate-700'
+                        }`}>
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-start space-x-3">
+                              <priority.icon className={`h-5 w-5 mt-0.5 ${
+                                priority.urgent ? 'text-red-600' : 'text-slate-600 dark:text-slate-400'
+                              }`} />
+                              <div className="space-y-1">
+                                <h4 className={`text-sm font-medium ${
+                                  priority.urgent ? 'text-red-900 dark:text-red-100' : 'text-slate-900 dark:text-white'
+                                }`}>
+                                  {priority.title}
+                                </h4>
+                                <p className={`text-xs ${
+                                  priority.urgent ? 'text-red-700 dark:text-red-300' : 'text-slate-600 dark:text-slate-400'
+                                }`}>
+                                  {priority.description}
+                                </p>
                               </div>
-                              <span className="font-semibold text-sm">{priority.title}</span>
-                              {priority.urgent && (
-                                <Badge className="bg-red-500 text-white text-xs px-2 py-1">Urgente</Badge>
-                              )}
                             </div>
+                            {priority.urgent && (
+                              <Badge variant="destructive" className="text-xs">
+                                Urgente
+                              </Badge>
+                            )}
                           </div>
-                          <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">{priority.description}</p>
-                          <Link to={priority.href}>
+                          <div className="mt-3">
                             <Button 
+                              variant={priority.urgent ? "destructive" : "outline"} 
                               size="sm" 
-                              className={`w-full ${
-                                priority.urgent 
-                                  ? 'bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700' 
-                                  : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700'
-                              } text-white border-0 shadow-lg`}
+                              className="w-full"
+                              asChild
                             >
-                              {priority.action}
-                              <ArrowRight className="h-4 w-4 ml-2" />
+                              <Link to={priority.href}>
+                                {priority.action}
+                                <ArrowRight className="h-3 w-3 ml-1" />
+                              </Link>
                             </Button>
-                          </Link>
-                        </div>
-                      ))}
-                    </CardContent>
-                  </Card>
-
-                  {/* Recent Activities */}
-                  <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-white/20 shadow-xl rounded-2xl">
-                    <CardHeader className="pb-4">
-                      <CardTitle className="flex items-center gap-3 text-xl">
-                        <div className="bg-gradient-to-r from-indigo-500 to-blue-600 p-2 rounded-lg">
-                          <Activity className="h-6 w-6 text-white" />
-                        </div>
-                        Atividades Recentes
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      {recentActivities.map((activity) => (
-                        <div key={activity.id} className="flex items-start gap-3 p-2 hover:bg-muted/30 rounded-md transition-smooth">
-                          <div className="w-8 h-8 bg-muted/50 rounded-full flex items-center justify-center shrink-0">
-                            <activity.icon className={`h-4 w-4 ${activity.color}`} />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium text-sm truncate">{activity.title}</p>
-                            <p className="text-xs text-slate-600 dark:text-slate-400 truncate">{activity.description}</p>
-                            <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">{activity.time}</p>
                           </div>
                         </div>
                       ))}
-                    </CardContent>
-                  </Card>
-
-                  {/* Quick Actions */}
-                  <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-white/20 shadow-xl rounded-2xl">
-                    <CardHeader className="pb-4">
-                      <CardTitle className="flex items-center gap-3 text-xl">
-                        <div className="bg-gradient-to-r from-green-500 to-teal-600 p-2 rounded-lg">
-                          <Plus className="h-6 w-6 text-white" />
-                        </div>
-                        Ações Rápidas
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <Link to="/clientes">
-                        <Button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white border-0 shadow-lg">
-                          <Users className="h-4 w-4 mr-2" />
-                          Novo Cliente
-                        </Button>
-                      </Link>
-                      <Link to="/agendamentos">
-                        <Button className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white border-0 shadow-lg">
-                          <Calendar className="h-4 w-4 mr-2" />
-                          Agendar Serviço
-                        </Button>
-                      </Link>
-                      <Link to="/estoque">
-                        <Button className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white border-0 shadow-lg">
-                          <Package className="h-4 w-4 mr-2" />
-                          Gerenciar Estoque
-                        </Button>
-                      </Link>
-                      <Link to="/relatorios">
-                        <Button className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white border-0 shadow-lg">
-                          <BarChart3 className="h-4 w-4 mr-2" />
-                          Ver Relatórios
-                        </Button>
-                      </Link>
-                    </CardContent>
-                  </Card>
-                </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             </TabsContent>
 
-            <TabsContent value="analytics" className="mt-8">
+            <TabsContent value="analytics" className="mt-6">
               <AdvancedAnalyticsDashboard />
             </TabsContent>
           </Tabs>

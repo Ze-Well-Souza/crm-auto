@@ -1,6 +1,9 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
 import Stripe from 'https://esm.sh/stripe@14.21.0'
+import { corsHeaders, handleCors } from '../_shared/cors.ts'
+import { RateLimiter, RATE_LIMIT_PRESETS, createRateLimitIdentifier } from '../_shared/rate-limit.ts'
+import { generateRequestId, logWithRequestId } from '../_shared/logging.ts'
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
   apiVersion: '2023-10-16',
@@ -9,14 +12,63 @@ const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
 const cryptoProvider = Stripe.createSubtleCryptoProvider()
 
 serve(async (req) => {
-  const signature = req.headers.get('stripe-signature')
-  const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET')
-
-  if (!signature || !webhookSecret) {
-    return new Response('Missing signature or webhook secret', { status: 400 })
-  }
+  const requestId = generateRequestId()
+  
+  // Handle CORS
+  const corsResponse = handleCors(req)
+  if (corsResponse) return corsResponse
 
   try {
+    // Initialize rate limiter for webhook endpoints
+    const kv = await Deno.openKv()
+    const rateLimiter = new RateLimiter(RATE_LIMIT_PRESETS.webhook, kv)
+    
+    // Check rate limit by IP for webhook processing
+    const clientIp = createRateLimitIdentifier(req, 'ip')
+    const rateLimitResult = await rateLimiter.checkLimit(`stripe_webhook:${clientIp}`)
+    
+    if (!rateLimitResult.allowed) {
+      logWithRequestId(requestId, 'Rate limit exceeded for Stripe webhook', { clientIp, retryAfter: rateLimitResult.retryAfter })
+      return new Response(
+        JSON.stringify({ 
+          error: 'Muitas requisições. Por favor, tente novamente mais tarde.',
+          retryAfter: rateLimitResult.retryAfter 
+        }),
+        {
+          headers: { 
+            ...corsHeaders(req.headers.get('origin')), 
+            'Content-Type': 'application/json',
+            'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
+            'X-RateLimit-Reset': rateLimitResult.reset.toString(),
+            'Retry-After': rateLimitResult.retryAfter?.toString() || '60'
+          },
+          status: 429,
+        }
+      )
+    }
+
+    logWithRequestId(requestId, 'Rate limit check passed for Stripe webhook', { 
+      clientIp, 
+      remaining: rateLimitResult.remaining 
+    })
+
+    const signature = req.headers.get('stripe-signature')
+    const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET')
+
+    if (!signature || !webhookSecret) {
+      logWithRequestId(requestId, 'Missing signature or webhook secret', {
+        hasSignature: !!signature,
+        hasWebhookSecret: !!webhookSecret
+      })
+      return new Response(
+        JSON.stringify({ error: 'Missing signature or webhook secret' }),
+        {
+          headers: { ...corsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
+          status: 400,
+        }
+      )
+    }
+
     const body = await req.text()
     const event = await stripe.webhooks.constructEventAsync(
       body,
@@ -31,7 +83,11 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    console.log('Processing webhook event:', event.type)
+    logWithRequestId(requestId, 'Processing webhook event', {
+      eventType: event.type,
+      eventId: event.id,
+      timestamp: event.created
+    })
 
     switch (event.type) {
       case 'checkout.session.completed': {
@@ -40,6 +96,10 @@ serve(async (req) => {
         const planId = session.metadata?.plan_id
 
         if (!userId || !planId) {
+          logWithRequestId(requestId, 'Missing metadata in checkout session', {
+            metadata: session.metadata,
+            sessionId: session.id
+          })
           throw new Error('Missing metadata in checkout session')
         }
 
@@ -64,9 +124,16 @@ serve(async (req) => {
             onConflict: 'partner_id'
           })
 
-        if (subError) throw subError
+        if (subError) {
+          logWithRequestId(requestId, 'Error upserting subscription', {
+            userId,
+            planId,
+            error: subError.message
+          })
+          throw subError
+        }
 
-        console.log('Subscription activated for user:', userId)
+        logWithRequestId(requestId, 'Subscription activated', { userId, planId, sessionId: session.id })
         break
       }
 
@@ -74,7 +141,12 @@ serve(async (req) => {
         const invoice = event.data.object as Stripe.Invoice
         const subscriptionId = invoice.subscription as string
 
-        if (!subscriptionId) break
+        if (!subscriptionId) {
+          logWithRequestId(requestId, 'Missing subscription ID in invoice.payment_succeeded', {
+            invoiceId: invoice.id
+          })
+          break
+        }
 
         // Buscar subscription pelo stripe_subscription_id
         const { data: subscription, error: fetchError } = await supabaseAdmin
@@ -84,7 +156,10 @@ serve(async (req) => {
           .single()
 
         if (fetchError || !subscription) {
-          console.error('Subscription not found:', subscriptionId)
+          logWithRequestId(requestId, 'Subscription not found for renewal', {
+            subscriptionId,
+            error: fetchError?.message
+          })
           break
         }
 
@@ -101,9 +176,15 @@ serve(async (req) => {
           })
           .eq('stripe_subscription_id', subscriptionId)
 
-        if (updateError) throw updateError
+        if (updateError) {
+          logWithRequestId(requestId, 'Error renewing subscription', {
+            subscriptionId,
+            error: updateError.message
+          })
+          throw updateError
+        }
 
-        console.log('Subscription renewed:', subscriptionId)
+        logWithRequestId(requestId, 'Subscription renewed', { subscriptionId, userId: subscription.partner_id })
         break
       }
 
@@ -116,9 +197,15 @@ serve(async (req) => {
           .update({ status: 'cancelled' })
           .eq('stripe_subscription_id', subscription.id)
 
-        if (cancelError) throw cancelError
+        if (cancelError) {
+          logWithRequestId(requestId, 'Error cancelling subscription', {
+            subscriptionId: subscription.id,
+            error: cancelError.message
+          })
+          throw cancelError
+        }
 
-        console.log('Subscription cancelled:', subscription.id)
+        logWithRequestId(requestId, 'Subscription cancelled', { subscriptionId: subscription.id })
         break
       }
 
@@ -138,26 +225,46 @@ serve(async (req) => {
           })
           .eq('stripe_subscription_id', subscription.id)
 
-        if (updateError) throw updateError
+        if (updateError) {
+          logWithRequestId(requestId, 'Error updating subscription', {
+            subscriptionId: subscription.id,
+            error: updateError.message
+          })
+          throw updateError
+        }
 
-        console.log('Subscription updated:', subscription.id)
+        logWithRequestId(requestId, 'Subscription updated', { 
+          subscriptionId: subscription.id,
+          newStatus: status,
+          cancelAtPeriodEnd: subscription.cancel_at_period_end
+        })
         break
       }
 
       default:
-        console.log('Unhandled event type:', event.type)
+        logWithRequestId(requestId, 'Unhandled event type', { eventType: event.type, eventId: event.id })
     }
 
-    return new Response(JSON.stringify({ received: true }), {
-      headers: { 'Content-Type': 'application/json' },
-      status: 200,
-    })
+    return new Response(
+      JSON.stringify({ received: true }),
+      {
+        headers: { 
+          ...corsHeaders(req.headers.get('origin')), 
+          'Content-Type': 'application/json',
+          'X-RateLimit-Remaining': rateLimitResult.remaining.toString()
+        },
+        status: 200,
+      }
+    )
   } catch (error) {
-    console.error('Webhook error:', error)
+    logWithRequestId(requestId, 'Webhook processing error', {
+      error: error.message,
+      stack: error.stack
+    })
     return new Response(
       JSON.stringify({ error: error.message }),
       {
-        headers: { 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
         status: 400,
       }
     )

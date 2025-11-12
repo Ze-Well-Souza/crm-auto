@@ -1,4 +1,5 @@
 import { toast } from 'sonner';
+import * as Sentry from '@sentry/react';
 import { supabase } from '@/integrations/supabase/client';
 
 export const usePlanLimits = () => {
@@ -13,6 +14,10 @@ export const usePlanLimits = () => {
 
       if (error) {
         console.error('Error validating limit:', error);
+        Sentry.captureException(error, {
+          tags: { component: 'usePlanLimits', action: 'validateLimit' },
+          extra: { actionType }
+        });
         return { canProceed: false, current: 0, limit: 0, message: 'Erro ao validar limite' };
       }
 

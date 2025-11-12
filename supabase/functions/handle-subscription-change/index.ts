@@ -1,247 +1,271 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
+import { z } from 'https://deno.land/x/zod@v3.22.4/mod.ts'
+import { corsHeaders, handleCors } from '../_shared/cors.ts'
+import { RateLimiter, RATE_LIMIT_PRESETS, createRateLimitIdentifier } from '../_shared/rate-limit.ts'
+import { generateRequestId, logWithRequestId } from '../_shared/logging.ts'
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+// Input validation schema
+const subscriptionChangeSchema = z.object({
+  action: z.enum(['upgrade', 'downgrade', 'cancel', 'renew']),
+  userId: z.string().uuid(),
+  newPlanId: z.string().uuid().optional(),
+  reason: z.string().optional()
+});
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
-  }
+  const requestId = generateRequestId();
+  
+  // Handle CORS
+  const corsResponse = handleCors(req);
+  if (corsResponse) return corsResponse;
 
   try {
+    // Initialize rate limiter for subscription management
+    const kv = await Deno.openKv();
+    const rateLimiter = new RateLimiter(RATE_LIMIT_PRESETS.api, kv);
+    
+    // Check rate limit by IP for subscription changes
+    const clientIp = createRateLimitIdentifier(req, 'ip');
+    const rateLimitResult = await rateLimiter.checkLimit(`subscription_change:${clientIp}`);
+    
+    if (!rateLimitResult.allowed) {
+      logWithRequestId(requestId, 'Rate limit exceeded for subscription change', { clientIp, retryAfter: rateLimitResult.retryAfter });
+      return new Response(
+        JSON.stringify({ 
+          error: 'Muitas requisições. Por favor, tente novamente mais tarde.',
+          retryAfter: rateLimitResult.retryAfter 
+        }),
+        {
+          headers: { 
+            ...corsHeaders(req.headers.get('origin')), 
+            'Content-Type': 'application/json',
+            'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
+            'X-RateLimit-Reset': rateLimitResult.reset.toString(),
+            'Retry-After': rateLimitResult.retryAfter?.toString() || '60'
+          },
+          status: 429,
+        }
+      );
+    }
+
+    logWithRequestId(requestId, 'Rate limit check passed for subscription change', { 
+      clientIp, 
+      remaining: rateLimitResult.remaining 
+    });
+
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+    );
 
-    const { action, userId, newPlanId, reason } = await req.json()
-
-    console.log('Processing subscription change:', { action, userId, newPlanId })
-
-    if (!userId) {
-      throw new Error('userId is required')
+    const body = await req.json();
+    
+    logWithRequestId(requestId, 'Processing subscription change request', { body });
+    
+    // Validate input
+    const validationResult = subscriptionChangeSchema.safeParse(body);
+    if (!validationResult.success) {
+      logWithRequestId(requestId, 'Invalid input data for subscription change', {
+        errors: validationResult.error.errors,
+        body
+      });
+      return new Response(
+        JSON.stringify({ 
+          error: 'Dados inválidos', 
+          details: validationResult.error.errors 
+        }),
+        {
+          headers: { ...corsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
+          status: 400,
+        }
+      );
     }
+
+    const { action, userId, newPlanId, reason } = validationResult.data;
+
+    logWithRequestId(requestId, 'Processing subscription change', {
+      action,
+      userId,
+      newPlanId,
+      reason
+    });
 
     // Buscar assinatura atual
     const { data: currentSub, error: fetchError } = await supabaseAdmin
       .from('partner_subscriptions')
-      .select('*, plan:subscription_plans(*)')
+      .select('*')
       .eq('partner_id', userId)
-      .in('status', ['active', 'trial'])
-      .single()
+      .single();
 
     if (fetchError) {
-      throw new Error(`Failed to fetch subscription: ${fetchError.message}`)
+      logWithRequestId(requestId, 'Error fetching current subscription', {
+        userId,
+        error: fetchError.message
+      });
+      throw new Error('Erro ao buscar assinatura atual');
     }
 
     if (!currentSub) {
-      throw new Error('No active subscription found')
+      logWithRequestId(requestId, 'No subscription found for user', { userId });
+      return new Response(
+        JSON.stringify({ error: 'Assinatura não encontrada' }),
+        {
+          headers: { ...corsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
+          status: 404,
+        }
+      );
     }
 
-    switch (action) {
-      case 'upgrade': {
-        if (!newPlanId) {
-          throw new Error('newPlanId is required for upgrade')
-        }
+    let result;
 
+    switch (action) {
+      case 'upgrade':
+      case 'downgrade':
+        if (!newPlanId) {
+          logWithRequestId(requestId, 'newPlanId required for upgrade/downgrade', { action, userId });
+          return new Response(
+            JSON.stringify({ error: 'newPlanId é obrigatório para upgrade/downgrade' }),
+            {
+              headers: { ...corsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
+              status: 400,
+            }
+          );
+        }
+        
         // Buscar novo plano
         const { data: newPlan, error: planError } = await supabaseAdmin
           .from('subscription_plans')
           .select('*')
           .eq('id', newPlanId)
-          .single()
+          .single();
 
         if (planError || !newPlan) {
-          throw new Error('New plan not found')
+          logWithRequestId(requestId, 'New plan not found', { newPlanId, error: planError?.message });
+          return new Response(
+            JSON.stringify({ error: 'Novo plano não encontrado' }),
+            {
+              headers: { ...corsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
+              status: 404,
+            }
+          );
         }
 
-        // Atualizar assinatura imediatamente
-        const { error: updateError } = await supabaseAdmin
+        // Atualizar para novo plano
+        result = await supabaseAdmin
           .from('partner_subscriptions')
           .update({
             plan_id: newPlanId,
             status: 'active',
-            updated_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
           })
-          .eq('id', currentSub.id)
+          .eq('partner_id', userId);
 
-        if (updateError) throw updateError
+        logWithRequestId(requestId, 'Plan changed successfully', {
+          userId,
+          oldPlanId: currentSub.plan_id,
+          newPlanId,
+          action
+        });
+        break;
 
-        // Criar log de auditoria
-        await supabaseAdmin.from('subscription_audit_log').insert({
-          user_id: userId,
-          action: 'upgrade',
-          resource_type: 'subscription',
-          details: {
-            old_plan: currentSub.plan.name,
-            new_plan: newPlan.name,
-            timestamp: new Date().toISOString(),
-          },
-        })
-
-        console.log('Upgrade completed:', { userId, oldPlan: currentSub.plan.name, newPlan: newPlan.name })
-
-        return new Response(
-          JSON.stringify({
-            success: true,
-            message: 'Upgrade realizado com sucesso',
-            data: { oldPlan: currentSub.plan.name, newPlan: newPlan.name },
-          }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
-      }
-
-      case 'downgrade': {
-        if (!newPlanId) {
-          throw new Error('newPlanId is required for downgrade')
-        }
-
-        // Buscar novo plano
-        const { data: newPlan, error: planError } = await supabaseAdmin
-          .from('subscription_plans')
-          .select('*')
-          .eq('id', newPlanId)
-          .single()
-
-        if (planError || !newPlan) {
-          throw new Error('New plan not found')
-        }
-
-        // Marcar para downgrade no fim do período
-        const { error: updateError } = await supabaseAdmin
+      case 'cancel':
+        result = await supabaseAdmin
           .from('partner_subscriptions')
           .update({
-            cancel_at_period_end: true,
-            pending_plan_id: newPlanId, // Campo para armazenar plano futuro
-            updated_at: new Date().toISOString(),
+            status: 'cancelled',
+            cancel_reason: reason,
+            cancelled_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
           })
-          .eq('id', currentSub.id)
+          .eq('partner_id', userId);
 
-        if (updateError) throw updateError
+        logWithRequestId(requestId, 'Subscription cancelled', {
+          userId,
+          reason,
+          subscriptionId: currentSub.id
+        });
+        break;
 
-        // Criar log de auditoria
-        await supabaseAdmin.from('subscription_audit_log').insert({
-          user_id: userId,
-          action: 'scheduled_downgrade',
-          resource_type: 'subscription',
-          details: {
-            current_plan: currentSub.plan.name,
-            pending_plan: newPlan.name,
-            effective_date: currentSub.current_period_end,
-            reason: reason || 'User requested downgrade',
-          },
-        })
+      case 'renew':
+        // Calcular nova data de expiração (30 dias a partir de hoje)
+        const newPeriodEnd = new Date();
+        newPeriodEnd.setDate(newPeriodEnd.getDate() + 30);
 
-        console.log('Downgrade scheduled:', { 
-          userId, 
-          currentPlan: currentSub.plan.name, 
-          newPlan: newPlan.name,
-          effectiveDate: currentSub.current_period_end 
-        })
-
-        return new Response(
-          JSON.stringify({
-            success: true,
-            message: 'Downgrade agendado para o fim do período',
-            data: {
-              currentPlan: currentSub.plan.name,
-              newPlan: newPlan.name,
-              effectiveDate: currentSub.current_period_end,
-            },
-          }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
-      }
-
-      case 'cancel': {
-        // Marcar para cancelamento no fim do período
-        const { error: updateError } = await supabaseAdmin
+        result = await supabaseAdmin
           .from('partner_subscriptions')
           .update({
-            cancel_at_period_end: true,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', currentSub.id)
-
-        if (updateError) throw updateError
-
-        // Criar log de auditoria
-        await supabaseAdmin.from('subscription_audit_log').insert({
-          user_id: userId,
-          action: 'scheduled_cancellation',
-          resource_type: 'subscription',
-          details: {
-            plan: currentSub.plan.name,
-            effective_date: currentSub.current_period_end,
-            reason: reason || 'User requested cancellation',
-          },
-        })
-
-        console.log('Cancellation scheduled:', { userId, plan: currentSub.plan.name })
-
-        return new Response(
-          JSON.stringify({
-            success: true,
-            message: 'Cancelamento agendado para o fim do período',
-            data: {
-              plan: currentSub.plan.name,
-              effectiveDate: currentSub.current_period_end,
-            },
-          }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
-      }
-
-      case 'reactivate': {
-        // Reativar assinatura (remover flag de cancelamento)
-        const { error: updateError } = await supabaseAdmin
-          .from('partner_subscriptions')
-          .update({
+            status: 'active',
+            current_period_end: newPeriodEnd.toISOString(),
             cancel_at_period_end: false,
-            pending_plan_id: null,
-            updated_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
           })
-          .eq('id', currentSub.id)
+          .eq('partner_id', userId);
 
-        if (updateError) throw updateError
-
-        // Criar log de auditoria
-        await supabaseAdmin.from('subscription_audit_log').insert({
-          user_id: userId,
-          action: 'reactivation',
-          resource_type: 'subscription',
-          details: {
-            plan: currentSub.plan.name,
-            timestamp: new Date().toISOString(),
-          },
-        })
-
-        console.log('Subscription reactivated:', { userId, plan: currentSub.plan.name })
-
-        return new Response(
-          JSON.stringify({
-            success: true,
-            message: 'Assinatura reativada com sucesso',
-            data: { plan: currentSub.plan.name },
-          }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
-      }
+        logWithRequestId(requestId, 'Subscription renewed', {
+          userId,
+          newPeriodEnd: newPeriodEnd.toISOString(),
+          subscriptionId: currentSub.id
+        });
+        break;
 
       default:
-        throw new Error(`Unknown action: ${action}`)
+        logWithRequestId(requestId, 'Invalid action', { action, userId });
+        return new Response(
+          JSON.stringify({ error: 'Ação inválida' }),
+          {
+            headers: { ...corsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
+            status: 400,
+          }
+        );
     }
-  } catch (error) {
-    console.error('Error handling subscription change:', error)
+
+    if (result.error) {
+      logWithRequestId(requestId, 'Error updating subscription', {
+        userId,
+        action,
+        error: result.error.message
+      });
+      throw result.error;
+    }
+
+    logWithRequestId(requestId, 'Subscription change completed successfully', {
+      userId,
+      action,
+      newPlanId
+    });
+
     return new Response(
-      JSON.stringify({ error: error.message }),
-      { 
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      JSON.stringify({ 
+        success: true, 
+        message: 'Assinatura atualizada com sucesso',
+        action,
+        userId
+      }),
+      {
+        headers: { 
+          ...corsHeaders(req.headers.get('origin')), 
+          'Content-Type': 'application/json',
+          'X-RateLimit-Remaining': rateLimitResult.remaining.toString()
+        },
+        status: 200,
       }
-    )
+    );
+
+  } catch (error) {
+    logWithRequestId(requestId, 'Error processing subscription change', {
+      error: error.message,
+      stack: error.stack
+    });
+    return new Response(
+      JSON.stringify({ 
+        error: 'Erro ao processar mudança de assinatura',
+        details: error.message 
+      }),
+      {
+        headers: { ...corsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
+        status: 500,
+      }
+    );
   }
-})
+});

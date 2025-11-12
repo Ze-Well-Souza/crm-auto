@@ -8,7 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Car, Shield, Users, Wrench, Crown, Zap, Rocket } from 'lucide-react';
+import { ThemeToggle } from '@/components/theme/ThemeToggle';
+import { Car, Shield, Users, Wrench, Crown, Zap, Rocket, Eye, EyeOff, Check, X } from 'lucide-react';
 
 const Auth = () => {
   const { user, signIn, signUp, loading } = useAuth();
@@ -20,6 +21,30 @@ const Auth = () => {
     confirmPassword: ''
   });
   const { toast } = useToast();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  // Password validation function
+  const validatePassword = (password: string) => {
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    const isMinLength = password.length >= 6;
+
+    return {
+      isValid: hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar && isMinLength,
+      requirements: {
+        uppercase: hasUpperCase,
+        lowercase: hasLowerCase,
+        number: hasNumber,
+        specialChar: hasSpecialChar,
+        minLength: isMinLength
+      }
+    };
+  };
+
+  const passwordValidation = validatePassword(formData.password);
 
   // Capturar plano pré-selecionado da URL
   const selectedPlan = searchParams.get('plan') || 'profissional';
@@ -86,11 +111,11 @@ const Auth = () => {
       return;
     }
 
-    if (formData.password.length < 6) {
+    if (!passwordValidation.isValid) {
       toast({
         variant: "destructive",
         title: "Erro",
-        description: "A senha deve ter pelo menos 6 caracteres."
+        description: "A senha deve conter: 1 letra maiúscula, 1 minúscula, 1 número, 1 caractere especial e no mínimo 6 caracteres."
       });
       return;
     }
@@ -124,6 +149,7 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center p-4">
+      <ThemeToggle />
       <div className="w-full max-w-5xl space-y-6">
         {/* Plano Selecionado */}
         {selectedPlan && (
@@ -131,9 +157,6 @@ const Auth = () => {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg bg-gradient-to-r ${planInfo.color}`}>
-                    <planInfo.icon className="h-6 w-6 text-white" />
-                  </div>
                   <div className="flex-1">
                     <p className="font-semibold text-sm">Plano Selecionado: {planInfo.name}</p>
                     <p className="text-xs text-slate-600 dark:text-slate-400">{planInfo.price}</p>
@@ -156,11 +179,6 @@ const Auth = () => {
           {/* Left side - Branding */}
           <div className="order-2 lg:order-1 space-y-6">
             <div className="text-center lg:text-left space-y-4">
-              <div className="flex justify-center lg:justify-start">
-                <div className="p-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg">
-                  <Car className="h-12 w-12 text-white" />
-                </div>
-              </div>
               <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Oficina Eficiente
               </h1>
@@ -193,9 +211,9 @@ const Auth = () => {
               </CardHeader>
               <CardContent>
                 <Tabs defaultValue="login" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="login">Login</TabsTrigger>
-                    <TabsTrigger value="signup">Cadastro</TabsTrigger>
+                  <TabsList className="grid w-full grid-cols-2 bg-gray-100">
+                    <TabsTrigger value="login" className="data-[state=active]:bg-gray-300 data-[state=active]:text-black text-gray-700">Login</TabsTrigger>
+                    <TabsTrigger value="signup" className="data-[state=active]:bg-gray-300 data-[state=active]:text-black text-gray-700">Cadastro</TabsTrigger>
                   </TabsList>
                   
                   <TabsContent value="login" className="space-y-4">
@@ -210,19 +228,32 @@ const Auth = () => {
                           value={formData.email}
                           onChange={handleInputChange}
                           required
+                          className="bg-gray-100 border-gray-300 text-black placeholder-gray-500"
                         />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="password">Senha</Label>
-                        <Input
-                          id="password"
-                          name="password"
-                          type="password"
-                          placeholder="••••••••"
-                          value={formData.password}
-                          onChange={handleInputChange}
-                          required
-                        />
+                        <div className="relative">
+                          <Input
+                            id="password"
+                            name="password"
+                            type={showPassword ? 'text' : 'password'}
+                            placeholder="••••••••"
+                            value={formData.password}
+                            onChange={handleInputChange}
+                            required
+                            className="pr-10 bg-gray-100 border-gray-300 text-black placeholder-gray-500"
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </Button>
+                        </div>
                       </div>
                       <Button 
                         type="submit" 
@@ -246,31 +277,86 @@ const Auth = () => {
                           value={formData.email}
                           onChange={handleInputChange}
                           required
+                          className="bg-gray-100 border-gray-300 text-black placeholder-gray-500"
                         />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="signup-password">Senha</Label>
-                        <Input
-                          id="signup-password"
-                          name="password"
-                          type="password"
-                          placeholder="••••••••"
-                          value={formData.password}
-                          onChange={handleInputChange}
-                          required
-                        />
+                        <div className="relative">
+                          <Input
+                            id="signup-password"
+                            name="password"
+                            type={showPassword ? 'text' : 'password'}
+                            placeholder="••••••••"
+                            value={formData.password}
+                            onChange={handleInputChange}
+                            required
+                            className="pr-10 bg-gray-100 border-gray-300 text-black placeholder-gray-500"
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </Button>
+                        </div>
+                        {formData.password && (
+                          <div className="space-y-1 text-xs">
+                            <div className="flex items-center gap-1">
+                              {passwordValidation.requirements.minLength ? <Check className="h-3 w-3 text-green-500" /> : <X className="h-3 w-3 text-red-500" />}
+                              <span className={passwordValidation.requirements.minLength ? 'text-green-600' : 'text-red-600'}>Mínimo 6 caracteres</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              {passwordValidation.requirements.uppercase ? <Check className="h-3 w-3 text-green-500" /> : <X className="h-3 w-3 text-red-500" />}
+                              <span className={passwordValidation.requirements.uppercase ? 'text-green-600' : 'text-red-600'}>1 letra maiúscula</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              {passwordValidation.requirements.lowercase ? <Check className="h-3 w-3 text-green-500" /> : <X className="h-3 w-3 text-red-500" />}
+                              <span className={passwordValidation.requirements.lowercase ? 'text-green-600' : 'text-red-600'}>1 letra minúscula</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              {passwordValidation.requirements.number ? <Check className="h-3 w-3 text-green-500" /> : <X className="h-3 w-3 text-red-500" />}
+                              <span className={passwordValidation.requirements.number ? 'text-green-600' : 'text-red-600'}>1 número</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              {passwordValidation.requirements.specialChar ? <Check className="h-3 w-3 text-green-500" /> : <X className="h-3 w-3 text-red-500" />}
+                              <span className={passwordValidation.requirements.specialChar ? 'text-green-600' : 'text-red-600'}>1 caractere especial</span>
+                            </div>
+                          </div>
+                        )}
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="confirm-password">Confirmar Senha</Label>
-                        <Input
-                          id="confirm-password"
-                          name="confirmPassword"
-                          type="password"
-                          placeholder="••••••••"
-                          value={formData.confirmPassword}
-                          onChange={handleInputChange}
-                          required
-                        />
+                        <div className="relative">
+                          <Input
+                            id="confirm-password"
+                            name="confirmPassword"
+                            type={showConfirmPassword ? 'text' : 'password'}
+                            placeholder="••••••••"
+                            value={formData.confirmPassword}
+                            onChange={handleInputChange}
+                            required
+                            className="pr-10 bg-gray-100 border-gray-300 text-black placeholder-gray-500"
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          >
+                            {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </Button>
+                        </div>
+                        {formData.confirmPassword && formData.password !== formData.confirmPassword && (
+                          <p className="text-xs text-red-600">As senhas não coincidem</p>
+                        )}
+                        {formData.confirmPassword && formData.password === formData.confirmPassword && (
+                          <p className="text-xs text-green-600">As senhas coincidem</p>
+                        )}
                       </div>
                       <Button 
                         type="submit" 

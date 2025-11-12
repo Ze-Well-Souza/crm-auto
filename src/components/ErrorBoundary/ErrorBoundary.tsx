@@ -12,7 +12,8 @@ interface State {
   error?: Error;
 }
 
-export class ErrorBoundary extends Component<Props, State> {
+class ErrorBoundary extends Component<Props, State> {
+  static displayName = 'ErrorBoundary';
   constructor(props: Props) {
     super(props);
     this.state = { hasError: false };
@@ -85,4 +86,5 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 }
 
+export { ErrorBoundary };
 export default ErrorBoundary;

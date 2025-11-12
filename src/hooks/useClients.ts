@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import * as Sentry from '@sentry/react';
 import { supabase } from "@/integrations/supabase/client";
 import type { Client } from "@/types";
 import { usePlanLimits } from "./usePlanLimits";
@@ -33,6 +34,9 @@ export const useClients = () => {
       setClients(data || []);
     } catch (err: any) {
       console.error('Erro ao buscar clientes:', err);
+      Sentry.captureException(err, {
+        tags: { component: 'useClients', action: 'fetchClients' }
+      });
       setError(err.message || 'Erro inesperado ao carregar clientes');
     } finally {
       setLoading(false);
