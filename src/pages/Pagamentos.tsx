@@ -29,7 +29,7 @@ import { formatCurrency } from '@/utils/formatters';
 interface ServiceOrderForPayment {
   id: string;
   customer_name: string;
-  customer_email?: string;
+  customer_email: string;
   vehicle_info: string;
   description: string;
   status: 'completed' | 'in_progress' | 'pending';
@@ -86,8 +86,8 @@ export default function Pagamentos() {
         return {
           id: order.order_number || order.id,
           customer_name: client?.name || 'Cliente não informado',
-          customer_email: client?.email,
-          vehicle_info: vehicle 
+          customer_email: client?.email || 'email@nao-informado.com',
+          vehicle_info: vehicle
             ? `${vehicle.brand} ${vehicle.model} - ${vehicle.license_plate}`
             : 'Veículo não informado',
           description: order.description || 'Sem descrição',

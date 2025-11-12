@@ -88,25 +88,26 @@ export const TransactionDashboard: React.FC = () => {
     );
   };
 
-  const getMethodIcon = (method: Transaction['payment_method']) => {
-    const icons = {
-      card: CreditCard,
-      pix: QrCode,
-      boleto: FileText
-    };
-    
-    const Icon = icons[method];
-    return <Icon className="h-4 w-4" />;
+  const getMethodIcon = (method: string) => {
+    if (method.toLowerCase().includes('card') || method.toLowerCase().includes('cartão')) {
+      return <CreditCard className="h-4 w-4" />;
+    } else if (method.toLowerCase().includes('pix')) {
+      return <QrCode className="h-4 w-4" />;
+    } else if (method.toLowerCase().includes('boleto')) {
+      return <FileText className="h-4 w-4" />;
+    }
+    return <CreditCard className="h-4 w-4" />;
   };
-
-  const getMethodLabel = (method: Transaction['payment_method']) => {
-    const labels = {
-      card: 'Cartão',
-      pix: 'PIX',
-      boleto: 'Boleto'
-    };
-    
-    return labels[method];
+  
+  const getMethodLabel = (method: string) => {
+    if (method.toLowerCase().includes('card') || method.toLowerCase().includes('cartão')) {
+      return 'Cartão';
+    } else if (method.toLowerCase().includes('pix')) {
+      return 'PIX';
+    } else if (method.toLowerCase().includes('boleto')) {
+      return 'Boleto';
+    }
+    return method;
   };
 
   if (loading) {
