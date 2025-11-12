@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -24,106 +25,100 @@ import { OrderPayment } from '@/components/payments/OrderPayment';
 import { WebhookManager } from '@/components/payments/WebhookManager';
 import { formatCurrency } from '@/utils/formatters';
 
-// Mock data para ordens de serviço
-const mockServiceOrders = [
-  {
-    id: 'OS001',
-    customer_name: 'João Silva',
-    customer_email: 'joao@email.com',
-    vehicle_info: 'Honda Civic 2020 - ABC-1234',
-    description: 'Troca de óleo e filtros',
-    status: 'completed' as const,
-    payment_status: 'unpaid' as const,
-    created_at: '2024-01-15T10:30:00Z',
-    scheduled_date: '2024-01-16T09:00:00Z',
-    items: [
-      {
-        id: '1',
-        description: 'Óleo motor 5W30',
-        quantity: 4,
-        unit_price: 25.00,
-        total: 100.00
-      },
-      {
-        id: '2',
-        description: 'Filtro de óleo',
-        quantity: 1,
-        unit_price: 30.00,
-        total: 30.00
-      },
-      {
-        id: '3',
-        description: 'Mão de obra',
-        quantity: 1,
-        unit_price: 50.00,
-        total: 50.00
-      }
-    ],
-    subtotal: 180.00,
-    tax: 18.00,
-    total: 198.00
-  },
-  {
-    id: 'OS002',
-    customer_name: 'Maria Santos',
-    customer_email: 'maria@email.com',
-    vehicle_info: 'Toyota Corolla 2019 - XYZ-5678',
-    description: 'Revisão completa',
-    status: 'completed' as const,
-    payment_status: 'paid' as const,
-    created_at: '2024-01-14T14:20:00Z',
-    scheduled_date: '2024-01-15T14:00:00Z',
-    items: [
-      {
-        id: '1',
-        description: 'Revisão 20.000km',
-        quantity: 1,
-        unit_price: 350.00,
-        total: 350.00
-      }
-    ],
-    subtotal: 350.00,
-    tax: 35.00,
-    total: 385.00
-  },
-  {
-    id: 'OS003',
-    customer_name: 'Carlos Oliveira',
-    customer_email: 'carlos@email.com',
-    vehicle_info: 'Ford Focus 2021 - DEF-9012',
-    description: 'Troca de pastilhas de freio',
-    status: 'in_progress' as const,
-    payment_status: 'unpaid' as const,
-    created_at: '2024-01-15T16:45:00Z',
-    scheduled_date: '2024-01-17T10:00:00Z',
-    items: [
-      {
-        id: '1',
-        description: 'Pastilhas de freio dianteiras',
-        quantity: 1,
-        unit_price: 120.00,
-        total: 120.00
-      },
-      {
-        id: '2',
-        description: 'Mão de obra',
-        quantity: 1,
-        unit_price: 80.00,
-        total: 80.00
-      }
-    ],
-    subtotal: 200.00,
-    tax: 20.00,
-    total: 220.00
-  }
-];
+// Tipo para ordens de serviço
+interface ServiceOrderForPayment {
+  id: string;
+  customer_name: string;
+  customer_email: string;
+  vehicle_info: string;
+  description: string;
+  status: 'completed' | 'in_progress' | 'pending';
+  payment_status: 'paid' | 'unpaid' | 'pending';
+  created_at: string;
+  scheduled_date?: string;
+  total: number;
+  subtotal: number;
+  tax: number;
+  items: Array<{
+    id: string;
+    description: string;
+    quantity: number;
+    unit_price: number;
+    total: number;
+  }>;
+}
 
 export default function Pagamentos() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [isNewPaymentOpen, setIsNewPaymentOpen] = useState(false);
+  const [serviceOrders, setServiceOrders] = useState<ServiceOrderForPayment[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredOrders = mockServiceOrders.filter(order => {
+  useEffect(() => {
+    fetchServiceOrders();
+  }, []);
+
+  const fetchServiceOrders = async () => {
+    try {
+      setLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from('service_orders')
+        .select(`
+          *,
+          clients:client_id(name, email),
+          vehicles:vehicle_id(brand, model, license_plate)
+        `)
+        .eq('user_id', user.id)
+        .in('status', ['finalizado', 'em_andamento'])
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      if (error) throw error;
+
+      const transformed: ServiceOrderForPayment[] = (data || []).map(order => {
+        const client = order.clients as any;
+        const vehicle = order.vehicles as any;
+        
+        return {
+          id: order.order_number || order.id,
+          customer_name: client?.name || 'Cliente não informado',
+          customer_email: client?.email || 'email@nao-informado.com',
+          vehicle_info: vehicle
+            ? `${vehicle.brand} ${vehicle.model} - ${vehicle.license_plate}`
+            : 'Veículo não informado',
+          description: order.description || 'Sem descrição',
+          status: order.status === 'finalizado' ? 'completed' : 'in_progress' as any,
+          payment_status: order.payment_status || 'unpaid' as any,
+          created_at: order.created_at,
+          scheduled_date: order.created_at,
+          subtotal: Number(order.total_amount) || 0,
+          tax: 0,
+          total: Number(order.total_amount) || 0,
+          items: [
+            {
+              id: '1',
+              description: order.description || 'Serviço',
+              quantity: 1,
+              unit_price: Number(order.total_amount) || 0,
+              total: Number(order.total_amount) || 0
+            }
+          ]
+        };
+      });
+
+      setServiceOrders(transformed);
+    } catch (err) {
+      console.error('Error fetching service orders:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredOrders = serviceOrders.filter(order => {
     const matchesSearch = order.customer_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          order.vehicle_info.toLowerCase().includes(searchTerm.toLowerCase());
@@ -134,12 +129,12 @@ export default function Pagamentos() {
   });
 
   const stats = {
-    total_pending: mockServiceOrders.filter(o => o.payment_status === 'unpaid').length,
-    total_paid: mockServiceOrders.filter(o => o.payment_status === 'paid').length,
-    total_amount_pending: mockServiceOrders
+    total_pending: serviceOrders.filter(o => o.payment_status === 'unpaid').length,
+    total_paid: serviceOrders.filter(o => o.payment_status === 'paid').length,
+    total_amount_pending: serviceOrders
       .filter(o => o.payment_status === 'unpaid')
       .reduce((sum, o) => sum + o.total, 0),
-    total_amount_paid: mockServiceOrders
+    total_amount_paid: serviceOrders
       .filter(o => o.payment_status === 'paid')
       .reduce((sum, o) => sum + o.total, 0)
   };
@@ -220,7 +215,7 @@ export default function Pagamentos() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {Math.round((stats.total_paid / mockServiceOrders.length) * 100)}%
+              {serviceOrders.length > 0 ? Math.round((stats.total_paid / serviceOrders.length) * 100) : 0}%
             </div>
             <p className="text-xs text-muted-foreground">
               Ordens pagas vs total

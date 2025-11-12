@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useStripeWebhooks } from '@/hooks/useStripeWebhooks';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -47,88 +48,54 @@ export const WebhookManager: React.FC = () => {
   const [events, setEvents] = useState<WebhookEvent[]>([]);
   const [endpoints, setEndpoints] = useState<WebhookEndpoint[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { events: realEvents, loading, refetch } = useStripeWebhooks();
 
-  // Simular dados de webhooks
+  // Configurar URL do webhook e carregar eventos reais
   useEffect(() => {
-    const mockEvents: WebhookEvent[] = [
-      {
-        id: 'evt_1234567890',
-        type: 'payment_intent.succeeded',
-        created: '2024-01-15T14:30:00Z',
-        data: {
-          object: {
-            id: 'pi_1234567890',
-            amount: 15000,
-            currency: 'brl',
-            metadata: {
-              order_id: 'OS001',
-              customer_name: 'João Silva'
-            }
-          }
-        },
-        status: 'succeeded',
-        attempts: 1
-      },
-      {
-        id: 'evt_0987654321',
-        type: 'payment_intent.payment_failed',
-        created: '2024-01-15T12:15:00Z',
-        data: {
-          object: {
-            id: 'pi_0987654321',
-            amount: 8990,
-            currency: 'brl',
-            last_payment_error: {
-              message: 'Your card was declined.',
-              code: 'card_declined'
-            }
-          }
-        },
-        status: 'succeeded',
-        attempts: 1
-      },
-      {
-        id: 'evt_1122334455',
-        type: 'payment_intent.requires_action',
-        created: '2024-01-15T16:45:00Z',
-        data: {
-          object: {
-            id: 'pi_1122334455',
-            amount: 32050,
-            currency: 'brl',
-            next_action: {
-              type: 'use_stripe_sdk'
-            }
-          }
-        },
-        status: 'pending',
-        attempts: 3,
-        next_retry: '2024-01-15T17:00:00Z'
-      }
-    ];
+    const projectId = 'simqszeoovjipujuxeus';
+    const webhookEndpoint = `https://${projectId}.supabase.co/functions/v1/stripe-webhook`;
+    setWebhookUrl(webhookEndpoint);
+    setWebhookSecret('Configure no Stripe Dashboard');
 
+    // Configurar endpoint mock (Stripe API não permite listar via client)
     const mockEndpoints: WebhookEndpoint[] = [
       {
-        id: 'we_1234567890',
-        url: 'https://your-domain.com/api/webhooks/stripe',
+        id: 'we_system',
+        url: webhookEndpoint,
         enabled_events: [
           'payment_intent.succeeded',
           'payment_intent.payment_failed',
           'payment_intent.canceled',
-          'payment_intent.requires_action'
+          'customer.subscription.created',
+          'customer.subscription.updated',
+          'customer.subscription.deleted',
+          'invoice.payment_succeeded',
+          'invoice.payment_failed'
         ],
         status: 'enabled',
-        created: '2024-01-10T10:00:00Z',
+        created: new Date().toISOString(),
         last_response_status: 200,
-        last_response_time: '2024-01-15T14:30:05Z'
+        last_response_time: new Date().toISOString()
       }
     ];
-
-    setEvents(mockEvents);
     setEndpoints(mockEndpoints);
-    setWebhookUrl('https://your-domain.com/api/webhooks/stripe');
-    setWebhookSecret('whsec_1234567890abcdef...');
   }, []);
+
+  // Transformar eventos reais para o formato do componente
+  useEffect(() => {
+    if (realEvents && realEvents.length > 0) {
+      const transformedEvents: WebhookEvent[] = realEvents.map(event => ({
+        id: event.event_id,
+        type: event.event_type,
+        created: event.created_at,
+        data: event.event_data,
+        status: event.status as 'succeeded' | 'failed' | 'pending',
+        attempts: event.attempts,
+        next_retry: event.next_retry_at || undefined
+      }));
+      setEvents(transformedEvents);
+    }
+  }, [realEvents]);
 
   const getEventStatusBadge = (status: WebhookEvent['status']) => {
     const variants = {
@@ -172,9 +139,8 @@ export const WebhookManager: React.FC = () => {
   const testWebhook = async () => {
     setIsLoading(true);
     try {
-      // Simular teste de webhook
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      console.log('Webhook test completed');
+      await refetch();
+      console.log('Webhook events reloaded');
     } catch (error) {
       console.error('Webhook test failed:', error);
     } finally {

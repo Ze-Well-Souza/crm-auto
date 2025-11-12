@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useStripeTransactions } from '@/hooks/useStripeTransactions';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -48,95 +49,19 @@ interface TransactionStats {
 }
 
 export const TransactionDashboard: React.FC = () => {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [stats, setStats] = useState<TransactionStats | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { transactions, stats, loading, error } = useStripeTransactions();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [methodFilter, setMethodFilter] = useState<string>('all');
 
-  // Simular dados de transações
-  useEffect(() => {
-    const mockTransactions: Transaction[] = [
-      {
-        id: 'txn_001',
-        amount: 150.00,
-        currency: 'BRL',
-        status: 'completed',
-        payment_method: 'card',
-        description: 'Ordem de Serviço #OS001',
-        created_at: '2024-01-15T10:30:00Z',
-        updated_at: '2024-01-15T10:32:00Z',
-        order_id: 'OS001',
-        customer_name: 'João Silva',
-        payment_intent_id: 'pi_1234567890'
-      },
-      {
-        id: 'txn_002',
-        amount: 89.90,
-        currency: 'BRL',
-        status: 'completed',
-        payment_method: 'pix',
-        description: 'Ordem de Serviço #OS002',
-        created_at: '2024-01-15T14:20:00Z',
-        updated_at: '2024-01-15T14:21:00Z',
-        order_id: 'OS002',
-        customer_name: 'Maria Santos',
-        payment_intent_id: 'pi_0987654321'
-      },
-      {
-        id: 'txn_003',
-        amount: 320.50,
-        currency: 'BRL',
-        status: 'pending',
-        payment_method: 'boleto',
-        description: 'Ordem de Serviço #OS003',
-        created_at: '2024-01-15T16:45:00Z',
-        updated_at: '2024-01-15T16:45:00Z',
-        order_id: 'OS003',
-        customer_name: 'Carlos Oliveira',
-        payment_intent_id: 'pi_1122334455'
-      },
-      {
-        id: 'txn_004',
-        amount: 75.00,
-        currency: 'BRL',
-        status: 'failed',
-        payment_method: 'card',
-        description: 'Ordem de Serviço #OS004',
-        created_at: '2024-01-15T18:10:00Z',
-        updated_at: '2024-01-15T18:12:00Z',
-        order_id: 'OS004',
-        customer_name: 'Ana Costa',
-        payment_intent_id: 'pi_5566778899'
-      }
-    ];
-
-    const mockStats: TransactionStats = {
-      total_revenue: mockTransactions.filter(t => t.status === 'completed').reduce((sum, t) => sum + t.amount, 0),
-      total_transactions: mockTransactions.length,
-      successful_payments: mockTransactions.filter(t => t.status === 'completed').length,
-      pending_payments: mockTransactions.filter(t => t.status === 'pending').length,
-      failed_payments: mockTransactions.filter(t => t.status === 'failed').length,
-      card_payments: mockTransactions.filter(t => t.payment_method === 'card').length,
-      pix_payments: mockTransactions.filter(t => t.payment_method === 'pix').length,
-      boleto_payments: mockTransactions.filter(t => t.payment_method === 'boleto').length,
-    };
-
-    setTimeout(() => {
-      setTransactions(mockTransactions);
-      setStats(mockStats);
-      setLoading(false);
-    }, 1000);
-  }, []);
-
   const filteredTransactions = transactions.filter(transaction => {
+    const customerName = transaction.client?.name || '';
     const matchesSearch = transaction.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         transaction.customer_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          transaction.id.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === 'all' || transaction.status === statusFilter;
-    const matchesMethod = methodFilter === 'all' || transaction.payment_method === methodFilter;
+    const matchesMethod = methodFilter === 'all' || transaction.payment_method.toLowerCase().includes(methodFilter);
     
     return matchesSearch && matchesStatus && matchesMethod;
   });
@@ -163,25 +88,26 @@ export const TransactionDashboard: React.FC = () => {
     );
   };
 
-  const getMethodIcon = (method: Transaction['payment_method']) => {
-    const icons = {
-      card: CreditCard,
-      pix: QrCode,
-      boleto: FileText
-    };
-    
-    const Icon = icons[method];
-    return <Icon className="h-4 w-4" />;
+  const getMethodIcon = (method: string) => {
+    if (method.toLowerCase().includes('card') || method.toLowerCase().includes('cartão')) {
+      return <CreditCard className="h-4 w-4" />;
+    } else if (method.toLowerCase().includes('pix')) {
+      return <QrCode className="h-4 w-4" />;
+    } else if (method.toLowerCase().includes('boleto')) {
+      return <FileText className="h-4 w-4" />;
+    }
+    return <CreditCard className="h-4 w-4" />;
   };
-
-  const getMethodLabel = (method: Transaction['payment_method']) => {
-    const labels = {
-      card: 'Cartão',
-      pix: 'PIX',
-      boleto: 'Boleto'
-    };
-    
-    return labels[method];
+  
+  const getMethodLabel = (method: string) => {
+    if (method.toLowerCase().includes('card') || method.toLowerCase().includes('cartão')) {
+      return 'Cartão';
+    } else if (method.toLowerCase().includes('pix')) {
+      return 'PIX';
+    } else if (method.toLowerCase().includes('boleto')) {
+      return 'Boleto';
+    }
+    return method;
   };
 
   if (loading) {
@@ -330,9 +256,9 @@ export const TransactionDashboard: React.FC = () => {
                 {filteredTransactions.map((transaction) => (
                   <TableRow key={transaction.id}>
                     <TableCell className="font-mono text-sm">
-                      {transaction.id}
+                      {transaction.id.substring(0, 8)}...
                     </TableCell>
-                    <TableCell>{transaction.customer_name}</TableCell>
+                    <TableCell>{transaction.client?.name || 'N/A'}</TableCell>
                     <TableCell>{transaction.description}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">

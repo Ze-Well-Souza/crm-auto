@@ -1,5 +1,8 @@
 import { supabase } from '@/integrations/supabase/client';
 
+// Chave pública do Stripe (seguro expor no frontend)
+export const STRIPE_PUBLISHABLE_KEY = 'pk_test_51RQRqBD6M8ZNfEdA4AIsE065FQLHccGhPaYLdsF6ibJMB2hlCOlooO4n8DPLSG9yp2qQwaUECmoevU3Nx3WPPOhU0043jrGAJd';
+
 export interface CheckoutSessionParams {
   planId: string;
   billingCycle: 'monthly' | 'yearly';
