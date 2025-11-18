@@ -11,11 +11,12 @@ import { PaymentConfirmation } from './_templates/payment-confirmation.tsx'
 import { SubscriptionChange } from './_templates/subscription-change.tsx'
 import { WelcomeEmail } from './_templates/welcome-email.tsx'
 import { ReactivationEmail } from './_templates/reactivation-email.tsx'
+import { QuotationEmail } from './_templates/quotation-email.tsx'
 
 const resend = new Resend(Deno.env.get('RESEND_API_KEY'))
 
 interface EmailRequest {
-  type: 'appointment' | 'appointment_reminder' | 'payment' | 'subscription' | 'welcome' | 'reactivation'
+  type: 'appointment' | 'appointment_reminder' | 'payment' | 'subscription' | 'welcome' | 'reactivation' | 'quotation'
   to: string
   data: any
 }
@@ -105,6 +106,13 @@ serve(async (req) => {
           React.createElement(ReactivationEmail, emailRequest.data)
         )
         subject = '💙 Sentimos sua falta! Que tal voltar?'
+        break
+
+      case 'quotation':
+        html = await renderAsync(
+          React.createElement(QuotationEmail, emailRequest.data)
+        )
+        subject = `📋 Cotação ${emailRequest.data.quotationNumber} - Confira nossa proposta`
         break
 
       default:

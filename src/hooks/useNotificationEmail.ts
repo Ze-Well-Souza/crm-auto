@@ -51,6 +51,40 @@ interface ReactivationEmailData {
   partnerName?: string;
 }
 
+interface QuotationService {
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  subtotal: number;
+}
+
+interface QuotationPart {
+  name: string;
+  code?: string;
+  quantity: number;
+  unitPrice: number;
+  subtotal: number;
+}
+
+interface QuotationEmailData {
+  clientName: string;
+  quotationNumber: string;
+  quotationDate: string;
+  validUntil: string;
+  vehicleInfo?: string;
+  services: QuotationService[];
+  parts?: QuotationPart[];
+  subtotalServices: number;
+  subtotalParts: number;
+  discount?: number;
+  total: number;
+  paymentConditions?: string;
+  notes?: string;
+  partnerName?: string;
+  partnerPhone?: string;
+  partnerEmail?: string;
+}
+
 export const useNotificationEmail = () => {
   const [sending, setSending] = useState(false);
 
@@ -108,6 +142,36 @@ export const useNotificationEmail = () => {
     } catch (error) {
       console.error('Error sending reactivation email:', error);
       toast.error('Erro ao enviar email de reativação');
+      throw error;
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const sendQuotationEmail = async (
+    to: string,
+    data: QuotationEmailData
+  ) => {
+    setSending(true);
+    try {
+      const { data: result, error } = await supabase.functions.invoke(
+        'send-notification-email',
+        {
+          body: {
+            type: 'quotation',
+            to,
+            data,
+          },
+        }
+      );
+
+      if (error) throw error;
+
+      toast.success('Cotação enviada por email!');
+      return result;
+    } catch (error) {
+      console.error('Error sending quotation email:', error);
+      toast.error('Erro ao enviar cotação');
       throw error;
     } finally {
       setSending(false);
@@ -238,6 +302,7 @@ export const useNotificationEmail = () => {
     sending,
     sendWelcomeEmail,
     sendReactivationEmail,
+    sendQuotationEmail,
     sendAppointmentReminder,
     sendAppointmentConfirmation,
     sendPaymentConfirmation,
