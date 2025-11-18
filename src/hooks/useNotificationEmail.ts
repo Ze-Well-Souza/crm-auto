@@ -33,6 +33,36 @@ interface SubscriptionEmailData {
 export const useNotificationEmail = () => {
   const [sending, setSending] = useState(false);
 
+  const sendAppointmentReminder = async (
+    to: string,
+    data: AppointmentEmailData
+  ) => {
+    setSending(true);
+    try {
+      const { data: result, error } = await supabase.functions.invoke(
+        'send-notification-email',
+        {
+          body: {
+            type: 'appointment_reminder',
+            to,
+            data,
+          },
+        }
+      );
+
+      if (error) throw error;
+
+      toast.success('Lembrete enviado!');
+      return result;
+    } catch (error) {
+      console.error('Error sending reminder email:', error);
+      toast.error('Erro ao enviar lembrete');
+      throw error;
+    } finally {
+      setSending(false);
+    }
+  };
+
   const sendAppointmentConfirmation = async (
     to: string,
     data: AppointmentEmailData
@@ -125,6 +155,7 @@ export const useNotificationEmail = () => {
 
   return {
     sending,
+    sendAppointmentReminder,
     sendAppointmentConfirmation,
     sendPaymentConfirmation,
     sendSubscriptionChange,
