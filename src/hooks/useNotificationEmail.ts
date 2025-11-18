@@ -30,8 +30,51 @@ interface SubscriptionEmailData {
   features?: string[];
 }
 
+interface WelcomeEmailData {
+  userName: string;
+  planName: string;
+  planDisplayName: string;
+  planLimits: {
+    clients: number;
+    appointments: number;
+    serviceOrders: number;
+    users: number;
+  };
+  features: string[];
+}
+
 export const useNotificationEmail = () => {
   const [sending, setSending] = useState(false);
+
+  const sendWelcomeEmail = async (
+    to: string,
+    data: WelcomeEmailData
+  ) => {
+    setSending(true);
+    try {
+      const { data: result, error } = await supabase.functions.invoke(
+        'send-notification-email',
+        {
+          body: {
+            type: 'welcome',
+            to,
+            data,
+          },
+        }
+      );
+
+      if (error) throw error;
+
+      toast.success('Email de boas-vindas enviado!');
+      return result;
+    } catch (error) {
+      console.error('Error sending welcome email:', error);
+      toast.error('Erro ao enviar email de boas-vindas');
+      throw error;
+    } finally {
+      setSending(false);
+    }
+  };
 
   const sendAppointmentReminder = async (
     to: string,
@@ -155,6 +198,7 @@ export const useNotificationEmail = () => {
 
   return {
     sending,
+    sendWelcomeEmail,
     sendAppointmentReminder,
     sendAppointmentConfirmation,
     sendPaymentConfirmation,
