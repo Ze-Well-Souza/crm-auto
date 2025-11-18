@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@/test/utils/test-utils';
+import { render } from '@/test/utils/test-utils';
 import { Card, CardHeader, CardTitle, CardContent } from '../card';
 
 describe('Card', () => {
   it('renders card with content', () => {
-    render(
+    const { getByText } = render(
       <Card>
         <CardHeader>
           <CardTitle>Test Card</CardTitle>
@@ -13,8 +13,8 @@ describe('Card', () => {
       </Card>
     );
 
-    expect(screen.getByText('Test Card')).toBeInTheDocument();
-    expect(screen.getByText('Test Content')).toBeInTheDocument();
+    expect(getByText('Test Card')).toBeInTheDocument();
+    expect(getByText('Test Content')).toBeInTheDocument();
   });
 
   it('applies custom className', () => {
