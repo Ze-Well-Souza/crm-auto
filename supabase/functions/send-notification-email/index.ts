@@ -12,11 +12,12 @@ import { SubscriptionChange } from './_templates/subscription-change.tsx'
 import { WelcomeEmail } from './_templates/welcome-email.tsx'
 import { ReactivationEmail } from './_templates/reactivation-email.tsx'
 import { QuotationEmail } from './_templates/quotation-email.tsx'
+import { PasswordResetEmail } from './_templates/password-reset.tsx'
 
 const resend = new Resend(Deno.env.get('RESEND_API_KEY'))
 
 interface EmailRequest {
-  type: 'appointment' | 'appointment_reminder' | 'payment' | 'subscription' | 'welcome' | 'reactivation' | 'quotation'
+  type: 'appointment' | 'appointment_reminder' | 'payment' | 'subscription' | 'welcome' | 'reactivation' | 'quotation' | 'password_reset'
   to: string
   data: any
 }
@@ -113,6 +114,13 @@ serve(async (req) => {
           React.createElement(QuotationEmail, emailRequest.data)
         )
         subject = `📋 Cotação ${emailRequest.data.quotationNumber} - Confira nossa proposta`
+        break
+
+      case 'password_reset':
+        html = await renderAsync(
+          React.createElement(PasswordResetEmail, emailRequest.data)
+        )
+        subject = '🔐 Redefinição de Senha - CRM Auto'
         break
 
       default:

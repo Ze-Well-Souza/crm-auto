@@ -85,8 +85,43 @@ interface QuotationEmailData {
   partnerEmail?: string;
 }
 
+interface PasswordResetEmailData {
+  userName: string;
+  resetLink: string;
+}
+
 export const useNotificationEmail = () => {
   const [sending, setSending] = useState(false);
+
+  const sendPasswordResetEmail = async (
+    to: string,
+    data: PasswordResetEmailData
+  ) => {
+    setSending(true);
+    try {
+      const { data: result, error } = await supabase.functions.invoke(
+        'send-notification-email',
+        {
+          body: {
+            type: 'password_reset',
+            to,
+            data,
+          },
+        }
+      );
+
+      if (error) throw error;
+
+      toast.success('Email de recuperação enviado!');
+      return result;
+    } catch (error) {
+      console.error('Error sending password reset email:', error);
+      toast.error('Erro ao enviar email de recuperação');
+      throw error;
+    } finally {
+      setSending(false);
+    }
+  };
 
   const sendWelcomeEmail = async (
     to: string,
@@ -300,6 +335,7 @@ export const useNotificationEmail = () => {
 
   return {
     sending,
+    sendPasswordResetEmail,
     sendWelcomeEmail,
     sendReactivationEmail,
     sendQuotationEmail,

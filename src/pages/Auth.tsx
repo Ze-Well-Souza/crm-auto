@@ -7,16 +7,19 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
 import { Car, Shield, Users, Wrench, Crown, Zap, Rocket, Eye, EyeOff, Check, X, CheckCircle } from 'lucide-react';
 
 const Auth = () => {
-  const { user, signIn, signUp, loading } = useAuth();
+  const { user, signIn, signUp, resetPassword, loading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [searchParams] = useSearchParams();
   const [showEmailVerification, setShowEmailVerification] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState('');
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -140,6 +143,37 @@ const Auth = () => {
         title: "Cadastro realizado com sucesso!",
         description: "Verifique seu email para confirmar a conta."
       });
+    }
+    setIsLoading(false);
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!forgotPasswordEmail) {
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Por favor, informe seu email."
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    const { error } = await resetPassword(forgotPasswordEmail);
+    
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: error.message
+      });
+    } else {
+      toast({
+        title: "Email Enviado!",
+        description: "Verifique sua caixa de entrada para redefinir sua senha."
+      });
+      setShowForgotPassword(false);
+      setForgotPasswordEmail('');
     }
     setIsLoading(false);
   };
@@ -306,6 +340,16 @@ const Auth = () => {
                       >
                         {isLoading ? 'Entrando...' : 'Entrar'}
                       </Button>
+                      
+                      <div className="text-center">
+                        <button
+                          type="button"
+                          onClick={() => setShowForgotPassword(true)}
+                          className="text-sm text-primary hover:underline"
+                        >
+                          Esqueci minha senha
+                        </button>
+                      </div>
                     </form>
                   </TabsContent>
                   
@@ -411,10 +455,51 @@ const Auth = () => {
                       </Button>
                     </form>
                   </TabsContent>
-                </Tabs>
+                  </Tabs>
                 )}
               </CardContent>
             </Card>
+
+            {/* Forgot Password Dialog */}
+            <Dialog open={showForgotPassword} onOpenChange={setShowForgotPassword}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Recuperar Senha</DialogTitle>
+                  <DialogDescription>
+                    Digite seu email para receber um link de recuperação de senha.
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleForgotPassword} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="forgot-email">Email</Label>
+                    <Input
+                      id="forgot-email"
+                      type="email"
+                      placeholder="seu@email.com"
+                      value={forgotPasswordEmail}
+                      onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="flex-1"
+                      onClick={() => {
+                        setShowForgotPassword(false);
+                        setForgotPasswordEmail('');
+                      }}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button type="submit" className="flex-1" disabled={isLoading}>
+                      {isLoading ? 'Enviando...' : 'Enviar Link'}
+                    </Button>
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
 
             {/* Security Notice */}
             <div className="flex items-center justify-center space-x-2 text-sm text-slate-600 dark:text-slate-400 mt-4">
