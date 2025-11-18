@@ -79,10 +79,10 @@ export const useSubscription = () => {
       }
 
       setSubscription(subscriptionData);
-      setPlan(subscriptionData.plan);
+      setPlan(subscriptionData?.plan || null);
       
       // Calcular uso
-      const usageData = calculateUsage(subscriptionData);
+      const usageData = subscriptionData ? calculateUsage(subscriptionData) : null;
       setUsage(usageData);
 
     } catch (err: any) {

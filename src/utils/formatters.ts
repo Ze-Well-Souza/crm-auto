@@ -4,7 +4,8 @@
  * Format currency values to Brazilian Real
  */
 export const formatCurrency = (value: number): string => {
-  return value.toLocaleString('pt-BR', { 
+  const n = Number(value ?? 0);
+  return n.toLocaleString('pt-BR', { 
     style: 'currency', 
     currency: 'BRL',
     minimumFractionDigits: 2 
@@ -14,8 +15,10 @@ export const formatCurrency = (value: number): string => {
 /**
  * Format date to Brazilian format
  */
-export const formatDate = (date: string | Date): string => {
+export const formatDate = (date?: string | Date | null): string => {
+  if (!date) return '-';
   const dateObj = typeof date === 'string' ? new Date(date) : date;
+  if (!(dateObj instanceof Date) || isNaN(dateObj.getTime())) return '-';
   return dateObj.toLocaleDateString('pt-BR');
 };
 
@@ -86,8 +89,10 @@ export const generateId = (): string => {
 /**
  * Format relative time (e.g., "2 hours ago", "1 day ago")
  */
-export const formatRelativeTime = (date: string | Date): string => {
+export const formatRelativeTime = (date?: string | Date | null): string => {
+  if (!date) return '-';
   const dateObj = typeof date === 'string' ? new Date(date) : date;
+  if (!(dateObj instanceof Date) || isNaN(dateObj.getTime())) return '-';
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - dateObj.getTime()) / 1000);
   

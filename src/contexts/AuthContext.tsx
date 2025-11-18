@@ -1,11 +1,24 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import * as Sentry from '@sentry/react';
+
+// Tipos mock compatíveis com Supabase
+interface MockUser {
+  id: string;
+  email: string;
+  role: 'admin' | 'user';
+  created_at: string;
+  updated_at: string;
+}
+
+interface MockSession {
+  access_token: string;
+  refresh_token: string;
+  user: MockUser;
+}
 
 interface AuthContextType {
-  user: User | null;
-  session: Session | null;
+  user: MockUser | null;
+  session: MockSession | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string) => Promise<{ error: any }>;
@@ -52,23 +65,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { error } = await supabase.auth.signIn({ email, password });
     return { error };
   };
 
   const signUp = async (email: string, password: string) => {
-    const redirectUrl = `${window.location.origin}/auth/callback`;
-    
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl
-      }
-    });
+    const { error } = await supabase.auth.signUp({ email, password });
     return { error };
   };
 
