@@ -19,7 +19,6 @@ import { useAppointmentSearch } from "@/hooks/useAdvancedSearch";
 import { EmptyState } from "@/components/common/EmptyState";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { StatusBadge } from "@/components/common/StatusBadge";
-import { ModuleErrorBoundary } from "@/components/ErrorBoundary";
 import { formatDate, formatCurrency } from "@/utils/formatters";
 import { isAfter, isBefore, isSameDay, parseISO } from "date-fns";
 import type { Appointment } from "@/types";
@@ -150,14 +149,9 @@ const Agendamentos = () => {
 
   return (
     <DashboardLayout>
-      <ModuleErrorBoundary 
-        moduleName="Agendamentos" 
-        moduleIcon={<Calendar className="h-20 w-20 text-blue-500" />}
-        fallbackRoute="/"
-      >
-        <div className="space-y-6">
-          {/* Header */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="space-y-2">
               <h1 className="text-3xl font-bold text-foreground">Agendamentos</h1>
               <p className="text-muted-foreground">Gerencie a agenda de serviços com visualização interativa</p>
@@ -356,7 +350,6 @@ const Agendamentos = () => {
           onUpdate={refetch}
         />
         </div>
-      </ModuleErrorBoundary>
     </DashboardLayout>
   );
 };

@@ -16,7 +16,6 @@ import { useFinancialSearch } from "@/hooks/useAdvancedSearch";
 import { EmptyState } from "@/components/common/EmptyState";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { StatusBadge } from "@/components/common/StatusBadge";
-import { ModuleErrorBoundary } from "@/components/ErrorBoundary";
 
 const Financeiro = () => {
   const [showForm, setShowForm] = useState(false);
@@ -132,14 +131,9 @@ const Financeiro = () => {
 
   return (
     <DashboardLayout>
-      <ModuleErrorBoundary 
-        moduleName="Financeiro" 
-        moduleIcon={<DollarSign className="h-20 w-20 text-yellow-500" />}
-        fallbackRoute="/"
-      >
-        <div className="space-y-6">
-          {/* Header */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="space-y-2">
               <h1 className="text-3xl font-bold text-foreground">Gestão Financeira</h1>
               <p className="text-muted-foreground">Controle de receitas, despesas e fluxo de caixa</p>
@@ -242,7 +236,6 @@ const Financeiro = () => {
           onSuccess={refetch}
         />
         </div>
-      </ModuleErrorBoundary>
     </DashboardLayout>
   );
 };
