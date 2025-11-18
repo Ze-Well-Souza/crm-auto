@@ -1,1 +1,1 @@
-export { ErrorBoundary, ModuleErrorBoundary } from './ErrorBoundary';
+export { ErrorBoundary } from './ErrorBoundary';
