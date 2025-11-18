@@ -1,18 +1,18 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@/test/utils/test-utils';
+import { render } from '@/test/utils/test-utils';
 import { Button } from '../button';
 
 describe('Button', () => {
   it('renders button with text', () => {
-    render(<Button>Click me</Button>);
-    expect(screen.getByText('Click me')).toBeInTheDocument();
+    const { getByText } = render(<Button>Click me</Button>);
+    expect(getByText('Click me')).toBeInTheDocument();
   });
 
   it('handles click events', () => {
     const handleClick = vi.fn();
-    render(<Button onClick={handleClick}>Click me</Button>);
+    const { getByText } = render(<Button onClick={handleClick}>Click me</Button>);
     
-    screen.getByText('Click me').click();
+    getByText('Click me').click();
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
 
@@ -23,8 +23,8 @@ describe('Button', () => {
   });
 
   it('can be disabled', () => {
-    render(<Button disabled>Disabled</Button>);
-    const button = screen.getByText('Disabled');
+    const { getByText } = render(<Button disabled>Disabled</Button>);
+    const button = getByText('Disabled');
     expect(button).toBeDisabled();
   });
 });
