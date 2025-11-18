@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
+import { initMonitoring } from "./lib/monitoring";
 // import { initSentry } from "./integrations/sentry";
 // import { ErrorBoundary } from "./components/ErrorBoundary";
 
@@ -19,5 +20,8 @@ import "./index.css";
 //       });
 //   });
 // }
+
+// Initialize error monitoring
+initMonitoring();
 
 createRoot(document.getElementById("root")!).render(<App />);
