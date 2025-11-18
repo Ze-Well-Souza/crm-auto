@@ -9,12 +9,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
-import { Car, Shield, Users, Wrench, Crown, Zap, Rocket, Eye, EyeOff, Check, X } from 'lucide-react';
+import { Car, Shield, Users, Wrench, Crown, Zap, Rocket, Eye, EyeOff, Check, X, CheckCircle } from 'lucide-react';
 
 const Auth = () => {
   const { user, signIn, signUp, loading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [searchParams] = useSearchParams();
+  const [showEmailVerification, setShowEmailVerification] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -132,6 +134,8 @@ const Auth = () => {
           : error.message
       });
     } else {
+      setRegisteredEmail(formData.email);
+      setShowEmailVerification(true);
       toast({
         title: "Cadastro realizado com sucesso!",
         description: "Verifique seu email para confirmar a conta."
@@ -210,11 +214,51 @@ const Auth = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Tabs defaultValue="login" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2 bg-gray-100">
-                    <TabsTrigger value="login" className="data-[state=active]:bg-gray-300 data-[state=active]:text-black text-gray-700">Login</TabsTrigger>
-                    <TabsTrigger value="signup" className="data-[state=active]:bg-gray-300 data-[state=active]:text-black text-gray-700">Cadastro</TabsTrigger>
-                  </TabsList>
+                {showEmailVerification ? (
+                  // Email Verification Message
+                  <div className="space-y-6 py-8 text-center">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 dark:bg-green-900 mb-4">
+                      <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="text-xl font-bold">Verifique seu Email</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Enviamos um link de confirmação para:
+                      </p>
+                      <p className="font-semibold text-blue-600 dark:text-blue-400">
+                        {registeredEmail}
+                      </p>
+                    </div>
+                    <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 p-4 rounded-lg text-left space-y-2">
+                      <p className="text-sm font-semibold text-blue-900 dark:text-blue-100">
+                        📧 Próximos passos:
+                      </p>
+                      <ol className="text-sm text-blue-800 dark:text-blue-200 space-y-1 list-decimal list-inside">
+                        <li>Abra sua caixa de entrada</li>
+                        <li>Procure por email de "CRM Auto"</li>
+                        <li>Clique no link de confirmação</li>
+                        <li>Complete a configuração da sua conta</li>
+                      </ol>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Não recebeu o email? Verifique sua caixa de spam ou entre em contato.
+                    </p>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setShowEmailVerification(false);
+                        setFormData({ email: '', password: '', confirmPassword: '' });
+                      }}
+                    >
+                      Voltar ao Login
+                    </Button>
+                  </div>
+                ) : (
+                  <Tabs defaultValue="login" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2 bg-gray-100">
+                      <TabsTrigger value="login" className="data-[state=active]:bg-gray-300 data-[state=active]:text-black text-gray-700">Login</TabsTrigger>
+                      <TabsTrigger value="signup" className="data-[state=active]:bg-gray-300 data-[state=active]:text-black text-gray-700">Cadastro</TabsTrigger>
+                    </TabsList>
                   
                   <TabsContent value="login" className="space-y-4">
                     <form onSubmit={handleSignIn} className="space-y-4">
@@ -368,6 +412,7 @@ const Auth = () => {
                     </form>
                   </TabsContent>
                 </Tabs>
+                )}
               </CardContent>
             </Card>
 
