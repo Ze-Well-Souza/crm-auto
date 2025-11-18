@@ -23,6 +23,7 @@ export type Database = {
           id: string
           notes: string | null
           partner_id: string
+          reminder_sent: boolean | null
           scheduled_date: string
           scheduled_time: string
           service_type: string | null
@@ -38,6 +39,7 @@ export type Database = {
           id?: string
           notes?: string | null
           partner_id: string
+          reminder_sent?: boolean | null
           scheduled_date: string
           scheduled_time: string
           service_type?: string | null
@@ -53,6 +55,7 @@ export type Database = {
           id?: string
           notes?: string | null
           partner_id?: string
+          reminder_sent?: boolean | null
           scheduled_date?: string
           scheduled_time?: string
           service_type?: string | null

@@ -6,13 +6,14 @@ import { renderAsync } from 'npm:@react-email/components@0.0.22'
 import { corsHeaders, handleCors } from '../_shared/cors.ts'
 import { generateRequestId, logWithRequestId } from '../_shared/logging.ts'
 import { AppointmentConfirmation } from './_templates/appointment-confirmation.tsx'
+import { AppointmentReminder } from './_templates/appointment-reminder.tsx'
 import { PaymentConfirmation } from './_templates/payment-confirmation.tsx'
 import { SubscriptionChange } from './_templates/subscription-change.tsx'
 
 const resend = new Resend(Deno.env.get('RESEND_API_KEY'))
 
 interface EmailRequest {
-  type: 'appointment' | 'payment' | 'subscription'
+  type: 'appointment' | 'appointment_reminder' | 'payment' | 'subscription'
   to: string
   data: any
 }
@@ -67,6 +68,13 @@ serve(async (req) => {
           React.createElement(AppointmentConfirmation, emailRequest.data)
         )
         subject = 'Confirmação de Agendamento - CRM Auto'
+        break
+
+      case 'appointment_reminder':
+        html = await renderAsync(
+          React.createElement(AppointmentReminder, emailRequest.data)
+        )
+        subject = '🔔 Lembrete: Seu agendamento é amanhã! - CRM Auto'
         break
 
       case 'payment':
