@@ -1,5 +1,5 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import Stripe from 'https://esm.sh/stripe@14.21.0'
 import { corsHeaders, handleCors } from '../_shared/cors.ts'
 import { RateLimiter, RATE_LIMIT_PRESETS, createRateLimitIdentifier } from '../_shared/rate-limit.ts'
@@ -10,6 +10,88 @@ const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
 })
 
 const cryptoProvider = Stripe.createSubtleCryptoProvider()
+
+// Helper function to send subscription change email
+async function sendSubscriptionEmail(
+  supabaseAdmin: any,
+  userId: string,
+  changeType: 'upgrade' | 'downgrade' | 'cancelled' | 'renewed',
+  newPlanId: string,
+  oldPlanId?: string
+) {
+  try {
+    // Get user profile
+    const { data: profile } = await supabaseAdmin
+      .from('profiles')
+      .select('full_name')
+      .eq('user_id', userId)
+      .single()
+
+    // Get user auth data
+    const { data: { user } } = await supabaseAdmin.auth.admin.getUserById(userId)
+    
+    if (!user?.email) {
+      console.log('No email found for user', userId)
+      return
+    }
+
+    // Get plan details
+    const { data: newPlan } = await supabaseAdmin
+      .from('subscription_plans')
+      .select('display_name, price_monthly, features')
+      .eq('id', newPlanId)
+      .single()
+
+    let oldPlan = null
+    if (oldPlanId) {
+      const { data } = await supabaseAdmin
+        .from('subscription_plans')
+        .select('display_name')
+        .eq('id', oldPlanId)
+        .single()
+      oldPlan = data
+    }
+
+    // Format effective date
+    const effectiveDate = new Date()
+    effectiveDate.setDate(effectiveDate.getDate() + (changeType === 'downgrade' ? 30 : 0))
+    
+    const formattedDate = new Intl.DateTimeFormat('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    }).format(effectiveDate)
+
+    // Prepare email data
+    const emailData = {
+      type: 'subscription',
+      to: user.email,
+      data: {
+        clientName: profile?.full_name || user.email.split('@')[0],
+        changeType,
+        oldPlan: oldPlan?.display_name || newPlan?.display_name || 'Plano Anterior',
+        newPlan: newPlan?.display_name || 'Novo Plano',
+        effectiveDate: formattedDate,
+        newPrice: newPlan?.price_monthly,
+        features: Array.isArray(newPlan?.features) ? newPlan.features : [],
+      },
+    }
+
+    // Call notification edge function
+    const { error: emailError } = await supabaseAdmin.functions.invoke(
+      'send-notification-email',
+      { body: emailData }
+    )
+
+    if (emailError) {
+      console.error('Failed to send subscription email:', emailError)
+    } else {
+      console.log('Subscription email sent successfully to', user.email)
+    }
+  } catch (error) {
+    console.error('Error in sendSubscriptionEmail:', error)
+  }
+}
 
 serve(async (req) => {
   const requestId = generateRequestId()
@@ -108,6 +190,13 @@ serve(async (req) => {
         const currentPeriodEnd = new Date()
         currentPeriodEnd.setDate(currentPeriodEnd.getDate() + 30)
 
+        // Buscar plano anterior do usuário (se existir)
+        const { data: existingSubscription } = await supabaseAdmin
+          .from('partner_subscriptions')
+          .select('plan_id')
+          .eq('partner_id', userId)
+          .single()
+
         // Criar ou atualizar assinatura
         const { error: subError } = await supabaseAdmin
           .from('partner_subscriptions')
@@ -131,6 +220,26 @@ serve(async (req) => {
             error: subError.message
           })
           throw subError
+        }
+
+        // Determinar tipo de mudança e enviar email
+        if (existingSubscription?.plan_id && existingSubscription.plan_id !== planId) {
+          // É um upgrade ou downgrade
+          await sendSubscriptionEmail(
+            supabaseAdmin,
+            userId,
+            'upgrade', // Assumir upgrade por padrão (checkout é geralmente upgrade)
+            planId,
+            existingSubscription.plan_id
+          )
+        } else {
+          // Nova assinatura (primeiro plano pago)
+          await sendSubscriptionEmail(
+            supabaseAdmin,
+            userId,
+            'renewed',
+            planId
+          )
         }
 
         logWithRequestId(requestId, 'Subscription activated', { userId, planId, sessionId: session.id })
@@ -184,12 +293,27 @@ serve(async (req) => {
           throw updateError
         }
 
+        // Enviar email de renovação
+        await sendSubscriptionEmail(
+          supabaseAdmin,
+          subscription.partner_id,
+          'renewed',
+          subscription.plan_id
+        )
+
         logWithRequestId(requestId, 'Subscription renewed', { subscriptionId, userId: subscription.partner_id })
         break
       }
 
       case 'customer.subscription.deleted': {
         const subscription = event.data.object as Stripe.Subscription
+
+        // Buscar subscription no banco antes de cancelar
+        const { data: dbSubscription } = await supabaseAdmin
+          .from('partner_subscriptions')
+          .select('partner_id, plan_id')
+          .eq('stripe_subscription_id', subscription.id)
+          .single()
 
         // Cancelar assinatura
         const { error: cancelError } = await supabaseAdmin
@@ -203,6 +327,16 @@ serve(async (req) => {
             error: cancelError.message
           })
           throw cancelError
+        }
+
+        // Enviar email de cancelamento
+        if (dbSubscription) {
+          await sendSubscriptionEmail(
+            supabaseAdmin,
+            dbSubscription.partner_id,
+            'cancelled',
+            dbSubscription.plan_id
+          )
         }
 
         logWithRequestId(requestId, 'Subscription cancelled', { subscriptionId: subscription.id })
