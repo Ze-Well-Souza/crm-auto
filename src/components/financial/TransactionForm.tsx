@@ -40,6 +40,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useClients } from "@/hooks/useClients";
 import { useFinancialTransactionsNew } from "@/hooks/useFinancialTransactionsNew";
+import { useNotificationEmail } from "@/hooks/useNotificationEmail";
 import { RECEIPT_CATEGORIES, EXPENSE_CATEGORIES } from "@/utils/constants";
 import type { FinancialTransaction } from "@/types";
 
@@ -76,6 +77,7 @@ export const TransactionForm = ({
   const [loading, setLoading] = useState(false);
   const { clients } = useClients();
   const { paymentMethods, createTransaction, updateTransaction } = useFinancialTransactionsNew();
+  const { sendPaymentConfirmation } = useNotificationEmail();
 
   const form = useForm<TransactionFormData>({
     resolver: zodResolver(transactionSchema),
@@ -107,8 +109,62 @@ export const TransactionForm = ({
 
       if (transaction) {
         await updateTransaction(transaction.id, transactionData as any);
+        
+        // Enviar email se o pagamento foi confirmado (status alterado para "pago")
+        if (data.status === 'pago' && transaction.status !== 'pago') {
+          const client = data.client_id ? clients?.find(c => c.id === data.client_id) : null;
+          
+          if (client?.email) {
+            try {
+              // Buscar nome do método de pagamento
+              let paymentMethodLabel = 'Não informado';
+              if (data.payment_method) {
+                // Tentar encontrar pelo type
+                const method = paymentMethods?.find(m => m.type === data.payment_method);
+                paymentMethodLabel = method?.name || data.payment_method;
+              }
+              
+              await sendPaymentConfirmation(client.email, {
+                clientName: client.name,
+                amount: data.amount,
+                paymentMethod: paymentMethodLabel,
+                description: data.description,
+                paymentDate: data.payment_date ? format(data.payment_date, 'dd/MM/yyyy') : format(new Date(), 'dd/MM/yyyy'),
+              });
+            } catch (emailError) {
+              console.error('Email não enviado:', emailError);
+            }
+          }
+        }
       } else {
         await createTransaction(transactionData as any);
+        
+        // Enviar email para novos pagamentos com status "pago"
+        if (data.status === 'pago') {
+          const client = data.client_id ? clients?.find(c => c.id === data.client_id) : null;
+          
+          if (client?.email) {
+            try {
+              // Buscar nome do método de pagamento
+              let paymentMethodLabel = 'Não informado';
+              if (data.payment_method) {
+                // Tentar encontrar pelo type
+                const method = paymentMethods?.find(m => m.type === data.payment_method);
+                paymentMethodLabel = method?.name || data.payment_method;
+              }
+              
+              await sendPaymentConfirmation(client.email, {
+                clientName: client.name,
+                amount: data.amount,
+                paymentMethod: paymentMethodLabel,
+                description: data.description,
+                paymentDate: data.payment_date ? format(data.payment_date, 'dd/MM/yyyy') : format(new Date(), 'dd/MM/yyyy'),
+              });
+            } catch (emailError) {
+              console.error('Email não enviado:', emailError);
+            }
+          }
+        }
       }
 
       onSuccess?.();
