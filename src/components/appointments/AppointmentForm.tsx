@@ -42,6 +42,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useClients } from "@/hooks/useClients";
 import { useVehicles } from "@/hooks/useVehicles";
 import { useAppointmentsNew } from "@/hooks/useAppointmentsNew";
+import { useNotificationEmail } from "@/hooks/useNotificationEmail";
 import type { Appointment } from "@/types";
 
 const appointmentSchema = z.object({
@@ -77,6 +78,7 @@ export const AppointmentForm = ({
   const { clients } = useClients();
   const { vehicles } = useVehicles();
   const { createAppointment, updateAppointment } = useAppointmentsNew();
+  const { sendAppointmentConfirmation } = useNotificationEmail();
 
   const form = useForm<AppointmentFormData>({
     resolver: zodResolver(appointmentSchema),
@@ -123,6 +125,26 @@ export const AppointmentForm = ({
         await updateAppointment(appointment.id, appointmentData as any);
       } else {
         await createAppointment(appointmentData as any);
+        
+        // Enviar email de confirmação para novos agendamentos
+        const client = clients?.find(c => c.id === data.client_id);
+        const vehicle = vehicles?.find(v => v.id === data.vehicle_id);
+        
+        if (client?.email) {
+          try {
+            await sendAppointmentConfirmation(client.email, {
+              clientName: client.name,
+              appointmentDate: format(data.scheduled_date, 'dd/MM/yyyy'),
+              appointmentTime: data.scheduled_time,
+              serviceType: data.service_type,
+              vehicleInfo: vehicle ? `${vehicle.brand} ${vehicle.model} - ${vehicle.license_plate || 'Sem placa'}` : undefined,
+              estimatedPrice: data.estimated_value,
+            });
+          } catch (emailError) {
+            // Não bloqueia o fluxo se o email falhar
+            console.error('Email não enviado:', emailError);
+          }
+        }
       }
 
       onSuccess?.();
