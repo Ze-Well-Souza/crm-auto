@@ -33,9 +33,20 @@ const AuthCallback = () => {
             description: 'Sua conta foi verificada com sucesso.'
           });
 
-          // Redirect to dashboard after a short delay
+          // Check if user has completed onboarding
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('full_name')
+            .eq('user_id', data.session.user.id)
+            .single();
+
+          // Redirect to onboarding if profile is incomplete, otherwise to dashboard
           setTimeout(() => {
-            navigate('/');
+            if (!profile?.full_name) {
+              navigate('/onboarding');
+            } else {
+              navigate('/');
+            }
           }, 2000);
         } else {
           throw new Error('Não foi possível confirmar o email. Por favor, tente novamente.');

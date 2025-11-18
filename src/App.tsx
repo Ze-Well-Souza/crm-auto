@@ -21,6 +21,7 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 const Index = lazy(() => import("./pages/Index"));
 const Auth = lazy(() => import("./pages/Auth"));
 const AuthCallback = lazy(() => import("./pages/AuthCallback"));
+const Onboarding = lazy(() => import("./pages/Onboarding"));
 const Admin = lazy(() => import("./pages/Admin"));
 const Clientes = lazy(() => import("./pages/Clientes"));
 const Veiculos = lazy(() => import("./pages/Veiculos"));
@@ -68,11 +69,14 @@ const App = () => (
                     <BrowserRouter>
                       <Suspense fallback={<PageLoadingFallback />}>
                         <Routes>
-                          {/* Rotas Públicas */}
+                        {/* Rotas Públicas */}
                           <Route path="/auth" element={<Auth />} />
                           <Route path="/auth/callback" element={<AuthCallback />} />
                           <Route path="/pricing" element={<PlanosPublicos />} />
                           <Route path="/install" element={<InstallPWA />} />
+                          
+                          {/* Onboarding */}
+                          <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
                           
                           {/* Dashboard */}
                           <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
