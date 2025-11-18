@@ -26,8 +26,8 @@ export class RateLimiter {
     this.kv = kv;
   }
 
-  async checkLimit(identifier: string): Promise<RateLimitResult> {
-    const key = [this.config.keyPrefix, identifier];
+  async checkLimit(identifier?: string): Promise<RateLimitResult> {
+    const key = [this.config.keyPrefix || 'rate_limit', identifier || 'anonymous'];
     const now = Date.now();
     const windowStart = now - this.config.windowMs;
 
@@ -77,8 +77,8 @@ export class RateLimiter {
     }
   }
 
-  async resetLimit(identifier: string): Promise<void> {
-    const key = [this.config.keyPrefix, identifier];
+  async resetLimit(identifier?: string): Promise<void> {
+    const key = [this.config.keyPrefix || 'rate_limit', identifier || 'anonymous'];
     await this.kv.delete(key);
   }
 }

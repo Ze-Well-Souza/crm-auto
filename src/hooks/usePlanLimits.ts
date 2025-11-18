@@ -8,8 +8,15 @@ export const usePlanLimits = () => {
     actionType: 'clients' | 'appointments' | 'reports'
   ): Promise<{ canProceed: boolean; current: number; limit: string | number; percentage?: number; message?: string }> => {
     try {
+      // Mapear tipos para corresponder ao schema da Edge Function
+      const featureMap = {
+        'clients': 'clients',
+        'appointments': 'appointments', 
+        'reports': 'service_orders' // Reports estão mapeados para service_orders no backend
+      } as const;
+
       const { data, error } = await supabase.functions.invoke('validate-plan-limit', {
-        body: { action_type: actionType }
+        body: { feature: featureMap[actionType] }
       });
 
       if (error) {
@@ -21,7 +28,20 @@ export const usePlanLimits = () => {
         return { canProceed: false, current: 0, limit: 0, message: 'Erro ao validar limite' };
       }
 
-      return data;
+      // Adaptar resposta da Edge Function para o formato esperado
+      if (data) {
+        return {
+          canProceed: data.allowed || false,
+          current: data.current || 0,
+          limit: data.limit === -1 ? 'unlimited' : data.limit,
+          percentage: data.remaining !== undefined && data.limit > 0 
+            ? Math.round(((data.current || 0) / data.limit) * 100) 
+            : undefined,
+          message: data.allowed ? undefined : `Limite de ${actionType} atingido`
+        };
+      }
+
+      return { canProceed: false, current: 0, limit: 0, message: 'Erro ao validar limite' };
     } catch (error) {
       console.error('Error in validateLimit:', error);
       return { canProceed: false, current: 0, limit: 0, message: 'Erro ao validar limite' };

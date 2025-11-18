@@ -9,7 +9,7 @@ const ALLOWED_ORIGINS = [
     : [])
 ]
 
-export const corsHeaders = (origin?: string) => {
+export const corsHeaders = (origin?: string | null) => {
   const isAllowed = origin && ALLOWED_ORIGINS.includes(origin)
   
   return {
