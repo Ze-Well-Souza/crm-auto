@@ -10,11 +10,12 @@ import { AppointmentReminder } from './_templates/appointment-reminder.tsx'
 import { PaymentConfirmation } from './_templates/payment-confirmation.tsx'
 import { SubscriptionChange } from './_templates/subscription-change.tsx'
 import { WelcomeEmail } from './_templates/welcome-email.tsx'
+import { ReactivationEmail } from './_templates/reactivation-email.tsx'
 
 const resend = new Resend(Deno.env.get('RESEND_API_KEY'))
 
 interface EmailRequest {
-  type: 'appointment' | 'appointment_reminder' | 'payment' | 'subscription' | 'welcome'
+  type: 'appointment' | 'appointment_reminder' | 'payment' | 'subscription' | 'welcome' | 'reactivation'
   to: string
   data: any
 }
@@ -97,6 +98,13 @@ serve(async (req) => {
           React.createElement(WelcomeEmail, emailRequest.data)
         )
         subject = '🎉 Bem-vindo ao CRM Auto! Sua conta está pronta'
+        break
+
+      case 'reactivation':
+        html = await renderAsync(
+          React.createElement(ReactivationEmail, emailRequest.data)
+        )
+        subject = '💙 Sentimos sua falta! Que tal voltar?'
         break
 
       default:

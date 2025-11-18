@@ -43,6 +43,14 @@ interface WelcomeEmailData {
   features: string[];
 }
 
+interface ReactivationEmailData {
+  clientName: string;
+  daysSinceLastAppointment: number;
+  lastAppointmentDate: string;
+  lastServiceType?: string;
+  partnerName?: string;
+}
+
 export const useNotificationEmail = () => {
   const [sending, setSending] = useState(false);
 
@@ -70,6 +78,36 @@ export const useNotificationEmail = () => {
     } catch (error) {
       console.error('Error sending welcome email:', error);
       toast.error('Erro ao enviar email de boas-vindas');
+      throw error;
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const sendReactivationEmail = async (
+    to: string,
+    data: ReactivationEmailData
+  ) => {
+    setSending(true);
+    try {
+      const { data: result, error } = await supabase.functions.invoke(
+        'send-notification-email',
+        {
+          body: {
+            type: 'reactivation',
+            to,
+            data,
+          },
+        }
+      );
+
+      if (error) throw error;
+
+      toast.success('Email de reativação enviado!');
+      return result;
+    } catch (error) {
+      console.error('Error sending reactivation email:', error);
+      toast.error('Erro ao enviar email de reativação');
       throw error;
     } finally {
       setSending(false);
@@ -199,6 +237,7 @@ export const useNotificationEmail = () => {
   return {
     sending,
     sendWelcomeEmail,
+    sendReactivationEmail,
     sendAppointmentReminder,
     sendAppointmentConfirmation,
     sendPaymentConfirmation,
