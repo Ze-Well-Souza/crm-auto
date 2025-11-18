@@ -1,7 +1,7 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
-import { initSentry } from "./integrations/sentry";
+// import { initSentry } from "./integrations/sentry";
 // import { ErrorBoundary } from "./components/ErrorBoundary";
 
 // Initialize Sentry for error monitoring

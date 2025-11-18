@@ -13,7 +13,6 @@ import { usePartsNew } from "@/hooks/usePartsNew";
 import { usePartsSearch } from "@/hooks/useAdvancedSearch";
 import { EmptyState } from "@/components/common/EmptyState";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import { ModuleErrorBoundary } from "@/components/ErrorBoundary";
 
 const Estoque = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -122,14 +121,9 @@ const Estoque = () => {
 
   return (
     <DashboardLayout>
-      <ModuleErrorBoundary 
-        moduleName="Estoque" 
-        moduleIcon={<Package className="h-20 w-20 text-green-500" />}
-        fallbackRoute="/"
-      >
-        <div className="space-y-6">
-          {/* Header */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="space-y-2">
               <h1 className="text-3xl font-bold text-foreground">Controle de Estoque</h1>
               <p className="text-muted-foreground">Gerencie peças, fornecedores e movimentações</p>
@@ -230,10 +224,9 @@ const Estoque = () => {
               showPageInfo={true}
               showNavigationInfo={true}
             />
-          )}
-        </div>
-         </div>
-       </ModuleErrorBoundary>
+        )}
+      </div>
+       </div>
      </DashboardLayout>
    );
 };

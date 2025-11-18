@@ -1,11 +1,4 @@
-// Sistema Mock para MVP - Remove dependência de Supabase
-import { createClient as createMockClient } from '../../lib/mock/mockSupabase'
-
-// Usar mock client para MVP - sem custos de API
-export const supabase = createMockClient('', '')
-
-// Para futura integração com Supabase real, descomente abaixo:
-/*
+// Cliente Supabase Real - Produção
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
@@ -16,4 +9,3 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
-*/
