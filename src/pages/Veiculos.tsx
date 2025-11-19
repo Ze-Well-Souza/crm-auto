@@ -100,23 +100,25 @@ const Veiculos = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        {/* Header */}
+        {/* Header - Landing Page Style */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-foreground">Gestão de Veículos</h1>
-            <p className="text-muted-foreground">Controle detalhado da frota de veículos</p>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 bg-clip-text text-transparent">
+              Gestão de Veículos
+            </h1>
+            <p className="text-slate-400">Controle detalhado da frota de veículos</p>
           </div>
-          
+
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="shadow-primary">
+              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg shadow-purple-500/50">
                 <Plus className="mr-2 h-4 w-4" />
                 Novo Veículo
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px]">
+            <DialogContent className="sm:max-w-[600px] bg-slate-900 border-white/10">
               <DialogHeader>
-                <DialogTitle>Cadastrar Novo Veículo</DialogTitle>
+                <DialogTitle className="text-white">Cadastrar Novo Veículo</DialogTitle>
               </DialogHeader>
               <VehicleForm onSuccess={() => setIsDialogOpen(false)} />
             </DialogContent>

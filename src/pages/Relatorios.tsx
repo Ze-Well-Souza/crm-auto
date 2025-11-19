@@ -238,11 +238,13 @@ const Relatorios = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        {/* Header */}
+        {/* Header - Landing Page Style */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Relatórios Avançados</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 bg-clip-text text-transparent">
+              Relatórios Avançados
+            </h1>
+            <p className="text-slate-400">
               Análise detalhada e insights do seu negócio
             </p>
           </div>

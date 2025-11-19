@@ -91,7 +91,7 @@ export const VehicleFilters = ({ onFiltersChange, activeFilters }: VehicleFilter
   };
 
   return (
-    <Card>
+    <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl">
       <CardContent className="pt-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4 flex-1">
@@ -101,15 +101,25 @@ export const VehicleFilters = ({ onFiltersChange, activeFilters }: VehicleFilter
                 variant={activeFilters.highMileage ? "default" : "outline"}
                 size="sm"
                 onClick={() => handleFilterChange('quickFilter', 'highMileage', !activeFilters.highMileage)}
+                className={cn(
+                  activeFilters.highMileage
+                    ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg shadow-purple-500/50"
+                    : "border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+                )}
               >
                 <Gauge className="h-3 w-3 mr-1" />
                 Alta Km
               </Button>
-              
+
               <Button
                 variant={activeFilters.maintenanceDue ? "default" : "outline"}
                 size="sm"
                 onClick={() => handleFilterChange('quickFilter', 'maintenanceDue', !activeFilters.maintenanceDue)}
+                className={cn(
+                  activeFilters.maintenanceDue
+                    ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg shadow-purple-500/50"
+                    : "border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+                )}
               >
                 <AlertTriangle className="h-3 w-3 mr-1" />
                 Manutenção
@@ -119,6 +129,11 @@ export const VehicleFilters = ({ onFiltersChange, activeFilters }: VehicleFilter
                 variant={activeFilters.flexFuel ? "default" : "outline"}
                 size="sm"
                 onClick={() => handleFilterChange('quickFilter', 'flexFuel', !activeFilters.flexFuel)}
+                className={cn(
+                  activeFilters.flexFuel
+                    ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg shadow-purple-500/50"
+                    : "border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+                )}
               >
                 <Fuel className="h-3 w-3 mr-1" />
                 Flex
@@ -128,34 +143,42 @@ export const VehicleFilters = ({ onFiltersChange, activeFilters }: VehicleFilter
             {/* Advanced Filters */}
             <Popover open={isOpen} onOpenChange={setIsOpen}>
               <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className="relative">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="relative border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+                >
                   <Filter className="h-3 w-3 mr-1" />
                   Filtros Avançados
                   {getActiveFilterCount() > 0 && (
-                    <Badge 
-                      variant="destructive" 
-                      className="absolute -top-2 -right-2 h-5 w-5 p-0 text-xs"
+                    <Badge
+                      className="absolute -top-2 -right-2 h-5 w-5 p-0 text-xs bg-red-500 text-white border-0"
                     >
                       {getActiveFilterCount()}
                     </Badge>
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-80" align="start">
+              <PopoverContent className="w-80 bg-slate-900 border-white/10 backdrop-blur-xl" align="start">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-medium">Filtros Avançados</h4>
-                    <Button variant="ghost" size="sm" onClick={clearFilters}>
+                    <h4 className="font-medium text-white">Filtros Avançados</h4>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={clearFilters}
+                      className="text-blue-400 hover:text-blue-300 hover:bg-blue-500/20"
+                    >
                       <X className="h-3 w-3 mr-1" />
                       Limpar
                     </Button>
                   </div>
 
-                  <Separator />
+                  <Separator className="bg-white/10" />
 
                   {/* Fuel Type Filter */}
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium flex items-center gap-2">
+                    <Label className="text-sm font-medium flex items-center gap-2 text-blue-300">
                       <Fuel className="h-3 w-3" />
                       Tipo de Combustível
                     </Label>
@@ -165,11 +188,12 @@ export const VehicleFilters = ({ onFiltersChange, activeFilters }: VehicleFilter
                           <Checkbox
                             id={`fuel-${option.value}`}
                             checked={activeFilters.fuelType?.includes(option.value) || false}
-                            onCheckedChange={(checked) => 
+                            onCheckedChange={(checked) =>
                               handleFilterChange('fuelType', option.value, checked as boolean)
                             }
+                            className="border-white/30 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                           />
-                          <Label htmlFor={`fuel-${option.value}`} className="text-xs">
+                          <Label htmlFor={`fuel-${option.value}`} className="text-xs text-slate-300">
                             {option.label}
                           </Label>
                         </div>
@@ -177,11 +201,11 @@ export const VehicleFilters = ({ onFiltersChange, activeFilters }: VehicleFilter
                     </div>
                   </div>
 
-                  <Separator />
+                  <Separator className="bg-white/10" />
 
                   {/* Year Range */}
                   <div className="space-y-3">
-                    <Label className="text-sm font-medium flex items-center gap-2">
+                    <Label className="text-sm font-medium flex items-center gap-2 text-blue-300">
                       <Calendar className="h-3 w-3" />
                       Faixa de Ano
                     </Label>
@@ -195,20 +219,20 @@ export const VehicleFilters = ({ onFiltersChange, activeFilters }: VehicleFilter
                         min={1990}
                         max={2025}
                         step={1}
-                        className="w-full"
+                        className="w-full [&_[role=slider]]:bg-purple-600 [&_[role=slider]]:border-purple-600"
                       />
-                      <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                      <div className="flex justify-between text-xs text-slate-400 mt-1">
                         <span>{yearRange[0]}</span>
                         <span>{yearRange[1]}</span>
                       </div>
                     </div>
                   </div>
 
-                  <Separator />
+                  <Separator className="bg-white/10" />
 
                   {/* Mileage Range */}
                   <div className="space-y-3">
-                    <Label className="text-sm font-medium flex items-center gap-2">
+                    <Label className="text-sm font-medium flex items-center gap-2 text-blue-300">
                       <Gauge className="h-3 w-3" />
                       Quilometragem (km)
                     </Label>
@@ -222,20 +246,20 @@ export const VehicleFilters = ({ onFiltersChange, activeFilters }: VehicleFilter
                         min={0}
                         max={300000}
                         step={5000}
-                        className="w-full"
+                        className="w-full [&_[role=slider]]:bg-purple-600 [&_[role=slider]]:border-purple-600"
                       />
-                      <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                      <div className="flex justify-between text-xs text-slate-400 mt-1">
                         <span>{mileageRange[0].toLocaleString('pt-BR')}</span>
                         <span>{mileageRange[1].toLocaleString('pt-BR')}</span>
                       </div>
                     </div>
                   </div>
 
-                  <Separator />
+                  <Separator className="bg-white/10" />
 
                   {/* Maintenance Status */}
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium flex items-center gap-2">
+                    <Label className="text-sm font-medium flex items-center gap-2 text-blue-300">
                       <Settings className="h-3 w-3" />
                       Status de Manutenção
                     </Label>
@@ -245,13 +269,19 @@ export const VehicleFilters = ({ onFiltersChange, activeFilters }: VehicleFilter
                           <Checkbox
                             id={`maintenance-${option.value}`}
                             checked={activeFilters.maintenanceStatus?.includes(option.value) || false}
-                            onCheckedChange={(checked) => 
+                            onCheckedChange={(checked) =>
                               handleFilterChange('maintenanceStatus', option.value, checked as boolean)
                             }
+                            className="border-white/30 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                           />
-                          <Label 
-                            htmlFor={`maintenance-${option.value}`} 
-                            className={cn("text-xs flex items-center gap-1", option.color)}
+                          <Label
+                            htmlFor={`maintenance-${option.value}`}
+                            className={cn(
+                              "text-xs flex items-center gap-1",
+                              option.value === 'em_dia' && "text-emerald-400",
+                              option.value === 'proxima' && "text-orange-400",
+                              option.value === 'atrasada' && "text-red-400"
+                            )}
                           >
                             <option.icon className="h-3 w-3" />
                             {option.label}
@@ -261,11 +291,11 @@ export const VehicleFilters = ({ onFiltersChange, activeFilters }: VehicleFilter
                     </div>
                   </div>
 
-                  <Separator />
+                  <Separator className="bg-white/10" />
 
                   {/* Age Category */}
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium flex items-center gap-2">
+                    <Label className="text-sm font-medium flex items-center gap-2 text-blue-300">
                       <Calendar className="h-3 w-3" />
                       Categoria por Idade
                     </Label>
@@ -273,12 +303,12 @@ export const VehicleFilters = ({ onFiltersChange, activeFilters }: VehicleFilter
                       value={activeFilters.ageCategory || ""}
                       onValueChange={(value) => handleFilterChange('ageCategory', value, true)}
                     >
-                      <SelectTrigger className="h-8">
-                        <SelectValue placeholder="Selecione a categoria" />
+                      <SelectTrigger className="h-8 bg-white/5 border-white/10 text-white">
+                        <SelectValue placeholder="Selecione a categoria" className="text-slate-400" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-slate-900 border-white/10">
                         {filterOptions.ageCategory.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
+                          <SelectItem key={option.value} value={option.value} className="text-white hover:bg-white/10">
                             {option.label}
                           </SelectItem>
                         ))}
@@ -293,8 +323,8 @@ export const VehicleFilters = ({ onFiltersChange, activeFilters }: VehicleFilter
           {/* Active Filters Display */}
           {getActiveFilterCount() > 0 && (
             <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground">Filtros ativos:</span>
-              <Badge variant="secondary" className="text-xs">
+              <span className="text-xs text-slate-400">Filtros ativos:</span>
+              <Badge className="text-xs bg-purple-500/20 text-purple-300 border-0">
                 {getActiveFilterCount()}
               </Badge>
             </div>

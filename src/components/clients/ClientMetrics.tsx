@@ -35,93 +35,101 @@ export const ClientMetrics = ({ clients }: ClientMetricsProps) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {/* Total Clients */}
-      <Card className="gradient-card">
+      {/* Total Clients - Landing Page Style */}
+      <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-blue-500/20 transition-all duration-300">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <Users className="h-4 w-4 text-primary" />
+          <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-300">
+            <div className="p-2 rounded-lg bg-blue-500/20">
+              <Users className="h-4 w-4 text-blue-400" />
+            </div>
             Total de Clientes
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{totalClients}</div>
-          <p className="text-xs text-muted-foreground">Cadastrados no sistema</p>
+          <div className="text-2xl font-bold text-white">{totalClients}</div>
+          <p className="text-xs text-slate-400">Cadastrados no sistema</p>
         </CardContent>
       </Card>
 
-      {/* Contact Completeness */}
-      <Card className="gradient-card">
+      {/* Contact Completeness - Landing Page Style */}
+      <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-emerald-500/20 transition-all duration-300">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <Phone className="h-4 w-4 text-success" />
+          <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-300">
+            <div className="p-2 rounded-lg bg-emerald-500/20">
+              <Phone className="h-4 w-4 text-emerald-400" />
+            </div>
             Dados de Contato
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="space-y-2">
-            <div className="flex justify-between text-xs">
+            <div className="flex justify-between text-xs text-slate-300">
               <span>Telefone</span>
               <span>{Math.round(phonePercentage)}%</span>
             </div>
-            <Progress value={phonePercentage} className="h-1" />
+            <Progress value={phonePercentage} className="h-1 bg-white/10" />
           </div>
-          
+
           <div className="space-y-2">
-            <div className="flex justify-between text-xs">
+            <div className="flex justify-between text-xs text-slate-300">
               <span>Email</span>
               <span>{Math.round(emailPercentage)}%</span>
             </div>
-            <Progress value={emailPercentage} className="h-1" />
+            <Progress value={emailPercentage} className="h-1 bg-white/10" />
           </div>
         </CardContent>
       </Card>
 
-      {/* Client Tiers */}
-      <Card className="gradient-card">
+      {/* Client Tiers - Landing Page Style */}
+      <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-purple-500/20 transition-all duration-300">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <Star className="h-4 w-4 text-warning" />
+          <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-300">
+            <div className="p-2 rounded-lg bg-purple-500/20">
+              <Star className="h-4 w-4 text-purple-400" />
+            </div>
             Classificação
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           <div className="flex justify-between items-center">
-            <Badge variant="default" className="bg-amber-500 hover:bg-amber-600 text-white">VIP</Badge>
-            <span className="text-sm font-medium">{vipClients}</span>
+            <Badge className="bg-amber-500/20 text-amber-300 border-0">VIP</Badge>
+            <span className="text-sm font-medium text-white">{vipClients}</span>
           </div>
           <div className="flex justify-between items-center">
-            <Badge variant="secondary" className="text-purple-600">Premium</Badge>
-            <span className="text-sm font-medium">{premiumClients}</span>
+            <Badge className="bg-purple-500/20 text-purple-300 border-0">Premium</Badge>
+            <span className="text-sm font-medium text-white">{premiumClients}</span>
           </div>
           <div className="flex justify-between items-center">
-            <Badge variant="outline" className="text-blue-600">Regular</Badge>
-            <span className="text-sm font-medium">{regularClients}</span>
+            <Badge className="bg-blue-500/20 text-blue-300 border-0">Regular</Badge>
+            <span className="text-sm font-medium text-white">{regularClients}</span>
           </div>
           <div className="flex justify-between items-center">
-            <Badge variant="outline" className="text-gray-600">Novo</Badge>
-            <span className="text-sm font-medium">{newClients}</span>
+            <Badge className="bg-slate-500/20 text-slate-300 border-0">Novo</Badge>
+            <span className="text-sm font-medium text-white">{newClients}</span>
           </div>
         </CardContent>
       </Card>
 
-      {/* Data Quality */}
-      <Card className="gradient-card">
+      {/* Data Quality - Landing Page Style */}
+      <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-cyan-500/20 transition-all duration-300">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-info" />
+          <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-300">
+            <div className="p-2 rounded-lg bg-cyan-500/20">
+              <TrendingUp className="h-4 w-4 text-cyan-400" />
+            </div>
             Qualidade dos Dados
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="space-y-2">
-            <div className="flex justify-between text-xs">
+            <div className="flex justify-between text-xs text-slate-300">
               <span>Endereço Completo</span>
               <span>{Math.round(addressPercentage)}%</span>
             </div>
-            <Progress value={addressPercentage} className="h-1" />
+            <Progress value={addressPercentage} className="h-1 bg-white/10" />
           </div>
-          
-          <div className="text-xs text-muted-foreground">
+
+          <div className="text-xs text-slate-400">
             {withAddress} de {totalClients} clientes com endereço
           </div>
         </CardContent>

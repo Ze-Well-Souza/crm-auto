@@ -141,33 +141,37 @@ const Configuracoes = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        {/* Header */}
+        {/* Header - Landing Page Style */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-foreground">Configurações do Sistema</h1>
-            <p className="text-muted-foreground">Gerencie as configurações da sua oficina</p>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 bg-clip-text text-transparent">
+              Configurações do Sistema
+            </h1>
+            <p className="text-slate-400">Gerencie as configurações da sua oficina</p>
           </div>
-          
+
           <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={handleImportData}>
+            <Button className="bg-white/5 border-white/10 text-slate-300 hover:bg-white/10" onClick={handleImportData}>
               <Upload className="mr-2 h-4 w-4" />
               Importar
             </Button>
-            <Button variant="outline" onClick={handleExportData}>
+            <Button className="bg-white/5 border-white/10 text-slate-300 hover:bg-white/10" onClick={handleExportData}>
               <Download className="mr-2 h-4 w-4" />
               Exportar
             </Button>
           </div>
         </div>
 
-        {/* Company Information */}
-        <Card className="gradient-card">
+        {/* Company Information - Landing Page Style */}
+        <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <User className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2 text-white">
+              <div className="p-2 rounded-lg bg-blue-500/20">
+                <User className="h-5 w-5 text-blue-400" />
+              </div>
               Informações da Empresa
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-slate-400">
               Dados básicos da sua oficina que aparecem em relatórios e documentos
             </CardDescription>
           </CardHeader>
@@ -236,14 +240,16 @@ const Configuracoes = () => {
           </CardContent>
         </Card>
 
-        {/* System Notifications */}
-        <Card className="gradient-card">
+        {/* System Notifications - Landing Page Style */}
+        <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Bell className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2 text-white">
+              <div className="p-2 rounded-lg bg-orange-500/20">
+                <Bell className="h-5 w-5 text-orange-400" />
+              </div>
               Notificações
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-slate-400">
               Configure como o sistema deve notificar sobre eventos importantes
             </CardDescription>
           </CardHeader>

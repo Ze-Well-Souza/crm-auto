@@ -166,21 +166,25 @@ export const SearchAdvanced = ({
         const selectPlaceholder = typeof group.placeholder === 'string' ? group.placeholder : `Selecionar ${group.label.toLowerCase()}`;
         return (
           <div key={group.key} className="space-y-2">
-            <Label>{group.label}</Label>
+            <Label className="text-slate-300">{group.label}</Label>
             <Select
               value={filters[group.key] || ""}
               onValueChange={(value) => handleFilterChange(group.key, value)}
             >
-              <SelectTrigger>
+              <SelectTrigger className="bg-white/5 border-white/10 text-white hover:bg-white/10">
                 <SelectValue placeholder={selectPlaceholder} />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-slate-900 border-white/10">
                 {group.options?.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
+                  <SelectItem
+                    key={option.value}
+                    value={option.value}
+                    className="text-slate-300 focus:bg-white/10 focus:text-white"
+                  >
                     <div className="flex items-center justify-between w-full">
                       <span>{option.label}</span>
                       {option.count !== undefined && (
-                        <Badge variant="secondary" className="ml-2">
+                        <Badge className="ml-2 bg-purple-500/20 text-purple-300 border-purple-500/30">
                           {option.count}
                         </Badge>
                       )}
@@ -197,18 +201,21 @@ export const SearchAdvanced = ({
         const multiselectPlaceholder = typeof group.placeholder === 'string' ? group.placeholder : `Selecionar ${group.label.toLowerCase()}`;
         return (
           <div key={group.key} className="space-y-2">
-            <Label>{group.label}</Label>
+            <Label className="text-slate-300">{group.label}</Label>
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" className="w-full justify-between">
-                  {selectedValues.length > 0 
+                <Button
+                  variant="outline"
+                  className="w-full justify-between bg-white/5 border-white/10 text-white hover:bg-white/10"
+                >
+                  {selectedValues.length > 0
                     ? `${selectedValues.length} selecionado(s)`
                     : multiselectPlaceholder
                   }
                   <ChevronDown className="h-4 w-4" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-full p-0">
+              <PopoverContent className="w-full p-0 bg-slate-900 border-white/10">
                 <div className="p-4 space-y-2">
                   {group.options?.map((option) => (
                     <div key={option.value} className="flex items-center space-x-2">
@@ -221,11 +228,12 @@ export const SearchAdvanced = ({
                             : selectedValues.filter((v: string) => v !== option.value);
                           handleFilterChange(group.key, newValues.length > 0 ? newValues : undefined);
                         }}
+                        className="border-white/20 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                       />
-                      <Label htmlFor={`${group.key}-${option.value}`} className="flex-1">
+                      <Label htmlFor={`${group.key}-${option.value}`} className="flex-1 text-slate-300">
                         {option.label}
                         {option.count !== undefined && (
-                          <Badge variant="secondary" className="ml-2">
+                          <Badge className="ml-2 bg-purple-500/20 text-purple-300 border-purple-500/30">
                             {option.count}
                           </Badge>
                         )}
@@ -242,11 +250,14 @@ export const SearchAdvanced = ({
         const dateRange = dateRanges[group.key] || {};
         return (
           <div key={group.key} className="space-y-2">
-            <Label>{group.label}</Label>
+            <Label className="text-slate-300">{group.label}</Label>
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" className="w-full justify-start text-left font-normal">
-                  <CalendarIcon className="mr-2 h-4 w-4" />
+                <Button
+                  variant="outline"
+                  className="w-full justify-start text-left font-normal bg-white/5 border-white/10 text-white hover:bg-white/10"
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4 text-purple-400" />
                   {dateRange.from ? (
                     dateRange.to ? (
                       <>
@@ -257,11 +268,11 @@ export const SearchAdvanced = ({
                       format(dateRange.from, "dd/MM/yyyy", { locale: ptBR })
                     )
                   ) : (
-                    <span>Selecionar período</span>
+                    <span className="text-slate-400">Selecionar período</span>
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
+              <PopoverContent className="w-auto p-0 bg-slate-900 border-white/10" align="start">
                 <Calendar
                   initialFocus
                   mode="range"
@@ -270,6 +281,7 @@ export const SearchAdvanced = ({
                   onSelect={(range) => handleDateRangeChange(group.key, range || { from: undefined, to: undefined })}
                   numberOfMonths={2}
                   locale={ptBR}
+                  className="text-white"
                 />
               </PopoverContent>
             </Popover>
@@ -280,7 +292,7 @@ export const SearchAdvanced = ({
         const numberRange = filters[group.key] || {};
         return (
           <div key={group.key} className="space-y-2">
-            <Label>{group.label}</Label>
+            <Label className="text-slate-300">{group.label}</Label>
             <div className="grid grid-cols-2 gap-2">
               <Input
                 type="number"
@@ -290,6 +302,7 @@ export const SearchAdvanced = ({
                   ...numberRange,
                   min: e.target.value ? Number(e.target.value) : undefined
                 })}
+                className="bg-white/5 border-white/10 text-white placeholder:text-slate-400 focus:border-purple-500/50 focus:ring-purple-500/20"
               />
               <Input
                 type="number"
@@ -299,6 +312,7 @@ export const SearchAdvanced = ({
                   ...numberRange,
                   max: e.target.value ? Number(e.target.value) : undefined
                 })}
+                className="bg-white/5 border-white/10 text-white placeholder:text-slate-400 focus:border-purple-500/50 focus:ring-purple-500/20"
               />
             </div>
           </div>
@@ -311,31 +325,31 @@ export const SearchAdvanced = ({
 
   return (
     <div className={cn("space-y-4", className)}>
-      {/* Barra de busca principal */}
+      {/* Barra de busca principal - Landing Page Style */}
       <div className="flex gap-2">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-purple-400" />
           <Input
             placeholder={placeholder}
             value={query}
             onChange={handleQueryChange}
-            className="pl-10"
+            className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-slate-400 focus:border-purple-500/50 focus:ring-purple-500/20"
           />
         </div>
-        
+
         {showAdvancedFilters && (
           <Button
             variant="outline"
             onClick={() => setShowAdvanced(!showAdvanced)}
             className={cn(
-              "flex items-center gap-2",
-              (showAdvanced || getActiveFiltersCount() > 0) && "bg-primary/10"
+              "flex items-center gap-2 bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:text-white",
+              (showAdvanced || getActiveFiltersCount() > 0) && "bg-purple-500/20 border-purple-500/30 text-purple-300"
             )}
           >
             <Filter className="h-4 w-4" />
             Filtros
             {getActiveFiltersCount() > 0 && (
-              <Badge variant="secondary" className="ml-1">
+              <Badge className="ml-1 bg-purple-500/30 text-purple-200 border-purple-500/50">
                 {getActiveFiltersCount()}
               </Badge>
             )}
@@ -343,20 +357,29 @@ export const SearchAdvanced = ({
         )}
 
         {getActiveFiltersCount() > 0 && (
-          <Button variant="outline" size="icon" onClick={handleReset}>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={handleReset}
+            className="bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+          >
             <RotateCcw className="h-4 w-4" />
           </Button>
         )}
       </div>
 
-      {/* Filtros rápidos */}
+      {/* Filtros rápidos - Landing Page Style */}
       {showQuickFilters && quickFilters.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {quickFilters.map((filter) => (
             <Badge
               key={filter.key}
-              variant={activeQuickFilters.has(filter.key) ? "default" : "outline"}
-              className="cursor-pointer hover:bg-primary/20 transition-colors"
+              className={cn(
+                "cursor-pointer transition-all duration-300 px-4 py-2",
+                activeQuickFilters.has(filter.key)
+                  ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0 shadow-lg shadow-purple-500/50"
+                  : "bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+              )}
               onClick={() => handleQuickFilterToggle(filter.key)}
             >
               {filter.icon && <span className="mr-1">{filter.icon}</span>}
@@ -366,16 +389,19 @@ export const SearchAdvanced = ({
         </div>
       )}
 
-      {/* Filtros avançados */}
+      {/* Filtros avançados - Landing Page Style */}
       {showAdvanced && showAdvancedFilters && filterGroups.length > 0 && (
-        <Card>
+        <Card className="bg-white/5 border border-white/10 backdrop-blur-xl shadow-xl">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">Filtros Avançados</CardTitle>
+              <CardTitle className="text-lg bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 bg-clip-text text-transparent">
+                Filtros Avançados
+              </CardTitle>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowAdvanced(false)}
+                className="text-slate-300 hover:text-white hover:bg-white/10"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -385,15 +411,20 @@ export const SearchAdvanced = ({
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filterGroups.map(renderFilterGroup)}
             </div>
-            
+
             {getActiveFiltersCount() > 0 && (
               <>
-                <Separator />
+                <Separator className="bg-white/10" />
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-sm text-slate-400">
                     {getActiveFiltersCount()} filtro(s) ativo(s)
                   </span>
-                  <Button variant="outline" size="sm" onClick={handleReset}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleReset}
+                    className="bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+                  >
                     Limpar filtros
                   </Button>
                 </div>

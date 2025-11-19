@@ -72,20 +72,34 @@ export const CalendarView = ({
   const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
   return (
-    <Card className="w-full">
+    <Card className="w-full bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-xl">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-2xl font-bold text-gradient-primary">
+          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 bg-clip-text text-transparent">
             {format(currentDate, 'MMMM yyyy', { locale: ptBR })}
           </CardTitle>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={previousMonth}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={previousMonth}
+              className="bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+            >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <Button variant="outline" size="sm" onClick={nextMonth}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={nextMonth}
+              className="bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+            >
               <ChevronRight className="h-4 w-4" />
             </Button>
-            <Button size="sm" onClick={() => onNewAppointment()}>
+            <Button
+              size="sm"
+              onClick={() => onNewAppointment()}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg shadow-purple-500/50"
+            >
               <Plus className="h-4 w-4 mr-2" />
               Novo
             </Button>
@@ -94,9 +108,9 @@ export const CalendarView = ({
       </CardHeader>
       <CardContent className="p-0">
         {/* Calendar Grid */}
-        <div className="grid grid-cols-7 border-b">
+        <div className="grid grid-cols-7 border-b border-white/10">
           {weekDays.map((day) => (
-            <div key={day} className="p-3 text-center text-sm font-medium text-muted-foreground border-r last:border-r-0">
+            <div key={day} className="p-3 text-center text-sm font-medium text-purple-400 border-r border-white/10 last:border-r-0">
               {day}
             </div>
           ))}
@@ -106,26 +120,26 @@ export const CalendarView = ({
           {monthDays.map((day, index) => {
             const dayAppointments = getAppointmentsForDate(day);
             const isCurrentDay = isToday(day);
-            
+
             return (
               <div
                 key={day.toISOString()}
                 className={cn(
-                  "border-r border-b last:border-r-0 p-2 min-h-[120px] cursor-pointer hover:bg-accent/50 transition-smooth",
-                  isCurrentDay && "bg-primary/5 border-primary/30"
+                  "border-r border-b border-white/10 last:border-r-0 p-2 min-h-[120px] cursor-pointer hover:bg-white/5 transition-all duration-300",
+                  isCurrentDay && "bg-blue-500/10 border-blue-500/30"
                 )}
                 onClick={() => onDateSelect(day)}
               >
                 {/* Day Number */}
                 <div className="flex items-center justify-between mb-2">
                   <span className={cn(
-                    "text-sm font-medium",
-                    isCurrentDay && "text-primary font-bold"
+                    "text-sm font-medium text-slate-300",
+                    isCurrentDay && "text-blue-400 font-bold"
                   )}>
                     {format(day, 'd')}
                   </span>
                   {dayAppointments.length > 0 && (
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge className="text-xs bg-purple-500/20 text-purple-300 border-purple-500/30">
                       {dayAppointments.length}
                     </Badge>
                   )}
@@ -187,26 +201,26 @@ export const CalendarView = ({
         </div>
 
         {/* Legend */}
-        <div className="p-4 border-t bg-muted/30">
-          <div className="flex flex-wrap gap-4 text-xs">
+        <div className="p-4 border-t border-white/10 bg-white/5">
+          <div className="flex flex-wrap gap-4 text-xs text-slate-300">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded bg-blue-500"></div>
+              <div className="w-3 h-3 rounded bg-blue-500 shadow-lg shadow-blue-500/50"></div>
               <span>Agendado</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded bg-green-500"></div>
+              <div className="w-3 h-3 rounded bg-emerald-500 shadow-lg shadow-emerald-500/50"></div>
               <span>Confirmado</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded bg-yellow-500"></div>
+              <div className="w-3 h-3 rounded bg-orange-500 shadow-lg shadow-orange-500/50"></div>
               <span>Em Andamento</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded bg-emerald-500"></div>
+              <div className="w-3 h-3 rounded bg-cyan-500 shadow-lg shadow-cyan-500/50"></div>
               <span>Concluído</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded bg-red-500"></div>
+              <div className="w-3 h-3 rounded bg-red-500 shadow-lg shadow-red-500/50"></div>
               <span>Cancelado</span>
             </div>
           </div>

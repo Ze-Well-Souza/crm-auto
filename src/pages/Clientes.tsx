@@ -97,23 +97,25 @@ const Clientes = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        {/* Header */}
+        {/* Header - Landing Page Style */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-foreground">Gestão de Clientes</h1>
-            <p className="text-muted-foreground">Gerencie informações completas dos seus clientes</p>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 bg-clip-text text-transparent">
+              Gestão de Clientes
+            </h1>
+            <p className="text-slate-400">Gerencie informações completas dos seus clientes</p>
           </div>
-          
+
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="shadow-primary">
+              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg shadow-purple-500/50">
                 <Plus className="mr-2 h-4 w-4" />
                 Novo Cliente
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
+            <DialogContent className="sm:max-w-[500px] bg-slate-900 border-white/10">
               <DialogHeader>
-                <DialogTitle>Cadastrar Novo Cliente</DialogTitle>
+                <DialogTitle className="text-white">Cadastrar Novo Cliente</DialogTitle>
               </DialogHeader>
               <ClientForm onSuccess={() => {
                 setIsDialogOpen(false);
@@ -137,23 +139,23 @@ const Clientes = () => {
           showAdvancedFilters={true}
         />
 
-        {/* Search Results Info */}
+        {/* Search Results Info - Landing Page Style */}
         {searchConfig.isFiltered && (
-          <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <div className="flex items-center justify-between bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 backdrop-blur-sm">
             <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-blue-600" />
-              <span className="text-sm text-blue-800">
+              <Filter className="h-4 w-4 text-blue-400" />
+              <span className="text-sm text-blue-300">
                 {searchConfig.paginationInfo.totalItems} cliente(s) encontrado(s)
-                {searchConfig.paginationInfo.totalItems !== clients?.length && 
+                {searchConfig.paginationInfo.totalItems !== clients?.length &&
                   ` de ${clients?.length} total`
                 }
               </span>
             </div>
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={searchConfig.handleReset}
-              className="text-blue-600 hover:text-blue-800"
+              className="text-blue-400 hover:text-blue-300 hover:bg-blue-500/20"
             >
               Limpar filtros
             </Button>

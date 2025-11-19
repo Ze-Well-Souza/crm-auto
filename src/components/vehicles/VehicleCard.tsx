@@ -91,40 +91,45 @@ export const VehicleCard = ({ vehicle, onUpdate, onQuickAction }: VehicleCardPro
 
   return (
     <>
-      <Card 
-        className="hover:shadow-elevated transition-smooth cursor-pointer group relative overflow-hidden"
+      <Card
+        className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-purple-500/20 transition-all duration-300 cursor-pointer group relative overflow-hidden"
         onClick={handleCardClick}
       >
-        {/* Background gradient based on maintenance status */}
+        {/* Background gradient based on maintenance status - Landing Page Style */}
         <div className={cn(
           "absolute inset-0 opacity-5 transition-opacity group-hover:opacity-10",
           vehicleMetrics.maintenanceStatus === 'atrasado' && "bg-gradient-to-br from-red-400 to-red-500",
           vehicleMetrics.maintenanceStatus === 'atencao' && "bg-gradient-to-br from-orange-400 to-orange-500",
-          vehicleMetrics.maintenanceStatus === 'em_dia' && "bg-gradient-to-br from-green-400 to-emerald-500"
+          vehicleMetrics.maintenanceStatus === 'em_dia' && "bg-gradient-to-br from-emerald-400 to-emerald-500"
         )} />
 
         <CardHeader className="pb-3 relative z-10">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
-              <Avatar className="h-12 w-12 border-2 border-primary/20">
-                <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+              <Avatar className="h-12 w-12 border-2 border-purple-500/30">
+                <AvatarFallback className="bg-purple-500/20 text-purple-300 font-semibold">
                   {getVehicleIcon()}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <CardTitle className="text-lg flex items-center gap-2">
+                <CardTitle className="text-lg flex items-center gap-2 text-white">
                   {vehicle.brand} {vehicle.model}
-                  <Badge variant={maintenanceStatus.variant} className="flex items-center gap-1">
-                    <MaintenanceIcon className={cn("h-3 w-3", maintenanceStatus.color)} />
+                  <Badge className={cn(
+                    "flex items-center gap-1 border-0",
+                    vehicleMetrics.maintenanceStatus === 'atrasado' && "bg-red-500/20 text-red-300",
+                    vehicleMetrics.maintenanceStatus === 'atencao' && "bg-orange-500/20 text-orange-300",
+                    vehicleMetrics.maintenanceStatus === 'em_dia' && "bg-emerald-500/20 text-emerald-300"
+                  )}>
+                    <MaintenanceIcon className="h-3 w-3" />
                     {maintenanceStatus.label}
                   </Badge>
                 </CardTitle>
-                <CardDescription className="flex items-center gap-2">
+                <CardDescription className="flex items-center gap-2 text-slate-400">
                   {vehicle.year && <span>{vehicle.year}</span>}
                   {vehicle.license_plate && (
                     <>
                       <span>•</span>
-                      <Badge variant="outline" className="text-xs">
+                      <Badge className="text-xs bg-blue-500/20 text-blue-300 border-0">
                         {vehicle.license_plate}
                       </Badge>
                     </>
@@ -137,16 +142,16 @@ export const VehicleCard = ({ vehicle, onUpdate, onQuickAction }: VehicleCardPro
         </CardHeader>
 
         <CardContent className="space-y-4 relative z-10">
-          {/* Owner Information */}
+          {/* Owner Information - Landing Page Style */}
           {vehicle.clients && (
-            <div className="flex items-center gap-2 text-sm bg-muted/30 p-2 rounded-md">
-              <User className="h-4 w-4 text-muted-foreground" />
-              <span className="font-medium">{vehicle.clients.name}</span>
+            <div className="flex items-center gap-2 text-sm bg-white/5 border border-white/10 p-2 rounded-md backdrop-blur-sm">
+              <User className="h-4 w-4 text-slate-400" />
+              <span className="font-medium text-slate-300">{vehicle.clients.name}</span>
               {vehicle.clients.email && (
-                <Button 
-                  size="sm" 
-                  variant="ghost" 
-                  className="h-6 w-6 p-0 ml-auto opacity-0 group-hover:opacity-100 transition-opacity"
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-6 w-6 p-0 ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-blue-400 hover:text-blue-300 hover:bg-blue-500/20"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleQuickAction('contact-owner');
@@ -158,109 +163,109 @@ export const VehicleCard = ({ vehicle, onUpdate, onQuickAction }: VehicleCardPro
             </div>
           )}
 
-          {/* Vehicle Specifications */}
+          {/* Vehicle Specifications - Landing Page Style */}
           <div className="grid grid-cols-2 gap-3">
             {vehicle.fuel_type && (
               <div className="flex items-center gap-2 text-sm">
-                <Fuel className="h-4 w-4 text-muted-foreground" />
-                <span>{vehicle.fuel_type}</span>
+                <Fuel className="h-4 w-4 text-slate-400" />
+                <span className="text-slate-300">{vehicle.fuel_type}</span>
               </div>
             )}
-            
+
             {vehicle.engine && (
               <div className="flex items-center gap-2 text-sm">
-                <Settings className="h-4 w-4 text-muted-foreground" />
-                <span>{vehicle.engine}</span>
+                <Settings className="h-4 w-4 text-slate-400" />
+                <span className="text-slate-300">{vehicle.engine}</span>
               </div>
             )}
-            
+
             {vehicle.color && (
               <div className="flex items-center gap-2 text-sm">
-                <div 
-                  className="w-4 h-4 rounded-full border border-muted-foreground/30"
-                  style={{ backgroundColor: vehicle.color.toLowerCase() === 'branco' ? '#ffffff' : 
+                <div
+                  className="w-4 h-4 rounded-full border border-white/30"
+                  style={{ backgroundColor: vehicle.color.toLowerCase() === 'branco' ? '#ffffff' :
                            vehicle.color.toLowerCase() === 'preto' ? '#000000' :
                            vehicle.color.toLowerCase() === 'prata' ? '#c0c0c0' :
                            vehicle.color.toLowerCase() === 'azul' ? '#0066cc' :
                            vehicle.color.toLowerCase() === 'vermelho' ? '#cc0000' : '#888888' }}
                 />
-                <span>{vehicle.color}</span>
+                <span className="text-slate-300">{vehicle.color}</span>
               </div>
             )}
-            
+
             <div className="flex items-center gap-2 text-sm">
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-              <span>{getVehicleAge()}</span>
+              <Calendar className="h-4 w-4 text-slate-400" />
+              <span className="text-slate-300">{getVehicleAge()}</span>
             </div>
           </div>
 
-          {/* Mileage and Value */}
-          <div className="grid grid-cols-2 gap-3 pt-2 border-t">
+          {/* Mileage and Value - Landing Page Style */}
+          <div className="grid grid-cols-2 gap-3 pt-2 border-t border-white/10">
             <div className="text-center">
               <div className="flex items-center justify-center gap-1">
-                <Gauge className="h-3 w-3 text-info" />
-                <span className="text-xs font-semibold">
+                <Gauge className="h-3 w-3 text-blue-400" />
+                <span className="text-xs font-semibold text-white">
                   {vehicle.mileage ? `${vehicle.mileage.toLocaleString('pt-BR')} km` : 'N/A'}
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground">Quilometragem</p>
+              <p className="text-xs text-slate-400">Quilometragem</p>
             </div>
-            
+
             <div className="text-center">
               <div className="flex items-center justify-center gap-1">
-                <DollarSign className="h-3 w-3 text-success" />
-                <span className="text-xs font-semibold text-success">
+                <DollarSign className="h-3 w-3 text-emerald-400" />
+                <span className="text-xs font-semibold text-emerald-400">
                   {formatCurrency(vehicleMetrics.totalSpent)}
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground">Total gasto</p>
+              <p className="text-xs text-slate-400">Total gasto</p>
             </div>
           </div>
 
-          {/* Service Metrics */}
-          <div className="grid grid-cols-2 gap-3 pt-2 border-t">
+          {/* Service Metrics - Landing Page Style */}
+          <div className="grid grid-cols-2 gap-3 pt-2 border-t border-white/10">
             <div className="text-center">
               <div className="flex items-center justify-center gap-1">
-                <Wrench className="h-3 w-3 text-primary" />
-                <span className="text-xs font-semibold">
+                <Wrench className="h-3 w-3 text-purple-400" />
+                <span className="text-xs font-semibold text-white">
                   {vehicleMetrics.totalServices} serviços
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground">Total realizados</p>
+              <p className="text-xs text-slate-400">Total realizados</p>
             </div>
-            
+
             <div className="text-center">
               <div className="flex items-center justify-center gap-1">
-                <TrendingUp className="h-3 w-3 text-warning" />
-                <span className="text-xs font-semibold">
-                  {formatCurrency(vehicleMetrics.totalSpent)}
+                <TrendingUp className="h-3 w-3 text-cyan-400" />
+                <span className="text-xs font-semibold text-white">
+                  {formatCurrency(vehicleMetrics.averageServiceCost)}
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground">Gasto total</p>
+              <p className="text-xs text-slate-400">Custo médio</p>
             </div>
           </div>
 
-          {/* Maintenance Alert */}
+          {/* Maintenance Alert - Landing Page Style */}
           {vehicleMetrics.maintenanceStatus === 'atrasado' && (
-            <div className="bg-destructive/10 border border-destructive/20 rounded-md p-3">
+            <div className="bg-red-500/10 border border-red-500/30 rounded-md p-3 backdrop-blur-sm">
               <div className="flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-destructive" />
-                <span className="text-sm font-medium text-destructive">Manutenção Atrasada</span>
+                <AlertTriangle className="h-4 w-4 text-red-400" />
+                <span className="text-sm font-medium text-red-300">Manutenção Atrasada</span>
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-xs text-slate-400 mt-1">
                 Última revisão há mais de 4 meses
               </p>
             </div>
           )}
 
-          {/* Next Maintenance */}
+          {/* Next Maintenance - Landing Page Style */}
           {vehicleMetrics.maintenanceStatus !== 'atrasado' && vehicleMetrics.estimatedNextMileage && (
-            <div className="bg-info/10 border border-info/20 rounded-md p-3">
+            <div className="bg-blue-500/10 border border-blue-500/30 rounded-md p-3 backdrop-blur-sm">
               <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-info" />
-                <span className="text-sm font-medium text-info">Próxima Manutenção</span>
+                <Clock className="h-4 w-4 text-blue-400" />
+                <span className="text-sm font-medium text-blue-300">Próxima Manutenção</span>
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-xs text-slate-400 mt-1">
                 Em {vehicleMetrics.estimatedNextMileage.toLocaleString('pt-BR')} km
               </p>
             </div>
@@ -268,7 +273,7 @@ export const VehicleCard = ({ vehicle, onUpdate, onQuickAction }: VehicleCardPro
 
           {/* Quick Actions */}
           <div className="flex gap-2 pt-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            <VehicleQuickActions 
+            <VehicleQuickActions
               vehicle={vehicle}
               onScheduleService={() => handleQuickAction('schedule')}
               onCreateServiceOrder={() => handleQuickAction('service')}
@@ -276,8 +281,8 @@ export const VehicleCard = ({ vehicle, onUpdate, onQuickAction }: VehicleCardPro
             />
           </div>
 
-          {/* Last Service */}
-          <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
+          {/* Last Service - Landing Page Style */}
+          <div className="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-white/10">
             <div className="flex items-center gap-1">
               <Clock className="h-3 w-3" />
               <span>Último serviço: {vehicleMetrics.lastService ? formatDate(vehicleMetrics.lastService) : 'N/A'}</span>
@@ -289,8 +294,8 @@ export const VehicleCard = ({ vehicle, onUpdate, onQuickAction }: VehicleCardPro
           </div>
 
           {vehicle.notes && (
-            <div className="mt-3 p-2 bg-muted/50 rounded-md">
-              <p className="text-xs text-muted-foreground line-clamp-2">
+            <div className="mt-3 p-2 bg-white/5 border border-white/10 rounded-md backdrop-blur-sm">
+              <p className="text-xs text-slate-400 line-clamp-2">
                 {vehicle.notes}
               </p>
             </div>

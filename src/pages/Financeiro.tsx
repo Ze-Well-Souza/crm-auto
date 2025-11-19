@@ -132,14 +132,16 @@ const Financeiro = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        {/* Header */}
+        {/* Header - Landing Page Style */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="space-y-2">
-              <h1 className="text-3xl font-bold text-foreground">Gestão Financeira</h1>
-              <p className="text-muted-foreground">Controle de receitas, despesas e fluxo de caixa</p>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 bg-clip-text text-transparent">
+                Gestão Financeira
+              </h1>
+              <p className="text-slate-400">Controle de receitas, despesas e fluxo de caixa</p>
             </div>
-          
-          <Button className="shadow-primary" onClick={() => setShowForm(true)}>
+
+          <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg shadow-purple-500/50" onClick={() => setShowForm(true)}>
             <Plus className="mr-2 h-4 w-4" />
             Nova Transação
           </Button>

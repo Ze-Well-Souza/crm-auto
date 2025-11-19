@@ -44,40 +44,44 @@ export const ServiceOrderMetrics = ({ serviceOrders }: ServiceOrderMetricsProps)
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {/* Total Orders */}
-      <Card className="gradient-card">
+      {/* Total Orders - Landing Page Style */}
+      <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-orange-500/20 transition-all duration-300">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <Wrench className="h-4 w-4 text-primary" />
+          <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-300">
+            <div className="p-2 rounded-lg bg-orange-500/20">
+              <Wrench className="h-4 w-4 text-orange-400" />
+            </div>
             Total de Ordens
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{totalOrders}</div>
-          <p className="text-xs text-muted-foreground">Todas as ordens</p>
+          <div className="text-2xl font-bold text-white">{totalOrders}</div>
+          <p className="text-xs text-slate-400">Todas as ordens</p>
         </CardContent>
       </Card>
 
-      {/* Revenue Metrics */}
-      <Card className="gradient-card">
+      {/* Revenue Metrics - Landing Page Style */}
+      <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-emerald-500/20 transition-all duration-300">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <DollarSign className="h-4 w-4 text-success" />
+          <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-300">
+            <div className="p-2 rounded-lg bg-emerald-500/20">
+              <DollarSign className="h-4 w-4 text-emerald-400" />
+            </div>
             Receita Realizada
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-success">
+          <div className="text-2xl font-bold text-emerald-400">
             {formatCurrency(totalRevenue)}
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-slate-400">
             Ticket médio: {formatCurrency(avgOrderValue)}
           </p>
         </CardContent>
       </Card>
 
-      {/* Pending Revenue */}
-      <Card className="gradient-card">
+      {/* Pending Revenue - Landing Page Style */}
+      <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-blue-500/20 transition-all duration-300">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <Clock className="h-4 w-4 text-warning" />
