@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
-import { Car, Shield, Users, Wrench, Crown, Zap, Rocket, Eye, EyeOff, Check, X, CheckCircle } from 'lucide-react';
+import { Car, Shield, Users, Wrench, Crown, Zap, Rocket, Eye, EyeOff, Check, X, CheckCircle, Star } from 'lucide-react';
 
 const Auth = () => {
   const { user, signIn, signUp, resetPassword, loading } = useAuth();
@@ -54,11 +54,79 @@ const Auth = () => {
   // Capturar plano pré-selecionado da URL
   const selectedPlan = searchParams.get('plan') || 'profissional';
 
-  const planInfo = {
-    'basico': { name: 'Básico', price: 'R$ 99/mês', icon: Zap, color: 'from-blue-500 to-blue-600' },
-    'profissional': { name: 'Profissional', price: 'R$ 249/mês', icon: Crown, color: 'from-violet-500 to-purple-600', trial: '14 dias grátis' },
-    'enterprise': { name: 'Enterprise', price: 'R$ 499/mês', icon: Rocket, color: 'from-orange-500 to-red-600' }
-  }[selectedPlan] || { name: 'Profissional', price: 'R$ 249/mês', icon: Crown, color: 'from-violet-500 to-purple-600', trial: '14 dias grátis' };
+  const allPlans = [
+    {
+      id: 'gratuito',
+      name: 'Gratuito',
+      price: 'R$ 0',
+      period: '/mês',
+      description: 'Experimente grátis para sempre',
+      icon: Star,
+      color: 'from-green-500 to-emerald-600',
+      free: true,
+      features: [
+        '40 clientes ativos',
+        '40 agendamentos/mês',
+        'Gestão básica completa',
+        '1 usuário',
+        'Suporte por email'
+      ]
+    },
+    {
+      id: 'basico',
+      name: 'Básico',
+      price: 'R$ 99',
+      period: '/mês',
+      description: 'Ideal para oficinas iniciantes',
+      icon: Zap,
+      color: 'from-blue-500 to-blue-600',
+      features: [
+        '200 clientes',
+        '100 agendamentos/mês',
+        'Relatórios básicos ilimitados',
+        '1 usuário',
+        'Suporte por email'
+      ]
+    },
+    {
+      id: 'profissional',
+      name: 'Profissional',
+      price: 'R$ 249',
+      period: '/mês',
+      description: 'Para oficinas em crescimento',
+      icon: Crown,
+      color: 'from-violet-500 to-purple-600',
+      popular: true,
+      trial: true,
+      features: [
+        '1.000 clientes',
+        '500 agendamentos/mês',
+        'TODOS os módulos',
+        'Gestão financeira avançada',
+        'Controle de estoque',
+        '5 usuários',
+        '14 dias grátis! 🎁'
+      ]
+    },
+    {
+      id: 'enterprise',
+      name: 'Enterprise',
+      price: 'R$ 499',
+      period: '/mês',
+      description: 'Para redes e grandes oficinas',
+      icon: Rocket,
+      color: 'from-orange-500 to-red-600',
+      features: [
+        'Recursos ilimitados',
+        'Multi-unidades',
+        'API access completo',
+        'Account manager dedicado',
+        'Treinamento personalizado'
+      ]
+    }
+  ];
+
+  const planInfo = allPlans.find(p => p.id === selectedPlan) || allPlans[2];
 
   // Redirect if already authenticated
   if (user) {
@@ -186,7 +254,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-background flex items-center justify-center p-4">
       <ThemeToggle />
       <div className="w-full max-w-5xl space-y-6">
         {/* Plano Selecionado */}
