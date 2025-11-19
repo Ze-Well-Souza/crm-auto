@@ -19,15 +19,14 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 // Lazy load pages
 const Index = lazy(() => import("./pages/Index"));
-const Auth = lazy(() => import("./pages/Auth"));
 const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Admin = lazy(() => import("./pages/Admin"));
 const Clientes = lazy(() => import("./pages/Clientes"));
 const Veiculos = lazy(() => import("./pages/Veiculos"));
-const Planos = lazy(() => import("./pages/Planos"));
-const PlanosPublicos = lazy(() => import("./pages/PlanosPublicos"));
+// const Planos = lazy(() => import("./pages/Planos"));
+// const PlanosPublicos = lazy(() => import("./pages/PlanosPublicos"));
 const OrdensServico = lazy(() => import("./pages/OrdensServico"));
 const Agendamentos = lazy(() => import("./pages/Agendamentos"));
 const Estoque = lazy(() => import("./pages/Estoque"));
@@ -71,17 +70,15 @@ const App = () => (
                       <Suspense fallback={<PageLoadingFallback />}>
                         <Routes>
                         {/* Rotas Públicas */}
-                          <Route path="/auth" element={<Auth />} />
                           <Route path="/auth/callback" element={<AuthCallback />} />
                           <Route path="/reset-password" element={<ResetPassword />} />
-                          <Route path="/pricing" element={<PlanosPublicos />} />
                           <Route path="/install" element={<InstallPWA />} />
                           
                           {/* Onboarding */}
-                          <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
+                          <Route path="/onboarding" element={<Onboarding />} />
                           
                           {/* Dashboard */}
-                          <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+                          <Route path="/" element={<Index />} />
                           
                           {/* Admin */}
                           <Route path="/admin" element={<ProtectedRoute><AdminRoute><Admin /></AdminRoute></ProtectedRoute>} />
@@ -96,7 +93,7 @@ const App = () => (
                           <Route path="/relatorios" element={<ProtectedRoute><FeatureRoute feature="crm_reports"><Relatorios /></FeatureRoute></ProtectedRoute>} />
                           
                           {/* Rotas sem Proteção de Features */}
-                          <Route path="/planos" element={<ProtectedRoute><Planos /></ProtectedRoute>} />
+                          {/** rota de planos removida */}
                           <Route path="/pagamentos" element={<ProtectedRoute><Pagamentos /></ProtectedRoute>} />
                           <Route path="/parceiros" element={<ProtectedRoute><Parceiros /></ProtectedRoute>} />
                           <Route path="/comunicacao" element={<ProtectedRoute><Comunicacao /></ProtectedRoute>} />
