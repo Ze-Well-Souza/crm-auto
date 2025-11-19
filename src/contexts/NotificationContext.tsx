@@ -52,7 +52,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
       description: message,
       duration: options?.duration || 3000,
       action: options?.action,
-      className: "border-green-500 bg-green-50 text-green-900",
+      className: "border-green-500 bg-green-50 dark:bg-green-950 text-green-900 dark:text-green-100",
     });
   };
 
@@ -62,7 +62,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
       description: message,
       duration: options?.duration || 5000,
       action: options?.action,
-      className: "border-red-500 bg-red-50 text-red-900",
+      className: "border-red-500 bg-red-50 dark:bg-red-950 text-red-900 dark:text-red-100",
     });
   };
 
@@ -82,7 +82,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
       description: message,
       duration: options?.duration || 3000,
       action: options?.action,
-      className: "border-blue-500 bg-blue-50 text-blue-900",
+      className: "border-blue-500 bg-blue-50 dark:bg-blue-950 text-blue-900 dark:text-blue-100",
     });
   };
 

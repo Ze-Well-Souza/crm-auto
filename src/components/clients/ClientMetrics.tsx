@@ -86,7 +86,7 @@ export const ClientMetrics = ({ clients }: ClientMetricsProps) => {
         </CardHeader>
         <CardContent className="space-y-2">
           <div className="flex justify-between items-center">
-            <Badge variant="default" className="text-yellow-600">VIP</Badge>
+            <Badge variant="default" className="bg-amber-500 hover:bg-amber-600 text-white">VIP</Badge>
             <span className="text-sm font-medium">{vipClients}</span>
           </div>
           <div className="flex justify-between items-center">

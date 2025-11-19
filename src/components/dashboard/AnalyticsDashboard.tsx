@@ -264,7 +264,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm">Agendamentos Pendentes</span>
-                    <span className="font-semibold text-yellow-600">8</span>
+                    <span className="font-semibold text-orange-600 dark:text-orange-400">8</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm">Faturas Vencidas</span>

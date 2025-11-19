@@ -78,7 +78,7 @@ export const ClientCard = ({ client, onUpdate, onQuickAction }: ClientCardProps)
       {/* Background gradient based on tier */}
       <div className={cn(
         "absolute inset-0 opacity-5 transition-opacity group-hover:opacity-10",
-        tier.label === 'VIP' && "bg-gradient-to-br from-yellow-400 to-orange-500",
+        tier.label === 'VIP' && "bg-gradient-to-br from-amber-400 to-orange-500",
         tier.label === 'Premium' && "bg-gradient-to-br from-purple-400 to-pink-500",
         tier.label === 'Regular' && "bg-gradient-to-br from-blue-400 to-cyan-500",
         tier.label === 'Novo' && "bg-gradient-to-br from-gray-400 to-slate-500"

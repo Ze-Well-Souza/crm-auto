@@ -52,10 +52,10 @@ export const ClientDashboard = ({ client, open, onOpenChange }: ClientDashboardP
   clientStats.avgTicket = clientStats.totalSpent / clientStats.serviceCount;
 
   const getClientTier = (score: number) => {
-    if (score >= 80) return { label: 'VIP', color: 'text-yellow-600', bg: 'bg-yellow-100' };
-    if (score >= 60) return { label: 'Premium', color: 'text-purple-600', bg: 'bg-purple-100' };
-    if (score >= 40) return { label: 'Regular', color: 'text-blue-600', bg: 'bg-blue-100' };
-    return { label: 'Novo', color: 'text-gray-600', bg: 'bg-gray-100' };
+    if (score >= 80) return { label: 'VIP', color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-100 dark:bg-amber-950' };
+    if (score >= 60) return { label: 'Premium', color: 'text-purple-600 dark:text-purple-400', bg: 'bg-purple-100 dark:bg-purple-950' };
+    if (score >= 40) return { label: 'Regular', color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-100 dark:bg-blue-950' };
+    return { label: 'Novo', color: 'text-gray-600 dark:text-gray-400', bg: 'bg-gray-100 dark:bg-gray-800' };
   };
 
   const tier = getClientTier(clientStats.score);

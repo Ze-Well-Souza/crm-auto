@@ -28,7 +28,6 @@ const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Admin = lazy(() => import("./pages/Admin"));
 const Clientes = lazy(() => import("./pages/Clientes"));
 const Veiculos = lazy(() => import("./pages/Veiculos"));
-const Planos = lazy(() => import("./pages/Planos"));
 // const PlanosPublicos = lazy(() => import("./pages/PlanosPublicos"));
 const OrdensServico = lazy(() => import("./pages/OrdensServico"));
 const Agendamentos = lazy(() => import("./pages/Agendamentos"));
@@ -77,7 +76,6 @@ const App = () => (
                           <Route path="/auth/callback" element={<AuthCallback />} />
                           <Route path="/reset-password" element={<ResetPassword />} />
                           <Route path="/install" element={<InstallPWA />} />
-                          <Route path="/planos" element={<Planos />} />
                           <Route path="/register" element={<Register />} />
 
                           {/* Onboarding */}

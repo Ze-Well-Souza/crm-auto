@@ -224,7 +224,7 @@ const Index = () => {
                                 activity.type === 'service_order_created' ? 'bg-orange-500' :
                                 activity.type === 'appointment_created' ? 'bg-green-500' :
                                 activity.type === 'vehicle_added' ? 'bg-purple-500' :
-                                'bg-yellow-500'
+                                'bg-orange-500'
                               }`} />
                             </div>
                             <div className="flex-1 space-y-1">

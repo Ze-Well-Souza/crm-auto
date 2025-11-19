@@ -266,10 +266,10 @@ export const AnalyticsDashboard = ({ data, period }: AnalyticsDashboardProps) =>
                     <Badge variant="secondary">{metrics.completedOrders}</Badge>
                   </div>
                   
-                  <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+                  <div className="flex items-center justify-between p-3 bg-orange-50 dark:bg-orange-950 rounded-lg">
                     <div className="flex items-center gap-2">
-                      <Clock className="h-5 w-5 text-yellow-600" />
-                      <span className="font-medium">Em Andamento</span>
+                      <Clock className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+                      <span className="font-medium text-orange-900 dark:text-orange-100">Em Andamento</span>
                     </div>
                     <Badge variant="secondary">{metrics.pendingOrders}</Badge>
                   </div>

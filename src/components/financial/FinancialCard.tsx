@@ -43,12 +43,12 @@ export const FinancialCard = ({ transaction, onUpdate, onQuickAction }: Financia
           bgColor: 'from-green-400/10 to-emerald-500/5'
         };
       case 'pendente':
-        return { 
-          variant: 'secondary' as const, 
-          label: 'Pendente', 
+        return {
+          variant: 'secondary' as const,
+          label: 'Pendente',
           icon: Clock,
           color: 'text-warning',
-          bgColor: 'from-yellow-400/10 to-orange-500/5'
+          bgColor: 'from-orange-400/10 to-orange-500/5'
         };
       case 'vencido':
         return { 

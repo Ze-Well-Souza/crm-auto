@@ -99,7 +99,7 @@ export const VehicleCard = ({ vehicle, onUpdate, onQuickAction }: VehicleCardPro
         <div className={cn(
           "absolute inset-0 opacity-5 transition-opacity group-hover:opacity-10",
           vehicleMetrics.maintenanceStatus === 'atrasado' && "bg-gradient-to-br from-red-400 to-red-500",
-          vehicleMetrics.maintenanceStatus === 'atencao' && "bg-gradient-to-br from-yellow-400 to-orange-500",
+          vehicleMetrics.maintenanceStatus === 'atencao' && "bg-gradient-to-br from-orange-400 to-orange-500",
           vehicleMetrics.maintenanceStatus === 'em_dia' && "bg-gradient-to-br from-green-400 to-emerald-500"
         )} />
 

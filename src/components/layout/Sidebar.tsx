@@ -28,7 +28,6 @@ export const Sidebar = () => {
 
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: Home, feature: null, adminOnly: false },
-    { name: "Planos", href: "/planos", icon: Crown, color: "text-violet-600", feature: null, adminOnly: false },
     { name: "Clientes", href: "/clientes", icon: Users, feature: 'crm_clients', adminOnly: false },
     { name: "Veículos", href: "/veiculos", icon: Car, feature: 'crm_vehicles', adminOnly: false },
     { name: "Agendamentos", href: "/agendamentos", icon: Calendar, feature: 'crm_appointments', adminOnly: false },

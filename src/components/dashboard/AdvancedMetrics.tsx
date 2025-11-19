@@ -126,7 +126,7 @@ export const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
       case 'success':
         return <CheckCircle className="w-4 h-4 text-green-600" />;
       case 'warning':
-        return <AlertTriangle className="w-4 h-4 text-yellow-600" />;
+        return <AlertTriangle className="w-4 h-4 text-orange-600" />;
       case 'danger':
         return <AlertTriangle className="w-4 h-4 text-red-600" />;
       default:
@@ -137,13 +137,13 @@ export const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
   const getStatusColor = (status?: string) => {
     switch (status) {
       case 'success':
-        return 'border-green-200 bg-green-50';
+        return 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950';
       case 'warning':
-        return 'border-yellow-200 bg-yellow-50';
+        return 'border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950';
       case 'danger':
-        return 'border-red-200 bg-red-50';
+        return 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950';
       default:
-        return 'border-gray-200 bg-white';
+        return 'border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800';
     }
   };
 
