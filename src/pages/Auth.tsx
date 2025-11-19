@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
-import { Car, Shield, Users, Wrench, Crown, Zap, Rocket, Eye, EyeOff, Check, X, CheckCircle, Star } from 'lucide-react';
+import { Car, Shield, Users, Wrench, Crown, Zap, Rocket, Eye, EyeOff, Check, X, CheckCircle, Star, ArrowRight, TrendingUp, Clock, ChevronDown } from 'lucide-react';
 
 const Auth = () => {
   const { user, signIn, signUp, resetPassword, loading } = useAuth();
@@ -28,6 +28,7 @@ const Auth = () => {
   const { toast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
 
   // Password validation function
   const validatePassword = (password: string) => {
@@ -253,331 +254,468 @@ const Auth = () => {
     }));
   };
 
+
+  const faqs = [
+    {
+      question: 'O plano gratuito é realmente grátis para sempre?',
+      answer: 'Sim! O plano gratuito não tem custo e pode ser usado para sempre. Você tem acesso a 40 clientes ativos, 40 agendamentos por mês e 5 relatórios mensais sem pagar nada. Perfeito para começar ou para pequenas oficinas.'
+    },
+    {
+      question: 'Como funciona o trial gratuito?',
+      answer: 'Você tem 14 dias completos para testar TODOS os recursos do plano Profissional. Não pedimos cartão de crédito e você pode cancelar a qualquer momento.'
+    },
+    {
+      question: 'Posso mudar de plano depois?',
+      answer: 'Sim! Você pode fazer upgrade ou downgrade a qualquer momento. O upgrade é imediato e o downgrade ocorre no final do ciclo de cobrança.'
+    },
+    {
+      question: 'Quais formas de pagamento aceitam?',
+      answer: 'Aceitamos cartão de crédito (parcelamento disponível), PIX e boleto bancário. Todos os pagamentos são processados de forma segura pelo Stripe.'
+    },
+    {
+      question: 'Meus dados estão seguros?',
+      answer: 'Sim! Utilizamos criptografia de ponta a ponta e seguimos as melhores práticas de segurança. Todos os dados são armazenados em servidores certificados.'
+    }
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-background flex items-center justify-center p-4">
-      <ThemeToggle />
-      <div className="w-full max-w-5xl space-y-6">
-        {/* Plano Selecionado */}
-        {selectedPlan && (
-          <Card className="border-2 border-violet-200 dark:border-violet-800 bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="flex-1">
-                    <p className="font-semibold text-sm">Plano Selecionado: {planInfo.name}</p>
-                    <p className="text-xs text-slate-600 dark:text-slate-400">{planInfo.price}</p>
-                  </div>
-                  {planInfo.trial && (
-                    <Badge className="bg-violet-600 text-white">
-                      {planInfo.trial}
+    <>
+      {/* PÁGINA PRINCIPAL */}
+      <div className="min-h-screen bg-gradient-to-br from-background via-accent/20 to-background">
+        {/* Header */}
+        <header className="border-b border-border/40 bg-background/80 backdrop-blur-lg sticky top-0 z-50">
+          <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <Crown className="h-8 w-8 text-primary" />
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+                CRM Oficina
+              </h1>
+            </div>
+            <div className="flex items-center gap-3">
+              <ThemeToggle />
+              <Button 
+                variant="outline" 
+                onClick={() => setShowAuthDialog(true)}
+                className="hover:bg-accent"
+              >
+                Já tem conta? Entrar
+              </Button>
+            </div>
+          </div>
+        </header>
+
+        {/* Hero Section */}
+        <section className="container mx-auto px-4 py-20 text-center">
+          <Badge className="mb-4 bg-success/10 text-success border-success/20 hover:bg-success/20">
+            ✨ Plano GRATUITO disponível - Use para sempre sem pagar nada!
+          </Badge>
+          <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground via-primary to-purple-600 bg-clip-text text-transparent">
+            Escolha o plano ideal para sua oficina
+          </h2>
+          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+            Gerencie sua oficina de forma profissional com o melhor CRM do mercado.
+            Comece grátis hoje mesmo!
+          </p>
+          <Button 
+            size="lg"
+            className="bg-gradient-to-r from-primary to-purple-600 hover:opacity-90 text-white shadow-lg"
+            onClick={() => setShowAuthDialog(true)}
+          >
+            Começar Grátis Agora <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
+        </section>
+
+        {/* Plans Section */}
+        <section className="container mx-auto px-4 py-12">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
+            {allPlans.map((plan) => {
+              const IconComponent = plan.icon;
+              return (
+                <Card 
+                  key={plan.id}
+                  className={`relative overflow-hidden transition-all hover:shadow-xl ${
+                    plan.popular ? 'border-primary shadow-lg scale-105' : 'border-border'
+                  }`}
+                >
+                  {plan.popular && (
+                    <Badge className="absolute top-4 right-4 bg-gradient-to-r from-purple-600 to-primary text-white border-0">
+                      👑 Mais Popular
                     </Badge>
                   )}
-                </div>
-                <Link to="/pricing">
-                  <Button variant="ghost" size="sm">Ver todos os planos</Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        <div className="grid lg:grid-cols-2 gap-8 items-center">
-          {/* Left side - Branding */}
-          <div className="order-2 lg:order-1 space-y-6">
-            <div className="text-center lg:text-left space-y-4">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Oficina Eficiente
-              </h1>
-              <p className="text-lg text-slate-600 dark:text-slate-400">
-                Sistema completo de gestão para sua oficina mecânica
-              </p>
-            </div>
-
-            {/* Features Preview */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col items-center space-y-2 p-4 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm rounded-xl shadow-lg">
-                <Users className="h-8 w-8 text-blue-600" />
-                <span className="text-sm font-medium">Gestão de Clientes</span>
-              </div>
-              <div className="flex flex-col items-center space-y-2 p-4 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm rounded-xl shadow-lg">
-                <Wrench className="h-8 w-8 text-purple-600" />
-                <span className="text-sm font-medium">Ordens de Serviço</span>
-              </div>
-            </div>
+                  {plan.free && (
+                    <Badge className="absolute top-4 right-4 bg-gradient-to-r from-success to-emerald-600 text-white border-0">
+                      ✨ 100% Grátis
+                    </Badge>
+                  )}
+                  
+                  <CardHeader>
+                    <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${plan.color} flex items-center justify-center mb-4`}>
+                      <IconComponent className="h-8 w-8 text-white" />
+                    </div>
+                    <CardTitle className="text-2xl">{plan.name}</CardTitle>
+                    <CardDescription className="text-muted-foreground">{plan.description}</CardDescription>
+                    <div className="pt-4">
+                      <span className="text-4xl font-bold text-foreground">{plan.price}</span>
+                      <span className="text-muted-foreground">{plan.period}</span>
+                    </div>
+                  </CardHeader>
+                  
+                  <CardContent className="space-y-4">
+                    {plan.trial && (
+                      <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-3 mb-4">
+                        <p className="text-sm text-primary font-medium text-center">
+                          🎁 14 dias grátis - Sem cartão de crédito!
+                        </p>
+                      </div>
+                    )}
+                    
+                    <ul className="space-y-3">
+                      {plan.features.map((feature, index) => (
+                        <li key={index} className="flex items-start gap-2">
+                          <Check className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
+                          <span className="text-sm text-foreground">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    
+                    <Button 
+                      className={`w-full mt-6 ${
+                        plan.id === 'enterprise'
+                          ? 'bg-gradient-to-r from-orange-600 to-red-600 hover:opacity-90'
+                          : plan.id === 'gratuito'
+                          ? 'bg-gradient-to-r from-success to-emerald-600 hover:opacity-90'
+                          : plan.popular
+                          ? 'bg-gradient-to-r from-purple-600 to-primary hover:opacity-90'
+                          : 'bg-primary hover:bg-primary/90'
+                      } text-white shadow-lg`}
+                      onClick={() => {
+                        if (plan.id === 'enterprise') {
+                          window.location.href = 'mailto:vendas@crm.com?subject=Interesse no Plano Enterprise';
+                        } else {
+                          setShowAuthDialog(true);
+                        }
+                      }}
+                    >
+                      {plan.id === 'enterprise' ? 'Falar com Vendas' : 
+                       plan.id === 'gratuito' ? 'Começar Grátis' :
+                       plan.trial ? 'Começar Trial Grátis' : 'Começar Agora'}
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
 
-          {/* Right side - Auth Form */}
-          <div className="order-1 lg:order-2">
-            <Card className="shadow-2xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border-0">
-              <CardHeader className="text-center">
-                <CardTitle className="text-2xl">Acesse sua conta</CardTitle>
-                <CardDescription>
-                  Faça login ou crie uma conta para começar
+          {/* Features Section */}
+          <div className="grid md:grid-cols-3 gap-8 mb-20">
+            <Card className="border-border hover:shadow-lg transition-all">
+              <CardHeader>
+                <TrendingUp className="h-10 w-10 text-success mb-2" />
+                <CardTitle>Aumente sua Produtividade</CardTitle>
+                <CardDescription className="text-muted-foreground">
+                  Automatize processos e economize até 10 horas por semana com nosso sistema inteligente.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                {showEmailVerification ? (
-                  // Email Verification Message
-                  <div className="space-y-6 py-8 text-center">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 dark:bg-green-900 mb-4">
-                      <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="text-xl font-bold">Verifique seu Email</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Enviamos um link de confirmação para:
-                      </p>
-                      <p className="font-semibold text-blue-600 dark:text-blue-400">
-                        {registeredEmail}
-                      </p>
-                    </div>
-                    <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 p-4 rounded-lg text-left space-y-2">
-                      <p className="text-sm font-semibold text-blue-900 dark:text-blue-100">
-                        📧 Próximos passos:
-                      </p>
-                      <ol className="text-sm text-blue-800 dark:text-blue-200 space-y-1 list-decimal list-inside">
-                        <li>Abra sua caixa de entrada</li>
-                        <li>Procure por email de "CRM Auto"</li>
-                        <li>Clique no link de confirmação</li>
-                        <li>Complete a configuração da sua conta</li>
-                      </ol>
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      Não recebeu o email? Verifique sua caixa de spam ou entre em contato.
-                    </p>
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setShowEmailVerification(false);
-                        setFormData({ email: '', password: '', confirmPassword: '' });
-                      }}
-                    >
-                      Voltar ao Login
-                    </Button>
-                  </div>
-                ) : (
-                  <Tabs defaultValue="login" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 bg-gray-100">
-                      <TabsTrigger value="login" className="data-[state=active]:bg-gray-300 data-[state=active]:text-black text-gray-700">Login</TabsTrigger>
-                      <TabsTrigger value="signup" className="data-[state=active]:bg-gray-300 data-[state=active]:text-black text-gray-700">Cadastro</TabsTrigger>
-                    </TabsList>
-                  
-                  <TabsContent value="login" className="space-y-4">
-                    <form onSubmit={handleSignIn} className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
-                        <Input
-                          id="email"
-                          name="email"
-                          type="email"
-                          placeholder="seu@email.com"
-                          value={formData.email}
-                          onChange={handleInputChange}
-                          required
-                          className="bg-gray-100 border-gray-300 text-black placeholder-gray-500"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="password">Senha</Label>
-                        <div className="relative">
-                          <Input
-                            id="password"
-                            name="password"
-                            type={showPassword ? 'text' : 'password'}
-                            placeholder="••••••••"
-                            value={formData.password}
-                            onChange={handleInputChange}
-                            required
-                            className="pr-10 bg-gray-100 border-gray-300 text-black placeholder-gray-500"
-                          />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                            onClick={() => setShowPassword(!showPassword)}
-                          >
-                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                          </Button>
-                        </div>
-                      </div>
-                      <Button 
-                        type="submit" 
-                        className="w-full" 
-                        disabled={isLoading}
-                      >
-                        {isLoading ? 'Entrando...' : 'Entrar'}
-                      </Button>
-                      
-                      <div className="text-center">
-                        <button
-                          type="button"
-                          onClick={() => setShowForgotPassword(true)}
-                          className="text-sm text-primary hover:underline"
-                        >
-                          Esqueci minha senha
-                        </button>
-                      </div>
-                    </form>
-                  </TabsContent>
-                  
-                  <TabsContent value="signup" className="space-y-4">
-                    <form onSubmit={handleSignUp} className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="signup-email">Email</Label>
-                        <Input
-                          id="signup-email"
-                          name="email"
-                          type="email"
-                          placeholder="seu@email.com"
-                          value={formData.email}
-                          onChange={handleInputChange}
-                          required
-                          className="bg-gray-100 border-gray-300 text-black placeholder-gray-500"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="signup-password">Senha</Label>
-                        <div className="relative">
-                          <Input
-                            id="signup-password"
-                            name="password"
-                            type={showPassword ? 'text' : 'password'}
-                            placeholder="••••••••"
-                            value={formData.password}
-                            onChange={handleInputChange}
-                            required
-                            className="pr-10 bg-gray-100 border-gray-300 text-black placeholder-gray-500"
-                          />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                            onClick={() => setShowPassword(!showPassword)}
-                          >
-                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                          </Button>
-                        </div>
-                        {formData.password && (
-                          <div className="space-y-1 text-xs">
-                            <div className="flex items-center gap-1">
-                              {passwordValidation.requirements.minLength ? <Check className="h-3 w-3 text-green-500" /> : <X className="h-3 w-3 text-red-500" />}
-                              <span className={passwordValidation.requirements.minLength ? 'text-green-600' : 'text-red-600'}>Mínimo 6 caracteres</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              {passwordValidation.requirements.uppercase ? <Check className="h-3 w-3 text-green-500" /> : <X className="h-3 w-3 text-red-500" />}
-                              <span className={passwordValidation.requirements.uppercase ? 'text-green-600' : 'text-red-600'}>1 letra maiúscula</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              {passwordValidation.requirements.lowercase ? <Check className="h-3 w-3 text-green-500" /> : <X className="h-3 w-3 text-red-500" />}
-                              <span className={passwordValidation.requirements.lowercase ? 'text-green-600' : 'text-red-600'}>1 letra minúscula</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              {passwordValidation.requirements.number ? <Check className="h-3 w-3 text-green-500" /> : <X className="h-3 w-3 text-red-500" />}
-                              <span className={passwordValidation.requirements.number ? 'text-green-600' : 'text-red-600'}>1 número</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              {passwordValidation.requirements.specialChar ? <Check className="h-3 w-3 text-green-500" /> : <X className="h-3 w-3 text-red-500" />}
-                              <span className={passwordValidation.requirements.specialChar ? 'text-green-600' : 'text-red-600'}>1 caractere especial</span>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="confirm-password">Confirmar Senha</Label>
-                        <div className="relative">
-                          <Input
-                            id="confirm-password"
-                            name="confirmPassword"
-                            type={showConfirmPassword ? 'text' : 'password'}
-                            placeholder="••••••••"
-                            value={formData.confirmPassword}
-                            onChange={handleInputChange}
-                            required
-                            className="pr-10 bg-gray-100 border-gray-300 text-black placeholder-gray-500"
-                          />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                          >
-                            {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                          </Button>
-                        </div>
-                        {formData.confirmPassword && formData.password !== formData.confirmPassword && (
-                          <p className="text-xs text-red-600">As senhas não coincidem</p>
-                        )}
-                        {formData.confirmPassword && formData.password === formData.confirmPassword && (
-                          <p className="text-xs text-green-600">As senhas coincidem</p>
-                        )}
-                      </div>
-                      <Button 
-                        type="submit" 
-                        className="w-full" 
-                        disabled={isLoading}
-                      >
-                        {isLoading ? 'Criando conta...' : 'Criar Conta'}
-                      </Button>
-                    </form>
-                  </TabsContent>
-                  </Tabs>
-                )}
-              </CardContent>
             </Card>
+            
+            <Card className="border-border hover:shadow-lg transition-all">
+              <CardHeader>
+                <Shield className="h-10 w-10 text-primary mb-2" />
+                <CardTitle>100% Seguro</CardTitle>
+                <CardDescription className="text-muted-foreground">
+                  Seus dados protegidos com criptografia de ponta a ponta e backups automáticos diários.
+                </CardDescription>
+              </CardHeader>
+            </Card>
+            
+            <Card className="border-border hover:shadow-lg transition-all">
+              <CardHeader>
+                <Clock className="h-10 w-10 text-warning mb-2" />
+                <CardTitle>Suporte Rápido</CardTitle>
+                <CardDescription className="text-muted-foreground">
+                  Atendimento ágil e eficiente para resolver qualquer dúvida ou problema.
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
 
-            {/* Forgot Password Dialog */}
-            <Dialog open={showForgotPassword} onOpenChange={setShowForgotPassword}>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Recuperar Senha</DialogTitle>
-                  <DialogDescription>
-                    Digite seu email para receber um link de recuperação de senha.
-                  </DialogDescription>
-                </DialogHeader>
-                <form onSubmit={handleForgotPassword} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="forgot-email">Email</Label>
-                    <Input
-                      id="forgot-email"
-                      type="email"
-                      placeholder="seu@email.com"
-                      value={forgotPasswordEmail}
-                      onChange={(e) => setForgotPasswordEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="flex-1"
-                      onClick={() => {
-                        setShowForgotPassword(false);
-                        setForgotPasswordEmail('');
-                      }}
-                    >
-                      Cancelar
-                    </Button>
-                    <Button type="submit" className="flex-1" disabled={isLoading}>
-                      {isLoading ? 'Enviando...' : 'Enviar Link'}
-                    </Button>
-                  </div>
-                </form>
-              </DialogContent>
-            </Dialog>
-
-            {/* Security Notice */}
-            <div className="flex items-center justify-center space-x-2 text-sm text-slate-600 dark:text-slate-400 mt-4">
-              <Shield className="h-4 w-4" />
-              <span>Seus dados estão protegidos</span>
+          {/* FAQ Section */}
+          <div className="max-w-4xl mx-auto mb-20">
+            <h3 className="text-3xl font-bold text-center mb-2 text-foreground">Perguntas Frequentes</h3>
+            <p className="text-center text-muted-foreground mb-12">Tire suas dúvidas sobre nossos planos</p>
+            
+            <div className="space-y-4">
+              {faqs.map((faq, index) => (
+                <Card key={index} className="border-border">
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center justify-between text-foreground">
+                      {faq.question}
+                      <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                    </CardTitle>
+                    <CardDescription className="text-muted-foreground pt-2">
+                      {faq.answer}
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              ))}
             </div>
           </div>
-        </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="border-t border-border/40 bg-background/80 backdrop-blur-lg">
+          <div className="container mx-auto px-4 py-8 text-center">
+            <p className="text-muted-foreground">
+              © 2024 CRM Oficina. Todos os direitos reservados.
+            </p>
+          </div>
+        </footer>
       </div>
-    </div>
+
+      {/* AUTH DIALOG */}
+      <Dialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Acesse sua conta</DialogTitle>
+            <DialogDescription>
+              Faça login ou crie uma conta para começar
+            </DialogDescription>
+          </DialogHeader>
+          
+          <Tabs defaultValue="login" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="login">Login</TabsTrigger>
+              <TabsTrigger value="signup">Cadastro</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="login" className="space-y-4">
+              <form onSubmit={handleSignIn} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="seu@email.com"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="password">Senha</Label>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      required
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                </div>
+                
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? "Entrando..." : "Entrar"}
+                </Button>
+                
+                <Button
+                  type="button"
+                  variant="link"
+                  className="w-full"
+                  onClick={() => {
+                    setShowAuthDialog(false);
+                    setShowForgotPassword(true);
+                  }}
+                >
+                  Esqueci minha senha
+                </Button>
+              </form>
+            </TabsContent>
+            
+            <TabsContent value="signup" className="space-y-4">
+              <form onSubmit={handleSignUp} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="signup-email">Email</Label>
+                  <Input
+                    id="signup-email"
+                    name="email"
+                    type="email"
+                    placeholder="seu@email.com"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="signup-password">Senha</Label>
+                  <div className="relative">
+                    <Input
+                      id="signup-password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      required
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                  {formData.password && (
+                    <div className="text-sm space-y-1 mt-2">
+                      <div className="flex items-center gap-2">
+                        {passwordValidation.requirements.minLength ? (
+                          <CheckCircle className="h-4 w-4 text-success" />
+                        ) : (
+                          <X className="h-4 w-4 text-destructive" />
+                        )}
+                        <span className={passwordValidation.requirements.minLength ? "text-success" : "text-muted-foreground"}>
+                          Mínimo 6 caracteres
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {passwordValidation.requirements.uppercase ? (
+                          <CheckCircle className="h-4 w-4 text-success" />
+                        ) : (
+                          <X className="h-4 w-4 text-destructive" />
+                        )}
+                        <span className={passwordValidation.requirements.uppercase ? "text-success" : "text-muted-foreground"}>
+                          Uma letra maiúscula
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {passwordValidation.requirements.lowercase ? (
+                          <CheckCircle className="h-4 w-4 text-success" />
+                        ) : (
+                          <X className="h-4 w-4 text-destructive" />
+                        )}
+                        <span className={passwordValidation.requirements.lowercase ? "text-success" : "text-muted-foreground"}>
+                          Uma letra minúscula
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {passwordValidation.requirements.number ? (
+                          <CheckCircle className="h-4 w-4 text-success" />
+                        ) : (
+                          <X className="h-4 w-4 text-destructive" />
+                        )}
+                        <span className={passwordValidation.requirements.number ? "text-success" : "text-muted-foreground"}>
+                          Um número
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {passwordValidation.requirements.specialChar ? (
+                          <CheckCircle className="h-4 w-4 text-success" />
+                        ) : (
+                          <X className="h-4 w-4 text-destructive" />
+                        )}
+                        <span className={passwordValidation.requirements.specialChar ? "text-success" : "text-muted-foreground"}>
+                          Um caractere especial (!@#$%^&*)
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="confirm-password">Confirmar Senha</Label>
+                  <div className="relative">
+                    <Input
+                      id="confirm-password"
+                      name="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={formData.confirmPassword}
+                      onChange={handleInputChange}
+                      required
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    >
+                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                </div>
+                
+                <Button type="submit" className="w-full" disabled={isLoading || !passwordValidation.isValid}>
+                  {isLoading ? "Criando conta..." : "Criar Conta"}
+                </Button>
+              </form>
+            </TabsContent>
+          </Tabs>
+          
+          <div className="flex items-center justify-center pt-4 text-sm text-muted-foreground">
+            <Shield className="h-4 w-4 mr-2" />
+            Seus dados estão protegidos
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* EMAIL VERIFICATION DIALOG */}
+      <Dialog open={showEmailVerification} onOpenChange={setShowEmailVerification}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Verifique seu email</DialogTitle>
+            <DialogDescription>
+              Enviamos um link de confirmação para <strong>{registeredEmail}</strong>.
+              Por favor, verifique sua caixa de entrada e spam.
+            </DialogDescription>
+          </DialogHeader>
+          <Button onClick={() => setShowEmailVerification(false)}>Entendi</Button>
+        </DialogContent>
+      </Dialog>
+
+      {/* FORGOT PASSWORD DIALOG */}
+      <Dialog open={showForgotPassword} onOpenChange={setShowForgotPassword}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Recuperar senha</DialogTitle>
+            <DialogDescription>
+              Informe seu email e enviaremos um link para redefinir sua senha.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleForgotPassword} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="forgot-email">Email</Label>
+              <Input
+                id="forgot-email"
+                type="email"
+                placeholder="seu@email.com"
+                value={forgotPasswordEmail}
+                onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                required
+              />
+            </div>
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Enviando..." : "Enviar Link"}
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
