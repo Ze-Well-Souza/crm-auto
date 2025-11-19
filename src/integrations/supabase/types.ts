@@ -534,6 +534,48 @@ export type Database = {
           },
         ]
       }
+      stripe_webhook_events: {
+        Row: {
+          attempts: number | null
+          created_at: string | null
+          error_message: string | null
+          event_data: Json
+          event_id: string
+          event_type: string
+          id: string
+          next_retry_at: string | null
+          processed_at: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          attempts?: number | null
+          created_at?: string | null
+          error_message?: string | null
+          event_data: Json
+          event_id: string
+          event_type: string
+          id?: string
+          next_retry_at?: string | null
+          processed_at?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          attempts?: number | null
+          created_at?: string | null
+          error_message?: string | null
+          event_data?: Json
+          event_id?: string
+          event_type?: string
+          id?: string
+          next_retry_at?: string | null
+          processed_at?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       subscription_audit_log: {
         Row: {
           action: Database["public"]["Enums"]["subscription_action"]

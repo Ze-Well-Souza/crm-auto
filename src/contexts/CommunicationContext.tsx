@@ -90,13 +90,20 @@ export const CommunicationProvider: React.FC<CommunicationProviderProps> = ({ ch
   useEffect(() => {
     fetchMessagesAndConversations();
 
-    // Polling para atualizações (substituindo realtime para MVP)
-    const interval = setInterval(() => {
-      fetchMessagesAndConversations();
-    }, 30000); // Atualizar a cada 30 segundos
+    // Subscribe to real-time updates
+    const subscription = supabase
+      .channel('chat_messages_changes')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'chat_messages'
+      }, () => {
+        fetchMessagesAndConversations();
+      })
+      .subscribe();
 
     return () => {
-      clearInterval(interval);
+      subscription.unsubscribe();
     };
   }, []);
 
