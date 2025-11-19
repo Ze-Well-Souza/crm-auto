@@ -72,7 +72,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
       description: message,
       duration: options?.duration || 4000,
       action: options?.action,
-      className: "border-yellow-500 bg-yellow-50 text-yellow-900",
+      className: "border-orange-500 bg-orange-50 dark:bg-orange-950 text-orange-900 dark:text-orange-100",
     });
   };
 

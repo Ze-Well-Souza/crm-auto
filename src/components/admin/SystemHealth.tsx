@@ -107,7 +107,7 @@ export const SystemHealth = () => {
       case 'healthy':
         return <CheckCircle2 className="h-6 w-6 text-green-600" />;
       case 'warning':
-        return <AlertCircle className="h-6 w-6 text-yellow-600" />;
+        return <AlertCircle className="h-6 w-6 text-orange-600" />;
       case 'error':
         return <XCircle className="h-6 w-6 text-red-600" />;
       default:
@@ -120,7 +120,7 @@ export const SystemHealth = () => {
       case 'healthy':
         return <Badge className="bg-green-600">Healthy</Badge>;
       case 'warning':
-        return <Badge className="bg-yellow-600">Warning</Badge>;
+        return <Badge className="bg-orange-600">Warning</Badge>;
       case 'error':
         return <Badge className="bg-red-600">Error</Badge>;
       default:
@@ -137,7 +137,7 @@ export const SystemHealth = () => {
       {/* Overall Status Card */}
       <Card className={
         overallStatus === 'healthy' ? 'border-green-500' :
-        overallStatus === 'error' ? 'border-red-500' : 'border-yellow-500'
+        overallStatus === 'error' ? 'border-red-500' : 'border-orange-500'
       }>
         <CardHeader>
           <div className="flex items-center justify-between">

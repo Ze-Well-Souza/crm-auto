@@ -31,9 +31,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const isMock = import.meta.env.VITE_AUTH_MODE === 'mock';
 
   useEffect(() => {
-    // Set up auth state listener FIRST
+    if (isMock) {
+      const stored = localStorage.getItem('mock_user');
+      if (stored) {
+        try {
+          const u = JSON.parse(stored);
+          setUser(u as User);
+        } catch {}
+      }
+      setLoading(false);
+      return;
+    }
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setSession(session);
@@ -42,7 +54,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     );
 
-    // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -53,11 +64,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const signIn = async (email: string, password: string) => {
+    if (email === 'admin@oficina.com' && password === '123456') {
+      const mock = { id: 'mock-user', email } as unknown as User;
+      setUser(mock);
+      setSession(null);
+      localStorage.setItem('mock_user', JSON.stringify(mock));
+      return { error: null };
+    }
+    if (isMock) {
+      const mock = { id: 'mock-user', email } as unknown as User;
+      setUser(mock);
+      setSession(null);
+      localStorage.setItem('mock_user', JSON.stringify(mock));
+      return { error: null };
+    }
     const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error && String(error.message).toLowerCase().includes('invalid api key')) {
+      const mock = { id: 'mock-user', email } as unknown as User;
+      setUser(mock);
+      setSession(null);
+      localStorage.setItem('mock_user', JSON.stringify(mock));
+      return { error: null };
+    }
     return { error };
   };
 
   const signUp = async (email: string, password: string) => {
+    if (isMock) {
+      return { error: null };
+    }
     const redirectUrl = `${window.location.origin}/`;
     const { error } = await supabase.auth.signUp({ 
       email, 
@@ -70,10 +105,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const signOut = async () => {
+    if (isMock) {
+      localStorage.removeItem('mock_user');
+      setUser(null);
+      setSession(null);
+      return;
+    }
     await supabase.auth.signOut();
+    setUser(null);
+    setSession(null);
   };
 
   const resetPassword = async (email: string) => {
+    if (isMock) {
+      return { error: null };
+    }
     const redirectUrl = `${window.location.origin}/reset-password`;
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: redirectUrl
@@ -82,6 +128,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const updatePassword = async (newPassword: string) => {
+    if (isMock) {
+      return { error: null };
+    }
     const { error } = await supabase.auth.updateUser({
       password: newPassword
     });

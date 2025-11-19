@@ -8,7 +8,7 @@ export const OrderStatusBadge = ({ status }: OrderStatusBadgeProps) => {
   const getStatusConfig = (status: string | null) => {
     switch (status) {
       case 'pendente':
-        return { label: 'Pendente', className: 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400' };
+        return { label: 'Pendente', className: 'bg-orange-500/10 text-orange-600 dark:text-orange-400' };
       case 'confirmado':
         return { label: 'Confirmado', className: 'bg-blue-500/10 text-blue-600 dark:text-blue-400' };
       case 'em_preparacao':

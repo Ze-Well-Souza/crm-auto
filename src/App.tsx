@@ -20,13 +20,15 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 // Lazy load pages
 const Index = lazy(() => import("./pages/Index"));
 const Landing = lazy(() => import("./pages/Landing"));
+const Documentation = lazy(() => import("./pages/Documentation"));
+const Register = lazy(() => import("./pages/Register"));
 const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Admin = lazy(() => import("./pages/Admin"));
 const Clientes = lazy(() => import("./pages/Clientes"));
 const Veiculos = lazy(() => import("./pages/Veiculos"));
-// const Planos = lazy(() => import("./pages/Planos"));
+const Planos = lazy(() => import("./pages/Planos"));
 // const PlanosPublicos = lazy(() => import("./pages/PlanosPublicos"));
 const OrdensServico = lazy(() => import("./pages/OrdensServico"));
 const Agendamentos = lazy(() => import("./pages/Agendamentos"));
@@ -75,12 +77,16 @@ const App = () => (
                           <Route path="/auth/callback" element={<AuthCallback />} />
                           <Route path="/reset-password" element={<ResetPassword />} />
                           <Route path="/install" element={<InstallPWA />} />
+                          <Route path="/planos" element={<Planos />} />
+                          <Route path="/register" element={<Register />} />
 
                           {/* Onboarding */}
                           <Route path="/onboarding" element={<Onboarding />} />
 
+                          {/* Landing como entrada */}
+                          <Route path="/" element={<Landing />} />
                           {/* Dashboard */}
-                          <Route path="/" element={<Index />} />
+                          <Route path="/dashboard" element={<Index />} />
                           
                           {/* Admin */}
                           <Route path="/admin" element={<ProtectedRoute><AdminRoute><Admin /></AdminRoute></ProtectedRoute>} />
@@ -101,6 +107,7 @@ const App = () => (
                           <Route path="/comunicacao" element={<ProtectedRoute><Comunicacao /></ProtectedRoute>} />
                           <Route path="/biblioteca-imagens" element={<ProtectedRoute><ImageLibrary /></ProtectedRoute>} />
                           <Route path="/configuracoes" element={<ProtectedRoute><Configuracoes /></ProtectedRoute>} />
+                          <Route path="/docs" element={<ProtectedRoute><Documentation /></ProtectedRoute>} />
                           
                           <Route path="*" element={<NotFound />} />
                         </Routes>

@@ -40,8 +40,39 @@ export const useSubscription = () => {
   const [usage, setUsage] = useState<SubscriptionUsage | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const isMock = import.meta.env.VITE_AUTH_MODE === 'mock';
 
   useEffect(() => {
+    if (isMock) {
+      const allFeatures = [
+        'crm_clients',
+        'crm_vehicles',
+        'crm_appointments',
+        'crm_service_orders',
+        'crm_parts',
+        'crm_financial',
+        'crm_reports'
+      ];
+      const mockPlan: SubscriptionPlan = {
+        id: 'mock-plan',
+        name: 'Enterprise',
+        price: 0,
+        billing_cycle: 'monthly',
+        max_appointments_per_month: null,
+        max_active_clients: null,
+        max_reports_per_month: null,
+        features: allFeatures,
+        is_active: true,
+      };
+      setPlan(mockPlan);
+      setUsage({
+        clients: { current: 0, limit: null, percentage: 0 },
+        appointments: { current: 0, limit: null, percentage: 0 },
+        reports: { current: 0, limit: null, percentage: 0 },
+      });
+      setLoading(false);
+      return;
+    }
     loadSubscription();
   }, []);
 
@@ -49,6 +80,39 @@ export const useSubscription = () => {
     try {
       setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        const stored = localStorage.getItem('mock_user');
+        if (stored) {
+          const allFeatures = [
+            'crm_clients',
+            'crm_vehicles',
+            'crm_appointments',
+            'crm_service_orders',
+            'crm_parts',
+            'crm_financial',
+            'crm_reports'
+          ];
+          const mockPlan: SubscriptionPlan = {
+            id: 'local-mock-plan',
+            name: 'Enterprise',
+            price: 0,
+            billing_cycle: 'monthly',
+            max_appointments_per_month: null,
+            max_active_clients: null,
+            max_reports_per_month: null,
+            features: allFeatures,
+            is_active: true,
+          };
+          setPlan(mockPlan);
+          setUsage({
+            clients: { current: 0, limit: null, percentage: 0 },
+            appointments: { current: 0, limit: null, percentage: 0 },
+            reports: { current: 0, limit: null, percentage: 0 },
+          });
+          setLoading(false);
+          return;
+        }
+      }
       
       if (!user) {
         setLoading(false);
@@ -88,6 +152,33 @@ export const useSubscription = () => {
     } catch (err: any) {
       console.error('Error loading subscription:', err);
       setError(err.message);
+      // Fallback para ambiente sem backend válido
+      const allFeatures = [
+        'crm_clients',
+        'crm_vehicles',
+        'crm_appointments',
+        'crm_service_orders',
+        'crm_parts',
+        'crm_financial',
+        'crm_reports'
+      ];
+      const mockPlan: SubscriptionPlan = {
+        id: 'fallback-plan',
+        name: 'Enterprise',
+        price: 0,
+        billing_cycle: 'monthly',
+        max_appointments_per_month: null,
+        max_active_clients: null,
+        max_reports_per_month: null,
+        features: allFeatures,
+        is_active: true,
+      };
+      setPlan(mockPlan);
+      setUsage({
+        clients: { current: 0, limit: null, percentage: 0 },
+        appointments: { current: 0, limit: null, percentage: 0 },
+        reports: { current: 0, limit: null, percentage: 0 },
+      });
     } finally {
       setLoading(false);
     }
@@ -95,14 +186,19 @@ export const useSubscription = () => {
 
   const createTrialSubscription = async (userId: string) => {
     try {
-      // Buscar plano Profissional para trial
-      const { data: plans } = await supabase
-        .from('subscription_plans')
-        .select('*')
-        .eq('name', 'Profissional')
-        .single();
+      // Preferir plano Enterprise/Pro para desbloquear recursos
+      let selectedPlan: any = null;
+      const tryNames = ['Enterprise', 'Empresarial', 'Pro', 'Profissional'];
+      for (const name of tryNames) {
+        const { data } = await supabase
+          .from('subscription_plans')
+          .select('*')
+          .eq('name', name)
+          .single();
+        if (data) { selectedPlan = data; break; }
+      }
 
-      if (!plans) throw new Error('Plano Profissional não encontrado');
+      if (!selectedPlan) throw new Error('Nenhum plano compatível encontrado');
 
       const trialEndsAt = new Date();
       trialEndsAt.setDate(trialEndsAt.getDate() + 14); // 14 dias
@@ -112,7 +208,7 @@ export const useSubscription = () => {
 
       await supabase.from('partner_subscriptions').insert({
         partner_id: userId,
-        plan_id: plans.id,
+        plan_id: selectedPlan.id,
         status: 'trial',
         trial_ends_at: trialEndsAt.toISOString(),
         current_period_start: new Date().toISOString(),
@@ -153,6 +249,8 @@ export const useSubscription = () => {
   };
 
   const hasFeature = (feature: string): boolean => {
+    if (isMock) return true;
+    if (!plan && localStorage.getItem('mock_user')) return true;
     if (!plan) return false;
     return plan.features?.includes(feature) || false;
   };

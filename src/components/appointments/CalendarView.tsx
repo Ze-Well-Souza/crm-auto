@@ -40,7 +40,7 @@ export const CalendarView = ({
       case 'confirmado':
         return 'bg-green-500 text-white';
       case 'em_andamento':
-        return 'bg-yellow-500 text-white';
+        return 'bg-orange-500 text-white';
       case 'concluido':
         return 'bg-emerald-500 text-white';
       case 'cancelado':

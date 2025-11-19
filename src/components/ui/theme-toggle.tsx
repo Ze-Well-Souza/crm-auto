@@ -21,23 +21,23 @@ export function ThemeToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem 
+        <DropdownMenuItem
           onClick={() => setTheme("light")}
-          className={theme === "light" ? "bg-accent" : ""}
+          className={theme === "light" ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300" : "text-slate-700 dark:text-slate-200"}
         >
           <Sun className="mr-2 h-4 w-4" />
           Claro
         </DropdownMenuItem>
-        <DropdownMenuItem 
+        <DropdownMenuItem
           onClick={() => setTheme("dark")}
-          className={theme === "dark" ? "bg-accent" : ""}
+          className={theme === "dark" ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300" : "text-slate-700 dark:text-slate-200"}
         >
           <Moon className="mr-2 h-4 w-4" />
           Escuro
         </DropdownMenuItem>
-        <DropdownMenuItem 
+        <DropdownMenuItem
           onClick={() => setTheme("system")}
-          className={theme === "system" ? "bg-accent" : ""}
+          className={theme === "system" ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300" : "text-slate-700 dark:text-slate-200"}
         >
           <Monitor className="mr-2 h-4 w-4" />
           Sistema

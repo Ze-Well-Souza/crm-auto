@@ -4,6 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Oficina Eficiente - CRM Automotivo</title>
+    
+    <!-- Prevent FOUC - Apply theme before page renders -->
+    <script>
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
     <meta name="description" content="Sistema completo de CRM para oficinas mecânicas - Gerencie clientes, veículos, ordens de serviço e muito mais" />
     <meta name="author" content="Oficina Eficiente" />
 

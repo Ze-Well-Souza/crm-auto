@@ -68,10 +68,10 @@ export const TransactionDashboard: React.FC = () => {
 
   const getStatusBadge = (status: Transaction['status']) => {
     const variants = {
-      completed: 'bg-green-100 text-green-800 border-green-200',
-      pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      failed: 'bg-red-100 text-red-800 border-red-200',
-      cancelled: 'bg-gray-100 text-gray-800 border-gray-200'
+      completed: 'bg-green-100 dark:bg-green-950 text-green-800 dark:text-green-200 border-green-200 dark:border-green-800',
+      pending: 'bg-orange-100 dark:bg-orange-950 text-orange-800 dark:text-orange-200 border-orange-200 dark:border-orange-800',
+      failed: 'bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-200 border-red-200 dark:border-red-800',
+      cancelled: 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-700'
     };
 
     const labels = {

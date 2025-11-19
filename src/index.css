@@ -34,8 +34,10 @@
     /* Enhanced color palette */
     --success: 142.1 76.2% 36.3%;
     --success-foreground: 355.7 100% 97.3%;
-    --warning: 32.5 94.6% 43.7%;
-    --warning-foreground: 355.7 100% 97.3%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --warning-light: 48 96% 89%;
+    --warning-glow: 38 92% 50%;
     --info: 198.6 88.7% 48.4%;
     --info-foreground: 355.7 100% 97.3%;
     --purple: 262.1 83.3% 57.8%;
@@ -125,7 +127,9 @@
 
     /* Enhanced dark mode colors */
     --success: 142.1 70.6% 45.3%;
-    --warning: 32.5 94.6% 43.7%;
+    --warning: 38 92% 50%;
+    --warning-light: 48 96% 89%;
+    --warning-glow: 38 92% 50%;
     --info: 198.6 88.7% 48.4%;
     --purple: 262.1 83.3% 67.8%;
     --pink: 330.4 81.2% 70.4%;
@@ -173,6 +177,7 @@
     place-items: center;
     min-width: 320px;
     min-height: 100vh;
+    background-color: #f9fafb; /* gray-50 - default light mode */
     background: linear-gradient(135deg, 
       hsl(var(--background)) 0%, 
       hsl(var(--background)) 40%,
@@ -184,6 +189,10 @@
     font-weight: 400;
     letter-spacing: -0.01em;
     transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .dark body {
+    background-color: #0f172a; /* slate-900 - dark mode */
   }
 
   #root {

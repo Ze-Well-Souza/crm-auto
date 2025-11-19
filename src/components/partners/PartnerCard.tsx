@@ -16,7 +16,7 @@ export const PartnerCard = ({ partner, onEdit, onDelete }: PartnerCardProps) => 
       case 'ativo':
         return 'bg-green-500/10 text-green-600 dark:text-green-400';
       case 'pendente':
-        return 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400';
+        return 'bg-orange-500/10 text-orange-600 dark:text-orange-400';
       case 'inativo':
         return 'bg-red-500/10 text-red-600 dark:text-red-400';
       default:

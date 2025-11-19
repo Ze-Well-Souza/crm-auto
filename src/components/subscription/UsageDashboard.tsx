@@ -28,7 +28,7 @@ export const UsageDashboard = () => {
 
   const getProgressColor = (percentage: number) => {
     if (percentage >= 90) return 'bg-red-500';
-    if (percentage >= 80) return 'bg-yellow-500';
+    if (percentage >= 80) return 'bg-orange-500';
     return 'bg-green-500';
   };
 
@@ -153,16 +153,16 @@ export const UsageDashboard = () => {
       </div>
 
       {/* Alerta de Limite */}
-      {(usage.clients.percentage >= 80 || 
-        usage.appointments.percentage >= 80 || 
+      {(usage.clients.percentage >= 80 ||
+        usage.appointments.percentage >= 80 ||
         usage.reports.percentage >= 80) && (
-        <Card className="border-yellow-500 bg-yellow-50 dark:bg-yellow-950">
+        <Card className="border-orange-500 bg-orange-50 dark:bg-orange-950">
           <CardContent className="pt-6">
             <div className="flex items-start gap-3">
               <div className="text-2xl">⚠️</div>
               <div className="flex-1">
-                <h3 className="font-semibold mb-1">Você está próximo do limite</h3>
-                <p className="text-sm text-muted-foreground mb-3">
+                <h3 className="font-semibold mb-1 text-orange-900 dark:text-orange-100">Você está próximo do limite</h3>
+                <p className="text-sm text-orange-700 dark:text-orange-300 mb-3">
                   Faça upgrade para um plano superior e continue usando todos os recursos sem interrupções.
                 </p>
                 <Button onClick={() => navigate('/planos')}>

@@ -39,7 +39,7 @@ const Landing = () => {
   const navigate = useNavigate();
 
   if (user) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -69,6 +69,7 @@ const Landing = () => {
         title: "Login realizado com sucesso!",
         description: "Redirecionando para o dashboard..."
       });
+      navigate('/dashboard');
     }
     setIsLoading(false);
   };
@@ -92,7 +93,7 @@ const Landing = () => {
       period: '/mês',
       description: 'Ideal para começar',
       icon: Star,
-      gradient: 'from-green-400 to-emerald-500',
+      gradient: 'from-green-500 to-emerald-600',
       features: [
         '40 clientes ativos',
         '40 agendamentos/mês',
@@ -109,7 +110,7 @@ const Landing = () => {
       period: '/mês',
       description: 'Para oficinas pequenas',
       icon: Zap,
-      gradient: 'from-blue-400 to-blue-600',
+      gradient: 'from-blue-500 to-blue-700',
       features: [
         '200 clientes',
         '100 agendamentos/mês',
@@ -126,7 +127,7 @@ const Landing = () => {
       period: '/mês',
       description: 'Mais Popular',
       icon: Crown,
-      gradient: 'from-purple-400 to-purple-600',
+      gradient: 'from-purple-500 to-purple-700',
       popular: true,
       features: [
         '1.000 clientes',
@@ -145,7 +146,7 @@ const Landing = () => {
       period: '',
       description: 'Recursos ilimitados',
       icon: Rocket,
-      gradient: 'from-orange-400 to-red-500',
+      gradient: 'from-orange-500 to-red-600',
       features: [
         'Clientes ilimitados',
         'Multi-unidades',
@@ -164,71 +165,88 @@ const Landing = () => {
         title: "Plano Enterprise",
         description: "Em breve você receberá um contato da nossa equipe de vendas."
       });
+      navigate(`/register?plan=${planId}`);
     } else {
-      toast({
-        title: `Plano ${planId} Selecionado`,
-        description: "Crie sua conta para continuar."
-      });
+      navigate(`/register?plan=${planId}`);
     }
   };
 
+  const fillDemoAndLogin = async () => {
+    setFormData({ email: 'admin@oficina.com', password: '123456' });
+    setIsLoading(true);
+    const { error } = await signIn('admin@oficina.com', '123456');
+    if (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Erro no Login',
+        description: error.message === 'Invalid login credentials'
+          ? 'Credenciais inválidas. Verifique seu email e senha.'
+          : error.message
+      });
+    } else {
+      toast({ title: 'Login demo preenchido', description: 'Redirecionando para o dashboard...' });
+      navigate('/dashboard');
+    }
+    setIsLoading(false);
+  };
+
   return (
-    <div className="min-h-screen bg-slate-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 relative overflow-hidden">
       {/* Background Effects */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
-      <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-green-500/10 rounded-full blur-3xl" />
+      <div className="absolute inset-0 bg-transparent dark:bg-[hsl(222,47%,11%)]" />
+      <div className="absolute -top-16 left-1/5 w-[32rem] h-[32rem] bg-transparent dark:bg-blue-500/10 rounded-full blur-[120px]" />
+      <div className="absolute top-1/3 right-0 w-[28rem] h-[28rem] bg-transparent dark:bg-purple-500/10 rounded-full blur-[120px]" />
+      <div className="absolute bottom-0 left-1/3 w-[36rem] h-[36rem] bg-transparent dark:bg-emerald-500/10 rounded-full blur-[140px]" />
 
       {/* Navbar */}
-      <nav className="relative z-10 border-b border-white/10 backdrop-blur-sm bg-slate-900/50">
+      <nav className="relative z-10 border-b border-gray-200 dark:border-white/10 backdrop-blur-sm bg-white dark:bg-slate-900/50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Car className="h-8 w-8 text-blue-400" />
-            <span className="text-2xl font-bold text-white">Oficina Eficiente</span>
+            <Car className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+            <span className="text-2xl font-bold text-slate-900 dark:text-white">Oficina Eficiente</span>
           </div>
           <ThemeToggle />
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative z-10 container mx-auto px-4 py-16">
+      <section className="relative z-10 container mx-auto px-6 lg:px-8 py-20">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Column - Value Prop */}
           <div className="space-y-8 animate-fade-in">
             <div className="space-y-4">
-              <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30">
+              <Badge className="bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-500/30">
                 Sistema Completo de Gestão
               </Badge>
-              <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
-                <span className="text-white">Gerencie sua Oficina</span>
+              <h1 className="text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-tight tracking-tight">
+                <span className="text-slate-900 dark:text-white drop-shadow-[0_2px_8px_rgba(59,130,246,0.25)]">Gerencie sua Oficina</span>
                 <br />
-                <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-green-400 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 dark:from-blue-400 dark:via-purple-400 dark:to-cyan-400 bg-clip-text text-transparent drop-shadow-[0_2px_12px_rgba(99,102,241,0.35)]">
                   com Inteligência
                 </span>
               </h1>
-              <p className="text-xl text-slate-300 leading-relaxed">
+              <p className="text-xl text-slate-600 dark:text-slate-300 leading-relaxed">
                 Sistema completo integrado ao Marketplace. Controle clientes, ordens de serviço, estoque e financeiro em um só lugar.
               </p>
             </div>
 
             {/* Feature Pills */}
             <div className="flex flex-wrap gap-3">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-sm border border-white/10">
-                <Users className="h-4 w-4 text-blue-400" />
-                <span className="text-sm text-slate-300">Gestão de Clientes</span>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 dark:bg-white/5 backdrop-blur-sm border border-gray-200 dark:border-white/10">
+                <Users className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                <span className="text-sm text-slate-700 dark:text-slate-300">Gestão de Clientes</span>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-sm border border-white/10">
-                <Calendar className="h-4 w-4 text-purple-400" />
-                <span className="text-sm text-slate-300">Agendamentos</span>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 dark:bg-white/5 backdrop-blur-sm border border-gray-200 dark:border-white/10">
+                <Calendar className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                <span className="text-sm text-slate-700 dark:text-slate-300">Agendamentos</span>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-sm border border-white/10">
-                <Package className="h-4 w-4 text-green-400" />
-                <span className="text-sm text-slate-300">Controle de Estoque</span>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 dark:bg-white/5 backdrop-blur-sm border border-gray-200 dark:border-white/10">
+                <Package className="h-4 w-4 text-green-600 dark:text-green-400" />
+                <span className="text-sm text-slate-700 dark:text-slate-300">Controle de Estoque</span>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-sm border border-white/10">
-                <DollarSign className="h-4 w-4 text-yellow-400" />
-                <span className="text-sm text-slate-300">Financeiro</span>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 dark:bg-white/5 backdrop-blur-sm border border-gray-200 dark:border-white/10">
+                <DollarSign className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                <span className="text-sm text-slate-700 dark:text-slate-300">Financeiro</span>
               </div>
             </div>
 
@@ -236,7 +254,7 @@ const Landing = () => {
             <Button
               onClick={scrollToPlans}
               variant="ghost"
-              className="text-blue-400 hover:text-blue-300 group"
+              className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 group"
             >
               Conheça os planos
               <ArrowDown className="ml-2 h-4 w-4 animate-bounce" />
@@ -244,20 +262,21 @@ const Landing = () => {
           </div>
 
           {/* Right Column - Login Card */}
-          <div className="animate-slide-up">
-            <Card className="bg-white/5 backdrop-blur-xl border-white/10 shadow-2xl">
+          <div>
+            <Card className="relative bg-white dark:bg-white/5 border-gray-200 dark:border-white/10 shadow-xl dark:backdrop-blur-xl">
+              <div className="absolute -inset-0.5 rounded-xl pointer-events-none dark:shadow-[0_0_60px_rgba(99,102,241,0.25)]" />
               <CardHeader>
-                <CardTitle className="text-2xl text-white">Acesse sua conta</CardTitle>
-                <CardDescription className="text-slate-400">
+                <CardTitle className="text-2xl text-slate-900 dark:text-white">Acesse sua conta</CardTitle>
+                <CardDescription className="text-slate-600 dark:text-slate-400">
                   Entre com suas credenciais para continuar
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSignIn} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-slate-300">Email</Label>
+                    <Label htmlFor="email" className="text-slate-700 dark:text-slate-300">Email</Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 dark:text-slate-500" />
                       <Input
                         id="email"
                         name="email"
@@ -266,14 +285,14 @@ const Landing = () => {
                         value={formData.email}
                         onChange={handleInputChange}
                         required
-                        className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-slate-500 focus:border-blue-500/50 focus:ring-blue-500/20"
+                        className="pl-10 bg-white dark:bg-white/5 border-gray-300 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-blue-500 dark:focus:border-blue-500/50 focus:ring-blue-500/20"
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="password" className="text-slate-300">Senha</Label>
+                    <Label htmlFor="password" className="text-slate-700 dark:text-slate-300">Senha</Label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 dark:text-slate-500" />
                       <Input
                         id="password"
                         name="password"
@@ -282,40 +301,52 @@ const Landing = () => {
                         value={formData.password}
                         onChange={handleInputChange}
                         required
-                        className="pl-10 pr-10 bg-white/5 border-white/10 text-white placeholder:text-slate-500 focus:border-blue-500/50 focus:ring-blue-500/20"
+                        className="pl-10 pr-10 bg-white dark:bg-white/5 border-gray-300 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-blue-500 dark:focus:border-blue-500/50 focus:ring-blue-500/20"
                       />
                       <Button
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent text-slate-400 hover:text-slate-300"
+                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
                         onClick={() => setShowPassword(!showPassword)}
                       >
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </Button>
-                    </div>
-                  </div>
+                </div>
+              </div>
 
-                  <Button
-                    type="submit"
-                    className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? 'Entrando...' : 'Entrar'}
-                  </Button>
+              <div className="flex items-center justify-end">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 px-0"
+                  onClick={fillDemoAndLogin}
+                >
+                  🔑 Preencher Credenciais Demo
+                </Button>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold shadow-lg"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Entrando...' : 'Entrar'}
+              </Button>
 
                   <div className="flex items-center justify-between text-sm">
                     <button
                       type="button"
-                      onClick={() => navigate('/auth')}
-                      className="text-blue-400 hover:text-blue-300 hover:underline"
+                      onClick={() => navigate('/reset-password')}
+                      className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline"
                     >
                       Esqueceu a senha?
                     </button>
                     <button
                       type="button"
-                      onClick={() => navigate('/auth')}
-                      className="text-slate-400 hover:text-slate-300"
+                      onClick={() => navigate('/register')}
+                      className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-300"
                     >
                       Criar conta →
                     </button>
@@ -330,13 +361,13 @@ const Landing = () => {
       {/* Pricing Section */}
       <section id="pricing-section" className="relative z-10 container mx-auto px-4 py-24">
         <div className="text-center space-y-4 mb-16 animate-fade-in">
-          <Badge className="bg-purple-500/20 text-purple-300 border-purple-500/30">
+          <Badge className="bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-500/30">
             Planos e Preços
           </Badge>
-          <h2 className="text-4xl lg:text-5xl font-bold text-white">
+          <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white">
             Escolha o plano ideal para sua oficina
           </h2>
-          <p className="text-xl text-slate-400 max-w-2xl mx-auto">
+          <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
             Comece grátis e escale conforme seu negócio cresce
           </p>
         </div>
@@ -345,8 +376,8 @@ const Landing = () => {
           {plans.map((plan, index) => (
             <Card
               key={plan.id}
-              className={`relative bg-white/5 backdrop-blur-xl border-white/10 hover:border-white/20 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl ${
-                plan.popular ? 'lg:scale-105 border-purple-500/50' : ''
+              className={`relative bg-white dark:bg-white/5 border-gray-200 dark:border-white/10 shadow-xl dark:backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 ${
+                plan.popular ? 'lg:scale-105 border-purple-300 dark:border-purple-500/40' : 'hover:border-gray-300 dark:hover:border-white/20'
               }`}
               style={{ animationDelay: `${index * 100}ms` }}
             >
@@ -359,18 +390,32 @@ const Landing = () => {
                 </div>
               )}
 
+              {/* Neon glow per plan - only in dark mode */}
+              {plan.id === 'gratuito' && (
+                <div className="absolute -inset-1 rounded-2xl pointer-events-none dark:shadow-[0_0_50px_rgba(16,185,129,0.25)]" />
+              )}
+              {plan.id === 'basico' && (
+                <div className="absolute -inset-1 rounded-2xl pointer-events-none dark:shadow-[0_0_50px_rgba(59,130,246,0.25)]" />
+              )}
+              {plan.id === 'profissional' && (
+                <div className="absolute -inset-1 rounded-2xl pointer-events-none dark:shadow-[0_0_60px_rgba(168,85,247,0.28)]" />
+              )}
+              {plan.id === 'enterprise' && (
+                <div className="absolute -inset-1 rounded-2xl pointer-events-none dark:shadow-[0_0_60px_rgba(234,88,12,0.28)]" />
+              )}
+
               <CardHeader className="space-y-4">
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${plan.gradient} flex items-center justify-center`}>
+                <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${plan.gradient} flex items-center justify-center shadow-lg`}>
                   <plan.icon className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <CardTitle className="text-2xl text-white">{plan.name}</CardTitle>
-                  <CardDescription className="text-slate-400">{plan.description}</CardDescription>
+                  <CardTitle className="text-2xl text-slate-900 dark:text-white">{plan.name}</CardTitle>
+                  <CardDescription className="text-slate-600 dark:text-slate-400">{plan.description}</CardDescription>
                 </div>
                 <div>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-4xl font-bold text-white">{plan.price}</span>
-                    {plan.period && <span className="text-slate-400">{plan.period}</span>}
+                    <span className="text-4xl font-bold text-slate-900 dark:text-white">{plan.price}</span>
+                    {plan.period && <span className="text-slate-600 dark:text-slate-400">{plan.period}</span>}
                   </div>
                 </div>
               </CardHeader>
@@ -379,8 +424,8 @@ const Landing = () => {
                 <ul className="space-y-3">
                   {plan.features.map((feature, idx) => (
                     <li key={idx} className="flex items-start gap-2">
-                      <Check className="h-5 w-5 text-green-400 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-slate-300">{feature}</span>
+                      <Check className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-slate-700 dark:text-slate-300">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -391,7 +436,7 @@ const Landing = () => {
                   className={`w-full ${
                     plan.buttonVariant === 'default'
                       ? `bg-gradient-to-r ${plan.gradient} hover:opacity-90 text-white border-0`
-                      : 'border-white/20 text-white hover:bg-white/10'
+                      : 'border-gray-300 dark:border-white/20 text-slate-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10'
                   }`}
                 >
                   {plan.buttonText}
@@ -403,9 +448,9 @@ const Landing = () => {
 
         {/* Trust Badge */}
         <div className="mt-16 text-center">
-          <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 backdrop-blur-sm border border-white/10">
-            <TrendingUp className="h-5 w-5 text-green-400" />
-            <span className="text-sm text-slate-300">
+          <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gray-100 dark:bg-white/5 backdrop-blur-sm border border-gray-200 dark:border-white/10">
+            <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
+            <span className="text-sm text-slate-700 dark:text-slate-300">
               Mais de 500 oficinas já confiam na Oficina Eficiente
             </span>
           </div>
@@ -413,14 +458,14 @@ const Landing = () => {
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-white/10 backdrop-blur-sm bg-slate-900/50">
+      <footer className="relative z-10 border-t border-gray-200 dark:border-white/10 backdrop-blur-sm bg-white dark:bg-slate-900/50">
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <Car className="h-6 w-6 text-blue-400" />
-              <span className="text-white font-semibold">Oficina Eficiente</span>
+              <Car className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              <span className="text-slate-900 dark:text-white font-semibold">Oficina Eficiente</span>
             </div>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-slate-600 dark:text-slate-400">
               © 2025 Oficina Eficiente. Todos os direitos reservados.
             </p>
           </div>
