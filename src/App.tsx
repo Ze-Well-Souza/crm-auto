@@ -19,6 +19,7 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 // Lazy load pages
 const Index = lazy(() => import("./pages/Index"));
+const Landing = lazy(() => import("./pages/Landing"));
 const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
@@ -70,13 +71,14 @@ const App = () => (
                       <Suspense fallback={<PageLoadingFallback />}>
                         <Routes>
                         {/* Rotas Públicas */}
+                          <Route path="/landing" element={<Landing />} />
                           <Route path="/auth/callback" element={<AuthCallback />} />
                           <Route path="/reset-password" element={<ResetPassword />} />
                           <Route path="/install" element={<InstallPWA />} />
-                          
+
                           {/* Onboarding */}
                           <Route path="/onboarding" element={<Onboarding />} />
-                          
+
                           {/* Dashboard */}
                           <Route path="/" element={<Index />} />
                           
