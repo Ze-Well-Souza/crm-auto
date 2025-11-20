@@ -226,84 +226,90 @@ export const EmailConfigurationForm = () => {
   const preset = SMTP_PRESETS[formData.provider as keyof typeof SMTP_PRESETS];
 
   return (
-    <Card>
+    <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Mail className="h-5 w-5" />
+        <CardTitle className="flex items-center gap-2 text-white">
+          <div className="p-2 rounded-lg bg-blue-500/20">
+            <Mail className="h-5 w-5 text-blue-400" />
+          </div>
           Configuração de Email Próprio
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-slate-400">
           Configure seu email pessoal ou profissional para enviar emails através do sistema
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {existingConfig && (
-          <Alert>
-            <CheckCircle2 className="h-4 w-4" />
-            <AlertDescription>
+          <Alert className="bg-emerald-500/20 border-emerald-500/30">
+            <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+            <AlertDescription className="text-emerald-300">
               Email configurado: <strong>{existingConfig.email}</strong>
             </AlertDescription>
           </Alert>
         )}
 
         <div className="space-y-2">
-          <Label htmlFor="provider">Provedor de Email</Label>
+          <Label htmlFor="provider" className="text-yellow-400">Provedor de Email</Label>
           <Select value={formData.provider} onValueChange={handleProviderChange}>
-            <SelectTrigger>
+            <SelectTrigger className="bg-white/5 border-white/10 text-white">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="gmail">Gmail</SelectItem>
-              <SelectItem value="outlook">Outlook/Hotmail</SelectItem>
-              <SelectItem value="yahoo">Yahoo</SelectItem>
-              <SelectItem value="custom">Personalizado</SelectItem>
+            <SelectContent className="bg-slate-900 border-white/10">
+              <SelectItem value="gmail" className="text-white hover:bg-white/10">Gmail</SelectItem>
+              <SelectItem value="outlook" className="text-white hover:bg-white/10">Outlook/Hotmail</SelectItem>
+              <SelectItem value="yahoo" className="text-white hover:bg-white/10">Yahoo</SelectItem>
+              <SelectItem value="custom" className="text-white hover:bg-white/10">Personalizado</SelectItem>
             </SelectContent>
           </Select>
-          <p className="text-sm text-muted-foreground">{preset.help}</p>
+          <p className="text-sm text-purple-300">{preset.help}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email *</Label>
+            <Label htmlFor="email" className="text-yellow-400">Email *</Label>
             <Input
               id="email"
               type="email"
               placeholder="seu@email.com"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="from_name">Nome de Exibição</Label>
+            <Label htmlFor="from_name" className="text-yellow-400">Nome de Exibição</Label>
             <Input
               id="from_name"
               placeholder="Seu Nome"
               value={formData.from_name}
               onChange={(e) => setFormData({ ...formData, from_name: e.target.value })}
+              className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="smtp_username">Usuário SMTP *</Label>
+            <Label htmlFor="smtp_username" className="text-yellow-400">Usuário SMTP *</Label>
             <Input
               id="smtp_username"
               placeholder="Geralmente seu email"
               value={formData.smtp_username}
               onChange={(e) => setFormData({ ...formData, smtp_username: e.target.value })}
+              className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="smtp_password">Senha / Senha de App *</Label>
+            <Label htmlFor="smtp_password" className="text-yellow-400">Senha / Senha de App *</Label>
             <Input
               id="smtp_password"
               type="password"
               placeholder="••••••••"
               value={formData.smtp_password}
               onChange={(e) => setFormData({ ...formData, smtp_password: e.target.value })}
+              className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
             />
           </div>
         </div>
@@ -311,22 +317,24 @@ export const EmailConfigurationForm = () => {
         {formData.provider === 'custom' && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="smtp_host">Servidor SMTP</Label>
+              <Label htmlFor="smtp_host" className="text-yellow-400">Servidor SMTP</Label>
               <Input
                 id="smtp_host"
                 placeholder="smtp.exemplo.com"
                 value={formData.smtp_host}
                 onChange={(e) => setFormData({ ...formData, smtp_host: e.target.value })}
+                className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="smtp_port">Porta</Label>
+              <Label htmlFor="smtp_port" className="text-yellow-400">Porta</Label>
               <Input
                 id="smtp_port"
                 type="number"
                 value={formData.smtp_port}
                 onChange={(e) => setFormData({ ...formData, smtp_port: parseInt(e.target.value) })}
+                className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
               />
             </div>
           </div>
@@ -338,23 +346,23 @@ export const EmailConfigurationForm = () => {
             checked={formData.smtp_secure}
             onCheckedChange={(checked) => setFormData({ ...formData, smtp_secure: checked })}
           />
-          <Label htmlFor="smtp_secure">Usar conexão segura (TLS)</Label>
+          <Label htmlFor="smtp_secure" className="text-yellow-400">Usar conexão segura (TLS)</Label>
         </div>
 
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            <strong>Dica de Segurança:</strong> Para Gmail e Yahoo, use uma "senha de app" ao invés da sua senha normal. 
+        <Alert className="bg-orange-500/20 border-orange-500/30">
+          <AlertCircle className="h-4 w-4 text-orange-400" />
+          <AlertDescription className="text-orange-300">
+            <strong>Dica de Segurança:</strong> Para Gmail e Yahoo, use uma "senha de app" ao invés da sua senha normal.
             Para Outlook, use sua senha normal mas ative autenticação de dois fatores.
           </AlertDescription>
         </Alert>
 
         <div className="flex gap-2">
-          <Button onClick={() => handleSave(false)} disabled={loading}>
+          <Button onClick={() => handleSave(false)} disabled={loading} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0">
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Salvar Configuração
           </Button>
-          <Button variant="outline" onClick={handleTestEmail} disabled={testLoading || loading}>
+          <Button variant="outline" onClick={handleTestEmail} disabled={testLoading || loading} className="border-white/10 text-white hover:bg-white/10">
             {testLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Testar Email
           </Button>

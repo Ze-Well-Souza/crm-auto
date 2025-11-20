@@ -263,7 +263,7 @@ const Landing = () => {
 
           {/* Right Column - Login Card */}
           <div>
-            <Card className="relative bg-white dark:bg-white/5 border-gray-200 dark:border-white/10 shadow-xl dark:backdrop-blur-xl">
+            <Card className="relative bg-white dark:bg-white/5 border-gray-200 dark:border-white/10 shadow-2xl shadow-indigo-500/20 dark:shadow-indigo-400/20 dark:backdrop-blur-xl">
               <div className="absolute -inset-0.5 rounded-xl pointer-events-none dark:shadow-[0_0_60px_rgba(99,102,241,0.25)]" />
               <CardHeader>
                 <CardTitle className="text-2xl text-slate-900 dark:text-white">Acesse sua conta</CardTitle>
@@ -376,8 +376,13 @@ const Landing = () => {
           {plans.map((plan, index) => (
             <Card
               key={plan.id}
-              className={`relative bg-white dark:bg-white/5 border-gray-200 dark:border-white/10 shadow-xl dark:backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 ${
+              className={`relative bg-white dark:bg-white/5 border-gray-200 dark:border-white/10 shadow-xl dark:backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 ${
                 plan.popular ? 'lg:scale-105 border-purple-300 dark:border-purple-500/40' : 'hover:border-gray-300 dark:hover:border-white/20'
+              } ${
+                plan.id === 'gratuito' ? 'shadow-emerald-500/20 dark:shadow-emerald-900/20 hover:shadow-emerald-500/30' :
+                plan.id === 'basico' ? 'shadow-blue-500/20 dark:shadow-blue-500/20 hover:shadow-blue-500/30' :
+                plan.id === 'profissional' ? 'shadow-purple-500/20 dark:shadow-purple-500/20 hover:shadow-purple-500/30' :
+                'shadow-orange-500/20 dark:shadow-orange-500/20 hover:shadow-orange-500/30'
               }`}
               style={{ animationDelay: `${index * 100}ms` }}
             >
