@@ -1,18 +1,8 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
 import { Resend } from 'npm:resend@4.0.0'
-import React from 'npm:react@18.3.1'
-import { renderAsync } from 'npm:@react-email/components@0.0.22'
 import { corsHeaders, handleCors } from '../_shared/cors.ts'
 import { generateRequestId, logWithRequestId } from '../_shared/logging.ts'
-import { AppointmentConfirmation } from './_templates/appointment-confirmation.tsx'
-import { AppointmentReminder } from './_templates/appointment-reminder.tsx'
-import { PaymentConfirmation } from './_templates/payment-confirmation.tsx'
-import { SubscriptionChange } from './_templates/subscription-change.tsx'
-import { WelcomeEmail } from './_templates/welcome-email.tsx'
-import { ReactivationEmail } from './_templates/reactivation-email.tsx'
-import { QuotationEmail } from './_templates/quotation-email.tsx'
-import { PasswordResetEmail } from './_templates/password-reset.tsx'
 
 const resend = new Resend(Deno.env.get('RESEND_API_KEY'))
 
@@ -65,62 +55,89 @@ serve(async (req) => {
     let html: string
     let subject: string
 
-    // Render appropriate email template
+    // Generate simple HTML email templates directly
     switch (emailRequest.type) {
       case 'appointment':
-        html = await renderAsync(
-          React.createElement(AppointmentConfirmation, emailRequest.data)
-        )
         subject = 'Confirmação de Agendamento - CRM Auto'
+        html = `
+          <h1>Confirmação de Agendamento</h1>
+          <p>Olá ${emailRequest.data.clientName},</p>
+          <p>Seu agendamento foi confirmado para ${emailRequest.data.date} às ${emailRequest.data.time}.</p>
+          <p><strong>Serviço:</strong> ${emailRequest.data.service}</p>
+          <p>Atenciosamente,<br>Equipe CRM Auto</p>
+        `
         break
 
       case 'appointment_reminder':
-        html = await renderAsync(
-          React.createElement(AppointmentReminder, emailRequest.data)
-        )
         subject = '🔔 Lembrete: Seu agendamento é amanhã! - CRM Auto'
+        html = `
+          <h1>Lembrete de Agendamento</h1>
+          <p>Olá ${emailRequest.data.clientName},</p>
+          <p>Lembramos que você tem um agendamento amanhã às ${emailRequest.data.time}.</p>
+          <p><strong>Serviço:</strong> ${emailRequest.data.service}</p>
+          <p>Atenciosamente,<br>Equipe CRM Auto</p>
+        `
         break
 
       case 'payment':
-        html = await renderAsync(
-          React.createElement(PaymentConfirmation, emailRequest.data)
-        )
         subject = 'Confirmação de Pagamento - CRM Auto'
+        html = `
+          <h1>Pagamento Confirmado</h1>
+          <p>Olá ${emailRequest.data.clientName},</p>
+          <p>Confirmamos o recebimento do seu pagamento de R$ ${emailRequest.data.amount}.</p>
+          <p>Atenciosamente,<br>Equipe CRM Auto</p>
+        `
         break
 
       case 'subscription':
-        html = await renderAsync(
-          React.createElement(SubscriptionChange, emailRequest.data)
-        )
         subject = `${emailRequest.data.changeType === 'upgrade' ? 'Upgrade' : 'Alteração'} de Plano - CRM Auto`
+        html = `
+          <h1>Alteração de Plano</h1>
+          <p>Olá,</p>
+          <p>Seu plano foi atualizado para <strong>${emailRequest.data.planName}</strong>.</p>
+          <p>Atenciosamente,<br>Equipe CRM Auto</p>
+        `
         break
 
       case 'welcome':
-        html = await renderAsync(
-          React.createElement(WelcomeEmail, emailRequest.data)
-        )
         subject = '🎉 Bem-vindo ao CRM Auto! Sua conta está pronta'
+        html = `
+          <h1>Bem-vindo ao CRM Auto!</h1>
+          <p>Olá ${emailRequest.data.userName},</p>
+          <p>Sua conta foi criada com sucesso. Você está no plano <strong>${emailRequest.data.planName}</strong>.</p>
+          <p>Atenciosamente,<br>Equipe CRM Auto</p>
+        `
         break
 
       case 'reactivation':
-        html = await renderAsync(
-          React.createElement(ReactivationEmail, emailRequest.data)
-        )
         subject = '💙 Sentimos sua falta! Que tal voltar?'
+        html = `
+          <h1>Sentimos sua falta!</h1>
+          <p>Olá ${emailRequest.data.clientName},</p>
+          <p>Há algum tempo que não te vemos! Que tal agendar uma revisão?</p>
+          <p>Atenciosamente,<br>Equipe CRM Auto</p>
+        `
         break
 
       case 'quotation':
-        html = await renderAsync(
-          React.createElement(QuotationEmail, emailRequest.data)
-        )
-        subject = `📋 Cotação ${emailRequest.data.quotationNumber} - Confira nossa proposta`
+        subject = 'Orçamento - CRM Auto'
+        html = `
+          <h1>Orçamento</h1>
+          <p>Olá ${emailRequest.data.clientName},</p>
+          <p>Segue orçamento número <strong>${emailRequest.data.quotationNumber}</strong>.</p>
+          <p>Valor total: R$ ${emailRequest.data.total}</p>
+          <p>Atenciosamente,<br>Equipe CRM Auto</p>
+        `
         break
 
       case 'password_reset':
-        html = await renderAsync(
-          React.createElement(PasswordResetEmail, emailRequest.data)
-        )
         subject = '🔐 Redefinição de Senha - CRM Auto'
+        html = `
+          <h1>Redefinição de Senha</h1>
+          <p>Você solicitou a redefinição de senha.</p>
+          <p><a href="${emailRequest.data.resetLink}">Clique aqui para redefinir sua senha</a></p>
+          <p>Atenciosamente,<br>Equipe CRM Auto</p>
+        `
         break
 
       default:

@@ -14,20 +14,9 @@ const MOCK_SERVICE_ORDERS: ServiceOrder[] = [
     vehicle_id: '1',
     status: 'em_andamento',
     description: 'Troca de óleo e filtros + Revisão completa dos freios',
-    services: [
-      { name: 'Troca de óleo', price: 150, quantity: 1 },
-      { name: 'Filtro de óleo', price: 45, quantity: 1 },
-      { name: 'Filtro de ar', price: 60, quantity: 1 },
-      { name: 'Revisão de freios', price: 200, quantity: 1 }
-    ],
-    parts: [
-      { name: 'Óleo sintético 5W30', price: 180, quantity: 4 },
-      { name: 'Pastilhas de freio', price: 250, quantity: 1 }
-    ],
-    labor_cost: 455,
-    parts_cost: 430,
+    total_labor: 455,
+    total_parts: 430,
     total_amount: 885,
-    estimated_completion: '2024-01-25',
     created_at: '2024-01-20T10:00:00Z',
     updated_at: '2024-01-20T10:00:00Z',
     user_id: 'user-1',
@@ -41,17 +30,9 @@ const MOCK_SERVICE_ORDERS: ServiceOrder[] = [
     vehicle_id: '2',
     status: 'orcamento',
     description: 'Diagnóstico de problema no motor + Troca de velas',
-    services: [
-      { name: 'Diagnóstico computadorizado', price: 120, quantity: 1 },
-      { name: 'Troca de velas', price: 80, quantity: 1 }
-    ],
-    parts: [
-      { name: 'Jogo de velas NGK', price: 160, quantity: 1 }
-    ],
-    labor_cost: 200,
-    parts_cost: 160,
+    total_labor: 200,
+    total_parts: 160,
     total_amount: 360,
-    estimated_completion: '2024-01-23',
     created_at: '2024-01-19T14:30:00Z',
     updated_at: '2024-01-19T14:30:00Z',
     user_id: 'user-1',
@@ -65,18 +46,9 @@ const MOCK_SERVICE_ORDERS: ServiceOrder[] = [
     vehicle_id: '3',
     status: 'concluido',
     description: 'Alinhamento e balanceamento + Troca de pneus',
-    services: [
-      { name: 'Alinhamento', price: 80, quantity: 1 },
-      { name: 'Balanceamento', price: 60, quantity: 1 },
-      { name: 'Montagem de pneus', price: 40, quantity: 4 }
-    ],
-    parts: [
-      { name: 'Pneu Michelin 205/55R16', price: 450, quantity: 4 }
-    ],
-    labor_cost: 300,
-    parts_cost: 1800,
+    total_labor: 300,
+    total_parts: 1800,
     total_amount: 2100,
-    estimated_completion: '2024-01-18',
     created_at: '2024-01-15T09:00:00Z',
     updated_at: '2024-01-18T16:00:00Z',
     user_id: 'user-1',
@@ -90,17 +62,9 @@ const MOCK_SERVICE_ORDERS: ServiceOrder[] = [
     vehicle_id: '4',
     status: 'aguardando_pecas',
     description: 'Troca de embreagem completa',
-    services: [
-      { name: 'Troca de embreagem', price: 600, quantity: 1 }
-    ],
-    parts: [
-      { name: 'Kit embreagem', price: 850, quantity: 1 },
-      { name: 'Rolamento', price: 120, quantity: 1 }
-    ],
-    labor_cost: 600,
-    parts_cost: 970,
+    total_labor: 600,
+    total_parts: 970,
     total_amount: 1570,
-    estimated_completion: '2024-01-28',
     created_at: '2024-01-21T11:00:00Z',
     updated_at: '2024-01-21T11:00:00Z',
     user_id: 'user-1',
@@ -114,20 +78,14 @@ const MOCK_SERVICE_ORDERS: ServiceOrder[] = [
     vehicle_id: '5',
     status: 'cancelado',
     description: 'Reparo no sistema de ar condicionado',
-    services: [
-      { name: 'Diagnóstico A/C', price: 100, quantity: 1 },
-      { name: 'Recarga de gás', price: 150, quantity: 1 }
-    ],
-    parts: [],
-    labor_cost: 250,
-    parts_cost: 0,
-    total_amount: 250,
-    estimated_completion: '2024-01-22',
-    created_at: '2024-01-17T15:00:00Z',
-    updated_at: '2024-01-19T10:00:00Z',
+    total_labor: 350,
+    total_parts: 580,
+    total_amount: 930,
+    created_at: '2024-01-17T12:15:00Z',
+    updated_at: '2024-01-22T10:00:00Z',
     user_id: 'user-1',
-    clients: { name: 'Carlos Mendes', email: 'carlos@email.com' },
-    vehicles: { brand: 'Chevrolet', model: 'Onix', license_plate: 'JKL-7890' }
+    clients: { name: 'Lucas Fernandes', email: 'lucas@email.com' },
+    vehicles: { brand: 'Nissan', model: 'Kicks', license_plate: 'JKL-7890' }
   }
 ];
 
