@@ -22,7 +22,9 @@ export interface Vehicle {
   model: string;
   year: number | null;
   license_plate: string | null;
+  plate: string | null;
   vin: string | null;
+  chassis: string | null;
   color: string | null;
   fuel_type: string | null;
   engine: string | null;
@@ -45,6 +47,7 @@ export interface ServiceOrder {
   total_labor: number | null;
   total_parts: number | null;
   total_amount: number | null;
+  total_discount: number | null;
   discount: number | null;
   status: string | null;
   mechanic_id: string | null;
@@ -52,6 +55,11 @@ export interface ServiceOrder {
   delivered_at: string | null;
   finished_at: string | null;
   started_at: string | null;
+  diagnosis: string | null;
+  service_description: string | null;
+  start_date: string | null;
+  completion_date: string | null;
+  appointment_id: string | null;
   created_at: string;
   updated_at: string;
   clients?: {

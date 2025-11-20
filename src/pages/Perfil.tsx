@@ -10,16 +10,17 @@ import { Camera } from 'lucide-react';
 import { useRef, useState } from 'react';
 
 const Perfil = () => {
-  const { profile, updateProfile, setAvatarUrl } = useAuth();
+  const { user } = useAuth();
   const { toast } = useToast();
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [local, setLocal] = useState({
-    name: profile?.name || 'Admin',
-    email: profile?.email || 'admin@oficina.com',
-    phone: profile?.phone || '(11) 99999-9999',
-    emailNotifications: profile?.preferences.emailNotifications ?? true,
-    soundEffects: profile?.preferences.soundEffects ?? true,
+    name: user?.email?.split('@')[0] || 'Admin',
+    email: user?.email || 'admin@oficina.com',
+    phone: '(11) 99999-9999',
+    emailNotifications: true,
+    soundEffects: true,
   });
+  const [avatarUrl, setAvatarUrl] = useState<string>('');
 
   const handleAvatarClick = () => fileRef.current?.click();
   const onAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,12 +32,7 @@ const Perfil = () => {
   };
 
   const onSave = () => {
-    updateProfile({
-      name: local.name,
-      email: local.email,
-      phone: local.phone,
-      preferences: { emailNotifications: local.emailNotifications, soundEffects: local.soundEffects }
-    });
+    // TODO: Implementar atualização de perfil via Supabase profiles table
     toast({ title: 'Perfil atualizado com sucesso!' });
   };
 
@@ -52,15 +48,15 @@ const Perfil = () => {
             <CardDescription>Atualize suas informações pessoais</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="flex items-center gap-6">
-              <div className="relative">
-                <div className="h-24 w-24 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center overflow-hidden">
-                  {profile?.avatarUrl ? (
-                    <img src={profile.avatarUrl} alt="Avatar" className="h-full w-full object-cover" />
-                  ) : (
-                    <Camera className="h-8 w-8 text-white" />
-                  )}
-                </div>
+              <div className="flex items-center gap-6">
+                <div className="relative">
+                  <div className="h-24 w-24 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center overflow-hidden">
+                    {avatarUrl ? (
+                      <img src={avatarUrl} alt="Avatar" className="h-full w-full object-cover" />
+                    ) : (
+                      <Camera className="h-8 w-8 text-white" />
+                    )}
+                  </div>
                 <Button onClick={handleAvatarClick} variant="outline" size="sm" className="mt-2">
                   Alterar foto
                 </Button>

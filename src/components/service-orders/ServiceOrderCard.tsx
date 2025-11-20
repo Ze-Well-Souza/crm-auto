@@ -194,24 +194,24 @@ export const ServiceOrderCard = ({ serviceOrder, onUpdate, onQuickAction }: Serv
 
           {/* Financial Information */}
           <div className="grid grid-cols-2 gap-3">
-            {serviceOrder.labor_cost && (
+            {serviceOrder.total_labor && (
               <div className="text-center">
                 <div className="flex items-center justify-center gap-1">
                   <Wrench className="h-3 w-3 text-purple-400" />
                   <span className="text-xs font-semibold text-white">
-                    {formatCurrency(serviceOrder.labor_cost)}
+                    {formatCurrency(serviceOrder.total_labor)}
                   </span>
                 </div>
                 <p className="text-xs text-slate-400">Mão de obra</p>
               </div>
             )}
 
-            {serviceOrder.parts_cost && (
+            {serviceOrder.total_parts && (
               <div className="text-center">
                 <div className="flex items-center justify-center gap-1">
                   <Settings className="h-3 w-3 text-blue-400" />
                   <span className="text-xs font-semibold text-white">
-                    {formatCurrency(serviceOrder.parts_cost)}
+                    {formatCurrency(serviceOrder.total_parts)}
                   </span>
                 </div>
                 <p className="text-xs text-slate-400">Peças</p>
