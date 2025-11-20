@@ -106,16 +106,25 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
 
       {/* Tabs com diferentes análises */}
       <Tabs defaultValue="financial" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="financial" className="flex items-center gap-2">
+        <TabsList className="grid w-full grid-cols-3 bg-white/5 border-white/10">
+          <TabsTrigger
+            value="financial"
+            className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-400"
+          >
             <DollarSign className="w-4 h-4" />
             Financeiro
           </TabsTrigger>
-          <TabsTrigger value="appointments" className="flex items-center gap-2">
+          <TabsTrigger
+            value="appointments"
+            className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-400"
+          >
             <Calendar className="w-4 h-4" />
             Agendamentos
           </TabsTrigger>
-          <TabsTrigger value="performance" className="flex items-center gap-2">
+          <TabsTrigger
+            value="performance"
+            className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-400"
+          >
             <TrendingUp className="w-4 h-4" />
             Performance
           </TabsTrigger>

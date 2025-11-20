@@ -86,17 +86,17 @@ export const VehicleForm = ({ onSuccess }: VehicleFormProps) => {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div className="col-span-2">
-          <Label htmlFor="client_id" className="text-blue-300">Cliente *</Label>
+          <Label htmlFor="client_id" className="text-blue-400">Cliente *</Label>
           <Select
             value={formData.client_id}
             onValueChange={(value) => setFormData(prev => ({ ...prev, client_id: value }))}
           >
-            <SelectTrigger className="bg-white/5 border-white/10 text-white focus:border-purple-500/50 focus:ring-purple-500/20">
-              <SelectValue placeholder="Selecione o cliente" className="text-slate-400" />
+            <SelectTrigger className="bg-white/5 border-white/10 text-white focus:border-purple-500/50 focus:ring-purple-500/20 [&>span]:text-white">
+              <SelectValue placeholder="Selecione o cliente" className="text-slate-400 placeholder:text-slate-400" />
             </SelectTrigger>
             <SelectContent className="bg-slate-900 border-white/10">
               {clients?.map((client) => (
-                <SelectItem key={client.id} value={client.id} className="text-white hover:bg-white/10">
+                <SelectItem key={client.id} value={client.id} className="text-white hover:bg-white/10 focus:bg-white/10 focus:text-white">
                   {client.name}
                 </SelectItem>
               ))}
@@ -105,7 +105,7 @@ export const VehicleForm = ({ onSuccess }: VehicleFormProps) => {
         </div>
 
         <div>
-          <Label htmlFor="brand" className="text-blue-300">Marca *</Label>
+          <Label htmlFor="brand" className="text-blue-400">Marca *</Label>
           <Input
             id="brand"
             name="brand"
@@ -118,7 +118,7 @@ export const VehicleForm = ({ onSuccess }: VehicleFormProps) => {
         </div>
 
         <div>
-          <Label htmlFor="model" className="text-blue-300">Modelo *</Label>
+          <Label htmlFor="model" className="text-blue-400">Modelo *</Label>
           <Input
             id="model"
             name="model"
@@ -131,7 +131,7 @@ export const VehicleForm = ({ onSuccess }: VehicleFormProps) => {
         </div>
 
         <div>
-          <Label htmlFor="year" className="text-blue-300">Ano</Label>
+          <Label htmlFor="year" className="text-blue-400">Ano</Label>
           <Input
             id="year"
             name="year"
@@ -146,7 +146,7 @@ export const VehicleForm = ({ onSuccess }: VehicleFormProps) => {
         </div>
 
         <div>
-          <Label htmlFor="license_plate" className="text-blue-300">Placa</Label>
+          <Label htmlFor="license_plate" className="text-blue-400">Placa</Label>
           <Input
             id="license_plate"
             name="license_plate"
@@ -159,7 +159,7 @@ export const VehicleForm = ({ onSuccess }: VehicleFormProps) => {
         </div>
 
         <div className="col-span-2">
-          <Label htmlFor="vin" className="text-blue-300">Chassi (VIN)</Label>
+          <Label htmlFor="vin" className="text-blue-400">Chassi (VIN)</Label>
           <Input
             id="vin"
             name="vin"
@@ -172,7 +172,7 @@ export const VehicleForm = ({ onSuccess }: VehicleFormProps) => {
         </div>
 
         <div>
-          <Label htmlFor="color" className="text-blue-300">Cor</Label>
+          <Label htmlFor="color" className="text-blue-400">Cor</Label>
           <Input
             id="color"
             name="color"
@@ -184,17 +184,17 @@ export const VehicleForm = ({ onSuccess }: VehicleFormProps) => {
         </div>
 
         <div>
-          <Label htmlFor="fuel_type" className="text-blue-300">Combustível</Label>
+          <Label htmlFor="fuel_type" className="text-blue-400">Combustível</Label>
           <Select
             value={formData.fuel_type}
             onValueChange={(value) => setFormData(prev => ({ ...prev, fuel_type: value }))}
           >
-            <SelectTrigger className="bg-white/5 border-white/10 text-white focus:border-purple-500/50 focus:ring-purple-500/20">
-              <SelectValue placeholder="Selecione o combustível" className="text-slate-400" />
+            <SelectTrigger className="bg-white/5 border-white/10 text-white focus:border-purple-500/50 focus:ring-purple-500/20 [&>span]:text-white">
+              <SelectValue placeholder="Selecione o combustível" className="text-slate-400 placeholder:text-slate-400" />
             </SelectTrigger>
             <SelectContent className="bg-slate-900 border-white/10">
               {FUEL_TYPES.map((fuel) => (
-                <SelectItem key={fuel} value={fuel} className="text-white hover:bg-white/10">
+                <SelectItem key={fuel} value={fuel} className="text-white hover:bg-white/10 focus:bg-white/10 focus:text-white">
                   {fuel}
                 </SelectItem>
               ))}
@@ -203,7 +203,7 @@ export const VehicleForm = ({ onSuccess }: VehicleFormProps) => {
         </div>
 
         <div>
-          <Label htmlFor="engine" className="text-blue-300">Motor</Label>
+          <Label htmlFor="engine" className="text-blue-400">Motor</Label>
           <Input
             id="engine"
             name="engine"
@@ -215,7 +215,7 @@ export const VehicleForm = ({ onSuccess }: VehicleFormProps) => {
         </div>
 
         <div>
-          <Label htmlFor="mileage" className="text-blue-300">Quilometragem</Label>
+          <Label htmlFor="mileage" className="text-blue-400">Quilometragem</Label>
           <Input
             id="mileage"
             name="mileage"
@@ -229,7 +229,7 @@ export const VehicleForm = ({ onSuccess }: VehicleFormProps) => {
         </div>
 
         <div className="col-span-2">
-          <Label htmlFor="notes" className="text-blue-300">Observações</Label>
+          <Label htmlFor="notes" className="text-blue-400">Observações</Label>
           <Textarea
             id="notes"
             name="notes"

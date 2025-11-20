@@ -42,9 +42,9 @@ export const Sidebar = () => {
   ];
 
   return (
-    <div className="flex h-full w-64 flex-col bg-gradient-to-b from-white/95 to-slate-50/95 dark:from-slate-900/95 dark:to-slate-800/95 backdrop-blur-xl border-r border-white/20 dark:border-slate-700/30 shadow-2xl relative overflow-hidden">
+    <div className="flex h-full w-64 flex-col bg-white dark:bg-gradient-to-b dark:from-slate-900/95 dark:to-slate-800/95 dark:backdrop-blur-xl border-r border-gray-200 dark:border-slate-700/30 shadow-sm dark:shadow-2xl relative overflow-hidden">
       {/* Logo */}
-      <div className="flex h-20 shrink-0 items-center px-6 border-b border-white/20 dark:border-slate-700/30 relative z-10">
+      <div className="flex h-20 shrink-0 items-center px-6 border-b border-gray-200 dark:border-white/20 dark:border-slate-700/30 relative z-10">
         <div className="flex items-center gap-4 group">
           <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-all duration-300">
             <Wrench className="h-7 w-7 text-white" />
@@ -72,10 +72,10 @@ export const Sidebar = () => {
                 <Link
                   to={isLocked ? '/planos' : item.href}
                   className={cn(
-                    "group flex gap-x-3 rounded-2xl p-3 text-sm font-semibold leading-6 transition-all duration-200 hover:scale-105 relative",
+                    "group flex gap-x-3 rounded-2xl p-3 text-sm font-semibold leading-6 transition-all duration-200 relative",
                     isActive
                       ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg"
-                      : "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800",
+                      : "text-slate-700 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-slate-800",
                     item.color,
                     isLocked && "opacity-60 cursor-not-allowed"
                   )}
@@ -102,8 +102,8 @@ export const Sidebar = () => {
       </nav>
 
       {/* User Profile */}
-      <div className="border-t border-white/20 dark:border-slate-700/30 p-4 relative z-10">
-        <div className="flex items-center gap-3 group hover:scale-105 transition-all duration-300 p-3 rounded-2xl hover:bg-white/50 dark:hover:bg-slate-800/50 backdrop-blur-sm">
+      <div className="border-t border-gray-200 dark:border-white/20 dark:border-slate-700/30 p-4 relative z-10">
+        <div className="flex items-center gap-3 group transition-all duration-300 p-3 rounded-2xl hover:bg-gray-100 dark:hover:bg-slate-800/50 dark:backdrop-blur-sm">
           <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-lg">
             <span className="text-sm font-bold text-white">A</span>
           </div>

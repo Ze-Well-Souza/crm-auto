@@ -174,9 +174,9 @@ export const PWAManager: React.FC<PWAManagerProps> = ({
         };
       default:
         return {
-          icon: <Bell className="w-4 h-4 text-yellow-600" />,
+          icon: <Bell className="w-4 h-4 text-orange-400" />,
           text: 'Pendente',
-          color: 'bg-yellow-100 text-yellow-800'
+          color: 'bg-orange-500/20 text-orange-400 border-orange-500/30'
         };
     }
   };
@@ -252,9 +252,9 @@ export const PWAManager: React.FC<PWAManagerProps> = ({
           )}
 
           {isOffline && (
-            <Alert className="bg-yellow-500/20 border-yellow-500/30">
-              <CloudOff className="h-4 w-4 text-yellow-400" />
-              <AlertDescription className="text-yellow-300">
+            <Alert className="bg-orange-500/20 border-orange-500/30">
+              <CloudOff className="h-4 w-4 text-blue-400" />
+              <AlertDescription className="text-yellow-400">
                 Você está offline. Algumas funcionalidades podem estar limitadas.
                 {pendingSync.length > 0 && (
                   <span className="ml-1">
@@ -269,7 +269,7 @@ export const PWAManager: React.FC<PWAManagerProps> = ({
 
           {/* Instalação */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-yellow-400">Instalação do App</h3>
+            <h3 className="text-lg font-medium text-blue-400">Instalação do App</h3>
             <div className="flex items-center justify-between">
               <div>
                 <Label className="font-medium text-white">Instalar CRM Parceiro</Label>
@@ -300,7 +300,7 @@ export const PWAManager: React.FC<PWAManagerProps> = ({
 
           {/* Atualizações */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-yellow-400">Atualizações</h3>
+            <h3 className="text-lg font-medium text-blue-400">Atualizações</h3>
 
             <div className="flex items-center justify-between">
               <div>
@@ -355,7 +355,7 @@ export const PWAManager: React.FC<PWAManagerProps> = ({
 
           {/* Modo Offline */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-yellow-400">Modo Offline</h3>
+            <h3 className="text-lg font-medium text-blue-400">Modo Offline</h3>
 
             <div className="flex items-center justify-between">
               <div>
@@ -397,7 +397,7 @@ export const PWAManager: React.FC<PWAManagerProps> = ({
 
           {/* Notificações */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-yellow-400">Notificações Push</h3>
+            <h3 className="text-lg font-medium text-blue-400">Notificações Push</h3>
 
             <div className="flex items-center justify-between">
               <div>

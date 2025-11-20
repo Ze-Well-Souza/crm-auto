@@ -115,7 +115,7 @@ export const ClientForm = ({ onSuccess }: ClientFormProps) => {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div className="col-span-2">
-          <Label htmlFor="name">Nome Completo *</Label>
+          <Label htmlFor="name" className="text-blue-400">Nome Completo *</Label>
           <Input
             id="name"
             name="name"
@@ -123,7 +123,7 @@ export const ClientForm = ({ onSuccess }: ClientFormProps) => {
             onChange={handleChange}
             required
             placeholder="João Silva"
-            className={errors.name ? "border-destructive" : ""}
+            className={`bg-white/5 border-white/10 text-white placeholder:text-slate-500 ${errors.name ? "border-destructive" : ""}`}
           />
           {errors.name && (
             <p className="text-sm text-destructive mt-1">{errors.name}</p>
@@ -131,7 +131,7 @@ export const ClientForm = ({ onSuccess }: ClientFormProps) => {
         </div>
 
         <div>
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email" className="text-blue-400">Email</Label>
           <Input
             id="email"
             name="email"
@@ -139,7 +139,7 @@ export const ClientForm = ({ onSuccess }: ClientFormProps) => {
             value={formData.email}
             onChange={handleChange}
             placeholder="joao@email.com"
-            className={errors.email ? "border-destructive" : ""}
+            className={`bg-white/5 border-white/10 text-white placeholder:text-slate-500 ${errors.email ? "border-destructive" : ""}`}
           />
           {errors.email && (
             <p className="text-sm text-destructive mt-1">{errors.email}</p>
@@ -147,14 +147,14 @@ export const ClientForm = ({ onSuccess }: ClientFormProps) => {
         </div>
 
         <div>
-          <Label htmlFor="phone">Telefone</Label>
+          <Label htmlFor="phone" className="text-blue-400">Telefone</Label>
           <Input
             id="phone"
             name="phone"
             value={formData.phone}
             onChange={handleChange}
             placeholder="(11) 99999-9999"
-            className={errors.phone ? "border-destructive" : ""}
+            className={`bg-white/5 border-white/10 text-white placeholder:text-slate-500 ${errors.phone ? "border-destructive" : ""}`}
           />
           {errors.phone && (
             <p className="text-sm text-destructive mt-1">{errors.phone}</p>
@@ -162,14 +162,14 @@ export const ClientForm = ({ onSuccess }: ClientFormProps) => {
         </div>
 
         <div className="col-span-2">
-          <Label htmlFor="cpf_cnpj">CPF/CNPJ</Label>
+          <Label htmlFor="cpf_cnpj" className="text-blue-400">CPF/CNPJ</Label>
           <Input
             id="cpf_cnpj"
             name="cpf_cnpj"
             value={formData.cpf_cnpj}
             onChange={handleChange}
             placeholder="000.000.000-00"
-            className={errors.cpf_cnpj ? "border-destructive" : ""}
+            className={`bg-white/5 border-white/10 text-white placeholder:text-slate-500 ${errors.cpf_cnpj ? "border-destructive" : ""}`}
           />
           {errors.cpf_cnpj && (
             <p className="text-sm text-destructive mt-1">{errors.cpf_cnpj}</p>
@@ -177,14 +177,14 @@ export const ClientForm = ({ onSuccess }: ClientFormProps) => {
         </div>
 
         <div className="col-span-2">
-          <Label htmlFor="address">Endereço</Label>
+          <Label htmlFor="address" className="text-blue-400">Endereço</Label>
           <Input
             id="address"
             name="address"
             value={formData.address}
             onChange={handleChange}
             placeholder="Rua das Flores, 123"
-            className={errors.address ? "border-destructive" : ""}
+            className={`bg-white/5 border-white/10 text-white placeholder:text-slate-500 ${errors.address ? "border-destructive" : ""}`}
           />
           {errors.address && (
             <p className="text-sm text-destructive mt-1">{errors.address}</p>
@@ -192,14 +192,14 @@ export const ClientForm = ({ onSuccess }: ClientFormProps) => {
         </div>
 
         <div>
-          <Label htmlFor="city">Cidade</Label>
+          <Label htmlFor="city" className="text-blue-400">Cidade</Label>
           <Input
             id="city"
             name="city"
             value={formData.city}
             onChange={handleChange}
             placeholder="São Paulo"
-            className={errors.city ? "border-destructive" : ""}
+            className={`bg-white/5 border-white/10 text-white placeholder:text-slate-500 ${errors.city ? "border-destructive" : ""}`}
           />
           {errors.city && (
             <p className="text-sm text-destructive mt-1">{errors.city}</p>
@@ -207,7 +207,7 @@ export const ClientForm = ({ onSuccess }: ClientFormProps) => {
         </div>
 
         <div>
-          <Label htmlFor="state">Estado</Label>
+          <Label htmlFor="state" className="text-blue-400">Estado</Label>
           <Input
             id="state"
             name="state"
@@ -215,7 +215,7 @@ export const ClientForm = ({ onSuccess }: ClientFormProps) => {
             onChange={handleChange}
             placeholder="SP"
             maxLength={2}
-            className={errors.state ? "border-destructive" : ""}
+            className={`bg-white/5 border-white/10 text-white placeholder:text-slate-500 ${errors.state ? "border-destructive" : ""}`}
           />
           {errors.state && (
             <p className="text-sm text-destructive mt-1">{errors.state}</p>
@@ -223,14 +223,14 @@ export const ClientForm = ({ onSuccess }: ClientFormProps) => {
         </div>
 
         <div className="col-span-2">
-          <Label htmlFor="zip_code">CEP</Label>
+          <Label htmlFor="zip_code" className="text-blue-400">CEP</Label>
           <Input
             id="zip_code"
             name="zip_code"
             value={formData.zip_code}
             onChange={handleChange}
             placeholder="00000-000"
-            className={errors.zip_code ? "border-destructive" : ""}
+            className={`bg-white/5 border-white/10 text-white placeholder:text-slate-500 ${errors.zip_code ? "border-destructive" : ""}`}
           />
           {errors.zip_code && (
             <p className="text-sm text-destructive mt-1">{errors.zip_code}</p>
@@ -238,7 +238,7 @@ export const ClientForm = ({ onSuccess }: ClientFormProps) => {
         </div>
 
         <div className="col-span-2">
-          <Label htmlFor="notes">Observações</Label>
+          <Label htmlFor="notes" className="text-blue-400">Observações</Label>
           <Textarea
             id="notes"
             name="notes"
@@ -246,7 +246,7 @@ export const ClientForm = ({ onSuccess }: ClientFormProps) => {
             onChange={handleChange}
             placeholder="Informações adicionais sobre o cliente..."
             rows={3}
-            className={errors.notes ? "border-destructive" : ""}
+            className={`bg-white/5 border-white/10 text-white placeholder:text-slate-500 ${errors.notes ? "border-destructive" : ""}`}
           />
           {errors.notes && (
             <p className="text-sm text-destructive mt-1">{errors.notes}</p>

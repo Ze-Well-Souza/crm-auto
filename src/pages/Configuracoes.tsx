@@ -178,7 +178,7 @@ const Configuracoes = () => {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="company-name" className="text-yellow-400">Nome da Empresa</Label>
+                <Label htmlFor="company-name" className="text-blue-400">Nome da Empresa</Label>
                 <Input
                   id="company-name"
                   value={companySettings.name}
@@ -188,7 +188,7 @@ const Configuracoes = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="company-cnpj" className="text-yellow-400">CNPJ</Label>
+                <Label htmlFor="company-cnpj" className="text-blue-400">CNPJ</Label>
                 <Input
                   id="company-cnpj"
                   value={companySettings.cnpj}
@@ -198,7 +198,7 @@ const Configuracoes = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="company-phone" className="text-yellow-400">Telefone</Label>
+                <Label htmlFor="company-phone" className="text-blue-400">Telefone</Label>
                 <Input
                   id="company-phone"
                   value={companySettings.phone}
@@ -208,7 +208,7 @@ const Configuracoes = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="company-email" className="text-yellow-400">E-mail</Label>
+                <Label htmlFor="company-email" className="text-blue-400">E-mail</Label>
                 <Input
                   id="company-email"
                   type="email"
@@ -220,7 +220,7 @@ const Configuracoes = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="company-address" className="text-yellow-400">Endereço</Label>
+              <Label htmlFor="company-address" className="text-blue-400">Endereço</Label>
               <Textarea
                 id="company-address"
                 value={companySettings.address}
@@ -230,7 +230,7 @@ const Configuracoes = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="company-website" className="text-yellow-400">Website</Label>
+              <Label htmlFor="company-website" className="text-blue-400">Website</Label>
               <Input
                 id="company-website"
                 value={companySettings.website}
@@ -262,7 +262,7 @@ const Configuracoes = () => {
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="text-base text-yellow-400">Notificações no Sistema</Label>
+                <Label className="text-base text-blue-400">Notificações no Sistema</Label>
                 <p className="text-sm text-slate-400">
                   Exibir notificações no painel
                 </p>
@@ -279,7 +279,7 @@ const Configuracoes = () => {
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="text-base text-yellow-400">Notificações por E-mail</Label>
+                <Label className="text-base text-blue-400">Notificações por E-mail</Label>
                 <p className="text-sm text-slate-400">
                   Enviar alertas importantes por e-mail
                 </p>
@@ -296,7 +296,7 @@ const Configuracoes = () => {
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="text-base text-yellow-400">Notificações por SMS</Label>
+                <Label className="text-base text-blue-400">Notificações por SMS</Label>
                 <p className="text-sm text-slate-400">
                   Enviar lembretes por SMS
                 </p>
@@ -313,7 +313,7 @@ const Configuracoes = () => {
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="text-base text-yellow-400 flex items-center gap-2">
+                <Label className="text-base text-blue-400 flex items-center gap-2">
                   <MessageCircle className="h-4 w-4 text-emerald-400" />
                   Notificações por WhatsApp
                 </Label>
@@ -392,7 +392,7 @@ const Configuracoes = () => {
 
                     <div className="flex items-center justify-between p-2 border border-white/10 rounded bg-white/5">
                       <div className="flex items-center gap-2">
-                        <Bell className="h-4 w-4 text-yellow-400" />
+                        <Bell className="h-4 w-4 text-blue-400" />
                         <span className="text-sm text-white">Lembretes</span>
                       </div>
                       <Switch
@@ -480,7 +480,7 @@ const Configuracoes = () => {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-4">
-              <Label className="text-base text-yellow-400">Tema do Sistema</Label>
+              <Label className="text-base text-blue-400">Tema do Sistema</Label>
               <p className="text-sm text-slate-400">
                 Escolha entre tema claro, escuro ou automático baseado no sistema
               </p>
@@ -529,7 +529,7 @@ const Configuracoes = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-base text-yellow-400">Transições Suaves</Label>
+                  <Label className="text-base text-blue-400">Transições Suaves</Label>
                   <div className="text-sm text-slate-400">
                     Ativar animações suaves ao trocar temas
                   </div>
@@ -544,7 +544,7 @@ const Configuracoes = () => {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-base text-yellow-400">Salvar Automaticamente</Label>
+                  <Label className="text-base text-blue-400">Salvar Automaticamente</Label>
                   <div className="text-sm text-slate-400">
                     Salvar preferências automaticamente
                   </div>
@@ -559,7 +559,7 @@ const Configuracoes = () => {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-base text-yellow-400">Sincronizar com Sistema</Label>
+                  <Label className="text-base text-blue-400">Sincronizar com Sistema</Label>
                   <div className="text-sm text-slate-400">
                     Seguir tema do sistema operacional
                   </div>
@@ -642,7 +642,7 @@ const Configuracoes = () => {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="working-hours" className="text-yellow-400">Horário de Funcionamento</Label>
+                <Label htmlFor="working-hours" className="text-blue-400">Horário de Funcionamento</Label>
                 <Input
                   id="working-hours"
                   value={businessSettings.workingHours}
@@ -652,7 +652,7 @@ const Configuracoes = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="working-days" className="text-yellow-400">Dias de Funcionamento</Label>
+                <Label htmlFor="working-days" className="text-blue-400">Dias de Funcionamento</Label>
                 <Input
                   id="working-days"
                   value={businessSettings.workingDays}
@@ -662,7 +662,7 @@ const Configuracoes = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="appointment-duration" className="text-yellow-400">Duração Padrão de Agendamento (minutos)</Label>
+                <Label htmlFor="appointment-duration" className="text-blue-400">Duração Padrão de Agendamento (minutos)</Label>
                 <Input
                   id="appointment-duration"
                   type="number"
@@ -673,7 +673,7 @@ const Configuracoes = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="max-advance" className="text-yellow-400">Máximo de Dias para Agendamento</Label>
+                <Label htmlFor="max-advance" className="text-blue-400">Máximo de Dias para Agendamento</Label>
                 <Input
                   id="max-advance"
                   type="number"
@@ -689,7 +689,7 @@ const Configuracoes = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-base text-yellow-400">Exigir Pagamento Antecipado</Label>
+                  <Label className="text-base text-blue-400">Exigir Pagamento Antecipado</Label>
                   <p className="text-sm text-slate-400">
                     Solicitar pagamento no momento do agendamento
                   </p>
@@ -704,7 +704,7 @@ const Configuracoes = () => {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-base text-yellow-400">Permitir Agendamento Online</Label>
+                  <Label className="text-base text-blue-400">Permitir Agendamento Online</Label>
                   <p className="text-sm text-slate-400">
                     Clientes podem agendar serviços pela internet
                   </p>
@@ -743,24 +743,24 @@ const Configuracoes = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="flex items-center justify-between p-3 border rounded-lg">
                 <div>
-                  <p className="text-sm font-medium">Backup Automático</p>
-                  <p className="text-xs text-muted-foreground">Último: Hoje, 03:00</p>
+                  <p className="text-sm font-medium text-white">Backup Automático</p>
+                  <p className="text-xs text-slate-400">Último: Hoje, 03:00</p>
                 </div>
                 <Badge variant="secondary">Ativo</Badge>
               </div>
-              
+
               <div className="flex items-center justify-between p-3 border rounded-lg">
                 <div>
-                  <p className="text-sm font-medium">Conexão Database</p>
-                  <p className="text-xs text-muted-foreground">Latência: 12ms</p>
+                  <p className="text-sm font-medium text-white">Conexão Database</p>
+                  <p className="text-xs text-slate-400">Latência: 12ms</p>
                 </div>
                 <Badge variant="secondary">Conectado</Badge>
               </div>
-              
+
               <div className="flex items-center justify-between p-3 border rounded-lg">
                 <div>
-                  <p className="text-sm font-medium">Versão do Sistema</p>
-                  <p className="text-xs text-muted-foreground">v1.0.0</p>
+                  <p className="text-sm font-medium text-white">Versão do Sistema</p>
+                  <p className="text-xs text-slate-400">v1.0.0</p>
                 </div>
                 <Badge variant="secondary">Atualizado</Badge>
               </div>

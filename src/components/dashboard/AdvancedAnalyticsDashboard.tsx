@@ -283,15 +283,15 @@ export const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProp
     URL.revokeObjectURL(url);
   };
 
-  const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#8dd1e1', '#d084d0'];
+  const COLORS = ['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#06b6d4', '#ec4899'];
 
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Header com controles */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold">Analytics Avançado</h2>
-          <p className="text-muted-foreground">Métricas detalhadas e projeções de negócio</p>
+          <h2 className="text-2xl font-bold text-white">Analytics Avançado</h2>
+          <p className="text-slate-400">Métricas detalhadas e projeções de negócio</p>
         </div>
         
         <div className="flex items-center gap-2">
@@ -324,70 +324,70 @@ export const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProp
 
       {/* Métricas principais */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
+        <Card className="bg-white/5 border-white/10">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Taxa de Retenção</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-white">Taxa de Retenção</CardTitle>
+            <Users className="h-4 w-4 text-purple-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{analytics.client_retention_rate.toFixed(1)}%</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-white">{analytics.client_retention_rate.toFixed(1)}%</div>
+            <p className="text-xs text-slate-400">
               Clientes que retornaram
             </p>
             <Progress value={analytics.client_retention_rate} className="mt-2" />
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white/5 border-white/10">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Valor Médio/Serviço</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-white">Valor Médio/Serviço</CardTitle>
+            <DollarSign className="h-4 w-4 text-purple-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(analytics.average_service_value)}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-white">{formatCurrency(analytics.average_service_value)}</div>
+            <p className="text-xs text-slate-400">
               Ticket médio por atendimento
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white/5 border-white/10">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Tendência Receita</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-white">Tendência Receita</CardTitle>
+            <TrendingUp className="h-4 w-4 text-blue-400" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {analytics.revenue_trend.length > 1 && 
-                analytics.revenue_trend[analytics.revenue_trend.length - 1] > 
+              {analytics.revenue_trend.length > 1 &&
+                analytics.revenue_trend[analytics.revenue_trend.length - 1] >
                 analytics.revenue_trend[analytics.revenue_trend.length - 2] ? (
-                <span className="text-green-600 flex items-center">
+                <span className="text-emerald-400 flex items-center">
                   <ArrowUpRight className="h-4 w-4 mr-1" />
                   Crescendo
                 </span>
               ) : (
-                <span className="text-red-600 flex items-center">
+                <span className="text-red-400 flex items-center">
                   <ArrowDownRight className="h-4 w-4 mr-1" />
                   Declinando
                 </span>
               )}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-slate-400">
               Últimos {selectedPeriod === "12months" ? "12" : "6"} meses
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white/5 border-white/10">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Projeção 6 Meses</CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-white">Projeção 6 Meses</CardTitle>
+            <Target className="h-4 w-4 text-purple-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-white">
               {formatCurrency(analytics.cash_flow_projection.reduce((sum, p) => sum + p.net_flow, 0))}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-slate-400">
               Fluxo de caixa projetado
             </p>
           </CardContent>
@@ -396,11 +396,31 @@ export const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProp
 
       {/* Tabs para diferentes visualizações */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview">Visão Geral</TabsTrigger>
-          <TabsTrigger value="revenue">Receita</TabsTrigger>
-          <TabsTrigger value="services">Serviços</TabsTrigger>
-          <TabsTrigger value="projections">Projeções</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-4 bg-white/5 border-white/10">
+          <TabsTrigger
+            value="overview"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-400"
+          >
+            Visão Geral
+          </TabsTrigger>
+          <TabsTrigger
+            value="revenue"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-400"
+          >
+            Receita
+          </TabsTrigger>
+          <TabsTrigger
+            value="services"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-400"
+          >
+            Serviços
+          </TabsTrigger>
+          <TabsTrigger
+            value="projections"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-400"
+          >
+            Projeções
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
@@ -419,9 +439,9 @@ export const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProp
                     <YAxis />
                     <Tooltip formatter={(value) => formatCurrency(Number(value))} />
                     <Legend />
-                    <Bar dataKey="revenue" fill="#8884d8" name="Receita" />
-                    <Bar dataKey="expenses" fill="#ff7300" name="Despesas" />
-                    <Line type="monotone" dataKey="profit" stroke="#82ca9d" name="Lucro" strokeWidth={3} />
+                    <Bar dataKey="revenue" fill="#3b82f6" name="Receita" />
+                    <Bar dataKey="expenses" fill="#ef4444" name="Despesas" />
+                    <Line type="monotone" dataKey="profit" stroke="#10b981" name="Lucro" strokeWidth={3} />
                   </ComposedChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -443,8 +463,8 @@ export const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProp
                       name === 'revenue' ? formatCurrency(Number(value)) : value,
                       name === 'revenue' ? 'Receita' : name === 'appointments' ? 'Agendamentos' : 'Crescimento %'
                     ]} />
-                    <Bar dataKey="revenue" fill="#8884d8" name="Receita" />
-                    <Bar dataKey="appointments" fill="#82ca9d" name="Agendamentos" />
+                    <Bar dataKey="revenue" fill="#3b82f6" name="Receita" />
+                    <Bar dataKey="appointments" fill="#10b981" name="Agendamentos" />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -465,7 +485,7 @@ export const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProp
                   <XAxis dataKey="month" />
                   <YAxis />
                   <Tooltip formatter={(value) => formatCurrency(Number(value))} />
-                  <Area type="monotone" dataKey="revenue" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+                  <Area type="monotone" dataKey="revenue" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.6} />
                 </AreaChart>
               </ResponsiveContainer>
             </CardContent>
@@ -518,7 +538,7 @@ export const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProp
                       labelLine={false}
                       label={({ name, value }) => `${name}: ${value}`}
                       outerRadius={80}
-                      fill="#8884d8"
+                      fill="#3b82f6"
                       dataKey="count"
                     >
                       {analytics.most_profitable_services.map((entry, index) => (
@@ -552,10 +572,10 @@ export const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProp
                     name === 'net_flow' ? 'Fluxo Líquido' : 'Confiança %'
                   ]} />
                   <Legend />
-                  <Bar dataKey="projected_revenue" fill="#8884d8" name="Receita Projetada" />
-                  <Bar dataKey="projected_expenses" fill="#ff7300" name="Despesas Projetadas" />
-                  <Line type="monotone" dataKey="net_flow" stroke="#82ca9d" name="Fluxo Líquido" strokeWidth={3} />
-                  <Line type="monotone" dataKey="confidence" stroke="#ffc658" name="Confiança %" strokeWidth={2} strokeDasharray="5 5" />
+                  <Bar dataKey="projected_revenue" fill="#3b82f6" name="Receita Projetada" />
+                  <Bar dataKey="projected_expenses" fill="#ef4444" name="Despesas Projetadas" />
+                  <Line type="monotone" dataKey="net_flow" stroke="#10b981" name="Fluxo Líquido" strokeWidth={3} />
+                  <Line type="monotone" dataKey="confidence" stroke="#8b5cf6" name="Confiança %" strokeWidth={2} strokeDasharray="5 5" />
                 </ComposedChart>
               </ResponsiveContainer>
             </CardContent>
@@ -571,16 +591,16 @@ export const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProp
                 <CardContent>
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-sm">Fluxo Líquido:</span>
-                      <span className={`font-bold ${projection.net_flow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      <span className="text-sm text-slate-400">Fluxo Líquido:</span>
+                      <span className={`font-bold ${projection.net_flow >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                         {formatCurrency(projection.net_flow)}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm">Confiança:</span>
+                      <span className="text-sm text-slate-400">Confiança:</span>
                       <div className="flex items-center gap-2">
                         <Progress value={projection.confidence} className="w-16" />
-                        <span className="text-sm">{projection.confidence.toFixed(0)}%</span>
+                        <span className="text-sm text-white">{projection.confidence.toFixed(0)}%</span>
                       </div>
                     </div>
                   </div>

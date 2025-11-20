@@ -249,7 +249,7 @@ export const EmailConfigurationForm = () => {
         )}
 
         <div className="space-y-2">
-          <Label htmlFor="provider" className="text-yellow-400">Provedor de Email</Label>
+          <Label htmlFor="provider" className="text-blue-400">Provedor de Email</Label>
           <Select value={formData.provider} onValueChange={handleProviderChange}>
             <SelectTrigger className="bg-white/5 border-white/10 text-white">
               <SelectValue />
@@ -261,12 +261,12 @@ export const EmailConfigurationForm = () => {
               <SelectItem value="custom" className="text-white hover:bg-white/10">Personalizado</SelectItem>
             </SelectContent>
           </Select>
-          <p className="text-sm text-purple-300">{preset.help}</p>
+          <p className="text-sm text-slate-400">{preset.help}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-yellow-400">Email *</Label>
+            <Label htmlFor="email" className="text-blue-400">Email *</Label>
             <Input
               id="email"
               type="email"
@@ -278,7 +278,7 @@ export const EmailConfigurationForm = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="from_name" className="text-yellow-400">Nome de Exibição</Label>
+            <Label htmlFor="from_name" className="text-blue-400">Nome de Exibição</Label>
             <Input
               id="from_name"
               placeholder="Seu Nome"
@@ -291,7 +291,7 @@ export const EmailConfigurationForm = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="smtp_username" className="text-yellow-400">Usuário SMTP *</Label>
+            <Label htmlFor="smtp_username" className="text-blue-400">Usuário SMTP *</Label>
             <Input
               id="smtp_username"
               placeholder="Geralmente seu email"
@@ -302,7 +302,7 @@ export const EmailConfigurationForm = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="smtp_password" className="text-yellow-400">Senha / Senha de App *</Label>
+            <Label htmlFor="smtp_password" className="text-blue-400">Senha / Senha de App *</Label>
             <Input
               id="smtp_password"
               type="password"
@@ -317,7 +317,7 @@ export const EmailConfigurationForm = () => {
         {formData.provider === 'custom' && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="smtp_host" className="text-yellow-400">Servidor SMTP</Label>
+              <Label htmlFor="smtp_host" className="text-blue-400">Servidor SMTP</Label>
               <Input
                 id="smtp_host"
                 placeholder="smtp.exemplo.com"
@@ -328,7 +328,7 @@ export const EmailConfigurationForm = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="smtp_port" className="text-yellow-400">Porta</Label>
+              <Label htmlFor="smtp_port" className="text-blue-400">Porta</Label>
               <Input
                 id="smtp_port"
                 type="number"
@@ -346,12 +346,12 @@ export const EmailConfigurationForm = () => {
             checked={formData.smtp_secure}
             onCheckedChange={(checked) => setFormData({ ...formData, smtp_secure: checked })}
           />
-          <Label htmlFor="smtp_secure" className="text-yellow-400">Usar conexão segura (TLS)</Label>
+          <Label htmlFor="smtp_secure" className="text-blue-400">Usar conexão segura (TLS)</Label>
         </div>
 
         <Alert className="bg-orange-500/20 border-orange-500/30">
           <AlertCircle className="h-4 w-4 text-orange-400" />
-          <AlertDescription className="text-orange-300">
+          <AlertDescription className="text-orange-400">
             <strong>Dica de Segurança:</strong> Para Gmail e Yahoo, use uma "senha de app" ao invés da sua senha normal.
             Para Outlook, use sua senha normal mas ative autenticação de dois fatores.
           </AlertDescription>
@@ -371,3 +371,4 @@ export const EmailConfigurationForm = () => {
     </Card>
   );
 };
+

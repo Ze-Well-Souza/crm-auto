@@ -705,6 +705,76 @@
     @apply focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background;
   }
 
+  /* Sonner Toast Icon Colors - Override default brown/yellow */
+  [data-sonner-toast] [data-icon] {
+    color: inherit !important;
+  }
+
+  [data-sonner-toast][data-type="error"] [data-icon] {
+    color: rgb(239 68 68) !important; /* red-500 */
+  }
+
+  [data-sonner-toast][data-type="success"] [data-icon] {
+    color: rgb(34 197 94) !important; /* green-500 */
+  }
+
+  [data-sonner-toast][data-type="warning"] [data-icon] {
+    color: rgb(249 115 22) !important; /* orange-500 */
+  }
+
+  [data-sonner-toast][data-type="info"] [data-icon] {
+    color: rgb(59 130 246) !important; /* blue-500 */
+  }
+
+  /* Ensure toast backgrounds are clean slate/white */
+  [data-sonner-toast] {
+    background-color: white !important;
+    color: rgb(15 23 42) !important; /* slate-900 */
+    border-color: rgb(226 232 240) !important; /* gray-200 */
+  }
+
+  .dark [data-sonner-toast] {
+    background-color: rgb(30 41 59) !important; /* slate-800 */
+    color: white !important;
+    border-color: rgb(51 65 85) !important; /* slate-700 */
+  }
+
+  /* Error toast borders */
+  [data-sonner-toast][data-type="error"] {
+    border-color: rgb(254 202 202) !important; /* red-200 */
+  }
+
+  .dark [data-sonner-toast][data-type="error"] {
+    border-color: rgba(127 29 29 / 0.3) !important; /* red-900/30 */
+  }
+
+  /* Success toast borders */
+  [data-sonner-toast][data-type="success"] {
+    border-color: rgb(187 247 208) !important; /* green-200 */
+  }
+
+  .dark [data-sonner-toast][data-type="success"] {
+    border-color: rgba(20 83 45 / 0.3) !important; /* green-900/30 */
+  }
+
+  /* Warning toast borders */
+  [data-sonner-toast][data-type="warning"] {
+    border-color: rgb(254 215 170) !important; /* orange-200 */
+  }
+
+  .dark [data-sonner-toast][data-type="warning"] {
+    border-color: rgba(124 45 18 / 0.3) !important; /* orange-900/30 */
+  }
+
+  /* Info toast borders */
+  [data-sonner-toast][data-type="info"] {
+    border-color: rgb(191 219 254) !important; /* blue-200 */
+  }
+
+  .dark [data-sonner-toast][data-type="info"] {
+    border-color: rgba(30 58 138 / 0.3) !important; /* blue-900/30 */
+  }
+
   /* Enhanced button animations */
   .btn-ripple {
     position: relative;
