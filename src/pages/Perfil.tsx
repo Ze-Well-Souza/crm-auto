@@ -6,35 +6,106 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { Camera } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { Camera, Loader2 } from 'lucide-react';
+import { useRef, useState, useEffect } from 'react';
 
 const Perfil = () => {
-  const { user } = useAuth();
+  const { user, profile, loadingProfile, updateProfile, uploadAvatar } = useAuth();
   const { toast } = useToast();
   const fileRef = useRef<HTMLInputElement | null>(null);
-  const [local, setLocal] = useState({
-    name: user?.email?.split('@')[0] || 'Admin',
-    email: user?.email || 'admin@oficina.com',
-    phone: '(11) 99999-9999',
+  const [loading, setLoading] = useState(false);
+  
+  const [formData, setFormData] = useState({
+    full_name: '',
+    phone: '',
     emailNotifications: true,
     soundEffects: true,
   });
-  const [avatarUrl, setAvatarUrl] = useState<string>('');
+
+  // Load profile data when available
+  useEffect(() => {
+    if (profile) {
+      setFormData(prev => ({
+        ...prev,
+        full_name: profile.full_name || '',
+        phone: profile.phone || '',
+      }));
+    }
+  }, [profile]);
 
   const handleAvatarClick = () => fileRef.current?.click();
-  const onAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0];
-    if (f) {
-      const url = URL.createObjectURL(f);
-      setAvatarUrl(url);
+  
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setLoading(true);
+      const { error, url } = await uploadAvatar(file);
+      
+      if (error) {
+        toast({
+          title: 'Erro ao fazer upload',
+          description: error.message,
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: 'Avatar atualizado!',
+          description: 'Sua foto foi atualizada com sucesso.',
+        });
+      }
+    } catch (error) {
+      toast({
+        title: 'Erro',
+        description: 'Erro ao fazer upload do avatar.',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const onSave = () => {
-    // TODO: Implementar atualização de perfil via Supabase profiles table
-    toast({ title: 'Perfil atualizado com sucesso!' });
+  const handleSave = async () => {
+    try {
+      setLoading(true);
+      const { error } = await updateProfile({
+        full_name: formData.full_name,
+        phone: formData.phone,
+      });
+
+      if (error) {
+        toast({
+          title: 'Erro',
+          description: error.message,
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: 'Perfil atualizado!',
+          description: 'Suas informações foram salvas com sucesso.',
+        });
+      }
+    } catch (error) {
+      toast({
+        title: 'Erro',
+        description: 'Erro ao atualizar perfil.',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (loadingProfile) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-96">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -48,109 +119,137 @@ const Perfil = () => {
             <CardDescription>Atualize suas informações pessoais</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-              <div className="flex items-center gap-6">
-                <div className="relative">
-                  <div className="h-24 w-24 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center overflow-hidden">
-                    {avatarUrl ? (
-                      <img src={avatarUrl} alt="Avatar" className="h-full w-full object-cover" />
-                    ) : (
-                      <Camera className="h-8 w-8 text-white" />
-                    )}
-                  </div>
-                <Button onClick={handleAvatarClick} variant="outline" size="sm" className="mt-2">
-                  Alterar foto
+            <div className="flex items-center gap-6">
+              <div className="relative">
+                <div className="h-24 w-24 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center overflow-hidden">
+                  {profile?.avatar_url ? (
+                    <img src={profile.avatar_url} alt="Avatar" className="h-full w-full object-cover" />
+                  ) : (
+                    <Camera className="h-8 w-8 text-white" />
+                  )}
+                </div>
+                <Button 
+                  onClick={handleAvatarClick} 
+                  variant="outline" 
+                  size="sm" 
+                  className="mt-2"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Enviando...
+                    </>
+                  ) : (
+                    'Alterar foto'
+                  )}
                 </Button>
-                <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onAvatarChange} />
+                <input 
+                  ref={fileRef} 
+                  type="file" 
+                  accept="image/*" 
+                  className="hidden" 
+                  onChange={handleAvatarChange} 
+                />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
                 <div className="space-y-2">
-                  <Label>Nome</Label>
-                  <Input value={local.name} onChange={(e) => setLocal({ ...local, name: e.target.value })} />
+                  <Label>Nome completo</Label>
+                  <Input 
+                    value={formData.full_name} 
+                    onChange={(e) => setFormData({ ...formData, full_name: e.target.value })} 
+                    placeholder="Seu nome completo"
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>Email</Label>
-                  <Input type="email" value={local.email} onChange={(e) => setLocal({ ...local, email: e.target.value })} />
+                  <Input 
+                    type="email" 
+                    value={user?.email || ''} 
+                    disabled
+                    className="opacity-60"
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>Telefone</Label>
-                  <Input value={local.phone} onChange={(e) => setLocal({ ...local, phone: e.target.value })} />
+                  <Input 
+                    value={formData.phone} 
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })} 
+                    placeholder="(00) 00000-0000"
+                  />
                 </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Senha atual</Label>
-                <Input type="password" placeholder="••••••••" />
-              </div>
-              <div className="space-y-2">
-                <Label>Nova senha</Label>
-                <Input type="password" placeholder="••••••••" />
+            <div className="pt-4 border-t">
+              <h3 className="text-lg font-medium mb-4">Preferências</h3>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label>Notificações por Email</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Receber notificações de agendamentos e atualizações
+                    </p>
+                  </div>
+                  <Switch 
+                    checked={formData.emailNotifications}
+                    onCheckedChange={(checked) => 
+                      setFormData({ ...formData, emailNotifications: checked })
+                    }
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label>Efeitos Sonoros</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Ativar sons para ações no sistema
+                    </p>
+                  </div>
+                  <Switch 
+                    checked={formData.soundEffects}
+                    onCheckedChange={(checked) => 
+                      setFormData({ ...formData, soundEffects: checked })
+                    }
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="space-y-4">
-              <div className="flex items-center justify-between rounded-xl bg-white/80 backdrop-blur-sm border border-blue-50 px-4 py-3 hover:bg-blue-50/50 shadow-md shadow-blue-100/40">
-                <div>
-                  <p className="text-sm font-medium">Notificações por Email</p>
-                  <p className="text-xs text-muted-foreground">Receber alertas importantes</p>
-                </div>
-                <Switch checked={local.emailNotifications} onCheckedChange={(v) => setLocal({ ...local, emailNotifications: v })} />
-              </div>
-              <div className="flex items-center justify-between rounded-xl bg-white/80 backdrop-blur-sm border border-purple-50 px-4 py-3 hover:bg-purple-50/50 shadow-md shadow-purple-100/40">
-                <div>
-                  <p className="text-sm font-medium">Efeitos Sonoros</p>
-                  <p className="text-xs text-muted-foreground">Habilitar sons na interface</p>
-                </div>
-                <Switch checked={local.soundEffects} onCheckedChange={(v) => setLocal({ ...local, soundEffects: v })} />
-              </div>
-            </div>
-
-            <div className="flex justify-end">
-              <Button onClick={onSave} className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-200">Salvar</Button>
+            <div className="flex justify-end gap-3">
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  if (profile) {
+                    setFormData({
+                      full_name: profile.full_name || '',
+                      phone: profile.phone || '',
+                      emailNotifications: true,
+                      soundEffects: true,
+                    });
+                  }
+                }}
+                disabled={loading}
+              >
+                Cancelar
+              </Button>
+              <Button 
+                onClick={handleSave}
+                disabled={loading}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Salvando...
+                  </>
+                ) : (
+                  'Salvar alterações'
+                )}
+              </Button>
             </div>
           </CardContent>
         </Card>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="bg-white/90 backdrop-blur-sm border border-blue-50 shadow-lg shadow-blue-100/50">
-            <CardHeader>
-              <CardTitle className="text-sm">Sessões</CardTitle>
-              <CardDescription className="text-xs">Últimos acessos</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-slate-900">3</div>
-            </CardContent>
-          </Card>
-          <Card className="bg-white/90 backdrop-blur-sm border border-emerald-50 shadow-lg shadow-emerald-100/50">
-            <CardHeader>
-              <CardTitle className="text-sm">Notificações</CardTitle>
-              <CardDescription className="text-xs">Recebidas hoje</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-slate-900">12</div>
-            </CardContent>
-          </Card>
-          <Card className="bg-white/90 backdrop-blur-sm border border-purple-50 shadow-lg shadow-purple-100/50">
-            <CardHeader>
-              <CardTitle className="text-sm">Preferências</CardTitle>
-              <CardDescription className="text-xs">Ativas</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-slate-900">5</div>
-            </CardContent>
-          </Card>
-          <Card className="bg-white/90 backdrop-blur-sm border border-orange-50 shadow-lg shadow-orange-100/50">
-            <CardHeader>
-              <CardTitle className="text-sm">Alterações</CardTitle>
-              <CardDescription className="text-xs">Últimos 7 dias</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-slate-900">8</div>
-            </CardContent>
-          </Card>
-        </div>
       </div>
     </DashboardLayout>
   );
