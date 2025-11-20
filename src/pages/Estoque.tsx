@@ -125,11 +125,11 @@ const Estoque = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="space-y-2">
-              <h1 className="text-3xl font-bold text-foreground">Controle de Estoque</h1>
-              <p className="text-muted-foreground">Gerencie peças, fornecedores e movimentações</p>
+              <h1 className="text-3xl font-bold text-white">Controle de Estoque</h1>
+              <p className="text-slate-400">Gerencie peças, fornecedores e movimentações</p>
             </div>
-          
-          <Button onClick={() => setIsDialogOpen(true)} className="shadow-primary">
+
+          <Button onClick={() => setIsDialogOpen(true)} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg shadow-purple-500/50">
             <Plus className="mr-2 h-4 w-4" />
             Nova Peça
           </Button>
@@ -160,21 +160,21 @@ const Estoque = () => {
 
         {/* Search Results Info */}
         {searchConfig.isFiltered && (
-          <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <div className="flex items-center justify-between bg-white/5 border border-white/10 backdrop-blur-xl rounded-lg p-3">
             <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-blue-600" />
-              <span className="text-sm text-blue-800">
+              <Filter className="h-4 w-4 text-purple-400" />
+              <span className="text-sm text-white">
                 {searchConfig.paginationInfo.totalItems} peça(s) encontrada(s)
-                {searchConfig.paginationInfo.totalItems !== parts?.length && 
+                {searchConfig.paginationInfo.totalItems !== parts?.length &&
                   ` de ${parts?.length} total`
                 }
               </span>
             </div>
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={searchConfig.handleReset}
-              className="text-blue-600 hover:text-blue-800"
+              className="text-purple-400 hover:text-purple-300 hover:bg-white/10"
             >
               Limpar filtros
             </Button>

@@ -115,14 +115,14 @@ export const ServiceOrderForm = ({ onSuccess }: ServiceOrderFormProps) => {
       {/* Cliente e Veículo */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="client_id">Cliente *</Label>
+          <Label htmlFor="client_id" className="text-blue-300">Cliente *</Label>
           <Select value={formData.client_id} onValueChange={(value) => handleChange("client_id", value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Selecione o cliente" />
+            <SelectTrigger className="bg-white/5 border-white/10 text-white focus:border-purple-500/50 focus:ring-purple-500/20">
+              <SelectValue placeholder="Selecione o cliente" className="text-slate-400" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-slate-900 border-white/10">
               {clients?.map((client) => (
-                <SelectItem key={client.id} value={client.id}>
+                <SelectItem key={client.id} value={client.id} className="text-white hover:bg-white/10">
                   {client.name}
                 </SelectItem>
               ))}
@@ -131,18 +131,18 @@ export const ServiceOrderForm = ({ onSuccess }: ServiceOrderFormProps) => {
         </div>
 
         <div>
-          <Label htmlFor="vehicle_id">Veículo</Label>
-          <Select 
-            value={formData.vehicle_id} 
+          <Label htmlFor="vehicle_id" className="text-blue-300">Veículo</Label>
+          <Select
+            value={formData.vehicle_id}
             onValueChange={(value) => handleChange("vehicle_id", value)}
             disabled={!formData.client_id}
           >
-            <SelectTrigger>
-              <SelectValue placeholder="Selecione o veículo" />
+            <SelectTrigger className="bg-white/5 border-white/10 text-white focus:border-purple-500/50 focus:ring-purple-500/20 disabled:opacity-50">
+              <SelectValue placeholder="Selecione o veículo" className="text-slate-400" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-slate-900 border-white/10">
               {clientVehicles.map((vehicle) => (
-                <SelectItem key={vehicle.id} value={vehicle.id}>
+                <SelectItem key={vehicle.id} value={vehicle.id} className="text-white hover:bg-white/10">
                   {vehicle.brand} {vehicle.model} - {vehicle.license_plate}
                 </SelectItem>
               ))}
@@ -153,7 +153,7 @@ export const ServiceOrderForm = ({ onSuccess }: ServiceOrderFormProps) => {
 
       {/* Descrição do Serviço */}
       <div>
-        <Label htmlFor="description">Descrição do Serviço *</Label>
+        <Label htmlFor="description" className="text-blue-300">Descrição do Serviço *</Label>
         <Textarea
           id="description"
           value={formData.description}
@@ -161,18 +161,19 @@ export const ServiceOrderForm = ({ onSuccess }: ServiceOrderFormProps) => {
           placeholder="Descreva os serviços que serão realizados..."
           rows={3}
           required
+          className="bg-white/5 border-white/10 text-white placeholder:text-slate-400 focus:border-purple-500/50 focus:ring-purple-500/20"
         />
       </div>
 
       {/* Valores */}
-      <Card>
+      <Card className="bg-white/5 border-white/10">
         <CardHeader>
-          <CardTitle className="text-lg">Valores</CardTitle>
+          <CardTitle className="text-lg text-white">Valores</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="total_labor">Mão de Obra (R$)</Label>
+              <Label htmlFor="total_labor" className="text-blue-300">Mão de Obra (R$)</Label>
               <Input
                 id="total_labor"
                 type="number"
@@ -181,11 +182,12 @@ export const ServiceOrderForm = ({ onSuccess }: ServiceOrderFormProps) => {
                 value={formData.total_labor}
                 onChange={(e) => handleChange("total_labor", e.target.value)}
                 placeholder="0,00"
+                className="bg-white/5 border-white/10 text-white placeholder:text-slate-400 focus:border-purple-500/50 focus:ring-purple-500/20"
               />
             </div>
 
             <div>
-              <Label htmlFor="total_parts">Peças (R$)</Label>
+              <Label htmlFor="total_parts" className="text-blue-300">Peças (R$)</Label>
               <Input
                 id="total_parts"
                 type="number"
@@ -194,11 +196,12 @@ export const ServiceOrderForm = ({ onSuccess }: ServiceOrderFormProps) => {
                 value={formData.total_parts}
                 onChange={(e) => handleChange("total_parts", e.target.value)}
                 placeholder="0,00"
+                className="bg-white/5 border-white/10 text-white placeholder:text-slate-400 focus:border-purple-500/50 focus:ring-purple-500/20"
               />
             </div>
 
             <div>
-              <Label htmlFor="discount">Desconto (R$)</Label>
+              <Label htmlFor="discount" className="text-blue-300">Desconto (R$)</Label>
               <Input
                 id="discount"
                 type="number"
@@ -207,14 +210,15 @@ export const ServiceOrderForm = ({ onSuccess }: ServiceOrderFormProps) => {
                 value={formData.discount}
                 onChange={(e) => handleChange("discount", e.target.value)}
                 placeholder="0,00"
+                className="bg-white/5 border-white/10 text-white placeholder:text-slate-400 focus:border-purple-500/50 focus:ring-purple-500/20"
               />
             </div>
           </div>
 
-          <div className="border-t pt-4">
+          <div className="border-t border-white/10 pt-4">
             <div className="flex justify-between items-center">
-              <span className="font-medium">Total Geral:</span>
-              <span className="text-2xl font-bold text-primary">
+              <span className="font-medium text-slate-300">Total Geral:</span>
+              <span className="text-2xl font-bold text-emerald-400">
                 R$ {calculateTotal().toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </span>
             </div>
@@ -225,43 +229,45 @@ export const ServiceOrderForm = ({ onSuccess }: ServiceOrderFormProps) => {
       {/* Status e Informações Adicionais */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="status">Status</Label>
+          <Label htmlFor="status" className="text-blue-300">Status</Label>
           <Select value={formData.status} onValueChange={(value) => handleChange("status", value)}>
-            <SelectTrigger>
+            <SelectTrigger className="bg-white/5 border-white/10 text-white focus:border-purple-500/50 focus:ring-purple-500/20">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="orcamento">Orçamento</SelectItem>
-              <SelectItem value="aprovado">Aprovado</SelectItem>
-              <SelectItem value="em_andamento">Em Andamento</SelectItem>
-              <SelectItem value="aguardando_pecas">Aguardando Peças</SelectItem>
-              <SelectItem value="concluido">Concluído</SelectItem>
-              <SelectItem value="entregue">Entregue</SelectItem>
-              <SelectItem value="cancelado">Cancelado</SelectItem>
+            <SelectContent className="bg-slate-900 border-white/10">
+              <SelectItem value="orcamento" className="text-white hover:bg-white/10">Orçamento</SelectItem>
+              <SelectItem value="aprovado" className="text-white hover:bg-white/10">Aprovado</SelectItem>
+              <SelectItem value="em_andamento" className="text-white hover:bg-white/10">Em Andamento</SelectItem>
+              <SelectItem value="aguardando_pecas" className="text-white hover:bg-white/10">Aguardando Peças</SelectItem>
+              <SelectItem value="concluido" className="text-white hover:bg-white/10">Concluído</SelectItem>
+              <SelectItem value="entregue" className="text-white hover:bg-white/10">Entregue</SelectItem>
+              <SelectItem value="cancelado" className="text-white hover:bg-white/10">Cancelado</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         <div>
-          <Label htmlFor="mechanic_id">Mecânico Responsável</Label>
+          <Label htmlFor="mechanic_id" className="text-blue-300">Mecânico Responsável</Label>
           <Input
             id="mechanic_id"
             value={formData.mechanic_id}
             onChange={(e) => handleChange("mechanic_id", e.target.value)}
             placeholder="Nome ou ID do mecânico"
+            className="bg-white/5 border-white/10 text-white placeholder:text-slate-400 focus:border-purple-500/50 focus:ring-purple-500/20"
           />
         </div>
       </div>
 
       {/* Observações */}
       <div>
-        <Label htmlFor="notes">Observações</Label>
+        <Label htmlFor="notes" className="text-blue-300">Observações</Label>
         <Textarea
           id="notes"
           value={formData.notes}
           onChange={(e) => handleChange("notes", e.target.value)}
           placeholder="Observações adicionais sobre a ordem de serviço..."
           rows={3}
+          className="bg-white/5 border-white/10 text-white placeholder:text-slate-400 focus:border-purple-500/50 focus:ring-purple-500/20"
         />
       </div>
 
@@ -272,10 +278,15 @@ export const ServiceOrderForm = ({ onSuccess }: ServiceOrderFormProps) => {
           variant="outline"
           onClick={onSuccess}
           disabled={loading}
+          className="border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
         >
           Cancelar
         </Button>
-        <Button type="submit" disabled={loading || !formData.client_id || !formData.description}>
+        <Button
+          type="submit"
+          disabled={loading || !formData.client_id || !formData.description}
+          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg shadow-purple-500/50 disabled:opacity-50"
+        >
           {loading ? "Salvando..." : "Salvar Ordem"}
         </Button>
       </div>

@@ -56,9 +56,9 @@ export const PartnerForm = ({ initialData, onSubmit, onCancel }: PartnerFormProp
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nome do Estabelecimento *</FormLabel>
+              <FormLabel className="text-blue-400">Nome do Estabelecimento *</FormLabel>
               <FormControl>
-                <Input placeholder="Ex: Restaurante do João" {...field} />
+                <Input placeholder="Ex: Restaurante do João" {...field} className="bg-white/5 border-white/10 text-white placeholder:text-slate-500" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -71,9 +71,9 @@ export const PartnerForm = ({ initialData, onSubmit, onCancel }: PartnerFormProp
             name="cnpj"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>CNPJ</FormLabel>
+                <FormLabel className="text-blue-400">CNPJ</FormLabel>
                 <FormControl>
-                  <Input placeholder="00.000.000/0000-00" {...field} value={field.value || ''} />
+                  <Input placeholder="00.000.000/0000-00" {...field} value={field.value || ''} className="bg-white/5 border-white/10 text-white placeholder:text-slate-500" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -85,22 +85,22 @@ export const PartnerForm = ({ initialData, onSubmit, onCancel }: PartnerFormProp
             name="category"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Categoria</FormLabel>
+                <FormLabel className="text-blue-400">Categoria</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value || ''}>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione a categoria" />
+                    <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                      <SelectValue placeholder="Selecione a categoria" className="text-slate-400" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent>
-                    <SelectItem value="restaurante">Restaurante</SelectItem>
-                    <SelectItem value="lanchonete">Lanchonete</SelectItem>
-                    <SelectItem value="pizzaria">Pizzaria</SelectItem>
-                    <SelectItem value="hamburgueria">Hamburgueria</SelectItem>
-                    <SelectItem value="padaria">Padaria</SelectItem>
-                    <SelectItem value="mercado">Mercado</SelectItem>
-                    <SelectItem value="farmacia">Farmácia</SelectItem>
-                    <SelectItem value="outro">Outro</SelectItem>
+                  <SelectContent className="bg-slate-900 border-white/10">
+                    <SelectItem value="restaurante" className="text-white hover:bg-white/10">Restaurante</SelectItem>
+                    <SelectItem value="lanchonete" className="text-white hover:bg-white/10">Lanchonete</SelectItem>
+                    <SelectItem value="pizzaria" className="text-white hover:bg-white/10">Pizzaria</SelectItem>
+                    <SelectItem value="hamburgueria" className="text-white hover:bg-white/10">Hamburgueria</SelectItem>
+                    <SelectItem value="padaria" className="text-white hover:bg-white/10">Padaria</SelectItem>
+                    <SelectItem value="mercado" className="text-white hover:bg-white/10">Mercado</SelectItem>
+                    <SelectItem value="farmacia" className="text-white hover:bg-white/10">Farmácia</SelectItem>
+                    <SelectItem value="outro" className="text-white hover:bg-white/10">Outro</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -115,9 +115,9 @@ export const PartnerForm = ({ initialData, onSubmit, onCancel }: PartnerFormProp
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel className="text-blue-400">Email</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="contato@parceiro.com" {...field} value={field.value || ''} />
+                  <Input type="email" placeholder="contato@parceiro.com" {...field} value={field.value || ''} className="bg-white/5 border-white/10 text-white placeholder:text-slate-500" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -129,9 +129,9 @@ export const PartnerForm = ({ initialData, onSubmit, onCancel }: PartnerFormProp
             name="phone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Telefone</FormLabel>
+                <FormLabel className="text-blue-400">Telefone</FormLabel>
                 <FormControl>
-                  <Input placeholder="(00) 00000-0000" {...field} value={field.value || ''} />
+                  <Input placeholder="(00) 00000-0000" {...field} value={field.value || ''} className="bg-white/5 border-white/10 text-white placeholder:text-slate-500" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -144,9 +144,9 @@ export const PartnerForm = ({ initialData, onSubmit, onCancel }: PartnerFormProp
           name="address"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Endereço</FormLabel>
+              <FormLabel className="text-blue-400">Endereço</FormLabel>
               <FormControl>
-                <Input placeholder="Rua, número, bairro" {...field} value={field.value || ''} />
+                <Input placeholder="Rua, número, bairro" {...field} value={field.value || ''} className="bg-white/5 border-white/10 text-white placeholder:text-slate-500" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -159,9 +159,9 @@ export const PartnerForm = ({ initialData, onSubmit, onCancel }: PartnerFormProp
             name="city"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Cidade</FormLabel>
+                <FormLabel className="text-blue-400">Cidade</FormLabel>
                 <FormControl>
-                  <Input placeholder="Cidade" {...field} value={field.value || ''} />
+                  <Input placeholder="Cidade" {...field} value={field.value || ''} className="bg-white/5 border-white/10 text-white placeholder:text-slate-500" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -173,9 +173,9 @@ export const PartnerForm = ({ initialData, onSubmit, onCancel }: PartnerFormProp
             name="state"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>UF</FormLabel>
+                <FormLabel className="text-blue-400">UF</FormLabel>
                 <FormControl>
-                  <Input placeholder="SP" maxLength={2} {...field} value={field.value || ''} />
+                  <Input placeholder="SP" maxLength={2} {...field} value={field.value || ''} className="bg-white/5 border-white/10 text-white placeholder:text-slate-500" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -187,9 +187,9 @@ export const PartnerForm = ({ initialData, onSubmit, onCancel }: PartnerFormProp
             name="zip_code"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>CEP</FormLabel>
+                <FormLabel className="text-blue-400">CEP</FormLabel>
                 <FormControl>
-                  <Input placeholder="00000-000" {...field} value={field.value || ''} />
+                  <Input placeholder="00000-000" {...field} value={field.value || ''} className="bg-white/5 border-white/10 text-white placeholder:text-slate-500" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -202,17 +202,17 @@ export const PartnerForm = ({ initialData, onSubmit, onCancel }: PartnerFormProp
           name="status"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Status</FormLabel>
+              <FormLabel className="text-blue-400">Status</FormLabel>
               <Select onValueChange={field.onChange} value={field.value || 'pendente'}>
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white/5 border-white/10 text-white">
                     <SelectValue />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent>
-                  <SelectItem value="ativo">Ativo</SelectItem>
-                  <SelectItem value="pendente">Pendente</SelectItem>
-                  <SelectItem value="inativo">Inativo</SelectItem>
+                <SelectContent className="bg-slate-900 border-white/10">
+                  <SelectItem value="ativo" className="text-white hover:bg-white/10">Ativo</SelectItem>
+                  <SelectItem value="pendente" className="text-white hover:bg-white/10">Pendente</SelectItem>
+                  <SelectItem value="inativo" className="text-white hover:bg-white/10">Inativo</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -225,9 +225,9 @@ export const PartnerForm = ({ initialData, onSubmit, onCancel }: PartnerFormProp
           name="marketplace_id"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>ID do Marketplace (externo)</FormLabel>
+              <FormLabel className="text-blue-400">ID do Marketplace (externo)</FormLabel>
               <FormControl>
-                <Input placeholder="ID no sistema do marketplace" {...field} value={field.value || ''} />
+                <Input placeholder="ID no sistema do marketplace" {...field} value={field.value || ''} className="bg-white/5 border-white/10 text-white placeholder:text-slate-500" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -239,13 +239,14 @@ export const PartnerForm = ({ initialData, onSubmit, onCancel }: PartnerFormProp
           name="notes"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Observações</FormLabel>
+              <FormLabel className="text-blue-400">Observações</FormLabel>
               <FormControl>
-                <Textarea 
+                <Textarea
                   placeholder="Informações adicionais sobre o parceiro..."
                   rows={3}
                   {...field}
                   value={field.value || ''}
+                  className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
                 />
               </FormControl>
               <FormMessage />
@@ -254,10 +255,10 @@ export const PartnerForm = ({ initialData, onSubmit, onCancel }: PartnerFormProp
         />
 
         <div className="flex gap-3 justify-end pt-4">
-          <Button type="button" variant="outline" onClick={onCancel}>
+          <Button type="button" variant="outline" onClick={onCancel} className="border-white/10 text-white hover:bg-white/10">
             Cancelar
           </Button>
-          <Button type="submit">
+          <Button type="submit" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0">
             {initialData ? 'Atualizar' : 'Cadastrar'}
           </Button>
         </div>

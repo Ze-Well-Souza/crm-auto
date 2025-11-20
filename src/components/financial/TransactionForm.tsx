@@ -182,14 +182,14 @@ export const TransactionForm = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto bg-slate-900 border-white/10">
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="text-emerald-400">
             {transaction ? "Editar Transação" : "Nova Transação"}
           </DialogTitle>
-          <DialogDescription>
-            {transaction 
-              ? "Atualize as informações da transação." 
+          <DialogDescription className="text-slate-400">
+            {transaction
+              ? "Atualize as informações da transação."
               : "Preencha os dados para criar uma nova transação financeira."
             }
           </DialogDescription>
@@ -203,16 +203,16 @@ export const TransactionForm = ({
                 name="type"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Tipo *</FormLabel>
+                    <FormLabel className="text-emerald-400">Tipo *</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione o tipo" />
+                        <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                          <SelectValue placeholder="Selecione o tipo" className="text-slate-400" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem value="receita">Receita</SelectItem>
-                        <SelectItem value="despesa">Despesa</SelectItem>
+                      <SelectContent className="bg-slate-900 border-white/10">
+                        <SelectItem value="receita" className="text-white hover:bg-white/10">Receita</SelectItem>
+                        <SelectItem value="despesa" className="text-white hover:bg-white/10">Despesa</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -225,7 +225,7 @@ export const TransactionForm = ({
                 name="amount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Valor (R$) *</FormLabel>
+                    <FormLabel className="text-emerald-400">Valor (R$) *</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -234,6 +234,7 @@ export const TransactionForm = ({
                         placeholder="0,00"
                         {...field}
                         onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                        className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
                       />
                     </FormControl>
                     <FormMessage />
@@ -247,11 +248,12 @@ export const TransactionForm = ({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Descrição *</FormLabel>
+                  <FormLabel className="text-emerald-400">Descrição *</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Ex: Troca de óleo - Cliente João"
                       {...field}
+                      className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
                     />
                   </FormControl>
                   <FormMessage />
@@ -265,16 +267,16 @@ export const TransactionForm = ({
                 name="category"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Categoria</FormLabel>
+                    <FormLabel className="text-emerald-400">Categoria</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione uma categoria" />
+                        <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                          <SelectValue placeholder="Selecione uma categoria" className="text-slate-400" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="bg-slate-900 border-white/10">
                         {categories.map((category) => (
-                          <SelectItem key={category} value={category}>
+                          <SelectItem key={category} value={category} className="text-white hover:bg-white/10">
                             {category}
                           </SelectItem>
                         ))}
@@ -290,16 +292,16 @@ export const TransactionForm = ({
                 name="payment_method"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Método de Pagamento</FormLabel>
+                    <FormLabel className="text-emerald-400">Método de Pagamento</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione o método" />
+                        <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                          <SelectValue placeholder="Selecione o método" className="text-slate-400" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="bg-slate-900 border-white/10">
                         {paymentMethods?.map((method) => (
-                          <SelectItem key={method.id} value={method.name}>
+                          <SelectItem key={method.id} value={method.name} className="text-white hover:bg-white/10">
                             {method.name}
                           </SelectItem>
                         ))}
@@ -316,16 +318,16 @@ export const TransactionForm = ({
               name="client_id"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Cliente (Opcional)</FormLabel>
+                  <FormLabel className="text-emerald-400">Cliente (Opcional)</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione um cliente" />
+                      <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                        <SelectValue placeholder="Selecione um cliente" className="text-slate-400" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
+                    <SelectContent className="bg-slate-900 border-white/10">
                       {clients?.map((client) => (
-                        <SelectItem key={client.id} value={client.id}>
+                        <SelectItem key={client.id} value={client.id} className="text-white hover:bg-white/10">
                           {client.name}
                         </SelectItem>
                       ))}
@@ -342,15 +344,15 @@ export const TransactionForm = ({
                 name="due_date"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Data de Vencimento</FormLabel>
+                    <FormLabel className="text-emerald-400">Data de Vencimento</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
                             variant={"outline"}
                             className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              "w-full pl-3 text-left font-normal bg-white/5 border-white/10 text-white hover:bg-white/10",
+                              !field.value && "text-slate-500"
                             )}
                           >
                             {field.value ? (
@@ -362,7 +364,7 @@ export const TransactionForm = ({
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
+                      <PopoverContent className="w-auto p-0 bg-slate-900 border-white/10" align="start">
                         <Calendar
                           mode="single"
                           selected={field.value}
@@ -382,15 +384,15 @@ export const TransactionForm = ({
                 name="payment_date"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Data de Pagamento</FormLabel>
+                    <FormLabel className="text-emerald-400">Data de Pagamento</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
                             variant={"outline"}
                             className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              "w-full pl-3 text-left font-normal bg-white/5 border-white/10 text-white hover:bg-white/10",
+                              !field.value && "text-slate-500"
                             )}
                           >
                             {field.value ? (
@@ -402,7 +404,7 @@ export const TransactionForm = ({
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
+                      <PopoverContent className="w-auto p-0 bg-slate-900 border-white/10" align="start">
                         <Calendar
                           mode="single"
                           selected={field.value}
@@ -423,18 +425,18 @@ export const TransactionForm = ({
               name="status"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Status</FormLabel>
+                  <FormLabel className="text-emerald-400">Status</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione o status" />
+                      <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                        <SelectValue placeholder="Selecione o status" className="text-slate-400" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="pendente">Pendente</SelectItem>
-                      <SelectItem value="pago">Pago</SelectItem>
-                      <SelectItem value="vencido">Vencido</SelectItem>
-                      <SelectItem value="cancelado">Cancelado</SelectItem>
+                    <SelectContent className="bg-slate-900 border-white/10">
+                      <SelectItem value="pendente" className="text-white hover:bg-white/10">Pendente</SelectItem>
+                      <SelectItem value="pago" className="text-white hover:bg-white/10">Pago</SelectItem>
+                      <SelectItem value="vencido" className="text-white hover:bg-white/10">Vencido</SelectItem>
+                      <SelectItem value="cancelado" className="text-white hover:bg-white/10">Cancelado</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -447,11 +449,12 @@ export const TransactionForm = ({
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Observações</FormLabel>
+                  <FormLabel className="text-emerald-400">Observações</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Observações adicionais..."
                       {...field}
+                      className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
                     />
                   </FormControl>
                   <FormMessage />
@@ -460,10 +463,10 @@ export const TransactionForm = ({
             />
 
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="border-white/10 text-white hover:bg-white/10">
                 Cancelar
               </Button>
-              <Button type="submit" disabled={loading}>
+              <Button type="submit" disabled={loading} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0">
                 {loading ? "Salvando..." : transaction ? "Atualizar" : "Criar"}
               </Button>
             </DialogFooter>

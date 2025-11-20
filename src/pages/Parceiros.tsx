@@ -11,21 +11,21 @@ const Parceiros = () => {
       <ModuleErrorBoundary moduleName="Parceiros" fallbackRoute="/">
         <div className="space-y-6">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 dark:from-amber-400 dark:to-orange-400 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold text-white">
               Gestão de Parceiros
             </h1>
-            <p className="text-muted-foreground mt-2">
+            <p className="text-slate-400 mt-2">
               Gerencie seus parceiros do marketplace e receba pedidos automaticamente
             </p>
           </div>
 
           <Tabs defaultValue="parceiros" className="space-y-6">
-            <TabsList className="grid w-full max-w-md grid-cols-2">
-              <TabsTrigger value="parceiros" className="gap-2">
+            <TabsList className="grid w-full max-w-md grid-cols-2 bg-white/5 border border-white/10 p-1">
+              <TabsTrigger value="parceiros" className="gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-300">
                 <Store className="h-4 w-4" />
                 Parceiros
               </TabsTrigger>
-              <TabsTrigger value="pedidos" className="gap-2">
+              <TabsTrigger value="pedidos" className="gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-300">
                 <ShoppingBag className="h-4 w-4" />
                 Pedidos
               </TabsTrigger>

@@ -85,73 +85,73 @@ export const AnalyticsDashboard = ({ data, period }: AnalyticsDashboardProps) =>
     <div className="space-y-6">
       {/* KPIs Principais */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="gradient-card bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+        <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-emerald-500/20 transition-all duration-300">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-green-600">Receita Total</p>
-                <p className="text-2xl font-bold text-green-900">{formatCurrency(metrics.revenue)}</p>
+                <p className="text-sm font-medium text-slate-300">Receita Total</p>
+                <p className="text-2xl font-bold text-white">{formatCurrency(metrics.revenue)}</p>
                 <div className="flex items-center mt-1">
-                  <TrendingUp className="h-4 w-4 text-green-600 mr-1" />
-                  <span className="text-sm text-green-600">+12.5%</span>
+                  <TrendingUp className="h-4 w-4 text-emerald-400 mr-1" />
+                  <span className="text-sm text-emerald-400">+12.5%</span>
                 </div>
               </div>
-              <div className="p-3 bg-green-200 rounded-full">
-                <DollarSign className="h-6 w-6 text-green-700" />
+              <div className="p-3 bg-emerald-500/20 rounded-full">
+                <DollarSign className="h-6 w-6 text-emerald-400" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="gradient-card bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+        <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-blue-500/20 transition-all duration-300">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-blue-600">Lucro Líquido</p>
-                <p className="text-2xl font-bold text-blue-900">{formatCurrency(profit)}</p>
+                <p className="text-sm font-medium text-slate-300">Lucro Líquido</p>
+                <p className="text-2xl font-bold text-white">{formatCurrency(profit)}</p>
                 <div className="flex items-center mt-1">
-                  <TrendingUp className="h-4 w-4 text-blue-600 mr-1" />
-                  <span className="text-sm text-blue-600">{profitMargin.toFixed(1)}% margem</span>
+                  <TrendingUp className="h-4 w-4 text-blue-400 mr-1" />
+                  <span className="text-sm text-blue-400">{profitMargin.toFixed(1)}% margem</span>
                 </div>
               </div>
-              <div className="p-3 bg-blue-200 rounded-full">
-                <Target className="h-6 w-6 text-blue-700" />
+              <div className="p-3 bg-blue-500/20 rounded-full">
+                <Target className="h-6 w-6 text-blue-400" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="gradient-card bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+        <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-purple-500/20 transition-all duration-300">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-purple-600">Clientes Ativos</p>
-                <p className="text-2xl font-bold text-purple-900">{metrics.clients}</p>
+                <p className="text-sm font-medium text-slate-300">Clientes Ativos</p>
+                <p className="text-2xl font-bold text-white">{metrics.clients}</p>
                 <div className="flex items-center mt-1">
-                  <TrendingUp className="h-4 w-4 text-purple-600 mr-1" />
-                  <span className="text-sm text-purple-600">+8.2%</span>
+                  <TrendingUp className="h-4 w-4 text-purple-400 mr-1" />
+                  <span className="text-sm text-purple-400">+8.2%</span>
                 </div>
               </div>
-              <div className="p-3 bg-purple-200 rounded-full">
-                <Users className="h-6 w-6 text-purple-700" />
+              <div className="p-3 bg-purple-500/20 rounded-full">
+                <Users className="h-6 w-6 text-purple-400" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="gradient-card bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
+        <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-orange-500/20 transition-all duration-300">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-orange-600">Taxa de Conclusão</p>
-                <p className="text-2xl font-bold text-orange-900">{completionRate.toFixed(1)}%</p>
+                <p className="text-sm font-medium text-slate-300">Taxa de Conclusão</p>
+                <p className="text-2xl font-bold text-white">{completionRate.toFixed(1)}%</p>
                 <div className="flex items-center mt-1">
-                  <CheckCircle className="h-4 w-4 text-orange-600 mr-1" />
-                  <span className="text-sm text-orange-600">{metrics.completedOrders} concluídos</span>
+                  <CheckCircle className="h-4 w-4 text-orange-400 mr-1" />
+                  <span className="text-sm text-orange-400">{metrics.completedOrders} concluídos</span>
                 </div>
               </div>
-              <div className="p-3 bg-orange-200 rounded-full">
-                <Activity className="h-6 w-6 text-orange-700" />
+              <div className="p-3 bg-orange-500/20 rounded-full">
+                <Activity className="h-6 w-6 text-orange-400" />
               </div>
             </div>
           </CardContent>
@@ -160,11 +160,11 @@ export const AnalyticsDashboard = ({ data, period }: AnalyticsDashboardProps) =>
 
       {/* Dashboard com Abas */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview">Visão Geral</TabsTrigger>
-          <TabsTrigger value="financial">Financeiro</TabsTrigger>
-          <TabsTrigger value="operations">Operações</TabsTrigger>
-          <TabsTrigger value="performance">Performance</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-4 bg-white/5 border border-white/10 p-1">
+          <TabsTrigger value="overview" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-300">Visão Geral</TabsTrigger>
+          <TabsTrigger value="financial" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-300">Financeiro</TabsTrigger>
+          <TabsTrigger value="operations" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-300">Operações</TabsTrigger>
+          <TabsTrigger value="performance" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-300">Performance</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">

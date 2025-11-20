@@ -98,7 +98,7 @@ export const ServiceOrderFilters = ({ onFiltersChange, activeFilters }: ServiceO
   };
 
   return (
-    <Card>
+    <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl">
       <CardContent className="pt-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4 flex-1">
@@ -108,15 +108,25 @@ export const ServiceOrderFilters = ({ onFiltersChange, activeFilters }: ServiceO
                 variant={activeFilters.urgent ? "default" : "outline"}
                 size="sm"
                 onClick={() => handleFilterChange('quickFilter', 'urgent', !activeFilters.urgent)}
+                className={cn(
+                  activeFilters.urgent
+                    ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg shadow-purple-500/50"
+                    : "border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+                )}
               >
                 <AlertTriangle className="h-3 w-3 mr-1" />
                 Urgente
               </Button>
-              
+
               <Button
                 variant={activeFilters.highValue ? "default" : "outline"}
                 size="sm"
                 onClick={() => handleFilterChange('quickFilter', 'highValue', !activeFilters.highValue)}
+                className={cn(
+                  activeFilters.highValue
+                    ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg shadow-purple-500/50"
+                    : "border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+                )}
               >
                 <DollarSign className="h-3 w-3 mr-1" />
                 Alto Valor
@@ -126,6 +136,11 @@ export const ServiceOrderFilters = ({ onFiltersChange, activeFilters }: ServiceO
                 variant={activeFilters.inProgress ? "default" : "outline"}
                 size="sm"
                 onClick={() => handleFilterChange('quickFilter', 'inProgress', !activeFilters.inProgress)}
+                className={cn(
+                  activeFilters.inProgress
+                    ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg shadow-purple-500/50"
+                    : "border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+                )}
               >
                 <PlayCircle className="h-3 w-3 mr-1" />
                 Em Andamento
@@ -135,6 +150,11 @@ export const ServiceOrderFilters = ({ onFiltersChange, activeFilters }: ServiceO
                 variant={activeFilters.needsApproval ? "default" : "outline"}
                 size="sm"
                 onClick={() => handleFilterChange('quickFilter', 'needsApproval', !activeFilters.needsApproval)}
+                className={cn(
+                  activeFilters.needsApproval
+                    ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg shadow-purple-500/50"
+                    : "border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+                )}
               >
                 <Clock className="h-3 w-3 mr-1" />
                 Aprovação
@@ -144,34 +164,42 @@ export const ServiceOrderFilters = ({ onFiltersChange, activeFilters }: ServiceO
             {/* Advanced Filters */}
             <Popover open={isOpen} onOpenChange={setIsOpen}>
               <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className="relative">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="relative border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+                >
                   <Filter className="h-3 w-3 mr-1" />
                   Filtros Avançados
                   {getActiveFilterCount() > 0 && (
-                    <Badge 
-                      variant="destructive" 
-                      className="absolute -top-2 -right-2 h-5 w-5 p-0 text-xs"
+                    <Badge
+                      className="absolute -top-2 -right-2 h-5 w-5 p-0 text-xs bg-red-500 text-white border-0"
                     >
                       {getActiveFilterCount()}
                     </Badge>
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-80" align="start">
+              <PopoverContent className="w-80 bg-slate-900 border-white/10 backdrop-blur-xl" align="start">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-medium">Filtros Avançados</h4>
-                    <Button variant="ghost" size="sm" onClick={clearFilters}>
+                    <h4 className="font-medium text-white">Filtros Avançados</h4>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={clearFilters}
+                      className="text-blue-400 hover:text-blue-300 hover:bg-blue-500/20"
+                    >
                       <X className="h-3 w-3 mr-1" />
                       Limpar
                     </Button>
                   </div>
 
-                  <Separator />
+                  <Separator className="bg-white/10" />
 
                   {/* Status Filter */}
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium flex items-center gap-2">
+                    <Label className="text-sm font-medium flex items-center gap-2 text-blue-300">
                       <CheckCircle className="h-3 w-3" />
                       Status da Ordem
                     </Label>
@@ -181,13 +209,23 @@ export const ServiceOrderFilters = ({ onFiltersChange, activeFilters }: ServiceO
                           <Checkbox
                             id={`status-${option.value}`}
                             checked={activeFilters.status?.includes(option.value) || false}
-                            onCheckedChange={(checked) => 
+                            onCheckedChange={(checked) =>
                               handleFilterChange('status', option.value, checked as boolean)
                             }
+                            className="border-white/30 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                           />
-                          <Label 
-                            htmlFor={`status-${option.value}`} 
-                            className={cn("text-xs flex items-center gap-1", option.color)}
+                          <Label
+                            htmlFor={`status-${option.value}`}
+                            className={cn(
+                              "text-xs flex items-center gap-1",
+                              option.value === 'concluido' && "text-emerald-400",
+                              option.value === 'em_andamento' && "text-blue-400",
+                              option.value === 'orcamento' && "text-slate-400",
+                              option.value === 'aguardando_pecas' && "text-orange-400",
+                              option.value === 'cancelado' && "text-red-400",
+                              option.value === 'aprovado' && "text-emerald-400",
+                              option.value === 'entregue' && "text-emerald-400"
+                            )}
                           >
                             <option.icon className="h-3 w-3" />
                             {option.label}
@@ -197,11 +235,11 @@ export const ServiceOrderFilters = ({ onFiltersChange, activeFilters }: ServiceO
                     </div>
                   </div>
 
-                  <Separator />
+                  <Separator className="bg-white/10" />
 
                   {/* Value Range */}
                   <div className="space-y-3">
-                    <Label className="text-sm font-medium flex items-center gap-2">
+                    <Label className="text-sm font-medium flex items-center gap-2 text-blue-300">
                       <DollarSign className="h-3 w-3" />
                       Faixa de Valor (R$)
                     </Label>
@@ -217,18 +255,18 @@ export const ServiceOrderFilters = ({ onFiltersChange, activeFilters }: ServiceO
                         step={100}
                         className="w-full"
                       />
-                      <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                      <div className="flex justify-between text-xs text-slate-400 mt-1">
                         <span>R$ {valueRange[0].toLocaleString('pt-BR')}</span>
                         <span>R$ {valueRange[1].toLocaleString('pt-BR')}</span>
                       </div>
                     </div>
                   </div>
 
-                  <Separator />
+                  <Separator className="bg-white/10" />
 
                   {/* Date Range */}
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium flex items-center gap-2">
+                    <Label className="text-sm font-medium flex items-center gap-2 text-blue-300">
                       <Calendar className="h-3 w-3" />
                       Período
                     </Label>
@@ -236,12 +274,12 @@ export const ServiceOrderFilters = ({ onFiltersChange, activeFilters }: ServiceO
                       value={activeFilters.dateRange || ""}
                       onValueChange={(value) => handleFilterChange('single', 'dateRange', true)}
                     >
-                      <SelectTrigger className="h-8">
-                        <SelectValue placeholder="Selecione o período" />
+                      <SelectTrigger className="h-8 bg-white/5 border-white/10 text-white">
+                        <SelectValue placeholder="Selecione o período" className="text-slate-400" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-slate-900 border-white/10">
                         {filterOptions.dateRange.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
+                          <SelectItem key={option.value} value={option.value} className="text-white hover:bg-white/10">
                             {option.label}
                           </SelectItem>
                         ))}
@@ -249,11 +287,11 @@ export const ServiceOrderFilters = ({ onFiltersChange, activeFilters }: ServiceO
                     </Select>
                   </div>
 
-                  <Separator />
+                  <Separator className="bg-white/10" />
 
                   {/* Service Type */}
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium flex items-center gap-2">
+                    <Label className="text-sm font-medium flex items-center gap-2 text-blue-300">
                       <Wrench className="h-3 w-3" />
                       Tipo de Serviço
                     </Label>
@@ -263,11 +301,12 @@ export const ServiceOrderFilters = ({ onFiltersChange, activeFilters }: ServiceO
                           <Checkbox
                             id={`service-${option.value}`}
                             checked={activeFilters.serviceType?.includes(option.value) || false}
-                            onCheckedChange={(checked) => 
+                            onCheckedChange={(checked) =>
                               handleFilterChange('serviceType', option.value, checked as boolean)
                             }
+                            className="border-white/30 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                           />
-                          <Label htmlFor={`service-${option.value}`} className="text-xs">
+                          <Label htmlFor={`service-${option.value}`} className="text-xs text-slate-300">
                             {option.label}
                           </Label>
                         </div>
@@ -275,11 +314,11 @@ export const ServiceOrderFilters = ({ onFiltersChange, activeFilters }: ServiceO
                     </div>
                   </div>
 
-                  <Separator />
+                  <Separator className="bg-white/10" />
 
                   {/* Priority Filter */}
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium flex items-center gap-2">
+                    <Label className="text-sm font-medium flex items-center gap-2 text-blue-300">
                       <TrendingUp className="h-3 w-3" />
                       Prioridade
                     </Label>
@@ -289,13 +328,19 @@ export const ServiceOrderFilters = ({ onFiltersChange, activeFilters }: ServiceO
                           <Checkbox
                             id={`priority-${option.value}`}
                             checked={activeFilters.priority?.includes(option.value) || false}
-                            onCheckedChange={(checked) => 
+                            onCheckedChange={(checked) =>
                               handleFilterChange('priority', option.value, checked as boolean)
                             }
+                            className="border-white/30 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                           />
-                          <Label 
-                            htmlFor={`priority-${option.value}`} 
-                            className={cn("text-xs", option.color)}
+                          <Label
+                            htmlFor={`priority-${option.value}`}
+                            className={cn(
+                              "text-xs",
+                              option.value === 'alta' && "text-red-400",
+                              option.value === 'media' && "text-orange-400",
+                              option.value === 'baixa' && "text-emerald-400"
+                            )}
                           >
                             {option.label}
                           </Label>
@@ -311,8 +356,8 @@ export const ServiceOrderFilters = ({ onFiltersChange, activeFilters }: ServiceO
           {/* Active Filters Display */}
           {getActiveFilterCount() > 0 && (
             <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground">Filtros ativos:</span>
-              <Badge variant="secondary" className="text-xs">
+              <span className="text-xs text-slate-400">Filtros ativos:</span>
+              <Badge className="text-xs bg-purple-500/20 text-purple-300 border-0">
                 {getActiveFilterCount()}
               </Badge>
             </div>

@@ -172,15 +172,15 @@ const OrdensServico = () => {
         />
 
         {/* Search */}
-        <Card>
+        <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl">
           <CardContent className="pt-6">
             <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-3 h-4 w-4 text-purple-400" />
               <Input
                 placeholder="Buscar ordens por número ou descrição..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-slate-400 focus:border-purple-500/50 focus:ring-purple-500/20"
               />
             </div>
           </CardContent>

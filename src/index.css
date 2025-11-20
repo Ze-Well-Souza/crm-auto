@@ -127,23 +127,23 @@
     --ring: 224.3 76.3% 55%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
+    --chart-3: 198 88% 48%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
 
     /* Enhanced dark mode colors */
     --success: 142.1 70.6% 45.3%;
     --success-light: 142 71% 20%;
-    --warning: 38 92% 50%;
-    --warning-light: 38 96% 20%;
-    --warning-glow: 38 92% 50%;
+    --warning: 45 93% 47%;
+    --warning-light: 45 93% 20%;
+    --warning-glow: 45 93% 47%;
     --info: 198.6 88.7% 48.4%;
     --info-light: 199 89% 20%;
     --purple: 262.1 83.3% 67.8%;
     --purple-light: 262 83% 20%;
     --pink: 330.4 81.2% 70.4%;
     --pink-light: 330 81% 20%;
-    --orange: 24.6 95% 53.1%;
+    --orange: 25 95% 53%;
     --orange-light: 25 95% 20%;
     --primary-light: 217 91% 20%;
 
@@ -158,8 +158,8 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
 
     /* Dark mode gradients */
-    --gradient-card: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted)) 100%);
-    --gradient-glass: linear-gradient(135deg, hsl(0 0% 0% / 0.1) 0%, hsl(0 0% 0% / 0.05) 100%);
+    --gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+    --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
     --gradient-dashboard: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--muted)) 50%, hsl(var(--accent)) 100%);
   }
 

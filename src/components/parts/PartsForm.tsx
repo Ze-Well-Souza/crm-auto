@@ -109,14 +109,14 @@ export const PartsForm = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto bg-slate-900 border-white/10">
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="text-yellow-400">
             {part ? "Editar Peça" : "Nova Peça"}
           </DialogTitle>
-          <DialogDescription>
-            {part 
-              ? "Atualize as informações da peça." 
+          <DialogDescription className="text-slate-400">
+            {part
+              ? "Atualize as informações da peça."
               : "Preencha os dados para cadastrar uma nova peça."
             }
           </DialogDescription>
@@ -130,9 +130,9 @@ export const PartsForm = ({
                 name="code"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Código</FormLabel>
+                    <FormLabel className="text-yellow-400">Código</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ex: FO001" {...field} />
+                      <Input placeholder="Ex: FO001" {...field} className="bg-white/5 border-white/10 text-white placeholder:text-slate-500" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -144,9 +144,9 @@ export const PartsForm = ({
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nome *</FormLabel>
+                    <FormLabel className="text-yellow-400">Nome *</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ex: Filtro de Óleo" {...field} />
+                      <Input placeholder="Ex: Filtro de Óleo" {...field} className="bg-white/5 border-white/10 text-white placeholder:text-slate-500" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -159,11 +159,12 @@ export const PartsForm = ({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Descrição</FormLabel>
+                  <FormLabel className="text-yellow-400">Descrição</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Descrição detalhada da peça..."
                       {...field}
+                      className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
                     />
                   </FormControl>
                   <FormMessage />
@@ -177,16 +178,16 @@ export const PartsForm = ({
                 name="category"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Categoria</FormLabel>
+                    <FormLabel className="text-yellow-400">Categoria</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione uma categoria" />
+                        <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                          <SelectValue placeholder="Selecione uma categoria" className="text-slate-400" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="bg-slate-900 border-white/10">
                         {PART_CATEGORIES.map((category) => (
-                          <SelectItem key={category} value={category}>
+                          <SelectItem key={category} value={category} className="text-white hover:bg-white/10">
                             {category}
                           </SelectItem>
                         ))}
@@ -202,9 +203,9 @@ export const PartsForm = ({
                 name="brand"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Marca</FormLabel>
+                    <FormLabel className="text-yellow-400">Marca</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ex: Bosch, Mann, TRW" {...field} />
+                      <Input placeholder="Ex: Bosch, Mann, TRW" {...field} className="bg-white/5 border-white/10 text-white placeholder:text-slate-500" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -217,16 +218,16 @@ export const PartsForm = ({
               name="supplier_id"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Fornecedor</FormLabel>
+                  <FormLabel className="text-yellow-400">Fornecedor</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione um fornecedor" />
+                      <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                        <SelectValue placeholder="Selecione um fornecedor" className="text-slate-400" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
+                    <SelectContent className="bg-slate-900 border-white/10">
                       {suppliers?.map((supplier) => (
-                        <SelectItem key={supplier.id} value={supplier.id}>
+                        <SelectItem key={supplier.id} value={supplier.id} className="text-white hover:bg-white/10">
                           {supplier.name}
                         </SelectItem>
                       ))}
@@ -243,7 +244,7 @@ export const PartsForm = ({
                 name="cost_price"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Preço de Custo (R$)</FormLabel>
+                    <FormLabel className="text-yellow-400">Preço de Custo (R$)</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -251,6 +252,7 @@ export const PartsForm = ({
                         step="0.01"
                         {...field}
                         onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                        className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
                       />
                     </FormControl>
                     <FormMessage />
@@ -263,7 +265,7 @@ export const PartsForm = ({
                 name="sale_price"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Preço de Venda (R$)</FormLabel>
+                    <FormLabel className="text-yellow-400">Preço de Venda (R$)</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -271,6 +273,7 @@ export const PartsForm = ({
                         step="0.01"
                         {...field}
                         onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                        className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
                       />
                     </FormControl>
                     <FormMessage />
@@ -285,13 +288,14 @@ export const PartsForm = ({
                 name="stock_quantity"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Quantidade em Estoque</FormLabel>
+                    <FormLabel className="text-yellow-400">Quantidade em Estoque</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
                         min="0"
                         {...field}
                         onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                        className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
                       />
                     </FormControl>
                     <FormMessage />
@@ -304,13 +308,14 @@ export const PartsForm = ({
                 name="min_stock"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Estoque Mínimo</FormLabel>
+                    <FormLabel className="text-yellow-400">Estoque Mínimo</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
                         min="0"
                         {...field}
                         onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                        className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
                       />
                     </FormControl>
                     <FormMessage />
@@ -323,13 +328,14 @@ export const PartsForm = ({
                 name="max_stock"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Estoque Máximo</FormLabel>
+                    <FormLabel className="text-yellow-400">Estoque Máximo</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
                         min="0"
                         {...field}
                         onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                        className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
                       />
                     </FormControl>
                     <FormMessage />
@@ -343,9 +349,9 @@ export const PartsForm = ({
               name="location"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Localização</FormLabel>
+                  <FormLabel className="text-yellow-400">Localização</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ex: Prateleira A1, Setor B" {...field} />
+                    <Input placeholder="Ex: Prateleira A1, Setor B" {...field} className="bg-white/5 border-white/10 text-white placeholder:text-slate-500" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -356,10 +362,10 @@ export const PartsForm = ({
               control={form.control}
               name="active"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border border-white/10 bg-white/5 p-4">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-base">Ativo</FormLabel>
-                    <div className="text-sm text-muted-foreground">
+                    <FormLabel className="text-base text-yellow-400">Ativo</FormLabel>
+                    <div className="text-sm text-slate-400">
                       Peça disponível para uso
                     </div>
                   </div>
@@ -374,10 +380,10 @@ export const PartsForm = ({
             />
 
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="border-white/10 text-white hover:bg-white/10">
                 Cancelar
               </Button>
-              <Button type="submit" disabled={loading}>
+              <Button type="submit" disabled={loading} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0">
                 {loading ? "Salvando..." : part ? "Atualizar" : "Criar"}
               </Button>
             </DialogFooter>

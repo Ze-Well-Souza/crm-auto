@@ -133,8 +133,8 @@ export const ServiceOrderCard = ({ serviceOrder, onUpdate, onQuickAction }: Serv
 
   return (
     <>
-      <Card 
-        className="hover:shadow-elevated transition-smooth cursor-pointer group relative overflow-hidden"
+      <Card
+        className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 cursor-pointer group relative overflow-hidden"
         onClick={handleCardClick}
       >
         {/* Background gradient based on status */}
@@ -146,20 +146,30 @@ export const ServiceOrderCard = ({ serviceOrder, onUpdate, onQuickAction }: Serv
         <CardHeader className="pb-3 relative z-10">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
-              <Avatar className="h-12 w-12 border-2 border-primary/20">
-                <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs">
+              <Avatar className="h-12 w-12 border-2 border-purple-500/30 bg-purple-500/10">
+                <AvatarFallback className="bg-purple-500/20 text-purple-300 font-semibold text-xs">
                   {getOrderIcon()}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <CardTitle className="text-lg flex items-center gap-2">
+                <CardTitle className="text-lg flex items-center gap-2 text-white">
                   {serviceOrder.order_number}
-                  <Badge variant={statusConfig.variant} className="flex items-center gap-1">
-                    <StatusIcon className={cn("h-3 w-3", statusConfig.color)} />
+                  <Badge
+                    variant={statusConfig.variant}
+                    className={cn(
+                      "flex items-center gap-1",
+                      serviceOrder.status === 'concluido' && "bg-emerald-500/20 text-emerald-300 border-0",
+                      serviceOrder.status === 'em_andamento' && "bg-blue-500/20 text-blue-300 border-0",
+                      serviceOrder.status === 'orcamento' && "bg-slate-500/20 text-slate-300 border-0",
+                      serviceOrder.status === 'aguardando_pecas' && "bg-orange-500/20 text-orange-300 border-0",
+                      serviceOrder.status === 'cancelado' && "bg-red-500/20 text-red-300 border-0"
+                    )}
+                  >
+                    <StatusIcon className="h-3 w-3" />
                     {statusConfig.label}
                   </Badge>
                 </CardTitle>
-                <div className="text-sm text-muted-foreground flex items-center gap-2">
+                <div className="text-sm text-slate-400 flex items-center gap-2">
                   {serviceOrder.clients?.name}
                   {serviceOrder.vehicles && (
                     <>
@@ -177,77 +187,82 @@ export const ServiceOrderCard = ({ serviceOrder, onUpdate, onQuickAction }: Serv
         <CardContent className="space-y-4 relative z-10">
           {/* Service Description */}
           {serviceOrder.description && (
-            <div className="bg-muted/30 p-3 rounded-md">
-              <p className="text-sm line-clamp-2">{serviceOrder.description}</p>
+            <div className="bg-white/5 p-3 rounded-md border border-white/10">
+              <p className="text-sm line-clamp-2 text-slate-300">{serviceOrder.description}</p>
             </div>
           )}
 
           {/* Financial Information */}
           <div className="grid grid-cols-2 gap-3">
-            {serviceOrder.total_labor && (
+            {serviceOrder.labor_cost && (
               <div className="text-center">
                 <div className="flex items-center justify-center gap-1">
-                  <Wrench className="h-3 w-3 text-primary" />
-                  <span className="text-xs font-semibold">
-                    {formatCurrency(serviceOrder.total_labor)}
+                  <Wrench className="h-3 w-3 text-purple-400" />
+                  <span className="text-xs font-semibold text-white">
+                    {formatCurrency(serviceOrder.labor_cost)}
                   </span>
                 </div>
-                <p className="text-xs text-muted-foreground">Mão de obra</p>
+                <p className="text-xs text-slate-400">Mão de obra</p>
               </div>
             )}
-            
-            {serviceOrder.total_parts && (
+
+            {serviceOrder.parts_cost && (
               <div className="text-center">
                 <div className="flex items-center justify-center gap-1">
-                  <Settings className="h-3 w-3 text-info" />
-                  <span className="text-xs font-semibold">
-                    {formatCurrency(serviceOrder.total_parts)}
+                  <Settings className="h-3 w-3 text-blue-400" />
+                  <span className="text-xs font-semibold text-white">
+                    {formatCurrency(serviceOrder.parts_cost)}
                   </span>
                 </div>
-                <p className="text-xs text-muted-foreground">Peças</p>
+                <p className="text-xs text-slate-400">Peças</p>
               </div>
             )}
           </div>
 
           {/* Total Amount */}
           {serviceOrder.total_amount && (
-            <div className="flex justify-between items-center pt-2 border-t">
-              <span className="text-sm font-medium">Total:</span>
-              <span className="text-lg font-bold text-success">
+            <div className="flex justify-between items-center pt-2 border-t border-white/10">
+              <span className="text-sm font-medium text-slate-300">Total:</span>
+              <span className="text-lg font-bold text-emerald-400">
                 {formatCurrency(serviceOrder.total_amount)}
               </span>
             </div>
           )}
 
           {/* Performance Metrics */}
-          <div className="grid grid-cols-3 gap-2 pt-2 border-t text-xs">
+          <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/10 text-xs">
             <div className="text-center">
-              <div className={cn("font-semibold", getComplexityColor(orderMetrics.complexity))}>
+              <div className={cn(
+                "font-semibold",
+                orderMetrics.complexity === 'alta' && "text-red-400",
+                orderMetrics.complexity === 'media' && "text-orange-400",
+                orderMetrics.complexity === 'baixa' && "text-emerald-400"
+              )}>
                 {orderMetrics.complexity.toUpperCase()}
               </div>
-              <p className="text-muted-foreground">Complexidade</p>
+              <p className="text-slate-400">Complexidade</p>
             </div>
-            
+
             <div className="text-center">
-              <div className="font-semibold text-info">
+              <div className="font-semibold text-blue-400">
                 {Math.round(orderMetrics.profitMargin)}%
               </div>
-              <p className="text-muted-foreground">Margem</p>
+              <p className="text-slate-400">Margem</p>
             </div>
-            
+
             <div className="text-center">
-              <div className="font-semibold text-warning">
+              <div className="font-semibold text-orange-400">
                 {Math.round(orderMetrics.timeSpent / 60)}h
               </div>
-              <p className="text-muted-foreground">Tempo</p>
+              <p className="text-slate-400">Tempo</p>
             </div>
           </div>
 
           {/* Overdue Alert */}
           {isOverdue() && (
-            <div className="bg-destructive/10 border border-destructive/20 rounded-md p-2">
+            <div className="bg-red-500/10 border border-red-500/20 rounded-md p-2">
               <div className="flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-destructive" />
+                <AlertTriangle className="h-4 w-4 text-red-400" />
                 <span className="text-sm font-medium text-destructive">Atrasada</span>
               </div>
               <p className="text-xs text-muted-foreground mt-1">

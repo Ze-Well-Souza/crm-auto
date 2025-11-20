@@ -50,74 +50,82 @@ export const PartsMetrics = ({ parts }: PartsMetricsProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {/* Total Parts */}
-      <Card className="gradient-card">
+      <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-purple-500/20 transition-all duration-300">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <Package className="h-4 w-4 text-primary" />
+          <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-300">
+            <div className="p-2 rounded-lg bg-purple-500/20">
+              <Package className="h-4 w-4 text-purple-400" />
+            </div>
             Total de Peças
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{totalParts}</div>
-          <p className="text-xs text-muted-foreground">Itens cadastrados</p>
+          <div className="text-2xl font-bold text-white">{totalParts}</div>
+          <p className="text-xs text-slate-400">Itens cadastrados</p>
         </CardContent>
       </Card>
 
       {/* Stock Value */}
-      <Card className="gradient-card">
+      <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-emerald-500/20 transition-all duration-300">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <DollarSign className="h-4 w-4 text-success" />
+          <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-300">
+            <div className="p-2 rounded-lg bg-emerald-500/20">
+              <DollarSign className="h-4 w-4 text-emerald-400" />
+            </div>
             Valor em Estoque
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-success">
+          <div className="text-2xl font-bold text-emerald-400">
             {formatCurrency(totalStockValue)}
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-slate-400">
             Lucro potencial: {formatCurrency(potentialProfit)}
           </p>
         </CardContent>
       </Card>
 
       {/* Stock Alerts */}
-      <Card className="gradient-card">
+      <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-orange-500/20 transition-all duration-300">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4 text-warning" />
+          <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-300">
+            <div className="p-2 rounded-lg bg-orange-500/20">
+              <AlertTriangle className="h-4 w-4 text-orange-400" />
+            </div>
             Alertas de Estoque
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-warning">{outOfStock + lowStock}</div>
-          <p className="text-xs text-muted-foreground">
+          <div className="text-2xl font-bold text-orange-400">{outOfStock + lowStock}</div>
+          <p className="text-xs text-slate-400">
             {outOfStock} sem estoque, {lowStock} baixo
           </p>
         </CardContent>
       </Card>
 
       {/* Stock Health */}
-      <Card className="gradient-card">
+      <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-blue-500/20 transition-all duration-300">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <Target className="h-4 w-4 text-info" />
+          <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-300">
+            <div className="p-2 rounded-lg bg-blue-500/20">
+              <Target className="h-4 w-4 text-blue-400" />
+            </div>
             Saúde do Estoque
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-info">
+          <div className="text-2xl font-bold text-blue-400">
             {Math.round(stockHealthScore)}%
           </div>
-          <p className="text-xs text-muted-foreground">Score de qualidade</p>
+          <p className="text-xs text-slate-400">Score de qualidade</p>
         </CardContent>
       </Card>
 
       {/* Stock Status Distribution - Full Width */}
-      <Card className="col-span-full gradient-card">
+      <Card className="col-span-full bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl">
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <BarChart3 className="h-5 w-5" />
+          <CardTitle className="text-lg flex items-center gap-2 text-white">
+            <BarChart3 className="h-5 w-5 text-purple-400" />
             Distribuição de Estoque
           </CardTitle>
         </CardHeader>
@@ -125,80 +133,80 @@ export const PartsMetrics = ({ parts }: PartsMetricsProps) => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <div className="text-center">
               <div className="flex items-center justify-center gap-1 mb-1">
-                <AlertTriangle className="h-4 w-4 text-destructive" />
-                <span className="font-semibold">{outOfStock}</span>
+                <AlertTriangle className="h-4 w-4 text-red-400" />
+                <span className="font-semibold text-white">{outOfStock}</span>
               </div>
-              <Badge variant="destructive" className="text-xs">Sem Estoque</Badge>
+              <Badge className="text-xs bg-red-500/20 text-red-300 border-0">Sem Estoque</Badge>
             </div>
-            
+
             <div className="text-center">
               <div className="flex items-center justify-center gap-1 mb-1">
-                <AlertTriangle className="h-4 w-4 text-warning" />
-                <span className="font-semibold">{lowStock}</span>
+                <AlertTriangle className="h-4 w-4 text-orange-400" />
+                <span className="font-semibold text-white">{lowStock}</span>
               </div>
-              <Badge variant="secondary" className="text-xs">Estoque Baixo</Badge>
+              <Badge className="text-xs bg-orange-500/20 text-orange-300 border-0">Estoque Baixo</Badge>
             </div>
-            
+
             <div className="text-center">
               <div className="flex items-center justify-center gap-1 mb-1">
-                <CheckCircle className="h-4 w-4 text-info" />
-                <span className="font-semibold">{adequateStock}</span>
+                <CheckCircle className="h-4 w-4 text-blue-400" />
+                <span className="font-semibold text-white">{adequateStock}</span>
               </div>
-              <Badge variant="outline" className="text-xs">Adequado</Badge>
+              <Badge className="text-xs bg-blue-500/20 text-blue-300 border-0">Adequado</Badge>
             </div>
-            
+
             <div className="text-center">
               <div className="flex items-center justify-center gap-1 mb-1">
-                <CheckCircle className="h-4 w-4 text-success" />
-                <span className="font-semibold">{highStock}</span>
+                <CheckCircle className="h-4 w-4 text-emerald-400" />
+                <span className="font-semibold text-white">{highStock}</span>
               </div>
-              <Badge variant="default" className="text-xs">Alto Estoque</Badge>
+              <Badge className="text-xs bg-emerald-500/20 text-emerald-300 border-0">Alto Estoque</Badge>
             </div>
           </div>
 
           {/* Performance Analysis */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-3">
-              <h4 className="font-medium text-sm">Análise de Giro</h4>
+              <h4 className="font-medium text-sm text-blue-300">Análise de Giro</h4>
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
-                    <TrendingUp className="h-3 w-3 text-success" />
-                    <span className="text-xs">Giro Rápido</span>
+                    <TrendingUp className="h-3 w-3 text-emerald-400" />
+                    <span className="text-xs text-slate-300">Giro Rápido</span>
                   </div>
-                  <Badge variant="default" className="text-xs">{fastMovingItems}</Badge>
+                  <Badge className="text-xs bg-emerald-500/20 text-emerald-300 border-0">{fastMovingItems}</Badge>
                 </div>
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
-                    <Clock className="h-3 w-3 text-info" />
-                    <span className="text-xs">Giro Normal</span>
+                    <Clock className="h-3 w-3 text-blue-400" />
+                    <span className="text-xs text-slate-300">Giro Normal</span>
                   </div>
-                  <Badge variant="secondary" className="text-xs">{activeItems}</Badge>
+                  <Badge className="text-xs bg-blue-500/20 text-blue-300 border-0">{activeItems}</Badge>
                 </div>
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
-                    <TrendingDown className="h-3 w-3 text-warning" />
-                    <span className="text-xs">Giro Lento</span>
+                    <TrendingDown className="h-3 w-3 text-orange-400" />
+                    <span className="text-xs text-slate-300">Giro Lento</span>
                   </div>
-                  <Badge variant="outline" className="text-xs">{slowMovingItems}</Badge>
+                  <Badge className="text-xs bg-orange-500/20 text-orange-300 border-0">{slowMovingItems}</Badge>
                 </div>
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
-                    <AlertTriangle className="h-3 w-3 text-destructive" />
-                    <span className="text-xs">Estoque Morto</span>
+                    <AlertTriangle className="h-3 w-3 text-red-400" />
+                    <span className="text-xs text-slate-300">Estoque Morto</span>
                   </div>
-                  <Badge variant="destructive" className="text-xs">{deadStock}</Badge>
+                  <Badge className="text-xs bg-red-500/20 text-red-300 border-0">{deadStock}</Badge>
                 </div>
               </div>
             </div>
 
             <div className="space-y-3">
-              <h4 className="font-medium text-sm">Top Categorias</h4>
+              <h4 className="font-medium text-sm text-blue-300">Top Categorias</h4>
               <div className="space-y-2">
                 {Object.entries(categories).slice(0, 4).map(([category, count]) => (
                   <div key={category} className="flex justify-between items-center">
-                    <span className="text-xs truncate">{category}</span>
-                    <Badge variant="outline" className="text-xs">{count}</Badge>
+                    <span className="text-xs truncate text-slate-300">{category}</span>
+                    <Badge className="text-xs bg-purple-500/20 text-purple-300 border-0">{count}</Badge>
                   </div>
                 ))}
               </div>
@@ -206,26 +214,26 @@ export const PartsMetrics = ({ parts }: PartsMetricsProps) => {
           </div>
 
           {/* Financial Summary */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 pt-6 border-t">
-            <div className="text-center p-4 bg-muted/30 rounded-lg">
-              <div className="text-lg font-bold text-success">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 pt-6 border-t border-white/10">
+            <div className="text-center p-4 bg-white/5 rounded-lg border border-white/10">
+              <div className="text-lg font-bold text-emerald-400">
                 {formatCurrency(totalStockValue)}
               </div>
-              <p className="text-xs text-muted-foreground">Valor de Custo</p>
+              <p className="text-xs text-slate-400">Valor de Custo</p>
             </div>
-            
-            <div className="text-center p-4 bg-muted/30 rounded-lg">
-              <div className="text-lg font-bold text-primary">
+
+            <div className="text-center p-4 bg-white/5 rounded-lg border border-white/10">
+              <div className="text-lg font-bold text-purple-400">
                 {formatCurrency(totalSaleValue)}
               </div>
-              <p className="text-xs text-muted-foreground">Valor de Venda</p>
+              <p className="text-xs text-slate-400">Valor de Venda</p>
             </div>
-            
-            <div className="text-center p-4 bg-muted/30 rounded-lg">
-              <div className="text-lg font-bold text-info">
+
+            <div className="text-center p-4 bg-white/5 rounded-lg border border-white/10">
+              <div className="text-lg font-bold text-blue-400">
                 {Math.round(avgProfitMargin)}%
               </div>
-              <p className="text-xs text-muted-foreground">Margem Média</p>
+              <p className="text-xs text-slate-400">Margem Média</p>
             </div>
           </div>
         </CardContent>
