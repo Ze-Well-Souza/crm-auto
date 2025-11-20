@@ -11,6 +11,7 @@ export interface Client {
   state: string | null;
   zip_code: string | null;
   notes: string | null;
+  partner_id: string;
   created_at: string;
   updated_at: string;
 }
