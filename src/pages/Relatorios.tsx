@@ -241,7 +241,7 @@ const Relatorios = () => {
         {/* Header - Landing Page Style */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold text-white">
               Relatórios Avançados
             </h1>
             <p className="text-slate-400">
@@ -353,63 +353,63 @@ const Relatorios = () => {
 
         {/* Key Metrics Summary */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="gradient-card">
+          <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-emerald-500/20 transition-all duration-300">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-success" />
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-300">
+                <TrendingUp className="h-4 w-4 text-emerald-400" />
                 Receitas
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-success">
+              <div className="text-2xl font-bold text-white">
                 R$ {totalReceitas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </div>
-              <p className="text-xs text-muted-foreground">Total de entradas</p>
+              <p className="text-xs text-slate-400">Total de entradas</p>
             </CardContent>
           </Card>
-          
-          <Card className="gradient-card">
+
+          <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-red-500/20 transition-all duration-300">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <TrendingDown className="h-4 w-4 text-destructive" />
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-300">
+                <TrendingDown className="h-4 w-4 text-red-400" />
                 Despesas
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-destructive">
+              <div className="text-2xl font-bold text-white">
                 R$ {totalDespesas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </div>
-              <p className="text-xs text-muted-foreground">Total de saídas</p>
+              <p className="text-xs text-slate-400">Total de saídas</p>
             </CardContent>
           </Card>
-          
-          <Card className="gradient-card">
+
+          <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-blue-500/20 transition-all duration-300">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <BarChart3 className={`h-4 w-4 ${saldo >= 0 ? 'text-success' : 'text-destructive'}`} />
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-300">
+                <BarChart3 className={`h-4 w-4 ${saldo >= 0 ? 'text-emerald-400' : 'text-red-400'}`} />
                 Saldo
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className={`text-2xl font-bold ${saldo >= 0 ? 'text-success' : 'text-destructive'}`}>
+              <div className={`text-2xl font-bold ${saldo >= 0 ? 'text-white' : 'text-white'}`}>
                 R$ {saldo.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </div>
-              <p className="text-xs text-muted-foreground">Resultado líquido</p>
+              <p className="text-xs text-slate-400">Resultado líquido</p>
             </CardContent>
           </Card>
-          
-          <Card className="gradient-card">
+
+          <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-purple-500/20 transition-all duration-300">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <PieChart className="h-4 w-4 text-primary" />
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-300">
+                <PieChart className="h-4 w-4 text-purple-400" />
                 Serviços
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">
+              <div className="text-2xl font-bold text-white">
                 {completedServiceOrders}
               </div>
-              <p className="text-xs text-muted-foreground">Ordens finalizadas</p>
+              <p className="text-xs text-slate-400">Ordens finalizadas</p>
             </CardContent>
           </Card>
         </div>
@@ -418,13 +418,13 @@ const Relatorios = () => {
         {/* Analytics Dashboard Avançado */}
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold">Analytics Dashboard</h2>
+            <h2 className="text-2xl font-bold text-white">Analytics Dashboard</h2>
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+              <Badge variant="outline" className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30">
+                <div className="w-2 h-2 bg-emerald-400 rounded-full mr-2 animate-pulse"></div>
                 Tempo Real
               </Badge>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="border-white/10 text-white hover:bg-white/10">
                 <Settings className="h-4 w-4 mr-2" />
                 Configurar
               </Button>

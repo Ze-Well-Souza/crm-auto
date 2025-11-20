@@ -133,22 +133,22 @@ export const WhatsAppIntegration: React.FC<WhatsAppIntegrationProps> = ({
 
   return (
     <div className={`space-y-6 ${className}`}>
-      <Card>
+      <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MessageCircle className="w-5 h-5 text-green-600" />
+          <CardTitle className="flex items-center gap-2 text-white">
+            <MessageCircle className="w-5 h-5 text-emerald-400" />
             Integração WhatsApp
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-slate-400">
             Envie mensagens e templates via WhatsApp para seus clientes
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="message" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="message">Mensagem Livre</TabsTrigger>
-              <TabsTrigger value="template">Templates</TabsTrigger>
-              <TabsTrigger value="settings">Configurações</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-3 bg-white/5 border border-white/10 p-1">
+              <TabsTrigger value="message" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-300">Mensagem Livre</TabsTrigger>
+              <TabsTrigger value="template" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-300">Templates</TabsTrigger>
+              <TabsTrigger value="settings" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-300">Configurações</TabsTrigger>
             </TabsList>
 
             {/* Mensagem Livre */}
@@ -156,18 +156,19 @@ export const WhatsAppIntegration: React.FC<WhatsAppIntegrationProps> = ({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="phone">Número do WhatsApp</Label>
+                    <Label htmlFor="phone" className="text-blue-400">Número do WhatsApp</Label>
                     <Input
                       id="phone"
                       placeholder="(11) 99999-9999"
                       value={phoneNumber}
                       onChange={handlePhoneChange}
                       maxLength={15}
+                      className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="message">Mensagem</Label>
+                    <Label htmlFor="message" className="text-blue-400">Mensagem</Label>
                     <Textarea
                       id="message"
                       placeholder="Digite sua mensagem..."
@@ -175,26 +176,27 @@ export const WhatsAppIntegration: React.FC<WhatsAppIntegrationProps> = ({
                       onChange={(e) => setMessage(e.target.value)}
                       rows={6}
                       maxLength={1000}
+                      className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
                     />
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="text-xs text-slate-400 mt-1">
                       {message.length}/1000 caracteres
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-2">
-                    <Button 
+                    <Button
                       onClick={handleWhatsAppWebClick}
                       disabled={!phoneNumber || !message}
                       variant="outline"
-                      className="w-full"
+                      className="w-full border-white/10 text-white hover:bg-white/10"
                     >
                       <MessageCircle className="w-4 h-4 mr-2" />
                       WhatsApp Web
                     </Button>
-                    <Button 
+                    <Button
                       onClick={handleSendMessage}
                       disabled={!phoneNumber || !message || loading}
-                      className="w-full"
+                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0"
                     >
                       <Send className="w-4 h-4 mr-2" />
                       {loading ? 'Enviando...' : 'API Business'}

@@ -144,7 +144,7 @@ const Configuracoes = () => {
         {/* Header - Landing Page Style */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold text-white">
               Configurações do Sistema
             </h1>
             <p className="text-slate-400">Gerencie as configurações da sua oficina</p>
@@ -563,11 +563,11 @@ const Configuracoes = () => {
               </div>
             </div>
             
-            <div className="p-4 bg-muted/50 rounded-lg">
+            <div className="p-4 bg-white/5 border border-white/10 rounded-lg">
               <div className="flex items-start gap-3">
-                <Palette className="h-5 w-5 text-primary mt-0.5" />
+                <Palette className="h-5 w-5 text-purple-400 mt-0.5" />
                 <div className="space-y-1">
-                  <p className="text-sm font-medium">Tema Atual: {
+                  <p className="text-sm font-medium text-white">Tema Atual: {
                     theme === "light" ? "Claro" : 
                     theme === "dark" ? "Escuro" : 
                     "Sistema (Automático)"

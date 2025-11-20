@@ -82,16 +82,16 @@ export const OrderForm = ({ initialData, onSubmit, onCancel }: OrderFormProps) =
             name="partner_id"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Parceiro *</FormLabel>
+                <FormLabel className="text-blue-400">Parceiro *</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white/5 border-white/10 text-white">
                       <SelectValue placeholder="Selecione o parceiro" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent>
+                  <SelectContent className="bg-slate-900 border-white/10">
                     {partners.filter(p => p.status === 'ativo').map(partner => (
-                      <SelectItem key={partner.id} value={partner.id}>
+                      <SelectItem key={partner.id} value={partner.id} className="text-white hover:bg-white/10">
                         {partner.name}
                       </SelectItem>
                     ))}
@@ -107,9 +107,9 @@ export const OrderForm = ({ initialData, onSubmit, onCancel }: OrderFormProps) =
             name="order_number"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Número do Pedido *</FormLabel>
+                <FormLabel className="text-blue-400">Número do Pedido *</FormLabel>
                 <FormControl>
-                  <Input placeholder="PED-001" {...field} />
+                  <Input placeholder="PED-001" {...field} className="bg-white/5 border-white/10 text-white placeholder:text-slate-500" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -117,17 +117,17 @@ export const OrderForm = ({ initialData, onSubmit, onCancel }: OrderFormProps) =
           />
         </div>
 
-        <div className="border-t pt-4">
-          <h3 className="font-medium mb-3">Dados do Cliente</h3>
+        <div className="border-t border-white/10 pt-4">
+          <h3 className="font-medium mb-3 text-white">Dados do Cliente</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <FormField
               control={form.control}
               name="customer_name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nome *</FormLabel>
+                  <FormLabel className="text-blue-400">Nome *</FormLabel>
                   <FormControl>
-                    <Input placeholder="Nome do cliente" {...field} />
+                    <Input placeholder="Nome do cliente" {...field} className="bg-white/5 border-white/10 text-white placeholder:text-slate-500" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -139,9 +139,9 @@ export const OrderForm = ({ initialData, onSubmit, onCancel }: OrderFormProps) =
               name="customer_phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Telefone</FormLabel>
+                  <FormLabel className="text-blue-400">Telefone</FormLabel>
                   <FormControl>
-                    <Input placeholder="(00) 00000-0000" {...field} value={field.value || ''} />
+                    <Input placeholder="(00) 00000-0000" {...field} value={field.value || ''} className="bg-white/5 border-white/10 text-white placeholder:text-slate-500" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -153,9 +153,9 @@ export const OrderForm = ({ initialData, onSubmit, onCancel }: OrderFormProps) =
               name="customer_email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel className="text-blue-400">Email</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="cliente@email.com" {...field} value={field.value || ''} />
+                    <Input type="email" placeholder="cliente@email.com" {...field} value={field.value || ''} className="bg-white/5 border-white/10 text-white placeholder:text-slate-500" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -164,15 +164,15 @@ export const OrderForm = ({ initialData, onSubmit, onCancel }: OrderFormProps) =
           </div>
         </div>
 
-        <div className="border-t pt-4">
+        <div className="border-t border-white/10 pt-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-medium">Itens do Pedido</h3>
+            <h3 className="font-medium text-white">Itens do Pedido</h3>
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={() => append({ name: '', quantity: 1, unit_price: 0, total: 0 })}
-              className="gap-2"
+              className="gap-2 border-white/10 text-white hover:bg-white/10"
             >
               <Plus className="h-4 w-4" />
               Adicionar Item
@@ -181,7 +181,7 @@ export const OrderForm = ({ initialData, onSubmit, onCancel }: OrderFormProps) =
 
           <div className="space-y-3">
             {fields.map((field, index) => (
-              <div key={field.id} className="flex gap-2 items-start p-3 border rounded-lg">
+              <div key={field.id} className="flex gap-2 items-start p-3 border border-white/10 rounded-lg bg-white/5">
                 <div className="flex-1 grid grid-cols-1 md:grid-cols-4 gap-2">
                   <FormField
                     control={form.control}
@@ -189,7 +189,7 @@ export const OrderForm = ({ initialData, onSubmit, onCancel }: OrderFormProps) =
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input placeholder="Nome do item" {...field} />
+                          <Input placeholder="Nome do item" {...field} className="bg-white/5 border-white/10 text-white placeholder:text-slate-500" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -210,6 +210,7 @@ export const OrderForm = ({ initialData, onSubmit, onCancel }: OrderFormProps) =
                               field.onChange(parseFloat(e.target.value));
                               updateItemTotal(index);
                             }}
+                            className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
                           />
                         </FormControl>
                         <FormMessage />
@@ -232,6 +233,7 @@ export const OrderForm = ({ initialData, onSubmit, onCancel }: OrderFormProps) =
                               field.onChange(parseFloat(e.target.value));
                               updateItemTotal(index);
                             }}
+                            className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
                           />
                         </FormControl>
                         <FormMessage />
@@ -251,6 +253,7 @@ export const OrderForm = ({ initialData, onSubmit, onCancel }: OrderFormProps) =
                             placeholder="Total"
                             {...field}
                             disabled
+                            className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
                           />
                         </FormControl>
                       </FormItem>
@@ -264,7 +267,7 @@ export const OrderForm = ({ initialData, onSubmit, onCancel }: OrderFormProps) =
                     variant="ghost"
                     size="icon"
                     onClick={() => remove(index)}
-                    className="text-red-600"
+                    className="text-red-400 hover:text-red-300 hover:bg-red-500/20"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -273,10 +276,10 @@ export const OrderForm = ({ initialData, onSubmit, onCancel }: OrderFormProps) =
             ))}
           </div>
 
-          <div className="mt-3 p-3 bg-muted rounded-lg">
+          <div className="mt-3 p-3 bg-white/5 border border-white/10 rounded-lg">
             <div className="flex justify-between items-center">
-              <span className="font-semibold">Total do Pedido:</span>
-              <span className="text-lg font-bold text-green-600">
+              <span className="font-semibold text-white">Total do Pedido:</span>
+              <span className="text-lg font-bold text-emerald-400">
                 R$ {form.watch('total_amount').toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </span>
             </div>
@@ -289,21 +292,21 @@ export const OrderForm = ({ initialData, onSubmit, onCancel }: OrderFormProps) =
             name="status"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Status</FormLabel>
+                <FormLabel className="text-blue-400">Status</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value || 'pendente'}>
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white/5 border-white/10 text-white">
                       <SelectValue />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent>
-                    <SelectItem value="pendente">Pendente</SelectItem>
-                    <SelectItem value="confirmado">Confirmado</SelectItem>
-                    <SelectItem value="em_preparacao">Em Preparação</SelectItem>
-                    <SelectItem value="pronto">Pronto</SelectItem>
-                    <SelectItem value="em_entrega">Em Entrega</SelectItem>
-                    <SelectItem value="entregue">Entregue</SelectItem>
-                    <SelectItem value="cancelado">Cancelado</SelectItem>
+                  <SelectContent className="bg-slate-900 border-white/10">
+                    <SelectItem value="pendente" className="text-white hover:bg-white/10">Pendente</SelectItem>
+                    <SelectItem value="confirmado" className="text-white hover:bg-white/10">Confirmado</SelectItem>
+                    <SelectItem value="em_preparacao" className="text-white hover:bg-white/10">Em Preparação</SelectItem>
+                    <SelectItem value="pronto" className="text-white hover:bg-white/10">Pronto</SelectItem>
+                    <SelectItem value="em_entrega" className="text-white hover:bg-white/10">Em Entrega</SelectItem>
+                    <SelectItem value="entregue" className="text-white hover:bg-white/10">Entregue</SelectItem>
+                    <SelectItem value="cancelado" className="text-white hover:bg-white/10">Cancelado</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -316,17 +319,17 @@ export const OrderForm = ({ initialData, onSubmit, onCancel }: OrderFormProps) =
             name="payment_status"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Status Pagamento</FormLabel>
+                <FormLabel className="text-blue-400">Status Pagamento</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value || 'pendente'}>
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white/5 border-white/10 text-white">
                       <SelectValue />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent>
-                    <SelectItem value="pendente">Pendente</SelectItem>
-                    <SelectItem value="pago">Pago</SelectItem>
-                    <SelectItem value="estornado">Estornado</SelectItem>
+                  <SelectContent className="bg-slate-900 border-white/10">
+                    <SelectItem value="pendente" className="text-white hover:bg-white/10">Pendente</SelectItem>
+                    <SelectItem value="pago" className="text-white hover:bg-white/10">Pago</SelectItem>
+                    <SelectItem value="estornado" className="text-white hover:bg-white/10">Estornado</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -339,9 +342,9 @@ export const OrderForm = ({ initialData, onSubmit, onCancel }: OrderFormProps) =
             name="payment_method"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Método de Pagamento</FormLabel>
+                <FormLabel className="text-blue-400">Método de Pagamento</FormLabel>
                 <FormControl>
-                  <Input placeholder="Ex: Cartão, Pix, Dinheiro" {...field} value={field.value || ''} />
+                  <Input placeholder="Ex: Cartão, Pix, Dinheiro" {...field} value={field.value || ''} className="bg-white/5 border-white/10 text-white placeholder:text-slate-500" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -355,9 +358,9 @@ export const OrderForm = ({ initialData, onSubmit, onCancel }: OrderFormProps) =
             name="delivery_date"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Data de Entrega</FormLabel>
+                <FormLabel className="text-blue-400">Data de Entrega</FormLabel>
                 <FormControl>
-                  <Input type="date" {...field} value={field.value || ''} />
+                  <Input type="date" {...field} value={field.value || ''} className="bg-slate-900 border-white/10 text-white" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -369,9 +372,9 @@ export const OrderForm = ({ initialData, onSubmit, onCancel }: OrderFormProps) =
             name="marketplace_reference"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Ref. Externa (Marketplace)</FormLabel>
+                <FormLabel className="text-blue-400">Ref. Externa (Marketplace)</FormLabel>
                 <FormControl>
-                  <Input placeholder="ID do pedido no marketplace" {...field} value={field.value || ''} />
+                  <Input placeholder="ID do pedido no marketplace" {...field} value={field.value || ''} className="bg-white/5 border-white/10 text-white placeholder:text-slate-500" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -384,13 +387,14 @@ export const OrderForm = ({ initialData, onSubmit, onCancel }: OrderFormProps) =
           name="delivery_address"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Endereço de Entrega</FormLabel>
+              <FormLabel className="text-blue-400">Endereço de Entrega</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Endereço completo de entrega..."
                   rows={2}
                   {...field}
                   value={field.value || ''}
+                  className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
                 />
               </FormControl>
               <FormMessage />
@@ -403,13 +407,14 @@ export const OrderForm = ({ initialData, onSubmit, onCancel }: OrderFormProps) =
           name="notes"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Observações</FormLabel>
+              <FormLabel className="text-blue-400">Observações</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Informações adicionais do pedido..."
                   rows={2}
                   {...field}
                   value={field.value || ''}
+                  className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
                 />
               </FormControl>
               <FormMessage />
@@ -418,10 +423,10 @@ export const OrderForm = ({ initialData, onSubmit, onCancel }: OrderFormProps) =
         />
 
         <div className="flex gap-3 justify-end pt-4">
-          <Button type="button" variant="outline" onClick={onCancel}>
+          <Button type="button" variant="outline" onClick={onCancel} className="border-white/10 text-white hover:bg-white/10">
             Cancelar
           </Button>
-          <Button type="submit">
+          <Button type="submit" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0">
             {initialData ? 'Atualizar' : 'Cadastrar'}
           </Button>
         </div>

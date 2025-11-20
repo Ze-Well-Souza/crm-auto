@@ -122,23 +122,23 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className = "" }) 
   };
 
   return (
-    <div className={`flex h-[600px] border rounded-lg overflow-hidden ${className}`}>
+    <div className={`flex h-[600px] border border-white/10 rounded-lg overflow-hidden bg-white/5 backdrop-blur-xl ${className}`}>
       {/* Lista de Conversas */}
-      <div className="w-1/3 border-r bg-gray-50">
-        <div className="p-4 border-b bg-white">
+      <div className="w-1/3 border-r border-white/10 bg-white/5">
+        <div className="p-4 border-b border-white/10 bg-white/5">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold text-gray-900">Conversas</h3>
-            <Button size="sm" variant="outline">
-              <Users className="w-4 h-4" />
+            <h3 className="font-semibold text-white">Conversas</h3>
+            <Button size="sm" variant="outline" className="border-white/10 text-white hover:bg-white/10">
+              <Users className="w-4 w-4" />
             </Button>
           </div>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
               placeholder="Buscar conversas..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-slate-500"
             />
           </div>
         </div>
@@ -151,46 +151,46 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className = "" }) 
                 onClick={() => handleConversationSelect(conversation.id)}
                 className={`p-3 rounded-lg cursor-pointer transition-colors mb-2 ${
                   activeConversation === conversation.id
-                    ? 'bg-blue-100 border-blue-200'
-                    : 'bg-white hover:bg-gray-100'
+                    ? 'bg-blue-500/20 border border-blue-500/30'
+                    : 'bg-white/5 hover:bg-white/10 border border-white/10'
                 }`}
               >
                 <div className="flex items-start space-x-3">
                   <Avatar className="w-10 h-10">
                     <AvatarImage src={conversation.avatar} />
-                    <AvatarFallback>
+                    <AvatarFallback className="bg-purple-500/20 text-purple-400">
                       {conversation.title?.charAt(0) || 'U'}
                     </AvatarFallback>
                   </Avatar>
-                  
+
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <h4 className="font-medium text-sm text-gray-900 truncate">
+                      <h4 className="font-medium text-sm text-white truncate">
                         {conversation.title}
                       </h4>
                       {conversation.unreadCount > 0 && (
-                        <Badge className="bg-red-500 text-white text-xs">
+                        <Badge className="bg-red-500/20 text-red-300 border-0 text-xs">
                           {conversation.unreadCount}
                         </Badge>
                       )}
                     </div>
-                    
+
                     {conversation.lastMessage && (
-                      <p className="text-xs text-gray-600 truncate mt-1">
+                      <p className="text-xs text-slate-400 truncate mt-1">
                         {conversation.lastMessage.content}
                       </p>
                     )}
-                    
+
                     <div className="flex items-center justify-between mt-2">
-                      <span className="text-xs text-gray-500">
-                        {formatDistanceToNow(conversation.updatedAt, { 
-                          addSuffix: true, 
-                          locale: ptBR 
+                      <span className="text-xs text-slate-500">
+                        {formatDistanceToNow(conversation.updatedAt, {
+                          addSuffix: true,
+                          locale: ptBR
                         })}
                       </span>
                       <div className="flex items-center space-x-1">
                         {conversation.type === 'group' && (
-                          <Users className="w-3 h-3 text-gray-400" />
+                          <Users className="w-3 h-3 text-slate-400" />
                         )}
                       </div>
                     </div>

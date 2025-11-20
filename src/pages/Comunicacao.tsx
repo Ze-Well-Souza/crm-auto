@@ -47,60 +47,60 @@ const Comunicacao = () => {
       <div className="space-y-6">
         {/* Header */}
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold text-gradient-primary">
+          <h1 className="text-3xl font-bold text-white">
             Central de Comunicação
           </h1>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-slate-400 text-lg">
             Gerencie todas as comunicações com seus clientes em um só lugar
           </p>
         </div>
 
         {/* Estatísticas Gerais */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="glass border-primary/20">
+          <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-purple-500/20 transition-all duration-300">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Conversas Ativas</p>
-                  <div className="text-2xl font-bold text-primary">{totalConversations}</div>
+                  <p className="text-sm text-slate-300">Conversas Ativas</p>
+                  <div className="text-2xl font-bold text-white">{totalConversations}</div>
                 </div>
-                <Users className="h-8 w-8 text-primary" />
+                <Users className="h-8 w-8 text-purple-400" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="glass border-warning/20">
+          <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-yellow-500/20 transition-all duration-300">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Mensagens Não Lidas</p>
-                  <div className="text-2xl font-bold text-warning">{unreadMessages}</div>
+                  <p className="text-sm text-slate-300">Mensagens Não Lidas</p>
+                  <div className="text-2xl font-bold text-white">{unreadMessages}</div>
                 </div>
-                <Bell className="h-8 w-8 text-warning" />
+                <Bell className="h-8 w-8 text-yellow-400" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="glass border-info/20">
+          <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-blue-500/20 transition-all duration-300">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Total de Mensagens</p>
-                  <div className="text-2xl font-bold text-info">{totalMessages}</div>
+                  <p className="text-sm text-slate-300">Total de Mensagens</p>
+                  <div className="text-2xl font-bold text-white">{totalMessages}</div>
                 </div>
-                <MessageCircle className="h-8 w-8 text-info" />
+                <MessageCircle className="h-8 w-8 text-blue-400" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="glass border-success/20">
+          <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-emerald-500/20 transition-all duration-300">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Canais Ativos</p>
-                  <div className="text-2xl font-bold text-success">{activeChannels.length}</div>
+                  <p className="text-sm text-slate-300">Canais Ativos</p>
+                  <div className="text-2xl font-bold text-white">{activeChannels.length}</div>
                 </div>
-                <BarChart3 className="h-8 w-8 text-success" />
+                <BarChart3 className="h-8 w-8 text-emerald-400" />
               </div>
             </CardContent>
           </Card>
@@ -108,24 +108,24 @@ const Comunicacao = () => {
 
         {/* Abas de Comunicação */}
         <Tabs defaultValue="chat" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="chat" className="flex items-center gap-2">
+          <TabsList className="grid w-full grid-cols-5 bg-white/5 border border-white/10 p-1">
+            <TabsTrigger value="chat" className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-300">
               <Users className="h-4 w-4" />
               Chat Interno
             </TabsTrigger>
-            <TabsTrigger value="whatsapp" className="flex items-center gap-2">
+            <TabsTrigger value="whatsapp" className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-300">
               <MessageCircle className="h-4 w-4" />
               WhatsApp
             </TabsTrigger>
-            <TabsTrigger value="email" className="flex items-center gap-2">
+            <TabsTrigger value="email" className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-300">
               <Mail className="h-4 w-4" />
               Email
             </TabsTrigger>
-            <TabsTrigger value="notifications" className="flex items-center gap-2">
+            <TabsTrigger value="notifications" className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-300">
               <Bell className="h-4 w-4" />
               Notificações
             </TabsTrigger>
-            <TabsTrigger value="settings" className="flex items-center gap-2">
+            <TabsTrigger value="settings" className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-300">
               <Settings className="h-4 w-4" />
               Configurações
             </TabsTrigger>

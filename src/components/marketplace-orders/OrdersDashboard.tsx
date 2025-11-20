@@ -111,9 +111,9 @@ export const OrdersDashboard = () => {
       )}
 
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-slate-900 border-white/10">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-blue-400">
               {editingOrderId ? 'Editar Pedido' : 'Novo Pedido Manual'}
             </DialogTitle>
           </DialogHeader>

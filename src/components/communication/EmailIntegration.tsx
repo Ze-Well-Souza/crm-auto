@@ -204,22 +204,22 @@ Equipe CRM Parceiro`,
 
   return (
     <div className={`space-y-6 ${className}`}>
-      <Card>
+      <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Mail className="w-5 h-5 text-blue-600" />
+          <CardTitle className="flex items-center gap-2 text-white">
+            <Mail className="w-5 h-5 text-blue-400" />
             Integração de Email
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-slate-400">
             Envie emails personalizados e templates para seus clientes
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="compose" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="compose">Compor Email</TabsTrigger>
-              <TabsTrigger value="template">Templates</TabsTrigger>
-              <TabsTrigger value="settings">Configurações</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-3 bg-white/5 border border-white/10 p-1">
+              <TabsTrigger value="compose" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-300">Compor Email</TabsTrigger>
+              <TabsTrigger value="template" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-300">Templates</TabsTrigger>
+              <TabsTrigger value="settings" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-300">Configurações</TabsTrigger>
             </TabsList>
 
             {/* Compor Email */}
@@ -227,25 +227,27 @@ Equipe CRM Parceiro`,
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="recipients">Destinatários</Label>
+                    <Label htmlFor="recipients" className="text-blue-400">Destinatários</Label>
                     <Input
                       id="recipients"
                       placeholder="email1@exemplo.com, email2@exemplo.com"
                       value={recipients}
                       onChange={(e) => setRecipients(e.target.value)}
+                      className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
                     />
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="text-xs text-slate-400 mt-1">
                       Separe múltiplos emails com vírgula
                     </div>
                   </div>
 
                   <div>
-                    <Label htmlFor="subject">Assunto</Label>
+                    <Label htmlFor="subject" className="text-blue-400">Assunto</Label>
                     <Input
                       id="subject"
                       placeholder="Assunto do email"
                       value={subject}
                       onChange={(e) => setSubject(e.target.value)}
+                      className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
                     />
                   </div>
 
