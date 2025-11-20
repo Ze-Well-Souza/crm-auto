@@ -28,11 +28,11 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <div className="flex h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       <Sidebar />
-      <main className="flex-1 overflow-auto bg-gray-50 dark:bg-transparent">
+      <main className="flex-1 overflow-auto bg-transparent">
         {/* Modern top bar with enhanced glassmorphism */}
-        <div className="sticky top-0 z-10 bg-white dark:bg-slate-900/80 dark:backdrop-blur-xl border-b border-gray-200 dark:border-slate-700/30 shadow-sm dark:shadow-lg">
+        <div className="sticky top-0 z-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-700/30 shadow-sm dark:shadow-lg">
           <div className="flex items-center justify-between px-6 py-4">
             <div className="flex-1">
               {/* Search bar */}
@@ -42,7 +42,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   <input
                     type="text"
                     placeholder="Buscar clientes, veículos, ordens..."
-                    className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700/30 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
+                    className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/30 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
                   />
                 </div>
               </div>
@@ -53,7 +53,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="relative h-10 w-10 rounded-xl bg-white dark:bg-slate-800/50 hover:bg-gray-100 dark:hover:bg-slate-800/70 border border-gray-200 dark:border-slate-700/30 transition-all duration-300"
+                className="relative h-10 w-10 rounded-xl bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-800/70 border border-slate-200 dark:border-slate-700/30 transition-all duration-300"
               >
                 <Bell className="h-5 w-5 text-slate-600 dark:text-slate-300" />
                 <span className="absolute -top-1 -right-1 h-3 w-3 bg-gradient-to-r from-red-500 to-pink-500 rounded-full animate-pulse"></span>
@@ -64,7 +64,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="flex items-center space-x-3 bg-white dark:bg-slate-800/50 rounded-2xl px-4 py-2 border border-gray-200 dark:border-slate-700/30 hover:bg-gray-100 dark:hover:bg-slate-800/70 transition-all duration-300 h-auto"
+                    className="flex items-center space-x-3 bg-slate-100 dark:bg-slate-800/50 rounded-2xl px-4 py-2 border border-slate-200 dark:border-slate-700/30 hover:bg-slate-200 dark:hover:bg-slate-800/70 transition-all duration-300 h-auto"
                   >
                     <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
                       <User className="h-4 w-4 text-white" />
