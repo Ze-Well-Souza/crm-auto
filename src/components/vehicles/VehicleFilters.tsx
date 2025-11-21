@@ -91,7 +91,7 @@ export const VehicleFilters = ({ onFiltersChange, activeFilters }: VehicleFilter
   };
 
   return (
-    <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl">
+    <Card className="bg-white/80 dark:bg-white/5 border border-slate-200/50 dark:border-white/10 backdrop-blur-xl shadow-xl">
       <CardContent className="pt-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4 flex-1">
@@ -104,7 +104,7 @@ export const VehicleFilters = ({ onFiltersChange, activeFilters }: VehicleFilter
                 className={cn(
                   activeFilters.highMileage
                     ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg shadow-purple-500/50"
-                    : "border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+                    : "border-slate-300 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
                 )}
               >
                 <Gauge className="h-3 w-3 mr-1" />
@@ -118,7 +118,7 @@ export const VehicleFilters = ({ onFiltersChange, activeFilters }: VehicleFilter
                 className={cn(
                   activeFilters.maintenanceDue
                     ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg shadow-purple-500/50"
-                    : "border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+                    : "border-slate-300 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
                 )}
               >
                 <AlertTriangle className="h-3 w-3 mr-1" />
@@ -132,7 +132,7 @@ export const VehicleFilters = ({ onFiltersChange, activeFilters }: VehicleFilter
                 className={cn(
                   activeFilters.flexFuel
                     ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg shadow-purple-500/50"
-                    : "border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+                    : "border-slate-300 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
                 )}
               >
                 <Fuel className="h-3 w-3 mr-1" />
@@ -146,7 +146,7 @@ export const VehicleFilters = ({ onFiltersChange, activeFilters }: VehicleFilter
                 <Button
                   variant="outline"
                   size="sm"
-                  className="relative border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+                  className="relative border-slate-300 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
                 >
                   <Filter className="h-3 w-3 mr-1" />
                   Filtros Avançados

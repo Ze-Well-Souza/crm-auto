@@ -110,41 +110,41 @@ export const VehicleDashboard = ({ vehicle, open, onOpenChange }: VehicleDashboa
           <TabsContent value="overview" className="space-y-6">
             {/* Key Metrics */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Card className="text-center">
+              <Card className="text-center border-l-4 border-l-emerald-500">
                 <CardContent className="pt-4">
-                  <DollarSign className="h-6 w-6 text-success mx-auto mb-2" />
-                  <div className="text-lg font-bold text-success">
+                  <DollarSign className="h-6 w-6 text-emerald-500 dark:text-emerald-400 mx-auto mb-2" />
+                  <div className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
                     {formatCurrency(vehicleStats.totalSpent)}
                   </div>
-                  <p className="text-xs text-muted-foreground">Gasto Total</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">Gasto Total</p>
                 </CardContent>
               </Card>
 
-              <Card className="text-center">
+              <Card className="text-center border-l-4 border-l-blue-500">
                 <CardContent className="pt-4">
-                  <Wrench className="h-6 w-6 text-primary mx-auto mb-2" />
+                  <Wrench className="h-6 w-6 text-blue-500 dark:text-blue-400 mx-auto mb-2" />
                   <div className="text-lg font-bold">{vehicleStats.serviceCount}</div>
-                  <p className="text-xs text-muted-foreground">Serviços</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">Serviços</p>
                 </CardContent>
               </Card>
 
-              <Card className="text-center">
+              <Card className="text-center border-l-4 border-l-purple-500">
                 <CardContent className="pt-4">
-                  <TrendingUp className="h-6 w-6 text-info mx-auto mb-2" />
+                  <TrendingUp className="h-6 w-6 text-purple-500 dark:text-purple-400 mx-auto mb-2" />
                   <div className="text-lg font-bold">
                     {formatCurrency(vehicleStats.avgServiceCost)}
                   </div>
-                  <p className="text-xs text-muted-foreground">Custo Médio</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">Custo Médio</p>
                 </CardContent>
               </Card>
 
-              <Card className="text-center">
+              <Card className="text-center border-l-4 border-l-orange-500">
                 <CardContent className="pt-4">
-                  <Car className="h-6 w-6 text-warning mx-auto mb-2" />
+                  <Car className="h-6 w-6 text-orange-500 dark:text-orange-400 mx-auto mb-2" />
                   <div className="text-lg font-bold">
                     {formatCurrency(vehicleStats.marketValue)}
                   </div>
-                  <p className="text-xs text-muted-foreground">Valor FIPE</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">Valor FIPE</p>
                 </CardContent>
               </Card>
             </div>

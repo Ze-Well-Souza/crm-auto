@@ -290,13 +290,13 @@ export const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProp
       {/* Header com controles */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-white">Analytics Avançado</h2>
-          <p className="text-slate-400">Métricas detalhadas e projeções de negócio</p>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Analytics Avançado</h2>
+          <p className="text-slate-600 dark:text-slate-400">Métricas detalhadas e projeções de negócio</p>
         </div>
         
         <div className="flex items-center gap-2">
           <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-[140px] bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 text-slate-900 dark:text-white">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -324,36 +324,36 @@ export const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProp
 
       {/* Métricas principais */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-white/5 border-white/10">
+        <Card className="bg-white dark:bg-white/5 border-gray-200 dark:border-white/10">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-white">Taxa de Retenção</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-700 dark:text-white">Taxa de Retenção</CardTitle>
             <Users className="h-4 w-4 text-purple-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">{analytics.client_retention_rate.toFixed(1)}%</div>
-            <p className="text-xs text-slate-400">
+            <div className="text-2xl font-bold text-slate-900 dark:text-white">{analytics.client_retention_rate.toFixed(1)}%</div>
+            <p className="text-xs text-slate-600 dark:text-slate-400">
               Clientes que retornaram
             </p>
             <Progress value={analytics.client_retention_rate} className="mt-2" />
           </CardContent>
         </Card>
 
-        <Card className="bg-white/5 border-white/10">
+        <Card className="bg-white dark:bg-white/5 border-gray-200 dark:border-white/10">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-white">Valor Médio/Serviço</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-700 dark:text-white">Valor Médio/Serviço</CardTitle>
             <DollarSign className="h-4 w-4 text-purple-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">{formatCurrency(analytics.average_service_value)}</div>
-            <p className="text-xs text-slate-400">
+            <div className="text-2xl font-bold text-slate-900 dark:text-white">{formatCurrency(analytics.average_service_value)}</div>
+            <p className="text-xs text-slate-600 dark:text-slate-400">
               Ticket médio por atendimento
             </p>
           </CardContent>
         </Card>
 
-        <Card className="bg-white/5 border-white/10">
+        <Card className="bg-white dark:bg-white/5 border-gray-200 dark:border-white/10">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-white">Tendência Receita</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-700 dark:text-white">Tendência Receita</CardTitle>
             <TrendingUp className="h-4 w-4 text-blue-400" />
           </CardHeader>
           <CardContent>
@@ -378,13 +378,13 @@ export const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProp
           </CardContent>
         </Card>
 
-        <Card className="bg-white/5 border-white/10">
+        <Card className="bg-white dark:bg-white/5 border-gray-200 dark:border-white/10">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-white">Projeção 6 Meses</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-700 dark:text-white">Projeção 6 Meses</CardTitle>
             <Target className="h-4 w-4 text-purple-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">
+            <div className="text-2xl font-bold text-slate-900 dark:text-white">
               {formatCurrency(analytics.cash_flow_projection.reduce((sum, p) => sum + p.net_flow, 0))}
             </div>
             <p className="text-xs text-slate-400">
@@ -399,25 +399,25 @@ export const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProp
         <TabsList className="grid w-full grid-cols-4 bg-white/5 border-white/10">
           <TabsTrigger
             value="overview"
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-400"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-700 dark:text-slate-400"
           >
             Visão Geral
           </TabsTrigger>
           <TabsTrigger
             value="revenue"
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-400"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-700 dark:text-slate-400"
           >
             Receita
           </TabsTrigger>
           <TabsTrigger
             value="services"
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-400"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-700 dark:text-slate-400"
           >
             Serviços
           </TabsTrigger>
           <TabsTrigger
             value="projections"
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-400"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-700 dark:text-slate-400"
           >
             Projeções
           </TabsTrigger>

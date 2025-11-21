@@ -72,7 +72,7 @@ export const ClientCard = ({ client, onUpdate, onQuickAction }: ClientCardProps)
   return (
     <>
       <Card
-        className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-purple-500/20 transition-all duration-300 cursor-pointer group relative overflow-hidden"
+        className="bg-white/80 dark:bg-white/5 border border-slate-200/50 dark:border-white/10 backdrop-blur-xl shadow-xl hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 cursor-pointer group relative overflow-hidden"
         onClick={handleCardClick}
       >
       {/* Background gradient based on tier - Landing Page Style */}
@@ -88,25 +88,25 @@ export const ClientCard = ({ client, onUpdate, onQuickAction }: ClientCardProps)
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <Avatar className="h-12 w-12 border-2 border-purple-500/30">
-              <AvatarFallback className="bg-purple-500/20 text-purple-300 font-semibold">
+              <AvatarFallback className="bg-purple-500/20 text-purple-600 dark:text-purple-300 font-semibold">
                 {getInitials(client.name)}
               </AvatarFallback>
             </Avatar>
             <div>
-              <CardTitle className="text-lg flex items-center gap-2 text-white">
+              <CardTitle className="text-lg flex items-center gap-2 text-slate-900 dark:text-white">
                 {client.name}
                 <Badge className={cn(
                   "text-xs border-0",
-                  tier.label === 'VIP' && "bg-amber-500/20 text-amber-300",
-                  tier.label === 'Premium' && "bg-purple-500/20 text-purple-300",
-                  tier.label === 'Regular' && "bg-blue-500/20 text-blue-300",
-                  tier.label === 'Novo' && "bg-slate-500/20 text-slate-300"
+                  tier.label === 'VIP' && "bg-amber-500/20 text-amber-600 dark:text-amber-300",
+                  tier.label === 'Premium' && "bg-purple-500/20 text-purple-600 dark:text-purple-300",
+                  tier.label === 'Regular' && "bg-blue-500/20 text-blue-600 dark:text-blue-300",
+                  tier.label === 'Novo' && "bg-slate-500/20 text-slate-700 dark:text-slate-300"
                 )}>
                   {tier.label}
                 </Badge>
               </CardTitle>
               {client.cpf_cnpj && (
-                <CardDescription className="text-slate-400">
+                <CardDescription className="text-slate-600 dark:text-slate-400">
                   CPF/CNPJ: {client.cpf_cnpj}
                 </CardDescription>
               )}
@@ -122,7 +122,7 @@ export const ClientCard = ({ client, onUpdate, onQuickAction }: ClientCardProps)
           {client.email && (
             <div className="flex items-center gap-2 text-sm">
               <Mail className="h-4 w-4 text-slate-400" />
-              <span className="truncate flex-1 text-slate-300">{client.email}</span>
+              <span className="truncate flex-1 text-slate-700 dark:text-slate-300">{client.email}</span>
               <Button
                 size="sm"
                 variant="ghost"
@@ -137,7 +137,7 @@ export const ClientCard = ({ client, onUpdate, onQuickAction }: ClientCardProps)
           {client.phone && (
             <div className="flex items-center gap-2 text-sm">
               <Phone className="h-4 w-4 text-slate-400" />
-              <span className="flex-1 text-slate-300">{formatPhone(client.phone)}</span>
+              <span className="flex-1 text-slate-700 dark:text-slate-300">{formatPhone(client.phone)}</span>
               <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <Button
                   size="sm"
@@ -176,7 +176,7 @@ export const ClientCard = ({ client, onUpdate, onQuickAction }: ClientCardProps)
                 {formatCurrency(clientMetrics.totalSpent)}
               </span>
             </div>
-            <p className="text-xs text-slate-400">Total gasto</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400">Total gasto</p>
           </div>
 
           <div className="text-center">
@@ -186,7 +186,7 @@ export const ClientCard = ({ client, onUpdate, onQuickAction }: ClientCardProps)
                 {clientMetrics.vehicleCount} veículo{clientMetrics.vehicleCount !== 1 ? 's' : ''}
               </span>
             </div>
-            <p className="text-xs text-slate-400">Cadastrado{clientMetrics.vehicleCount !== 1 ? 's' : ''}</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400">Cadastrado{clientMetrics.vehicleCount !== 1 ? 's' : ''}</p>
           </div>
         </div>
 

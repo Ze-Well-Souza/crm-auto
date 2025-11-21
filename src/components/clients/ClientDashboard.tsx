@@ -62,7 +62,7 @@ export const ClientDashboard = ({ client, open, onOpenChange }: ClientDashboardP
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto bg-slate-900 border-white/10">
+      <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle className="flex items-center gap-3">
@@ -71,12 +71,12 @@ export const ClientDashboard = ({ client, open, onOpenChange }: ClientDashboardP
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-white">{client.name}</span>
+                  <span>{client.name}</span>
                   <Badge variant="outline" className={`${tier.color} ${tier.bg}`}>
                     {tier.label}
                   </Badge>
                 </div>
-                <p className="text-sm text-slate-400 font-normal">
+                <p className="text-sm text-slate-600 dark:text-slate-400 font-normal">
                   Cliente há {clientStats.loyaltyMonths} meses
                 </p>
               </div>
@@ -85,28 +85,24 @@ export const ClientDashboard = ({ client, open, onOpenChange }: ClientDashboardP
         </DialogHeader>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 bg-white/5 border-white/10">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger
               value="overview"
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-400"
             >
               Visão Geral
             </TabsTrigger>
             <TabsTrigger
               value="services"
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-400"
             >
               Serviços
             </TabsTrigger>
             <TabsTrigger
               value="vehicles"
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-400"
             >
               Veículos
             </TabsTrigger>
             <TabsTrigger
               value="timeline"
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-400"
             >
               Histórico
             </TabsTrigger>
@@ -116,47 +112,47 @@ export const ClientDashboard = ({ client, open, onOpenChange }: ClientDashboardP
           <TabsContent value="overview" className="space-y-6">
             {/* Key Metrics */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Card className="text-center bg-white/5 border-white/10">
+              <Card className="text-center border-l-4 border-l-emerald-500">
                 <CardContent className="pt-4">
-                  <DollarSign className="h-6 w-6 text-emerald-400 mx-auto mb-2" />
-                  <div className="text-lg font-bold text-white">
+                  <DollarSign className="h-6 w-6 text-emerald-500 dark:text-emerald-400 mx-auto mb-2" />
+                  <div className="text-lg font-bold">
                     {formatCurrency(clientStats.totalSpent)}
                   </div>
-                  <p className="text-xs text-slate-400">Total Gasto</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">Total Gasto</p>
                 </CardContent>
               </Card>
 
-              <Card className="text-center bg-white/5 border-white/10">
+              <Card className="text-center border-l-4 border-l-blue-500">
                 <CardContent className="pt-4">
-                  <Wrench className="h-6 w-6 text-blue-400 mx-auto mb-2" />
-                  <div className="text-lg font-bold text-white">{clientStats.serviceCount}</div>
-                  <p className="text-xs text-slate-400">Serviços</p>
+                  <Wrench className="h-6 w-6 text-blue-500 dark:text-blue-400 mx-auto mb-2" />
+                  <div className="text-lg font-bold">{clientStats.serviceCount}</div>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">Serviços</p>
                 </CardContent>
               </Card>
 
-              <Card className="text-center bg-white/5 border-white/10">
+              <Card className="text-center border-l-4 border-l-purple-500">
                 <CardContent className="pt-4">
-                  <Car className="h-6 w-6 text-purple-400 mx-auto mb-2" />
-                  <div className="text-lg font-bold text-white">{clientStats.vehicleCount}</div>
-                  <p className="text-xs text-slate-400">Veículos</p>
+                  <Car className="h-6 w-6 text-purple-500 dark:text-purple-400 mx-auto mb-2" />
+                  <div className="text-lg font-bold">{clientStats.vehicleCount}</div>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">Veículos</p>
                 </CardContent>
               </Card>
 
-              <Card className="text-center bg-white/5 border-white/10">
+              <Card className="text-center border-l-4 border-l-orange-500">
                 <CardContent className="pt-4">
-                  <TrendingUp className="h-6 w-6 text-orange-400 mx-auto mb-2" />
-                  <div className="text-lg font-bold text-white">
+                  <TrendingUp className="h-6 w-6 text-orange-500 dark:text-orange-400 mx-auto mb-2" />
+                  <div className="text-lg font-bold">
                     {formatCurrency(clientStats.avgTicket)}
                   </div>
-                  <p className="text-xs text-slate-400">Ticket Médio</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">Ticket Médio</p>
                 </CardContent>
               </Card>
             </div>
 
             {/* Contact Information */}
-            <Card className="bg-white/5 border-white/10">
+            <Card className="">
               <CardHeader>
-                <CardTitle className="text-lg text-white">Informações de Contato</CardTitle>
+                <CardTitle className="text-lg">Informações de Contato</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -188,7 +184,7 @@ export const ClientDashboard = ({ client, open, onOpenChange }: ClientDashboardP
                       <div className="flex items-start gap-2">
                         <MapPin className="h-4 w-4 text-slate-400 mt-0.5" />
                         <div className="flex-1">
-                          {client.address && <div className="text-white">{client.address}</div>}
+                          {client.address && <div className="">{client.address}</div>}
                           {client.city && client.state && (
                             <div className="text-sm text-slate-400">
                               {client.city}, {client.state}
@@ -209,9 +205,9 @@ export const ClientDashboard = ({ client, open, onOpenChange }: ClientDashboardP
             </Card>
 
             {/* Recent Activity */}
-            <Card className="bg-white/5 border-white/10">
+            <Card className="">
               <CardHeader>
-                <CardTitle className="text-lg text-white">Atividade Recente</CardTitle>
+                <CardTitle className="text-lg">Atividade Recente</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -220,7 +216,7 @@ export const ClientDashboard = ({ client, open, onOpenChange }: ClientDashboardP
                       <Clock className="h-4 w-4 text-slate-400" />
                       <div>
                         <p className="text-sm font-medium text-white">Último serviço</p>
-                        <p className="text-xs text-slate-400">
+                        <p className="text-xs text-slate-600 dark:text-slate-400">
                           {formatDate(clientStats.lastService)}
                         </p>
                       </div>
@@ -233,7 +229,7 @@ export const ClientDashboard = ({ client, open, onOpenChange }: ClientDashboardP
                       <Calendar className="h-4 w-4 text-slate-400" />
                       <div>
                         <p className="text-sm font-medium text-white">Próximo agendamento</p>
-                        <p className="text-xs text-slate-400">
+                        <p className="text-xs text-slate-600 dark:text-slate-400">
                           {formatDate(clientStats.nextAppointment)}
                         </p>
                       </div>
@@ -261,9 +257,9 @@ export const ClientDashboard = ({ client, open, onOpenChange }: ClientDashboardP
 
           {/* Vehicles Tab */}
           <TabsContent value="vehicles">
-            <Card className="bg-white/5 border-white/10">
+            <Card className="">
               <CardHeader>
-                <CardTitle className="text-white">Veículos do Cliente</CardTitle>
+                <CardTitle className="">Veículos do Cliente</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-purple-400 text-center py-8">
@@ -282,3 +278,4 @@ export const ClientDashboard = ({ client, open, onOpenChange }: ClientDashboardP
     </Dialog>
   );
 };
+

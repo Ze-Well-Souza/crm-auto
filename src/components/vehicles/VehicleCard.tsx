@@ -92,7 +92,7 @@ export const VehicleCard = ({ vehicle, onUpdate, onQuickAction }: VehicleCardPro
   return (
     <>
       <Card
-        className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-purple-500/20 transition-all duration-300 cursor-pointer group relative overflow-hidden"
+        className="bg-white/80 dark:bg-white/5 border-l-4 border-l-purple-500 border-t border-r border-b border-slate-200/50 dark:border-t-white/10 dark:border-r-white/10 dark:border-b-white/10 backdrop-blur-xl shadow-xl hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 cursor-pointer group relative overflow-hidden"
         onClick={handleCardClick}
       >
         {/* Background gradient based on maintenance status - Landing Page Style */}
@@ -107,24 +107,24 @@ export const VehicleCard = ({ vehicle, onUpdate, onQuickAction }: VehicleCardPro
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
               <Avatar className="h-12 w-12 border-2 border-purple-500/30">
-                <AvatarFallback className="bg-purple-500/20 text-purple-300 font-semibold">
+                <AvatarFallback className="bg-purple-500/20 text-purple-600 dark:text-purple-300 font-semibold">
                   {getVehicleIcon()}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <CardTitle className="text-lg flex items-center gap-2 text-white">
+                <CardTitle className="text-lg flex items-center gap-2 text-slate-900 dark:text-white">
                   {vehicle.brand} {vehicle.model}
                   <Badge className={cn(
                     "flex items-center gap-1 border-0",
-                    vehicleMetrics.maintenanceStatus === 'atrasado' && "bg-red-500/20 text-red-300",
-                    vehicleMetrics.maintenanceStatus === 'atencao' && "bg-orange-500/20 text-orange-300",
-                    vehicleMetrics.maintenanceStatus === 'em_dia' && "bg-emerald-500/20 text-emerald-300"
+                    vehicleMetrics.maintenanceStatus === 'atrasado' && "bg-red-500/20 text-red-600 dark:text-red-300",
+                    vehicleMetrics.maintenanceStatus === 'atencao' && "bg-orange-500/20 text-orange-600 dark:text-orange-300",
+                    vehicleMetrics.maintenanceStatus === 'em_dia' && "bg-emerald-500/20 text-emerald-600 dark:text-emerald-300"
                   )}>
                     <MaintenanceIcon className="h-3 w-3" />
                     {maintenanceStatus.label}
                   </Badge>
                 </CardTitle>
-                <CardDescription className="flex items-center gap-2 text-slate-400">
+                <CardDescription className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
                   {vehicle.year && <span>{vehicle.year}</span>}
                   {vehicle.license_plate && (
                     <>
@@ -144,9 +144,9 @@ export const VehicleCard = ({ vehicle, onUpdate, onQuickAction }: VehicleCardPro
         <CardContent className="space-y-4 relative z-10">
           {/* Owner Information - Landing Page Style */}
           {vehicle.clients && (
-            <div className="flex items-center gap-2 text-sm bg-white/5 border border-white/10 p-2 rounded-md backdrop-blur-sm">
-              <User className="h-4 w-4 text-slate-400" />
-              <span className="font-medium text-slate-300">{vehicle.clients.name}</span>
+            <div className="flex items-center gap-2 text-sm bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 p-2 rounded-md">
+              <User className="h-4 w-4 text-slate-600 dark:text-slate-400" />
+              <span className="font-medium text-slate-700 dark:text-slate-300">{vehicle.clients.name}</span>
               {vehicle.clients.email && (
                 <Button
                   size="sm"
@@ -167,15 +167,15 @@ export const VehicleCard = ({ vehicle, onUpdate, onQuickAction }: VehicleCardPro
           <div className="grid grid-cols-2 gap-3">
             {vehicle.fuel_type && (
               <div className="flex items-center gap-2 text-sm">
-                <Fuel className="h-4 w-4 text-slate-400" />
-                <span className="text-slate-300">{vehicle.fuel_type}</span>
+                <Fuel className="h-4 w-4 text-slate-600 dark:text-slate-400" />
+                <span className="text-slate-700 dark:text-slate-300">{vehicle.fuel_type}</span>
               </div>
             )}
 
             {vehicle.engine && (
               <div className="flex items-center gap-2 text-sm">
-                <Settings className="h-4 w-4 text-slate-400" />
-                <span className="text-slate-300">{vehicle.engine}</span>
+                <Settings className="h-4 w-4 text-slate-600 dark:text-slate-400" />
+                <span className="text-slate-700 dark:text-slate-300">{vehicle.engine}</span>
               </div>
             )}
 
@@ -189,13 +189,13 @@ export const VehicleCard = ({ vehicle, onUpdate, onQuickAction }: VehicleCardPro
                            vehicle.color.toLowerCase() === 'azul' ? '#0066cc' :
                            vehicle.color.toLowerCase() === 'vermelho' ? '#cc0000' : '#888888' }}
                 />
-                <span className="text-slate-300">{vehicle.color}</span>
+                <span className="text-slate-700 dark:text-slate-300">{vehicle.color}</span>
               </div>
             )}
 
             <div className="flex items-center gap-2 text-sm">
-              <Calendar className="h-4 w-4 text-slate-400" />
-              <span className="text-slate-300">{getVehicleAge()}</span>
+              <Calendar className="h-4 w-4 text-slate-600 dark:text-slate-400" />
+              <span className="text-slate-700 dark:text-slate-300">{getVehicleAge()}</span>
             </div>
           </div>
 
@@ -204,7 +204,7 @@ export const VehicleCard = ({ vehicle, onUpdate, onQuickAction }: VehicleCardPro
             <div className="text-center">
               <div className="flex items-center justify-center gap-1">
                 <Gauge className="h-3 w-3 text-blue-400" />
-                <span className="text-xs font-semibold text-white">
+                <span className="text-xs font-semibold text-slate-900 dark:text-white">
                   {vehicle.mileage ? `${vehicle.mileage.toLocaleString('pt-BR')} km` : 'N/A'}
                 </span>
               </div>
@@ -227,7 +227,7 @@ export const VehicleCard = ({ vehicle, onUpdate, onQuickAction }: VehicleCardPro
             <div className="text-center">
               <div className="flex items-center justify-center gap-1">
                 <Wrench className="h-3 w-3 text-purple-400" />
-                <span className="text-xs font-semibold text-white">
+                <span className="text-xs font-semibold text-slate-900 dark:text-white">
                   {vehicleMetrics.totalServices} serviços
                 </span>
               </div>
@@ -237,7 +237,7 @@ export const VehicleCard = ({ vehicle, onUpdate, onQuickAction }: VehicleCardPro
             <div className="text-center">
               <div className="flex items-center justify-center gap-1">
                 <TrendingUp className="h-3 w-3 text-cyan-400" />
-                <span className="text-xs font-semibold text-white">
+                <span className="text-xs font-semibold text-slate-900 dark:text-white">
                   {formatCurrency(vehicleMetrics.averageServiceCost)}
                 </span>
               </div>

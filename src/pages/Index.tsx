@@ -117,18 +117,18 @@ const Index = () => {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 bg-clip-text text-transparent">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent dark:from-blue-400 dark:via-purple-400 dark:to-blue-500">
                   Bem-vindo ao CRM Auto!
                 </h1>
-                <p className="text-slate-400 text-lg mt-2">
+                <p className="text-slate-600 dark:text-slate-400 text-lg mt-2">
                   Gerencie sua oficina com eficiência e controle total sobre seus processos.
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 px-3 py-1">
+                <Badge className="bg-blue-600 text-white dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/30 px-3 py-1">
                   ● Ativo
                 </Badge>
-                <Badge className="bg-white/5 border-white/10 text-slate-300 px-3 py-1">
+                <Badge className="bg-blue-600 text-white dark:bg-white/5 dark:border-white/10 dark:text-slate-300 px-3 py-1">
                   {formatDate(new Date())}
                 </Badge>
               </div>
@@ -137,17 +137,17 @@ const Index = () => {
 
           {/* Dashboard Tabs - Landing Page Style */}
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-white/5 border border-white/10 backdrop-blur-xl p-1 rounded-xl">
+            <TabsList className="grid w-full grid-cols-2 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 p-1 rounded-xl shadow-sm">
               <TabsTrigger
                 value="overview"
-                className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-purple-500/50 rounded-lg transition-all text-slate-300"
+                className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg transition-all text-slate-700 dark:text-slate-300"
               >
                 <BarChart3 className="h-4 w-4" />
                 Visão Geral
               </TabsTrigger>
               <TabsTrigger
                 value="analytics"
-                className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-purple-500/50 rounded-lg transition-all text-slate-300"
+                className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg transition-all text-slate-700 dark:text-slate-300"
               >
                 <Target className="h-4 w-4" />
                 Análises Avançadas
@@ -157,61 +157,61 @@ const Index = () => {
             <TabsContent value="overview" className="space-y-6 mt-6">
               {/* Key Metrics - Landing Page Style */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-blue-500/20 transition-all duration-300 hover:-translate-y-1">
+                <Card className="bg-white/90 dark:bg-white/5 border-l-4 border-l-blue-600 border-t border-r border-b border-slate-200/50 dark:border-t-white/10 dark:border-r-white/10 dark:border-b-white/10 backdrop-blur-xl shadow-xl shadow-blue-500/10 transition-all duration-300">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-slate-300">Total de Clientes</CardTitle>
-                    <div className="p-2 rounded-lg bg-blue-500/20">
-                      <Users className="h-5 w-5 text-blue-400" />
+                    <CardTitle className="text-sm font-medium text-slate-700 dark:text-slate-300">Total de Clientes</CardTitle>
+                    <div className="p-2 rounded-lg bg-blue-600/20 dark:bg-blue-500/20">
+                      <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-3xl font-bold text-white">{totalClients}</div>
-                    <p className="text-xs text-slate-400 mt-1">
+                    <div className="text-3xl font-bold text-slate-900 dark:text-white">{totalClients}</div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                       {totalClients > 0 ? '+5% este mês' : 'Nenhum cliente ainda'}
                     </p>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 hover:-translate-y-1">
+                <Card className="bg-white/90 dark:bg-white/5 border-l-4 border-l-emerald-600 border-t border-r border-b border-slate-200/50 dark:border-t-white/10 dark:border-r-white/10 dark:border-b-white/10 backdrop-blur-xl shadow-xl shadow-emerald-500/10 transition-all duration-300">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-slate-300">Veículos</CardTitle>
-                    <div className="p-2 rounded-lg bg-emerald-500/20">
-                      <Car className="h-5 w-5 text-emerald-400" />
+                    <CardTitle className="text-sm font-medium text-slate-700 dark:text-slate-300">Veículos</CardTitle>
+                    <div className="p-2 rounded-lg bg-emerald-600/20 dark:bg-emerald-500/20">
+                      <Car className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-3xl font-bold text-white">{totalVehicles}</div>
-                    <p className="text-xs text-slate-400 mt-1">
+                    <div className="text-3xl font-bold text-slate-900 dark:text-white">{totalVehicles}</div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                       {totalVehicles > 0 ? 'Em manutenção ativa' : 'Nenhum veículo cadastrado'}
                     </p>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-orange-500/20 transition-all duration-300 hover:-translate-y-1">
+                <Card className="bg-white/90 dark:bg-white/5 border-l-4 border-l-orange-600 border-t border-r border-b border-slate-200/50 dark:border-t-white/10 dark:border-r-white/10 dark:border-b-white/10 backdrop-blur-xl shadow-xl shadow-orange-500/10 transition-all duration-300">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-slate-300">Ordens de Serviço</CardTitle>
-                    <div className="p-2 rounded-lg bg-orange-500/20">
-                      <Wrench className="h-5 w-5 text-orange-400" />
+                    <CardTitle className="text-sm font-medium text-slate-700 dark:text-slate-300">Ordens de Serviço</CardTitle>
+                    <div className="p-2 rounded-lg bg-orange-600/20 dark:bg-orange-500/20">
+                      <Wrench className="h-5 w-5 text-orange-600 dark:text-orange-400" />
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-3xl font-bold text-white">{totalServiceOrders}</div>
-                    <p className="text-xs text-slate-400 mt-1">
+                    <div className="text-3xl font-bold text-slate-900 dark:text-white">{totalServiceOrders}</div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                       {inProgressOrders} em andamento
                     </p>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-purple-500/20 transition-all duration-300 hover:-translate-y-1">
+                <Card className="bg-white/90 dark:bg-white/5 border-l-4 border-l-purple-600 border-t border-r border-b border-slate-200/50 dark:border-t-white/10 dark:border-r-white/10 dark:border-b-white/10 backdrop-blur-xl shadow-xl shadow-purple-500/10 transition-all duration-300">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-slate-300">Faturamento</CardTitle>
-                    <div className="p-2 rounded-lg bg-purple-500/20">
-                      <DollarSign className="h-5 w-5 text-purple-400" />
+                    <CardTitle className="text-sm font-medium text-slate-700 dark:text-slate-300">Faturamento</CardTitle>
+                    <div className="p-2 rounded-lg bg-purple-600/20 dark:bg-purple-500/20">
+                      <DollarSign className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-3xl font-bold text-white">{formatCurrency(monthlyRevenue)}</div>
-                    <p className="text-xs text-slate-400 mt-1">
+                    <div className="text-3xl font-bold text-slate-900 dark:text-white">{formatCurrency(monthlyRevenue)}</div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                       {profitMargin.toFixed(1)}% margem
                     </p>
                   </CardContent>
@@ -220,9 +220,9 @@ const Index = () => {
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Recent Activities - Landing Page Style */}
-                <Card className="lg:col-span-2 bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-xl">
+                <Card className="lg:col-span-2 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 shadow-lg">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-white">
+                    <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
                       <div className="p-2 rounded-lg bg-blue-500/20">
                         <Activity className="h-5 w-5 text-blue-400" />
                       </div>
@@ -268,9 +268,9 @@ const Index = () => {
                 </Card>
 
                 {/* Today's Priorities - Landing Page Style */}
-                <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-xl">
+                <Card className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 shadow-lg">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-white">
+                    <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
                       <div className="p-2 rounded-lg bg-orange-500/20">
                         <Target className="h-5 w-5 text-orange-400" />
                       </div>

@@ -166,20 +166,20 @@ export const SearchAdvanced = ({
         const selectPlaceholder = typeof group.placeholder === 'string' ? group.placeholder : `Selecionar ${group.label.toLowerCase()}`;
         return (
           <div key={group.key} className="space-y-2">
-            <Label className="text-slate-300">{group.label}</Label>
+            <Label className="text-slate-700 dark:text-slate-300">{group.label}</Label>
             <Select
               value={filters[group.key] || ""}
               onValueChange={(value) => handleFilterChange(group.key, value)}
             >
-              <SelectTrigger className="bg-white/5 border-white/10 text-white hover:bg-white/10">
+              <SelectTrigger className="bg-white dark:bg-white/5 border-slate-300 dark:border-white/10 text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-white/10">
                 <SelectValue placeholder={selectPlaceholder} />
               </SelectTrigger>
-              <SelectContent className="bg-slate-900 border-white/10">
+              <SelectContent className="bg-white dark:bg-slate-900 border-slate-200 dark:border-white/10">
                 {group.options?.map((option) => (
                   <SelectItem
                     key={option.value}
                     value={option.value}
-                    className="text-slate-300 focus:bg-white/10 focus:text-white"
+                    className="text-slate-700 dark:text-slate-300 focus:bg-slate-100 dark:focus:bg-white/10 focus:text-slate-900 dark:focus:text-white"
                   >
                     <div className="flex items-center justify-between w-full">
                       <span>{option.label}</span>
@@ -201,7 +201,7 @@ export const SearchAdvanced = ({
         const multiselectPlaceholder = typeof group.placeholder === 'string' ? group.placeholder : `Selecionar ${group.label.toLowerCase()}`;
         return (
           <div key={group.key} className="space-y-2">
-            <Label className="text-slate-300">{group.label}</Label>
+            <Label className="text-slate-700 dark:text-slate-300">{group.label}</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -250,7 +250,7 @@ export const SearchAdvanced = ({
         const dateRange = dateRanges[group.key] || {};
         return (
           <div key={group.key} className="space-y-2">
-            <Label className="text-slate-300">{group.label}</Label>
+            <Label className="text-slate-700 dark:text-slate-300">{group.label}</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -292,7 +292,7 @@ export const SearchAdvanced = ({
         const numberRange = filters[group.key] || {};
         return (
           <div key={group.key} className="space-y-2">
-            <Label className="text-slate-300">{group.label}</Label>
+            <Label className="text-slate-700 dark:text-slate-300">{group.label}</Label>
             <div className="grid grid-cols-2 gap-2">
               <Input
                 type="number"
@@ -333,7 +333,7 @@ export const SearchAdvanced = ({
             placeholder={placeholder}
             value={query}
             onChange={handleQueryChange}
-            className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-slate-400 focus:border-purple-500/50 focus:ring-purple-500/20"
+            className="pl-10"
           />
         </div>
 
@@ -361,7 +361,7 @@ export const SearchAdvanced = ({
             variant="outline"
             size="icon"
             onClick={handleReset}
-            className="bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+            className=""
           >
             <RotateCcw className="h-4 w-4" />
           </Button>
@@ -391,7 +391,7 @@ export const SearchAdvanced = ({
 
       {/* Filtros avançados - Landing Page Style */}
       {showAdvanced && showAdvancedFilters && filterGroups.length > 0 && (
-        <Card className="bg-white/5 border border-white/10 backdrop-blur-xl shadow-xl">
+        <Card className="bg-white/80 dark:bg-white/5 border border-slate-200/50 dark:border-white/10 backdrop-blur-xl shadow-xl">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 bg-clip-text text-transparent">
@@ -423,7 +423,7 @@ export const SearchAdvanced = ({
                     variant="outline"
                     size="sm"
                     onClick={handleReset}
-                    className="bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+                    className=""
                   >
                     Limpar filtros
                   </Button>

@@ -164,14 +164,14 @@ export const AppointmentForm = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px] bg-slate-900 border-white/10">
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="text-white">
             {appointment ? "Editar Agendamento" : "Novo Agendamento"}
           </DialogTitle>
-          <DialogDescription>
-            {appointment 
-              ? "Atualize as informações do agendamento." 
+          <DialogDescription className="text-slate-400">
+            {appointment
+              ? "Atualize as informações do agendamento."
               : "Preencha os dados para criar um novo agendamento."
             }
           </DialogDescription>
@@ -185,10 +185,10 @@ export const AppointmentForm = ({
                 name="client_id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Cliente</FormLabel>
+                    <FormLabel className="text-blue-400">Cliente</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
                           <SelectValue placeholder="Selecione um cliente" />
                         </SelectTrigger>
                       </FormControl>
@@ -210,10 +210,10 @@ export const AppointmentForm = ({
                 name="vehicle_id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Veículo (Opcional)</FormLabel>
+                    <FormLabel className="text-blue-400">Veículo (Opcional)</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
                           <SelectValue placeholder="Selecione um veículo" />
                         </SelectTrigger>
                       </FormControl>
@@ -236,10 +236,10 @@ export const AppointmentForm = ({
               name="service_type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tipo de Serviço</FormLabel>
+                  <FormLabel className="text-blue-400">Tipo de Serviço</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
                         <SelectValue placeholder="Selecione o tipo de serviço" />
                       </SelectTrigger>
                     </FormControl>
@@ -262,7 +262,7 @@ export const AppointmentForm = ({
                 name="scheduled_date"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Data do Agendamento</FormLabel>
+                    <FormLabel className="text-blue-400">Data do Agendamento</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -305,10 +305,10 @@ export const AppointmentForm = ({
                 name="scheduled_time"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Horário</FormLabel>
+                    <FormLabel className="text-blue-400">Horário</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
                           <SelectValue placeholder="Selecione um horário" />
                         </SelectTrigger>
                       </FormControl>
@@ -332,7 +332,7 @@ export const AppointmentForm = ({
                 name="estimated_duration"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Duração Estimada (minutos)</FormLabel>
+                    <FormLabel className="text-blue-400">Duração Estimada (minutos)</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -352,7 +352,7 @@ export const AppointmentForm = ({
                 name="estimated_value"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Valor Estimado (R$)</FormLabel>
+                    <FormLabel className="text-blue-400">Valor Estimado (R$)</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -373,7 +373,7 @@ export const AppointmentForm = ({
               name="service_description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Descrição do Serviço</FormLabel>
+                  <FormLabel className="text-blue-400">Descrição do Serviço</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Descreva os detalhes do serviço..."
@@ -390,7 +390,7 @@ export const AppointmentForm = ({
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Observações</FormLabel>
+                  <FormLabel className="text-blue-400">Observações</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Observações adicionais..."

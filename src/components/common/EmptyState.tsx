@@ -21,13 +21,13 @@ export const EmptyState = ({
   showAction = true
 }: EmptyStateProps) => {
   return (
-    <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl">
+    <Card className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 backdrop-blur-xl">
       <CardContent className="flex flex-col items-center justify-center py-12">
-        <Icon className="h-12 w-12 text-purple-400 mb-4" />
-        <h3 className="text-lg font-medium text-white mb-2">
+        <Icon className="h-12 w-12 text-purple-500 dark:text-purple-400 mb-4" />
+        <h3 className="text-lg font-medium text-slate-900 dark:text-white mb-2">
           {title}
         </h3>
-        <p className="text-sm text-slate-400 mb-4 text-center max-w-sm">
+        <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 text-center max-w-sm">
           {description}
         </p>
         {showAction && actionLabel && onAction && (

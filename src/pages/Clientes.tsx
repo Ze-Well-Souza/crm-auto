@@ -100,10 +100,10 @@ const Clientes = () => {
         {/* Header - Landing Page Style */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 dark:from-blue-400 dark:via-purple-400 dark:to-blue-500 bg-clip-text text-transparent">
               Gestão de Clientes
             </h1>
-            <p className="text-slate-400">Gerencie informações completas dos seus clientes</p>
+            <p className="text-slate-600 dark:text-slate-400">Gerencie informações completas dos seus clientes</p>
           </div>
 
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -113,9 +113,9 @@ const Clientes = () => {
                 Novo Cliente
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px] bg-slate-900 border-white/10">
+            <DialogContent className="sm:max-w-[500px]">
               <DialogHeader>
-                <DialogTitle className="text-white">Cadastrar Novo Cliente</DialogTitle>
+                <DialogTitle>Cadastrar Novo Cliente</DialogTitle>
               </DialogHeader>
               <ClientForm onSuccess={() => {
                 setIsDialogOpen(false);

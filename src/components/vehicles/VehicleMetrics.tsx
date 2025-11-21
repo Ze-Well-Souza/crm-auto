@@ -46,27 +46,27 @@ export const VehicleMetrics = ({ vehicles }: VehicleMetricsProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {/* Total Vehicles - Landing Page Style */}
-      <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-blue-500/20 transition-all duration-300">
+      <Card className="bg-white/90 dark:bg-white/5 border-l-4 border-l-blue-600 border-t border-r border-b border-slate-200/50 dark:border-t-white/10 dark:border-r-white/10 dark:border-b-white/10 backdrop-blur-xl shadow-xl shadow-blue-500/10 transition-all duration-300">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-300">
-            <div className="p-2 rounded-lg bg-blue-500/20">
-              <Car className="h-4 w-4 text-blue-400" />
+          <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-700 dark:text-slate-300">
+            <div className="p-2 rounded-lg bg-blue-600/20 dark:bg-blue-500/20">
+              <Car className="h-4 w-4 text-blue-600 dark:text-blue-400" />
             </div>
             Total de Veículos
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-white">{totalVehicles}</div>
-          <p className="text-xs text-slate-400">Cadastrados no sistema</p>
+          <div className="text-2xl font-bold text-slate-900 dark:text-white">{totalVehicles}</div>
+          <p className="text-xs text-slate-600 dark:text-slate-400">Cadastrados no sistema</p>
         </CardContent>
       </Card>
 
       {/* Fuel Distribution - Landing Page Style */}
-      <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-emerald-500/20 transition-all duration-300">
+      <Card className="bg-white/90 dark:bg-white/5 border-l-4 border-l-emerald-600 border-t border-r border-b border-slate-200/50 dark:border-t-white/10 dark:border-r-white/10 dark:border-b-white/10 backdrop-blur-xl shadow-xl shadow-emerald-500/10 transition-all duration-300">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-300">
-            <div className="p-2 rounded-lg bg-emerald-500/20">
-              <Fuel className="h-4 w-4 text-emerald-400" />
+          <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-700 dark:text-slate-300">
+            <div className="p-2 rounded-lg bg-emerald-600/20 dark:bg-emerald-500/20">
+              <Fuel className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
             </div>
             Combustível
           </CardTitle>
@@ -74,12 +74,12 @@ export const VehicleMetrics = ({ vehicles }: VehicleMetricsProps) => {
         <CardContent className="space-y-2">
           {Object.entries(fuelTypes).slice(0, 3).map(([fuel, count]) => (
             <div key={fuel} className="flex justify-between items-center">
-              <Badge className="text-xs bg-white/10 border-white/20 text-slate-300">{fuel}</Badge>
-              <span className="text-sm font-medium text-white">{count}</span>
+              <Badge className="text-xs bg-slate-100 dark:bg-white/10 border-slate-200 dark:border-white/20 text-slate-700 dark:text-slate-300">{fuel}</Badge>
+              <span className="text-sm font-medium text-slate-900 dark:text-white">{count}</span>
             </div>
           ))}
           {Object.keys(fuelTypes).length > 3 && (
-            <div className="text-xs text-slate-400 text-center">
+            <div className="text-xs text-slate-600 dark:text-slate-400 text-center">
               +{Object.keys(fuelTypes).length - 3} outros
             </div>
           )}
@@ -87,37 +87,37 @@ export const VehicleMetrics = ({ vehicles }: VehicleMetricsProps) => {
       </Card>
 
       {/* Age Distribution - Landing Page Style */}
-      <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-orange-500/20 transition-all duration-300">
+      <Card className="bg-white/90 dark:bg-white/5 border-l-4 border-l-orange-600 border-t border-r border-b border-slate-200/50 dark:border-t-white/10 dark:border-r-white/10 dark:border-b-white/10 backdrop-blur-xl shadow-xl shadow-orange-500/10 transition-all duration-300">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-300">
-            <div className="p-2 rounded-lg bg-orange-500/20">
-              <Calendar className="h-4 w-4 text-orange-400" />
+          <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-700 dark:text-slate-300">
+            <div className="p-2 rounded-lg bg-orange-600/20 dark:bg-orange-500/20">
+              <Calendar className="h-4 w-4 text-orange-600 dark:text-orange-400" />
             </div>
             Distribuição por Idade
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           <div className="flex justify-between items-center">
-            <Badge className="bg-emerald-500/20 text-emerald-300 border-0">Novos</Badge>
-            <span className="text-sm font-medium text-white">{newVehicles}</span>
+            <Badge className="bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border-0">Novos</Badge>
+            <span className="text-sm font-medium text-slate-900 dark:text-white">{newVehicles}</span>
           </div>
           <div className="flex justify-between items-center">
-            <Badge className="bg-blue-500/20 text-blue-300 border-0">Seminovos</Badge>
-            <span className="text-sm font-medium text-white">{semiNewVehicles}</span>
+            <Badge className="bg-blue-500/20 text-blue-600 dark:text-blue-300 border-0">Seminovos</Badge>
+            <span className="text-sm font-medium text-slate-900 dark:text-white">{semiNewVehicles}</span>
           </div>
           <div className="flex justify-between items-center">
-            <Badge className="bg-slate-500/20 text-slate-300 border-0">Usados</Badge>
-            <span className="text-sm font-medium text-white">{oldVehicles}</span>
+            <Badge className="bg-slate-500/20 text-slate-700 dark:text-slate-300 border-0">Usados</Badge>
+            <span className="text-sm font-medium text-slate-900 dark:text-white">{oldVehicles}</span>
           </div>
         </CardContent>
       </Card>
 
       {/* Maintenance Status - Landing Page Style */}
-      <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-purple-500/20 transition-all duration-300">
+      <Card className="bg-white/90 dark:bg-white/5 border-l-4 border-l-purple-600 border-t border-r border-b border-slate-200/50 dark:border-t-white/10 dark:border-r-white/10 dark:border-b-white/10 backdrop-blur-xl shadow-xl shadow-purple-500/10 transition-all duration-300">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-300">
-            <div className="p-2 rounded-lg bg-purple-500/20">
-              <Settings className="h-4 w-4 text-purple-400" />
+          <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-700 dark:text-slate-300">
+            <div className="p-2 rounded-lg bg-purple-600/20 dark:bg-purple-500/20">
+              <Settings className="h-4 w-4 text-purple-600 dark:text-purple-400" />
             </div>
             Status Manutenção
           </CardTitle>
@@ -125,24 +125,24 @@ export const VehicleMetrics = ({ vehicles }: VehicleMetricsProps) => {
         <CardContent className="space-y-2">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-1">
-              <CheckCircle className="h-3 w-3 text-emerald-400" />
-              <span className="text-xs text-slate-300">Em Dia</span>
+              <CheckCircle className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
+              <span className="text-xs text-slate-700 dark:text-slate-300">Em Dia</span>
             </div>
-            <span className="text-sm font-medium text-white">{inDayMaintenance}</span>
+            <span className="text-sm font-medium text-slate-900 dark:text-white">{inDayMaintenance}</span>
           </div>
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-1">
-              <Clock className="h-3 w-3 text-orange-400" />
-              <span className="text-xs text-slate-300">Próxima</span>
+              <Clock className="h-3 w-3 text-orange-600 dark:text-orange-400" />
+              <span className="text-xs text-slate-700 dark:text-slate-300">Próxima</span>
             </div>
-            <span className="text-sm font-medium text-white">{dueMaintenance}</span>
+            <span className="text-sm font-medium text-slate-900 dark:text-white">{dueMaintenance}</span>
           </div>
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-1">
-              <AlertTriangle className="h-3 w-3 text-red-400" />
-              <span className="text-xs text-slate-300">Atrasada</span>
+              <AlertTriangle className="h-3 w-3 text-red-600 dark:text-red-400" />
+              <span className="text-xs text-slate-700 dark:text-slate-300">Atrasada</span>
             </div>
-            <span className="text-sm font-medium text-white">{overdueMaintenance}</span>
+            <span className="text-sm font-medium text-slate-900 dark:text-white">{overdueMaintenance}</span>
           </div>
         </CardContent>
       </Card>

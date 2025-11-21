@@ -116,9 +116,9 @@ const Veiculos = () => {
                 Novo Veículo
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px] bg-slate-900 border-white/10">
+            <DialogContent className="sm:max-w-[600px] bg-white dark:bg-slate-900 border-gray-200 dark:border-white/10">
               <DialogHeader>
-                <DialogTitle className="text-white">Cadastrar Novo Veículo</DialogTitle>
+                <DialogTitle className="text-slate-900 dark:text-white">Cadastrar Novo Veículo</DialogTitle>
               </DialogHeader>
               <VehicleForm onSuccess={() => setIsDialogOpen(false)} />
             </DialogContent>
