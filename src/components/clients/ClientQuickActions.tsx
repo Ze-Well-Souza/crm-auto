@@ -38,7 +38,7 @@ export const ClientQuickActions = ({
 
   const handleEmail = () => {
     if (client.email) {
-      window.open(`mailto:${client.email}?subject=Contato da Oficina Eficiente`);
+      window.open(`mailto:${client.email}?subject=Contato da UAutos Pro`);
       toast({
         title: "Email aberto",
         description: `Enviando email para ${client.name}`,

@@ -96,7 +96,7 @@ const Auth = () => {
       period: '/mês',
       description: 'Para oficinas em crescimento',
       icon: Crown,
-      color: 'from-violet-500 to-purple-600',
+      color: 'from-blue-500 to-blue-700',
       popular: true,
       trial: true,
       features: [
@@ -286,15 +286,15 @@ const Auth = () => {
         <header className="border-b border-border/40 bg-background/80 backdrop-blur-lg sticky top-0 z-50">
           <div className="container mx-auto px-4 py-4 flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <Crown className="h-8 w-8 text-primary" />
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-                CRM Oficina
+              <Car className="h-8 w-8 text-primary" />
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+                UAutos Pro
               </h1>
             </div>
             <div className="flex items-center gap-3">
               <ThemeToggle />
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => setShowAuthDialog(true)}
                 className="hover:bg-accent"
               >
@@ -309,16 +309,16 @@ const Auth = () => {
           <Badge className="mb-4 bg-success/10 text-success border-success/20 hover:bg-success/20">
             ✨ Plano GRATUITO disponível - Use para sempre sem pagar nada!
           </Badge>
-          <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground via-primary to-purple-600 bg-clip-text text-transparent">
+          <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground via-primary to-blue-600 bg-clip-text text-transparent">
             Escolha o plano ideal para sua oficina
           </h2>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Gerencie sua oficina de forma profissional com o melhor CRM do mercado.
+            Gerencie sua oficina de forma profissional integrado ao Marketplace UAutos.
             Comece grátis hoje mesmo!
           </p>
-          <Button 
+          <Button
             size="lg"
-            className="bg-gradient-to-r from-primary to-purple-600 hover:opacity-90 text-white shadow-lg"
+            className="bg-gradient-to-r from-primary to-blue-600 hover:opacity-90 text-white shadow-lg"
             onClick={() => setShowAuthDialog(true)}
           >
             Começar Grátis Agora <ArrowRight className="ml-2 h-5 w-5" />
@@ -467,7 +467,7 @@ const Auth = () => {
         <footer className="border-t border-border/40 bg-background/80 backdrop-blur-lg">
           <div className="container mx-auto px-4 py-8 text-center">
             <p className="text-muted-foreground">
-              © 2024 CRM Oficina. Todos os direitos reservados.
+              © 2025 UAutos. Todos os direitos reservados.
             </p>
           </div>
         </footer>

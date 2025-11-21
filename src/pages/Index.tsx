@@ -117,8 +117,8 @@ const Index = () => {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent dark:from-blue-400 dark:via-purple-400 dark:to-blue-500">
-                  Bem-vindo ao CRM Auto!
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-600 bg-clip-text text-transparent dark:from-blue-400 dark:via-blue-300 dark:to-cyan-400">
+                  Bem-vindo ao UAutos Pro!
                 </h1>
                 <p className="text-slate-600 dark:text-slate-400 text-lg mt-2">
                   Gerencie sua oficina com eficiência e controle total sobre seus processos.
