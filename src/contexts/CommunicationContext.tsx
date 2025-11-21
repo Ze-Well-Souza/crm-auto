@@ -90,20 +90,30 @@ export const CommunicationProvider: React.FC<CommunicationProviderProps> = ({ ch
   useEffect(() => {
     fetchMessagesAndConversations();
 
-    // Subscribe to real-time updates
-    const subscription = supabase
-      .channel('chat_messages_changes')
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'chat_messages'
-      }, () => {
-        fetchMessagesAndConversations();
-      })
-      .subscribe();
+    // Subscribe to real-time updates apenas se autenticado
+    const setupSubscription = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) return;
 
+      const subscription = supabase
+        .channel('chat_messages_changes')
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'chat_messages'
+        }, () => {
+          fetchMessagesAndConversations();
+        })
+        .subscribe();
+
+      return () => {
+        subscription.unsubscribe();
+      };
+    };
+
+    const cleanup = setupSubscription();
     return () => {
-      subscription.unsubscribe();
+      cleanup.then(fn => fn?.());
     };
   }, []);
 

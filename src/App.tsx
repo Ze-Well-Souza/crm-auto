@@ -68,7 +68,12 @@ const App = () => (
                   <Toaster />
                   <Sonner />
                   <TooltipProvider>
-                    <BrowserRouter>
+                    <BrowserRouter
+                      future={{
+                        v7_startTransition: true,
+                        v7_relativeSplatPath: true
+                      }}
+                    >
                       <Suspense fallback={<PageLoadingFallback />}>
                         <Routes>
                         {/* Rotas Públicas */}

@@ -14,6 +14,25 @@ export interface Client {
   partner_id: string;
   created_at: string;
   updated_at: string;
+  // Campos de métricas e classificação
+  tags?: string[];
+  total_spent?: number;
+  service_count?: number;
+  vehicle_count?: number;
+  last_service_date?: string | null;
+  quality_score?: number;
+  is_vip?: boolean;
+  is_active?: boolean;
+}
+
+export interface ClientMetrics {
+  totalClients: number;
+  averageQualityScore: number;
+  vipCount: number;
+  newCount: number;
+  regularCount: number;
+  withEmail: number;
+  recentClients: number;
 }
 
 export interface Vehicle {

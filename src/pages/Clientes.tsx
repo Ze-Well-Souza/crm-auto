@@ -1,73 +1,87 @@
 import { useState } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
-import { Plus, Users, Filter } from "lucide-react";
+import { Plus, Users } from "lucide-react";
 import { useClients } from "@/hooks/useClients";
 import { ClientForm } from "@/components/clients/ClientForm";
-import { ClientCard } from "@/components/clients/ClientCard";
-import { ClientMetrics } from "@/components/clients/ClientMetrics";
+import { ClientCardModern } from "@/components/clients/ClientCardModern";
+import { ClientKPIs } from "@/components/clients/ClientKPIs";
+import { ClientFiltersAdvanced, ClientFilterOptions } from "@/components/clients/ClientFiltersAdvanced";
+import { useClientMetricsAdvanced } from "@/hooks/useClientMetricsAdvanced";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { EmptyState } from "@/components/common/EmptyState";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import { SearchAdvanced } from "@/components/common/SearchAdvanced";
-import { Pagination } from "@/components/common/Pagination";
-import { useClientSearch } from "@/hooks/useAdvancedSearch";
 import { Card, CardContent } from "@/components/ui/card";
+import type { Client } from "@/types";
 
 const Clientes = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { clients, loading, error, refetch } = useClients();
+  const { metrics, loading: metricsLoading } = useClientMetricsAdvanced();
 
-  // Configuração da busca avançada
-  const searchConfig = useClientSearch(clients || []);
+  const [filters, setFilters] = useState<ClientFilterOptions>({
+    searchQuery: '',
+    showVIP: false,
+    showNew: false,
+    showWithEmail: false,
+    showRecent: false
+  });
 
-  const handleQuickAction = (action: string, client: any) => {
-    console.log(`Ação ${action} para cliente:`, client);
-    // Implementar ações específicas aqui
+  // Aplicar filtros aos clientes
+  const filteredClients = clients?.filter(client => {
+    // Busca textual
+    if (filters.searchQuery) {
+      const query = filters.searchQuery.toLowerCase();
+      const matchesSearch =
+        client.name.toLowerCase().includes(query) ||
+        client.email?.toLowerCase().includes(query) ||
+        client.phone?.includes(query) ||
+        client.cpf_cnpj?.includes(query);
+      if (!matchesSearch) return false;
+    }
+
+    // Filtros de tags
+    if (filters.showVIP && !client.is_vip) return false;
+    if (filters.showNew && client.service_count !== 0) return false;
+    if (filters.showWithEmail && !client.email) return false;
+    if (filters.showRecent) {
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      if (new Date(client.created_at) <= sevenDaysAgo) return false;
+    }
+
+    return true;
+  }) || [];
+
+  // Handlers para ações rápidas
+  const handleCall = (client: Client) => {
+    if (client.phone) {
+      window.location.href = `tel:${client.phone}`;
+    }
   };
 
-  // Configuração dos filtros para busca avançada
-  const filterGroups = [
-    {
-      key: 'status',
-      label: 'Status',
-      type: 'select' as const,
-      options: [
-        { value: 'active', label: 'Ativo' },
-        { value: 'inactive', label: 'Inativo' },
-        { value: 'pending', label: 'Pendente' }
-      ]
-    },
-    {
-      key: 'city',
-      label: 'Cidade',
-      type: 'select' as const,
-      placeholder: 'Filtrar por cidade'
-    },
-    {
-      key: 'created_date',
-      label: 'Data de Cadastro',
-      type: 'date-range' as const
+  const handleWhatsApp = (client: Client) => {
+    if (client.phone) {
+      const phone = client.phone.replace(/\D/g, '');
+      window.open(`https://wa.me/55${phone}`, '_blank');
     }
-  ];
+  };
 
-  const quickFilters = [
-    {
-      key: 'hasEmail',
-      label: 'Com Email',
-      color: 'primary' as const
-    },
-    {
-      key: 'hasPhone', 
-      label: 'Com Telefone',
-      color: 'secondary' as const
-    },
-    {
-      key: 'recent',
-      label: 'Recentes',
-      color: 'outline' as const
+  const handleEmail = (client: Client) => {
+    if (client.email) {
+      window.location.href = `mailto:${client.email}`;
     }
-  ];
+  };
+
+  const handleSchedule = (client: Client) => {
+    console.log('Agendar para cliente:', client);
+    // TODO: Implementar navegação para agendamento
+  };
+
+  const handleNewService = (client: Client) => {
+    console.log('Novo serviço para cliente:', client);
+    // TODO: Implementar navegação para nova ordem de serviço
+  };
 
   if (loading) {
     return (
@@ -125,85 +139,45 @@ const Clientes = () => {
           </Dialog>
         </div>
 
-        {/* Enhanced Metrics */}
-        <ClientMetrics clients={clients || []} />
+        {/* KPIs Modernos */}
+        <ClientKPIs metrics={metrics} loading={metricsLoading} />
 
-        {/* Advanced Search */}
-        <SearchAdvanced
-          placeholder="Buscar clientes por nome, email, telefone ou documento..."
-          filterGroups={filterGroups}
-          quickFilters={quickFilters}
-          onSearch={searchConfig.handleSearch}
-          onReset={searchConfig.handleReset}
-          showQuickFilters={true}
-          showAdvancedFilters={true}
+        {/* Filtros Avançados */}
+        <ClientFiltersAdvanced
+          filters={filters}
+          onFiltersChange={setFilters}
+          totalResults={filteredClients.length}
         />
 
-        {/* Search Results Info - Landing Page Style */}
-        {searchConfig.isFiltered && (
-          <div className="flex items-center justify-between bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 backdrop-blur-sm">
-            <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-blue-400" />
-              <span className="text-sm text-blue-300">
-                {searchConfig.paginationInfo.totalItems} cliente(s) encontrado(s)
-                {searchConfig.paginationInfo.totalItems !== clients?.length &&
-                  ` de ${clients?.length} total`
-                }
-              </span>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={searchConfig.handleReset}
-              className="text-blue-400 hover:text-blue-300 hover:bg-blue-500/20"
-            >
-              Limpar filtros
-            </Button>
-          </div>
-        )}
-
-        {/* Clients List */}
+        {/* Grid de Clientes */}
         <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {searchConfig.data.length > 0 ? (
-              searchConfig.data.map((client) => (
-                <ClientCard 
-                  key={client.id} 
-                  client={client} 
-                  onUpdate={refetch}
-                  onQuickAction={handleQuickAction}
+          {filteredClients.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredClients.map((client) => (
+                <ClientCardModern
+                  key={client.id}
+                  client={client}
+                  onCall={handleCall}
+                  onWhatsApp={handleWhatsApp}
+                  onEmail={handleEmail}
+                  onSchedule={handleSchedule}
+                  onNewService={handleNewService}
                 />
-              ))
-            ) : (
-              <div className="col-span-full">
-                <EmptyState
-                  icon={Users}
-                  title={searchConfig.isFiltered ? "Nenhum cliente encontrado" : "Nenhum cliente cadastrado"}
-                  description={searchConfig.isFiltered 
-                    ? "Tente ajustar os termos de busca ou filtros." 
-                    : "Comece cadastrando o primeiro cliente do sistema."
-                  }
-                  actionLabel="Novo Cliente"
-                  onAction={() => setIsDialogOpen(true)}
-                  showAction={!searchConfig.isFiltered}
-                />
-              </div>
-            )}
-          </div>
-
-          {/* Pagination */}
-          {searchConfig.paginationInfo.totalPages > 1 && (
-            <Pagination
-              paginationInfo={searchConfig.paginationInfo}
-              onPageChange={searchConfig.handlePageChange}
-              onPageSizeChange={searchConfig.handlePageSizeChange}
-              goToFirstPage={searchConfig.goToFirstPage}
-              goToLastPage={searchConfig.goToLastPage}
-              goToNextPage={searchConfig.goToNextPage}
-              goToPreviousPage={searchConfig.goToPreviousPage}
-              showPageSizeSelector={true}
-              showPageInfo={true}
-              showNavigationInfo={true}
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              icon={Users}
+              title={filters.searchQuery || filters.showVIP || filters.showNew || filters.showWithEmail || filters.showRecent
+                ? "Nenhum cliente encontrado"
+                : "Nenhum cliente cadastrado"}
+              description={filters.searchQuery || filters.showVIP || filters.showNew || filters.showWithEmail || filters.showRecent
+                ? "Tente ajustar os termos de busca ou filtros."
+                : "Comece cadastrando o primeiro cliente do sistema."
+              }
+              actionLabel="Novo Cliente"
+              onAction={() => setIsDialogOpen(true)}
+              showAction={!(filters.searchQuery || filters.showVIP || filters.showNew || filters.showWithEmail || filters.showRecent)}
             />
           )}
         </div>

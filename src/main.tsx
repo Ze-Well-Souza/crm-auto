@@ -21,7 +21,7 @@ import { initMonitoring } from "./lib/monitoring";
 //   });
 // }
 
-// Initialize error monitoring
-initMonitoring();
+// Initialize error monitoring (desabilitado temporariamente - Sentry não configurado)
+// initMonitoring();
 
 createRoot(document.getElementById("root")!).render(<App />);

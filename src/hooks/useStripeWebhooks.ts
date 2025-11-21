@@ -23,20 +23,30 @@ export const useStripeWebhooks = () => {
   useEffect(() => {
     fetchWebhookEvents();
 
-    // Subscribe to real-time updates
-    const subscription = supabase
-      .channel('stripe_webhook_events_changes')
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'stripe_webhook_events'
-      }, () => {
-        fetchWebhookEvents();
-      })
-      .subscribe();
+    // Subscribe to real-time updates apenas se autenticado
+    const setupSubscription = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) return;
 
+      const subscription = supabase
+        .channel('stripe_webhook_events_changes')
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'stripe_webhook_events'
+        }, () => {
+          fetchWebhookEvents();
+        })
+        .subscribe();
+
+      return () => {
+        subscription.unsubscribe();
+      };
+    };
+
+    const cleanup = setupSubscription();
     return () => {
-      subscription.unsubscribe();
+      cleanup.then(fn => fn?.());
     };
   }, []);
 

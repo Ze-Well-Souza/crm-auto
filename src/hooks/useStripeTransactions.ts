@@ -41,20 +41,30 @@ export const useStripeTransactions = () => {
   useEffect(() => {
     fetchTransactions();
 
-    // Subscribe to real-time updates
-    const subscription = supabase
-      .channel('financial_transactions_changes')
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'financial_transactions'
-      }, () => {
-        fetchTransactions();
-      })
-      .subscribe();
+    // Subscribe to real-time updates apenas se autenticado
+    const setupSubscription = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) return;
 
+      const subscription = supabase
+        .channel('financial_transactions_changes')
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'financial_transactions'
+        }, () => {
+          fetchTransactions();
+        })
+        .subscribe();
+
+      return () => {
+        subscription.unsubscribe();
+      };
+    };
+
+    const cleanup = setupSubscription();
     return () => {
-      subscription.unsubscribe();
+      cleanup.then(fn => fn?.());
     };
   }, []);
 
