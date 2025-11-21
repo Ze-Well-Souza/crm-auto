@@ -27,6 +27,7 @@ export const ClientKPIs = ({ metrics, loading }: ClientKPIsProps) => {
 
   const kpis = [
     {
+      id: "total-clients",
       title: "Total de Clientes",
       value: metrics.totalClients,
       icon: Users,
@@ -35,22 +36,24 @@ export const ClientKPIs = ({ metrics, loading }: ClientKPIsProps) => {
       description: "Clientes cadastrados"
     },
     {
+      id: "quality-score",
       title: "Qualidade dos Dados",
       value: `${metrics.averageQualityScore}%`,
       icon: TrendingUp,
-      color: metrics.averageQualityScore >= 80 
-        ? "text-green-600 dark:text-green-400" 
-        : metrics.averageQualityScore >= 50 
-        ? "text-yellow-600 dark:text-yellow-400" 
+      color: metrics.averageQualityScore >= 80
+        ? "text-green-600 dark:text-green-400"
+        : metrics.averageQualityScore >= 50
+        ? "text-yellow-600 dark:text-yellow-400"
         : "text-red-600 dark:text-red-400",
-      bgColor: metrics.averageQualityScore >= 80 
-        ? "bg-green-100 dark:bg-green-900/20" 
-        : metrics.averageQualityScore >= 50 
-        ? "bg-yellow-100 dark:bg-yellow-900/20" 
+      bgColor: metrics.averageQualityScore >= 80
+        ? "bg-green-100 dark:bg-green-900/20"
+        : metrics.averageQualityScore >= 50
+        ? "bg-yellow-100 dark:bg-yellow-900/20"
         : "bg-red-100 dark:bg-red-900/20",
       description: "Média de completude"
     },
     {
+      id: "classification",
       title: "Classificação",
       value: `${metrics.vipCount} VIP`,
       icon: Star,
@@ -60,6 +63,7 @@ export const ClientKPIs = ({ metrics, loading }: ClientKPIsProps) => {
       subtitle: true
     },
     {
+      id: "with-email",
       title: "Com Email",
       value: metrics.withEmail,
       icon: Mail,
@@ -72,8 +76,8 @@ export const ClientKPIs = ({ metrics, loading }: ClientKPIsProps) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      {kpis.map((kpi, index) => (
-        <Card key={index} className="hover:shadow-md transition-shadow">
+      {kpis.map((kpi) => (
+        <Card key={kpi.id} className="hover:shadow-md transition-shadow">
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div className="flex-1">

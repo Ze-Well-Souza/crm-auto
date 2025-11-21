@@ -20,24 +20,36 @@ export function ThemeToggle() {
           <span className="sr-only">Alternar tema</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent
+        align="end"
+        className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800"
+      >
         <DropdownMenuItem
           onClick={() => setTheme("light")}
-          className={theme === "light" ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300" : "text-slate-700 dark:text-slate-200"}
+          className={theme === "light"
+            ? "bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400"
+            : "text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+          }
         >
           <Sun className="mr-2 h-4 w-4" />
           Claro
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => setTheme("dark")}
-          className={theme === "dark" ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300" : "text-slate-700 dark:text-slate-200"}
+          className={theme === "dark"
+            ? "bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400"
+            : "text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+          }
         >
           <Moon className="mr-2 h-4 w-4" />
           Escuro
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => setTheme("system")}
-          className={theme === "system" ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300" : "text-slate-700 dark:text-slate-200"}
+          className={theme === "system"
+            ? "bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400"
+            : "text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+          }
         >
           <Monitor className="mr-2 h-4 w-4" />
           Sistema
