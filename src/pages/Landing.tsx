@@ -203,7 +203,7 @@ const Landing = () => {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Car className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-            <span className="text-2xl font-bold text-slate-900 dark:text-white">UAutos Pro</span>
+            <span className="text-2xl font-bold text-slate-900 dark:text-white">Uautos Pro</span>
           </div>
           <ThemeToggle />
         </div>
@@ -226,7 +226,7 @@ const Landing = () => {
                 </span>
               </h1>
               <p className="text-xl text-slate-600 dark:text-slate-300 leading-relaxed">
-                Sistema completo integrado ao Marketplace UAutos. Controle clientes, ordens de serviço, estoque e financeiro em um só lugar.
+                Sistema completo integrado ao Marketplace Uautos. Controle clientes, ordens de serviço, estoque e financeiro em um só lugar.
               </p>
             </div>
 
@@ -456,7 +456,7 @@ const Landing = () => {
           <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-slate-100 dark:bg-white/5 backdrop-blur-sm border border-slate-200 dark:border-white/10">
             <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
             <span className="text-sm text-slate-700 dark:text-slate-300">
-              Mais de 500 oficinas já confiam no UAutos Pro
+              Mais de 500 oficinas já confiam no Uautos Pro
             </span>
           </div>
         </div>
@@ -468,10 +468,10 @@ const Landing = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <Car className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-              <span className="text-slate-900 dark:text-white font-semibold">UAutos Pro</span>
+              <span className="text-slate-900 dark:text-white font-semibold">Uautos Pro</span>
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400">
-              © 2025 UAutos. Todos os direitos reservados.
+              © 2025 Uautos. Todos os direitos reservados.
             </p>
           </div>
         </div>

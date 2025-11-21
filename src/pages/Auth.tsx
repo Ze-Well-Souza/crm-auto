@@ -288,7 +288,7 @@ const Auth = () => {
             <div className="flex items-center gap-2">
               <Car className="h-8 w-8 text-primary" />
               <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-                UAutos Pro
+                Uautos Pro
               </h1>
             </div>
             <div className="flex items-center gap-3">
@@ -313,7 +313,7 @@ const Auth = () => {
             Escolha o plano ideal para sua oficina
           </h2>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Gerencie sua oficina de forma profissional integrado ao Marketplace UAutos.
+            Gerencie sua oficina de forma profissional integrado ao Marketplace Uautos.
             Comece grátis hoje mesmo!
           </p>
           <Button

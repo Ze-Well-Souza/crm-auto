@@ -1,6 +1,6 @@
 {
-  "name": "CRM Parceiro",
-  "short_name": "CRM Parceiro",
+  "name": "Uautos Pro",
+  "short_name": "Uautos Pro",
   "description": "Sistema de gestão completo para oficinas e prestadores de serviços automotivos",
   "start_url": "/",
   "display": "standalone",
@@ -116,14 +116,14 @@
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Dashboard principal do CRM Parceiro"
+      "label": "Dashboard principal do Uautos Pro"
     },
     {
       "src": "/screenshots/mobile-1.png",
       "sizes": "375x667",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Dashboard mobile do CRM Parceiro"
+      "label": "Dashboard mobile do Uautos Pro"
     }
   ],
   "related_applications": [],

@@ -111,7 +111,7 @@ const PlanosPublicos = () => {
           <div className="flex items-center gap-2">
             <Car className="h-8 w-8 text-blue-600" />
             <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
-              UAutos Pro
+              Uautos Pro
             </h1>
           </div>
           <div className="flex items-center gap-3">
@@ -302,7 +302,7 @@ const PlanosPublicos = () => {
       {/* Footer */}
       <footer className="border-t border-white/20 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm py-8">
         <div className="container mx-auto px-4 text-center text-slate-600 dark:text-slate-400">
-          <p>© 2025 UAutos. Todos os direitos reservados.</p>
+          <p>© 2025 Uautos. Todos os direitos reservados.</p>
         </div>
       </footer>
     </div>

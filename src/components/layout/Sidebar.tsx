@@ -50,7 +50,7 @@ export const Sidebar = () => {
             <Wrench className="h-7 w-7 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">UAutos Pro</h1>
+            <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">Uautos Pro</h1>
             <p className="text-xs text-slate-500 dark:text-slate-400">Gestão Profissional</p>
           </div>
         </div>

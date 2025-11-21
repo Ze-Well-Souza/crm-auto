@@ -17,9 +17,9 @@ export default defineConfig(({ mode }) => ({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       manifest: {
-        name: 'UAutos Pro - Gestão Profissional para Oficinas',
-        short_name: 'UAutos Pro',
-        description: 'Sistema de gestão completo para oficinas integrado ao Marketplace UAutos',
+        name: 'Uautos Pro - Gestão Profissional para Oficinas',
+        short_name: 'Uautos Pro',
+        description: 'Sistema de gestão completo para oficinas integrado ao Marketplace Uautos',
         theme_color: '#2563EB',
         background_color: '#ffffff',
         display: 'standalone',
