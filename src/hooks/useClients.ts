@@ -35,8 +35,9 @@ export const useClients = () => {
       }
 
       const { data, error: fetchError } = await supabase
-        .from('clients')
+        .from('partner_clients')
         .select('*')
+        .eq('partner_id', session.user.id)
         .order('name', { ascending: true });
 
       if (fetchError) throw fetchError;
@@ -88,7 +89,7 @@ export const useClients = () => {
 
       // Tentar salvar no Supabase (usar partner_id conforme schema)
       const { data, error: insertError } = await supabase
-        .from('clients')
+        .from('partner_clients')
         .insert([{
           ...clientData,
           partner_id: session.user.id
@@ -154,10 +155,10 @@ export const useClients = () => {
       }
 
       const { data, error: updateError } = await supabase
-        .from('clients')
+        .from('partner_clients')
         .update(clientData)
         .eq('id', id)
-        .eq('user_id', session.user.id)
+        .eq('partner_id', session.user.id)
         .select()
         .single();
 
@@ -189,10 +190,10 @@ export const useClients = () => {
       }
 
       const { error: deleteError } = await supabase
-        .from('clients')
+        .from('partner_clients')
         .delete()
         .eq('id', id)
-        .eq('user_id', session.user.id);
+        .eq('partner_id', session.user.id);
 
       if (deleteError) throw deleteError;
 

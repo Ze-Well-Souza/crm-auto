@@ -33,7 +33,7 @@ export const useServiceOrderMetrics = (serviceOrderId: string) => {
           .from('service_orders')
           .select('*')
           .eq('id', serviceOrderId)
-          .eq('user_id', session.user.id)
+          .eq('partner_id', session.user.id)
           .single();
 
         if (orderError) throw orderError;

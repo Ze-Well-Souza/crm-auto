@@ -84,7 +84,7 @@ export const useStripeTransactions = () => {
           clients:client_id(name, email),
           service_orders:service_order_id(order_number)
         `)
-        .eq('user_id', user.id)
+        .eq('partner_id', user.id)
         .order('created_at', { ascending: false })
         .limit(100);
 

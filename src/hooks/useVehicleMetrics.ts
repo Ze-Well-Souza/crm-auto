@@ -48,7 +48,7 @@ export const useVehicleMetrics = (vehicleId: string) => {
           .from('vehicles')
           .select('mileage, created_at')
           .eq('id', vehicleId)
-          .eq('user_id', session.user.id)
+          .eq('partner_id', session.user.id)
           .single();
 
         if (vehicleError) throw vehicleError;
@@ -58,7 +58,7 @@ export const useVehicleMetrics = (vehicleId: string) => {
           .from('service_orders')
           .select('id, created_at, total_amount, status')
           .eq('vehicle_id', vehicleId)
-          .eq('user_id', session.user.id)
+          .eq('partner_id', session.user.id)
           .order('created_at', { ascending: false });
 
         if (ordersError) throw ordersError;
@@ -68,7 +68,7 @@ export const useVehicleMetrics = (vehicleId: string) => {
           .from('appointments')
           .select('scheduled_date, status')
           .eq('vehicle_id', vehicleId)
-          .eq('user_id', session.user.id)
+          .eq('partner_id', session.user.id)
           .order('scheduled_date', { ascending: false });
 
         // Calcular métricas

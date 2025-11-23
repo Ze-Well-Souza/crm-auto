@@ -233,11 +233,10 @@ export const useVehicles = () => {
         fleet_metrics: {
           total_services: fleet.total_services,
           total_spent: fleet.total_spent,
-          average_service_cost: fleet.average_service_cost,
           maintenance_status: fleet.maintenance_status,
-          days_since_last_service: fleet.days_since_last_service,
-          has_pending_alerts: fleet.has_pending_alerts,
-          alert_count: fleet.alert_count
+          last_service_date: fleet.last_service_date,
+          last_service_type: fleet.last_service_type,
+          last_service_os: fleet.last_service_os
         }
       })) || [];
 
@@ -314,11 +313,10 @@ export const useVehicles = () => {
           vehicle_snapshot: vehicleSnapshot,
           total_services: 0,
           total_spent: 0,
-          average_service_cost: 0,
           maintenance_status: 'em_dia',
-          days_since_last_service: null,
-          has_pending_alerts: false,
-          alert_count: 0
+          last_service_date: null,
+          last_service_type: null,
+          last_service_os: null
         }])
         .select()
         .single();

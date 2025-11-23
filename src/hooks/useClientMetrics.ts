@@ -32,7 +32,7 @@ export const useClientMetrics = (clientId: string) => {
           .from('financial_transactions')
           .select('amount, status')
           .eq('client_id', clientId)
-          .eq('user_id', session.user.id);
+          .eq('partner_id', session.user.id);
 
         if (transError) throw transError;
 
@@ -41,7 +41,7 @@ export const useClientMetrics = (clientId: string) => {
           .from('service_orders')
           .select('id, created_at, total_amount')
           .eq('client_id', clientId)
-          .eq('user_id', session.user.id)
+          .eq('partner_id', session.user.id)
           .order('created_at', { ascending: false });
 
         if (ordersError) throw ordersError;
@@ -51,7 +51,7 @@ export const useClientMetrics = (clientId: string) => {
           .from('vehicles')
           .select('id')
           .eq('client_id', clientId)
-          .eq('user_id', session.user.id);
+          .eq('partner_id', session.user.id);
 
         if (vehiclesError) throw vehiclesError;
 

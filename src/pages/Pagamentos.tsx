@@ -72,7 +72,7 @@ export default function Pagamentos() {
           clients:client_id(name, email),
           vehicles:vehicle_id(brand, model, license_plate)
         `)
-        .eq('user_id', user.id)
+        .eq('partner_id', user.id)
         .in('status', ['finalizado', 'em_andamento'])
         .order('created_at', { ascending: false })
         .limit(50);

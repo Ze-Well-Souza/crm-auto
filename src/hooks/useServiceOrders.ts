@@ -198,7 +198,7 @@ export const useServiceOrders = () => {
     }
   };
 
-  const createServiceOrder = async (orderData: Omit<ServiceOrder, 'id' | 'created_at' | 'updated_at' | 'clients' | 'vehicles' | 'user_id' | 'order_number'>) => {
+  const createServiceOrder = async (orderData: Omit<ServiceOrder, 'id' | 'created_at' | 'updated_at' | 'clients' | 'vehicles' | 'partner_id' | 'order_number'>) => {
     try {
       // Verificar acesso ao módulo
       if (!hasFeature('crm_service_orders')) {
@@ -220,7 +220,7 @@ export const useServiceOrders = () => {
         .from('service_orders')
         .insert([{
           ...orderData,
-          user_id: session.user.id
+          partner_id: session.user.id
         }])
         .select(`
           *,
@@ -260,7 +260,7 @@ export const useServiceOrders = () => {
         .from('service_orders')
         .update(orderData)
         .eq('id', id)
-        .eq('user_id', session.user.id)
+        .eq('partner_id', session.user.id)
         .select(`
           *,
           clients:client_id (
@@ -299,7 +299,7 @@ export const useServiceOrders = () => {
         .from('service_orders')
         .update({ status: newStatus })
         .eq('id', id)
-        .eq('user_id', session.user.id)
+        .eq('partner_id', session.user.id)
         .select(`
           *,
           clients:client_id (
@@ -338,7 +338,7 @@ export const useServiceOrders = () => {
         .from('service_orders')
         .delete()
         .eq('id', id)
-        .eq('user_id', session.user.id);
+        .eq('partner_id', session.user.id);
 
       if (deleteError) throw deleteError;
 
