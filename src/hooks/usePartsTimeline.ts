@@ -33,7 +33,7 @@ export const usePartsTimeline = (partId: string) => {
 
         // Buscar movimentações de estoque
         const { data: movements } = await supabase
-          .from('stock_movements')
+          .from('crm_stock_movements')
           .select('*')
           .eq('part_id', partId)
           .order('created_at', { ascending: false })
@@ -73,7 +73,7 @@ export const usePartsTimeline = (partId: string) => {
 
         // Buscar itens de ordem de serviço (vendas)
         const { data: serviceItems } = await supabase
-          .from('service_order_items')
+          .from('crm_service_order_items')
           .select(`
             id,
             created_at,

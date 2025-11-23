@@ -32,7 +32,7 @@ export const useVehicleTimeline = (vehicleId: string) => {
 
         // Buscar ordens de serviço do veículo
         const { data: serviceOrders } = await supabase
-          .from('service_orders')
+          .from('crm_service_orders')
           .select('id, order_number, created_at, status, total_amount, description, service_type')
           .eq('vehicle_id', vehicleId)
           .eq('user_id', session.user.id)
@@ -66,7 +66,7 @@ export const useVehicleTimeline = (vehicleId: string) => {
 
         // Buscar agendamentos do veículo para incluir no histórico
         const { data: appointments } = await supabase
-          .from('appointments')
+          .from('crm_appointments')
           .select('id, scheduled_date, status, notes, service_type')
           .eq('vehicle_id', vehicleId)
           .eq('user_id', session.user.id)

@@ -14,7 +14,7 @@ export type Database = {
   }
   public: {
     Tables: {
-      appointments: {
+      crm_appointments: {
         Row: {
           client_id: string
           created_at: string

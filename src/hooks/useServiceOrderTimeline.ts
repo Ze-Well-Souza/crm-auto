@@ -32,7 +32,7 @@ export const useServiceOrderTimeline = (serviceOrderId: string) => {
 
         // Buscar ordem de serviço
         const { data: serviceOrder } = await supabase
-          .from('service_orders')
+          .from('crm_service_orders')
           .select('*')
           .eq('id', serviceOrderId)
           .eq('user_id', session.user.id)
@@ -66,7 +66,7 @@ export const useServiceOrderTimeline = (serviceOrderId: string) => {
 
         // Buscar itens da ordem (peças e serviços)
         const { data: items } = await supabase
-          .from('service_order_items')
+          .from('crm_service_order_items')
           .select('*')
           .eq('service_order_id', serviceOrderId)
           .order('created_at', { ascending: true });
@@ -90,7 +90,7 @@ export const useServiceOrderTimeline = (serviceOrderId: string) => {
 
         // Buscar transações financeiras relacionadas
         const { data: transactions } = await supabase
-          .from('financial_transactions')
+          .from('crm_financial_transactions')
           .select('*')
           .eq('service_order_id', serviceOrderId)
           .eq('user_id', session.user.id)

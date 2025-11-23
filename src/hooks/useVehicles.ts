@@ -210,7 +210,7 @@ export const useVehicles = () => {
 
       // Buscar veículos da frota do parceiro (partner_fleet) com JOIN em vehicles
       const { data: fleetData, error: fetchError } = await supabase
-        .from('partner_fleet')
+        .from('crm_fleet')
         .select(`
           *,
           vehicles:vehicle_id (
@@ -267,7 +267,7 @@ export const useVehicles = () => {
 
       // 1. Criar veículo na tabela vehicles
       const { data: vehicleCreated, error: insertError } = await supabase
-        .from('vehicles')
+        .from('crm_vehicles')
         .insert([{
           ...vehicleData,
           partner_id: user.id
@@ -305,7 +305,7 @@ export const useVehicles = () => {
       console.log('🔗 Criando vínculo na frota...');
 
       const { data: fleetCreated, error: fleetError } = await supabase
-        .from('partner_fleet')
+        .from('crm_fleet')
         .insert([{
           partner_id: user.id,
           client_id: vehicleCreated.client_id,
@@ -346,7 +346,7 @@ export const useVehicles = () => {
       }
 
       const { data, error: updateError } = await supabase
-        .from('vehicles')
+        .from('crm_vehicles')
         .update(vehicleData)
         .eq('id', id)
         .eq('partner_id', user.id)
@@ -380,7 +380,7 @@ export const useVehicles = () => {
 
       // 1. Deletar da partner_fleet primeiro (devido ao CASCADE)
       const { error: fleetDeleteError } = await supabase
-        .from('partner_fleet')
+        .from('crm_fleet')
         .delete()
         .eq('vehicle_id', id)
         .eq('partner_id', user.id);
@@ -391,7 +391,7 @@ export const useVehicles = () => {
 
       // 2. Deletar da tabela vehicles
       const { error: deleteError } = await supabase
-        .from('vehicles')
+        .from('crm_vehicles')
         .delete()
         .eq('id', id)
         .eq('partner_id', user.id);

@@ -20,7 +20,7 @@ export const useAppointmentsNew = () => {
       }
 
       const { data, error: fetchError } = await supabase
-        .from('appointments')
+        .from('crm_appointments')
         .select('*')
         .order('scheduled_date', { ascending: false });
 
@@ -41,7 +41,7 @@ export const useAppointmentsNew = () => {
       }
 
       const { data, error: insertError } = await supabase
-        .from('appointments')
+        .from('crm_appointments')
         .insert([{
           ...appointmentData,
           user_id: session.user.id
@@ -66,7 +66,7 @@ export const useAppointmentsNew = () => {
   const updateAppointment = async (id: string, appointmentData: Partial<Appointment>) => {
     try {
       const { data, error: updateError } = await supabase
-        .from('appointments')
+        .from('crm_appointments')
         .update(appointmentData)
         .eq('id', id)
         .select()
@@ -89,7 +89,7 @@ export const useAppointmentsNew = () => {
   const deleteAppointment = async (id: string) => {
     try {
       const { error: deleteError } = await supabase
-        .from('appointments')
+        .from('crm_appointments')
         .delete()
         .eq('id', id);
 

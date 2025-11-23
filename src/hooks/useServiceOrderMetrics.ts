@@ -30,7 +30,7 @@ export const useServiceOrderMetrics = (serviceOrderId: string) => {
 
         // Buscar ordem de serviço completa
         const { data: order, error: orderError } = await supabase
-          .from('service_orders')
+          .from('crm_service_orders')
           .select('*')
           .eq('id', serviceOrderId)
           .eq('partner_id', session.user.id)
@@ -40,7 +40,7 @@ export const useServiceOrderMetrics = (serviceOrderId: string) => {
 
         // Buscar itens da ordem (se existir tabela service_order_items)
         const { data: items } = await supabase
-          .from('service_order_items')
+          .from('crm_service_order_items')
           .select('*')
           .eq('service_order_id', serviceOrderId);
 

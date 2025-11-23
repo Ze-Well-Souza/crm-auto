@@ -29,7 +29,7 @@ export const useClientMetrics = (clientId: string) => {
 
         // Buscar transações financeiras do cliente
         const { data: transactions, error: transError } = await supabase
-          .from('financial_transactions')
+          .from('crm_financial_transactions')
           .select('amount, status')
           .eq('client_id', clientId)
           .eq('partner_id', session.user.id);
@@ -38,7 +38,7 @@ export const useClientMetrics = (clientId: string) => {
 
         // Buscar ordens de serviço do cliente
         const { data: serviceOrders, error: ordersError } = await supabase
-          .from('service_orders')
+          .from('crm_service_orders')
           .select('id, created_at, total_amount')
           .eq('client_id', clientId)
           .eq('partner_id', session.user.id)
@@ -48,7 +48,7 @@ export const useClientMetrics = (clientId: string) => {
 
         // Buscar veículos do cliente
         const { data: vehicles, error: vehiclesError } = await supabase
-          .from('vehicles')
+          .from('crm_vehicles')
           .select('id')
           .eq('client_id', clientId)
           .eq('partner_id', session.user.id);

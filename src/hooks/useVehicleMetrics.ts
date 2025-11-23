@@ -45,7 +45,7 @@ export const useVehicleMetrics = (vehicleId: string) => {
 
         // Buscar dados do veículo
         const { data: vehicle, error: vehicleError } = await supabase
-          .from('vehicles')
+          .from('crm_vehicles')
           .select('mileage, created_at')
           .eq('id', vehicleId)
           .eq('partner_id', session.user.id)
@@ -55,7 +55,7 @@ export const useVehicleMetrics = (vehicleId: string) => {
 
         // Buscar ordens de serviço do veículo
         const { data: serviceOrders, error: ordersError } = await supabase
-          .from('service_orders')
+          .from('crm_service_orders')
           .select('id, created_at, total_amount, status')
           .eq('vehicle_id', vehicleId)
           .eq('partner_id', session.user.id)
@@ -65,7 +65,7 @@ export const useVehicleMetrics = (vehicleId: string) => {
 
         // Buscar agendamentos do veículo
         const { data: appointments } = await supabase
-          .from('appointments')
+          .from('crm_appointments')
           .select('scheduled_date, status')
           .eq('vehicle_id', vehicleId)
           .eq('partner_id', session.user.id)

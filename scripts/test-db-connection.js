@@ -50,12 +50,12 @@ async function testConnection() {
     const tables = [
       'subscription_plans',
       'partner_subscriptions',
-      'clients',
-      'vehicles',
-      'appointments',
-      'service_orders',
-      'parts',
-      'financial_transactions',
+      'crm_clients',
+      'crm_vehicles',
+      'crm_appointments',
+      'crm_service_orders',
+      'crm_parts',
+      'crm_financial_transactions',
     ];
 
     for (const table of tables) {

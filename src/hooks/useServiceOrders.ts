@@ -171,7 +171,7 @@ export const useServiceOrders = () => {
       }
 
       const { data, error: fetchError } = await supabase
-        .from('service_orders')
+        .from('crm_service_orders')
         .select(`
           *,
           clients:client_id (
@@ -217,7 +217,7 @@ export const useServiceOrders = () => {
       }
 
       const { data, error: insertError } = await supabase
-        .from('service_orders')
+        .from('crm_service_orders')
         .insert([{
           ...orderData,
           partner_id: session.user.id
@@ -257,7 +257,7 @@ export const useServiceOrders = () => {
       }
 
       const { data, error: updateError } = await supabase
-        .from('service_orders')
+        .from('crm_service_orders')
         .update(orderData)
         .eq('id', id)
         .eq('partner_id', session.user.id)
@@ -296,7 +296,7 @@ export const useServiceOrders = () => {
       }
 
       const { data, error: updateError } = await supabase
-        .from('service_orders')
+        .from('crm_service_orders')
         .update({ status: newStatus })
         .eq('id', id)
         .eq('partner_id', session.user.id)
@@ -335,7 +335,7 @@ export const useServiceOrders = () => {
       }
 
       const { error: deleteError } = await supabase
-        .from('service_orders')
+        .from('crm_service_orders')
         .delete()
         .eq('id', id)
         .eq('partner_id', session.user.id);

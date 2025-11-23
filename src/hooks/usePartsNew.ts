@@ -21,7 +21,7 @@ export const usePartsNew = () => {
       }
 
       const { data, error: fetchError } = await supabase
-        .from('parts')
+        .from('crm_parts')
         .select('*')
         .order('name', { ascending: true });
 
@@ -67,7 +67,7 @@ export const usePartsNew = () => {
       }
 
       const { data, error: insertError } = await supabase
-        .from('parts')
+        .from('crm_parts')
         .insert([{
           ...partData,
           user_id: session.user.id
@@ -92,7 +92,7 @@ export const usePartsNew = () => {
   const updatePart = async (id: string, partData: Partial<Part>) => {
     try {
       const { data, error: updateError } = await supabase
-        .from('parts')
+        .from('crm_parts')
         .update(partData)
         .eq('id', id)
         .select()
@@ -115,7 +115,7 @@ export const usePartsNew = () => {
   const deletePart = async (id: string) => {
     try {
       const { error: deleteError } = await supabase
-        .from('parts')
+        .from('crm_parts')
         .delete()
         .eq('id', id);
 

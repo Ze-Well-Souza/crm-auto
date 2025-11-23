@@ -78,7 +78,7 @@ export const useStripeTransactions = () => {
       }
 
       const { data, error: fetchError } = await supabase
-        .from('financial_transactions')
+        .from('crm_financial_transactions')
         .select(`
           *,
           clients:client_id(name, email),

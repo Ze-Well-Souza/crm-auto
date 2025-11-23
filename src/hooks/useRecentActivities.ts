@@ -41,7 +41,7 @@ export const useRecentActivities = (limit: number = 5) => {
         
         // Recent service orders
         supabase
-          .from('service_orders')
+          .from('crm_service_orders')
           .select('id, order_number, status, total_value, created_at')
           .eq('partner_id', partnerId)
           .gte('created_at', thirtyDaysAgo.toISOString())
@@ -50,7 +50,7 @@ export const useRecentActivities = (limit: number = 5) => {
         
         // Recent appointments
         supabase
-          .from('appointments')
+          .from('crm_appointments')
           .select('id, title, status, scheduled_date, created_at')
           .eq('partner_id', partnerId)
           .gte('created_at', thirtyDaysAgo.toISOString())
@@ -59,7 +59,7 @@ export const useRecentActivities = (limit: number = 5) => {
         
         // Recent vehicles
         supabase
-          .from('vehicles')
+          .from('crm_vehicles')
           .select('id, brand, model, license_plate, created_at')
           .eq('partner_id', partnerId)
           .gte('created_at', thirtyDaysAgo.toISOString())
@@ -68,7 +68,7 @@ export const useRecentActivities = (limit: number = 5) => {
         
         // Recent payments
         supabase
-          .from('financial_transactions')
+          .from('crm_financial_transactions')
           .select('id, description, amount, type, created_at')
           .eq('partner_id', partnerId)
           .eq('type', 'revenue')

@@ -66,7 +66,7 @@ export default function Pagamentos() {
       if (!user) return;
 
       const { data, error } = await supabase
-        .from('service_orders')
+        .from('crm_service_orders')
         .select(`
           *,
           clients:client_id(name, email),

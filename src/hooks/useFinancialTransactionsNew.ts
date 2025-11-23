@@ -21,7 +21,7 @@ export const useFinancialTransactionsNew = () => {
       }
 
       const { data, error: fetchError } = await supabase
-        .from('financial_transactions')
+        .from('crm_financial_transactions')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -62,7 +62,7 @@ export const useFinancialTransactionsNew = () => {
       }
 
       const { data, error: insertError } = await supabase
-        .from('financial_transactions')
+        .from('crm_financial_transactions')
         .insert([{
           ...transactionData,
           user_id: session.user.id
@@ -87,7 +87,7 @@ export const useFinancialTransactionsNew = () => {
   const updateTransaction = async (id: string, transactionData: Partial<FinancialTransaction>) => {
     try {
       const { data, error: updateError } = await supabase
-        .from('financial_transactions')
+        .from('crm_financial_transactions')
         .update(transactionData)
         .eq('id', id)
         .select()
@@ -110,7 +110,7 @@ export const useFinancialTransactionsNew = () => {
   const deleteTransaction = async (id: string) => {
     try {
       const { error: deleteError } = await supabase
-        .from('financial_transactions')
+        .from('crm_financial_transactions')
         .delete()
         .eq('id', id);
 

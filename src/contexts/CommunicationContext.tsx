@@ -123,7 +123,7 @@ export const CommunicationProvider: React.FC<CommunicationProviderProps> = ({ ch
       if (!user) return;
 
       const { data: messagesData, error: messagesError } = await supabase
-        .from('chat_messages')
+        .from('crm_chat_messages')
         .select('*')
         .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`)
         .order('created_at', { ascending: false })

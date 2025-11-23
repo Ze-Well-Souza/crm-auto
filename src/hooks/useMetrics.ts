@@ -46,67 +46,67 @@ export const useMetrics = () => {
         
         // Total vehicles
         supabase
-          .from('vehicles')
+          .from('crm_vehicles')
           .select('*', { count: 'exact', head: true })
           .eq('partner_id', partnerId),
         
         // Total service orders
         supabase
-          .from('service_orders')
+          .from('crm_service_orders')
           .select('*', { count: 'exact', head: true })
           .eq('partner_id', partnerId),
         
         // Total appointments
         supabase
-          .from('appointments')
+          .from('crm_appointments')
           .select('*', { count: 'exact', head: true })
           .eq('partner_id', partnerId),
         
         // Revenue data
         supabase
-          .from('financial_transactions')
+          .from('crm_financial_transactions')
           .select('amount')
           .eq('partner_id', partnerId)
           .eq('type', 'revenue'),
         
         // Pending service orders
         supabase
-          .from('service_orders')
+          .from('crm_service_orders')
           .select('*', { count: 'exact', head: true })
           .eq('partner_id', partnerId)
           .eq('status', 'pending'),
         
         // Completed service orders
         supabase
-          .from('service_orders')
+          .from('crm_service_orders')
           .select('*', { count: 'exact', head: true })
           .eq('partner_id', partnerId)
           .eq('status', 'completed'),
         
         // Cancelled appointments
         supabase
-          .from('appointments')
+          .from('crm_appointments')
           .select('*', { count: 'exact', head: true })
           .eq('partner_id', partnerId)
           .eq('status', 'cancelled'),
         
         // Confirmed appointments
         supabase
-          .from('appointments')
+          .from('crm_appointments')
           .select('*', { count: 'exact', head: true })
           .eq('partner_id', partnerId)
           .eq('status', 'confirmed'),
         
         // Low stock parts
         supabase
-          .from('parts')
+          .from('crm_parts')
           .select('*', { count: 'exact', head: true })
           .eq('partner_id', partnerId)
           .lte('current_stock', 'minimum_stock'),
         
         // Total parts
         supabase
-          .from('parts')
+          .from('crm_parts')
           .select('*', { count: 'exact', head: true })
           .eq('partner_id', partnerId)
       ]);

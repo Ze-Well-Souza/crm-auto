@@ -31,7 +31,7 @@ export const useClientTimeline = (clientId: string) => {
 
         // Buscar ordens de serviço
         const { data: serviceOrders } = await supabase
-          .from('service_orders')
+          .from('crm_service_orders')
           .select('id, order_number, created_at, status, total_amount')
           .eq('client_id', clientId)
           .eq('user_id', session.user.id)
@@ -54,7 +54,7 @@ export const useClientTimeline = (clientId: string) => {
 
         // Buscar agendamentos
         const { data: appointments } = await supabase
-          .from('appointments')
+          .from('crm_appointments')
           .select('id, scheduled_date, status, notes')
           .eq('client_id', clientId)
           .eq('user_id', session.user.id)
@@ -76,7 +76,7 @@ export const useClientTimeline = (clientId: string) => {
 
         // Buscar transações financeiras
         const { data: transactions } = await supabase
-          .from('financial_transactions')
+          .from('crm_financial_transactions')
           .select('id, created_at, amount, status, type, description')
           .eq('client_id', clientId)
           .eq('user_id', session.user.id)
