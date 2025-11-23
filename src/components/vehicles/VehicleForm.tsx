@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useVehicles } from "@/hooks/useVehicles";
 import { useClients } from "@/hooks/useClients";
 import { FUEL_TYPES } from "@/utils/constants";
+import { toast } from "sonner";
 import type { Vehicle } from "@/types";
 
 interface VehicleFormProps {
@@ -37,41 +38,58 @@ export const VehicleForm = ({ onSuccess }: VehicleFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validação de cliente
+    if (!formData.client_id) {
+      toast.error("Por favor, selecione um cliente");
+      return;
+    }
+
+    // Validação de campos obrigatórios
+    if (!formData.brand || !formData.model) {
+      toast.error("Marca e Modelo são obrigatórios");
+      return;
+    }
+
     setLoading(true);
 
-    const result = await createVehicle({
-      client_id: formData.client_id,
-      brand: formData.brand,
-      model: formData.model,
-      year: formData.year ? parseInt(formData.year) : null,
-      license_plate: formData.license_plate || null,
-      plate: formData.license_plate || null,
-      vin: formData.vin || null,
-      chassis: formData.vin || null,
-      color: formData.color || null,
-      fuel_type: formData.fuel_type || null,
-      engine: formData.engine || null,
-      mileage: formData.mileage ? parseInt(formData.mileage) : null,
-      notes: formData.notes || null,
-    });
-
-    setLoading(false);
-
-    if (result) {
-      setFormData({
-        client_id: "",
-        brand: "",
-        model: "",
-        year: "",
-        license_plate: "",
-        vin: "",
-        color: "",
-        fuel_type: "",
-        engine: "",
-        mileage: "",
-        notes: ""
+    try {
+      const result = await createVehicle({
+        client_id: formData.client_id,
+        brand: formData.brand,
+        model: formData.model,
+        year: formData.year ? parseInt(formData.year) : null,
+        plate: formData.license_plate || null,
+        vin: formData.vin || null,
+        color: formData.color || null,
+        fuel_type: formData.fuel_type || null,
+        engine: formData.engine || null,
+        mileage: formData.mileage ? parseInt(formData.mileage) : null,
+        notes: formData.notes || null,
       });
-      onSuccess?.();
+
+      if (result) {
+        // Limpar formulário
+        setFormData({
+          client_id: "",
+          brand: "",
+          model: "",
+          year: "",
+          license_plate: "",
+          vin: "",
+          color: "",
+          fuel_type: "",
+          engine: "",
+          mileage: "",
+          notes: ""
+        });
+        onSuccess?.();
+      }
+    } catch (err: any) {
+      console.error('Erro no formulário:', err);
+      toast.error(err.message || "Erro ao salvar veículo");
+    } finally {
+      setLoading(false);
     }
   };
 

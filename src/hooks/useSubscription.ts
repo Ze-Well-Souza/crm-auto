@@ -253,7 +253,18 @@ export const useSubscription = () => {
     if (isMock || bypass) return true;
     if (!plan && localStorage.getItem('mock_user')) return true;
     if (!plan) return false;
-    return plan.features?.includes(feature) || false;
+
+    // Handle both array and object formats for features
+    if (Array.isArray(plan.features)) {
+      return plan.features.includes(feature);
+    }
+
+    // If features is an object (JSONB from Supabase), check if the feature key exists
+    if (typeof plan.features === 'object' && plan.features !== null) {
+      return feature in plan.features || Object.values(plan.features).includes(feature);
+    }
+
+    return false;
   };
 
   const isTrialActive = (): boolean => {

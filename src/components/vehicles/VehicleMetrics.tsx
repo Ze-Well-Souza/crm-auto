@@ -46,11 +46,11 @@ export const VehicleMetrics = ({ vehicles }: VehicleMetricsProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {/* Total Vehicles - Landing Page Style */}
-      <Card className="bg-white/90 dark:bg-white/5 border-l-4 border-l-blue-600 border-t border-r border-b border-slate-200/50 dark:border-t-white/10 dark:border-r-white/10 dark:border-b-white/10 backdrop-blur-xl shadow-xl shadow-blue-500/10 transition-all duration-300">
+      <Card className="bg-white/90 dark:bg-white/5 border-l-4 border-l-slate-600 border-t border-r border-b border-slate-200/50 dark:border-t-white/10 dark:border-r-white/10 dark:border-b-white/10 backdrop-blur-xl shadow-xl shadow-slate-500/10 transition-all duration-300">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-700 dark:text-slate-300">
-            <div className="p-2 rounded-lg bg-blue-600/20 dark:bg-blue-500/20">
-              <Car className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <div className="p-2 rounded-lg bg-slate-600/20 dark:bg-slate-500/20">
+              <Car className="h-4 w-4 text-slate-600 dark:text-slate-400" />
             </div>
             Total de Veículos
           </CardTitle>
@@ -74,7 +74,7 @@ export const VehicleMetrics = ({ vehicles }: VehicleMetricsProps) => {
         <CardContent className="space-y-2">
           {Object.entries(fuelTypes).slice(0, 3).map(([fuel, count]) => (
             <div key={fuel} className="flex justify-between items-center">
-              <Badge className="text-xs bg-slate-100 dark:bg-white/10 border-slate-200 dark:border-white/20 text-slate-700 dark:text-slate-300">{fuel}</Badge>
+              <span className="inline-flex items-center rounded-full px-3 py-1 text-xs bg-blue-50 dark:bg-blue-500/20 text-blue-800 dark:text-blue-300 font-semibold">{fuel}</span>
               <span className="text-sm font-medium text-slate-900 dark:text-white">{count}</span>
             </div>
           ))}
@@ -98,15 +98,15 @@ export const VehicleMetrics = ({ vehicles }: VehicleMetricsProps) => {
         </CardHeader>
         <CardContent className="space-y-2">
           <div className="flex justify-between items-center">
-            <Badge className="bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border-0">Novos</Badge>
+            <span className="inline-flex items-center rounded-full px-3 py-1 text-xs bg-purple-100 text-purple-800 dark:bg-purple-500/20 dark:text-purple-300 font-semibold">Novos</span>
             <span className="text-sm font-medium text-slate-900 dark:text-white">{newVehicles}</span>
           </div>
           <div className="flex justify-between items-center">
-            <Badge className="bg-blue-500/20 text-blue-600 dark:text-blue-300 border-0">Seminovos</Badge>
+            <span className="inline-flex items-center rounded-full px-3 py-1 text-xs bg-orange-100 text-orange-800 dark:bg-orange-500/20 dark:text-orange-300 font-semibold">Seminovos</span>
             <span className="text-sm font-medium text-slate-900 dark:text-white">{semiNewVehicles}</span>
           </div>
           <div className="flex justify-between items-center">
-            <Badge className="bg-slate-500/20 text-slate-700 dark:text-slate-300 border-0">Usados</Badge>
+            <span className="inline-flex items-center rounded-full px-3 py-1 text-xs bg-slate-100 text-slate-700 dark:bg-slate-500/20 dark:text-slate-300 font-semibold">Usados</span>
             <span className="text-sm font-medium text-slate-900 dark:text-white">{oldVehicles}</span>
           </div>
         </CardContent>

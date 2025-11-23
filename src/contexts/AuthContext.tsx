@@ -93,13 +93,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    if (email === 'admin@oficina.com' && password === '123456') {
-      const mock = { id: 'mock-user', email } as unknown as User;
-      setUser(mock);
-      setSession(null);
-      localStorage.setItem('mock_user', JSON.stringify(mock));
-      return { error: null };
-    }
     if (isMock) {
       const mock = { id: 'mock-user', email } as unknown as User;
       setUser(mock);

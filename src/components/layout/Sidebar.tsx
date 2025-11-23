@@ -66,7 +66,7 @@ export const Sidebar = () => {
             const isActive = location.pathname === item.href;
             const hasAccess = !item.feature || hasFeature(item.feature);
             const isLocked = !hasAccess;
-            
+
             return (
               <li key={item.name}>
                 <Link

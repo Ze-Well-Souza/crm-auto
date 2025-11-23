@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNotifications } from "@/contexts/NotificationContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import type { Vehicle } from "@/types";
 
@@ -188,14 +189,14 @@ export const useVehicles = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const notifications = useNotifications();
+  const { user, session } = useAuth();
 
   const fetchVehicles = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) {
+      if (!user || !session) {
         // Se não autenticado, usar dados mock
         console.log('Usuário não autenticado - usando dados mock de veículos');
         setTimeout(() => {
@@ -205,21 +206,43 @@ export const useVehicles = () => {
         return;
       }
 
-      const { data, error: fetchError } = await supabase
-        .from('vehicles')
+      console.log('✅ Usuário autenticado:', user.id);
+
+      // Buscar veículos da frota do parceiro (partner_fleet) com JOIN em vehicles
+      const { data: fleetData, error: fetchError } = await supabase
+        .from('partner_fleet')
         .select(`
           *,
-          clients:client_id (
-            name,
-            email
+          vehicles:vehicle_id (
+            *,
+            clients:client_id (
+              name,
+              email
+            )
           )
         `)
-        .order('brand', { ascending: true });
+        .eq('partner_id', user.id)
+        .order('created_at', { ascending: false });
 
       if (fetchError) throw fetchError;
 
+      // Transformar dados para o formato esperado (Vehicle[])
+      const vehiclesData = fleetData?.map((fleet: any) => ({
+        ...fleet.vehicles,
+        // Adicionar métricas da frota
+        fleet_metrics: {
+          total_services: fleet.total_services,
+          total_spent: fleet.total_spent,
+          average_service_cost: fleet.average_service_cost,
+          maintenance_status: fleet.maintenance_status,
+          days_since_last_service: fleet.days_since_last_service,
+          has_pending_alerts: fleet.has_pending_alerts,
+          alert_count: fleet.alert_count
+        }
+      })) || [];
+
       // Se não houver dados no banco, usar mock
-      setVehicles(data && data.length > 0 ? data : MOCK_VEHICLES);
+      setVehicles(vehiclesData.length > 0 ? vehiclesData : MOCK_VEHICLES);
     } catch (err: any) {
       console.error('Erro ao buscar veículos:', err);
       // Em caso de erro, usar dados mock
@@ -232,16 +255,23 @@ export const useVehicles = () => {
 
   const createVehicle = async (vehicleData: Omit<Vehicle, 'id' | 'created_at' | 'updated_at' | 'clients' | 'user_id'>) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) {
+      if (!user || !session) {
         throw new Error('Usuário não autenticado');
       }
 
-      const { data, error: insertError } = await supabase
+      // Validar client_id obrigatório
+      if (!vehicleData.client_id) {
+        throw new Error('Cliente é obrigatório');
+      }
+
+      console.log('🚗 Criando veículo:', vehicleData);
+
+      // 1. Criar veículo na tabela vehicles
+      const { data: vehicleCreated, error: insertError } = await supabase
         .from('vehicles')
         .insert([{
           ...vehicleData,
-          user_id: session.user.id
+          partner_id: user.id
         }])
         .select(`
           *,
@@ -252,23 +282,68 @@ export const useVehicles = () => {
         `)
         .single();
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        console.error('❌ Erro ao inserir veículo:', insertError);
+        throw insertError;
+      }
+
+      if (!vehicleCreated) {
+        throw new Error('Veículo não foi criado - resposta vazia do banco');
+      }
+
+      console.log('✅ Veículo criado:', vehicleCreated);
+
+      // 2. Criar vínculo na tabela partner_fleet
+      const vehicleSnapshot = {
+        brand: vehicleCreated.brand,
+        model: vehicleCreated.model,
+        year: vehicleCreated.year,
+        plate: vehicleCreated.license_plate,
+        color: vehicleCreated.color,
+        fuel_type: vehicleCreated.fuel_type
+      };
+
+      console.log('🔗 Criando vínculo na frota...');
+
+      const { data: fleetCreated, error: fleetError } = await supabase
+        .from('partner_fleet')
+        .insert([{
+          partner_id: user.id,
+          client_id: vehicleCreated.client_id,
+          vehicle_id: vehicleCreated.id,
+          vehicle_snapshot: vehicleSnapshot,
+          total_services: 0,
+          total_spent: 0,
+          average_service_cost: 0,
+          maintenance_status: 'em_dia',
+          days_since_last_service: null,
+          has_pending_alerts: false,
+          alert_count: 0
+        }])
+        .select()
+        .single();
+
+      if (fleetError) {
+        console.error('❌ Erro ao criar vínculo na frota:', fleetError);
+        throw fleetError;
+      }
+
+      console.log('✅ Vínculo criado na frota:', fleetCreated);
 
       notifications.showCreateSuccess("Veículo");
 
       await fetchVehicles();
-      return data;
+      return vehicleCreated;
     } catch (err: any) {
-      console.error('Erro ao criar veículo:', err);
+      console.error('❌ Erro ao criar veículo:', err);
       notifications.showOperationError("criar", "veículo");
-      return null;
+      throw err; // Re-throw para o formulário tratar
     }
   };
 
   const updateVehicle = async (id: string, vehicleData: Partial<Vehicle>) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) {
+      if (!user || !session) {
         throw new Error('Usuário não autenticado');
       }
 
@@ -276,7 +351,7 @@ export const useVehicles = () => {
         .from('vehicles')
         .update(vehicleData)
         .eq('id', id)
-        .eq('user_id', session.user.id)
+        .eq('partner_id', user.id)
         .select(`
           *,
           clients:client_id (
@@ -301,16 +376,27 @@ export const useVehicles = () => {
 
   const deleteVehicle = async (id: string) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) {
+      if (!user || !session) {
         throw new Error('Usuário não autenticado');
       }
 
+      // 1. Deletar da partner_fleet primeiro (devido ao CASCADE)
+      const { error: fleetDeleteError } = await supabase
+        .from('partner_fleet')
+        .delete()
+        .eq('vehicle_id', id)
+        .eq('partner_id', user.id);
+
+      if (fleetDeleteError) {
+        console.error('Erro ao deletar da frota:', fleetDeleteError);
+      }
+
+      // 2. Deletar da tabela vehicles
       const { error: deleteError } = await supabase
         .from('vehicles')
         .delete()
         .eq('id', id)
-        .eq('user_id', session.user.id);
+        .eq('partner_id', user.id);
 
       if (deleteError) throw deleteError;
 

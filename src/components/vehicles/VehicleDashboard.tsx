@@ -56,21 +56,21 @@ export const VehicleDashboard = ({ vehicle, open, onOpenChange }: VehicleDashboa
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto bg-slate-900 border-white/10">
+      <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10">
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center">
-                <Car className="h-6 w-6 text-blue-400" />
+              <div className="w-12 h-12 bg-blue-50 dark:bg-blue-500/20 rounded-full flex items-center justify-center border border-blue-200 dark:border-0">
+                <Car className="h-6 w-6 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-white">{vehicle.brand} {vehicle.model}</span>
+                  <span className="text-slate-900 dark:text-white font-bold">{vehicle.brand} {vehicle.model}</span>
                   <Badge variant="outline" className={score.color}>
                     {score.label}
                   </Badge>
                 </div>
-                <p className="text-sm text-slate-400 font-normal">
+                <p className="text-sm text-slate-600 dark:text-slate-400 font-normal">
                   {vehicle.year} • {vehicle.license_plate} • {getVehicleAge()} anos
                 </p>
               </div>
@@ -79,28 +79,28 @@ export const VehicleDashboard = ({ vehicle, open, onOpenChange }: VehicleDashboa
         </DialogHeader>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 bg-white/5 border-white/10">
+          <TabsList className="grid w-full grid-cols-4 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10">
             <TabsTrigger
               value="overview"
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-400"
+              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-700 dark:text-slate-400"
             >
               Visão Geral
             </TabsTrigger>
             <TabsTrigger
               value="maintenance"
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-400"
+              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-700 dark:text-slate-400"
             >
               Manutenção
             </TabsTrigger>
             <TabsTrigger
               value="financial"
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-400"
+              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-700 dark:text-slate-400"
             >
               Financeiro
             </TabsTrigger>
             <TabsTrigger
               value="timeline"
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white text-slate-400"
+              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-700 dark:text-slate-400"
             >
               Histórico
             </TabsTrigger>
@@ -150,9 +150,9 @@ export const VehicleDashboard = ({ vehicle, open, onOpenChange }: VehicleDashboa
             </div>
 
             {/* Vehicle Specifications */}
-            <Card className="bg-white/5 border-white/10">
+            <Card className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10">
               <CardHeader>
-                <CardTitle className="text-lg text-white">Especificações Técnicas</CardTitle>
+                <CardTitle className="text-lg text-slate-900 dark:text-white">Especificações Técnicas</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
