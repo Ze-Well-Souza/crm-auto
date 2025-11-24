@@ -1,12 +1,16 @@
 # 📋 PRD - Product Requirements Document
-## Sistema de Gestão de Oficinas Automotivas
+## Sistema de Gestão de Oficinas Automotivas (Uautos Pro)
+
+> **Última Atualização**: 2025-01-24
+> **Versão do PRD**: 3.0
+> **Status**: ✅ MVP em Produção (React + Vite)
 
 ---
 
 ## 1. VISÃO GERAL DO PRODUTO
 
 ### 1.1 Resumo Executivo
-Sistema SaaS completo de gestão para oficinas automotivas e prestadores de serviços automotivos, oferecendo solução integrada para agendamentos, clientes, veículos, ordens de serviço, estoque de peças, financeiro e comunicação.
+Sistema SaaS completo de gestão para oficinas automotivas e prestadores de serviços automotivos, oferecendo solução integrada para agendamentos, clientes, veículos, ordens de serviço, estoque de peças, financeiro e comunicação. **Desenvolvido com React 18 + Vite**, integrado ao Marketplace Uautos.
 
 ### 1.2 Proposta de Valor
 - **Para Oficinas**: Sistema completo de gestão sem necessidade de múltiplas ferramentas
@@ -46,30 +50,87 @@ Sistema SaaS completo de gestão para oficinas automotivas e prestadores de serv
 
 ## 3. ARQUITETURA DO SISTEMA
 
-### 3.1 Stack Tecnológico
+### 3.1 Stack Tecnológico (ATUALIZADO)
 ```
-Frontend:
-├── React 18 (Vite)
-├── TypeScript
-├── Tailwind CSS (Design System Semântico)
-├── Shadcn/ui (Componentes)
-├── TanStack Query (Cache)
-└── React Router (Rotas)
+Frontend (SPA - Single Page Application):
+├── React 18.3.1 (Biblioteca UI)
+├── Vite 5.4.19 (Build Tool & Dev Server)
+├── TypeScript 5.8.3 (Type Safety)
+├── React Router DOM 6.30.1 (Client-Side Routing)
+├── Tailwind CSS 3.4.17 (Utility-First CSS)
+├── Shadcn/ui (Componentes Radix UI)
+├── TanStack Query 5.83.0 (Server State Management)
+├── React Hook Form 7.61.1 + Zod 3.25.76 (Validação)
+├── Next Themes 0.3.0 (Dark/Light Mode)
+└── Vite PWA 1.1.0 (Progressive Web App)
 
-Backend:
+Backend & Infraestrutura:
 ├── Supabase (PostgreSQL + Auth + Storage + Edge Functions)
-├── Row Level Security (RLS)
-└── Realtime Subscriptions
+│   ├── PostgreSQL 15+ (Database)
+│   ├── Row Level Security (RLS) - Segurança a nível de linha
+│   ├── Realtime Subscriptions (WebSockets)
+│   └── Edge Functions (Deno Runtime)
+├── Supabase Auth (JWT-based Authentication)
+└── Supabase Storage (Armazenamento de arquivos)
 
 Integrações:
-├── Stripe (Pagamentos e Assinaturas)
+├── Stripe (Pagamentos e Assinaturas SaaS)
+│   ├── @stripe/stripe-js 4.8.0
+│   └── @stripe/react-stripe-js 2.8.1
 ├── SMTP (E-mails transacionais)
-└── PWA (App Offline)
+├── Sentry 10.25.0 (Error Tracking & Performance)
+└── PWA (App Offline com Service Workers)
 
-Infraestrutura:
-├── Lovable Cloud (Hosting)
-├── Supabase Cloud (Database)
-└── Stripe (Billing)
+Build & Deploy:
+├── Vite (Bundler com Rollup)
+├── Terser (Minificação JS)
+├── Code Splitting (Lazy Loading por rota)
+├── Lovable Cloud (Hosting Frontend)
+└── Supabase Cloud (Backend as a Service)
+
+Testes & Qualidade:
+├── Vitest 4.0.10 (Unit & Integration Tests)
+├── @testing-library/react 16.3.0 (Component Tests)
+├── ESLint 9.32.0 (Linting)
+└── TypeScript (Type Checking)
+```
+
+### 3.2 Arquitetura de Roteamento
+**Tipo**: Client-Side Routing (React Router v6)
+**Estrutura**: `/src/pages/` (Não usa App Router do Next.js)
+
+**Rotas Públicas:**
+- `/` → Landing Page
+- `/landing` → Landing Page alternativa
+- `/register` → Cadastro de usuário
+- `/auth/callback` → Callback de confirmação de email
+- `/reset-password` → Recuperação de senha
+- `/install` → Instalação PWA
+
+**Rotas Protegidas (Requer Autenticação):**
+- `/dashboard` → Dashboard principal
+- `/clientes` → Gestão de clientes (Feature: `crm_clients`)
+- `/veiculos` → Gestão de veículos (Feature: `crm_vehicles`)
+- `/agendamentos` → Agendamentos (Feature: `crm_appointments`)
+- `/ordens` → Ordens de Serviço (Feature: `crm_service_orders`)
+- `/estoque` → Estoque de peças (Feature: `crm_parts`)
+- `/financeiro` → Gestão financeira (Feature: `crm_financial`)
+- `/pagamentos` → Pagamentos Stripe
+- `/parceiros` → Marketplace de parceiros
+- `/comunicacao` → Comunicação com clientes
+- `/biblioteca-imagens` → Biblioteca de imagens
+- `/configuracoes` → Configurações do usuário
+- `/docs` → Documentação
+
+**Rotas Administrativas (Requer Role Admin/Super Admin):**
+- `/admin` → Painel administrativo completo
+
+**Proteção de Rotas:**
+```typescript
+// Componentes de proteção
+<ProtectedRoute>        // Requer autenticação (supabase.auth.getUser())
+<AdminRoute>            // Requer role admin/super_admin (via is_admin() function)
+<FeatureRoute>          // Requer feature do plano (via SubscriptionContext)
 ```
 
 ### 3.2 Modelo de Dados Principais
@@ -1107,6 +1168,58 @@ export const useUserRole = () => {
 
 ---
 
-**Última Atualização**: 2024-12-20
-**Versão do PRD**: 2.0
-**Status**: ✅ Produção
+## 15. NOTAS TÉCNICAS IMPORTANTES
+
+### 15.1 Arquitetura Frontend
+**O projeto SEMPRE foi React + Vite. NÃO houve migração de/para Next.js.**
+
+- ✅ Build Tool: Vite 5.4.19
+- ✅ Roteamento: React Router DOM v6 (client-side)
+- ✅ Entry Point: `index.html` (padrão Vite)
+- ✅ Estrutura: SPA (Single Page Application)
+- ❌ NÃO usa Next.js App Router
+- ❌ NÃO usa Next.js Pages Router
+- ❌ NÃO usa Server-Side Rendering (SSR)
+
+### 15.2 Proteção de Rotas
+**3 Camadas de Segurança:**
+
+1. **Autenticação** (`<ProtectedRoute>`)
+   - Verifica se usuário está logado via Supabase Auth
+   - Redireciona para landing se não autenticado
+
+2. **Autorização por Role** (`<AdminRoute>`)
+   - Valida role via função `is_admin()` (SECURITY DEFINER)
+   - Bloqueia acesso se não for admin/super_admin
+
+3. **Autorização por Feature** (`<FeatureRoute>`)
+   - Verifica se plano atual tem acesso à feature
+   - Exibe prompt de upgrade se necessário
+
+### 15.3 Segurança Server-Side
+**Row Level Security (RLS) ativo em 100% das tabelas:**
+
+- Todas as queries passam por validação RLS
+- Funções SECURITY DEFINER para operações privilegiadas
+- Impossível burlar limites de plano via client-side
+- Logs de auditoria para ações administrativas
+
+### 15.4 Pendências Críticas Identificadas
+
+**❌ CRÍTICO - Ofuscação de Dados do Parceiro:**
+- **Problema**: Dados sensíveis do parceiro são exibidos antes da compra
+- **Impacto**: Violação de privacidade e modelo de negócio
+- **Solução**: Implementar ofuscação em `src/components/partners/PartnerCard.tsx`
+- **Prioridade**: ALTA (bloqueador para produção)
+
+**⚠️ IMPORTANTE - Otimização de Performance:**
+- **Problema**: Possíveis re-renders excessivos em contexts
+- **Impacto**: Performance degradada em uso intenso
+- **Solução**: Adicionar memoização em `AuthContext` e `SubscriptionContext`
+- **Prioridade**: MÉDIA (melhoria de UX)
+
+---
+
+**Última Atualização**: 2025-01-24
+**Versão do PRD**: 3.0
+**Status**: ✅ MVP 95% Completo (Pendente: Ofuscação de Dados)

@@ -4,186 +4,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import type { Vehicle } from "@/types";
 
-// Mock data para desenvolvimento
-const MOCK_VEHICLES: Vehicle[] = [
-  {
-    id: '1',
-    brand: 'Toyota',
-    model: 'Corolla',
-    year: 2022,
-    license_plate: 'ABC-1234',
-    color: 'Prata',
-    fuel_type: 'Flex',
-    mileage: 25000,
-    chassis: '9BWZZZ377VT004251',
-    client_id: '1',
-    plate: 'ABC-1234',
-    vin: null,
-    engine: null,
-    notes: 'Revisão em dia - Próxima manutenção em 30.000 km',
-    created_at: '2023-06-15T10:00:00Z',
-    updated_at: '2024-11-15T14:30:00Z',
-    clients: {
-      name: 'João Silva',
-      email: 'joao.silva@email.com'
-    }
-  },
-  {
-    id: '2',
-    brand: 'Honda',
-    model: 'Civic',
-    year: 2021,
-    license_plate: 'DEF-5678',
-    color: 'Preto',
-    fuel_type: 'Gasolina',
-    mileage: 45000,
-    chassis: '2HGFC2F59MH123456',
-    client_id: '2',
-    plate: 'DEF-5678',
-    vin: null,
-    engine: null,
-    notes: 'Troca de óleo realizada recentemente',
-    created_at: '2023-08-20T11:30:00Z',
-    updated_at: '2024-11-10T09:15:00Z',
-    clients: {
-      name: 'Maria Santos',
-      email: 'maria.santos@email.com'
-    }
-  },
-  {
-    id: '3',
-    brand: 'Volkswagen',
-    model: 'Gol',
-    year: 2020,
-    license_plate: 'GHI-9012',
-    color: 'Branco',
-    fuel_type: 'Flex',
-    mileage: 68000,
-    chassis: '9BWAA05U8PT123456',
-    client_id: '3',
-    plate: 'GHI-9012',
-    vin: null,
-    engine: null,
-    notes: 'Necessita revisão de freios',
-    created_at: '2023-05-10T08:45:00Z',
-    updated_at: '2024-11-05T16:20:00Z',
-    clients: {
-      name: 'Carlos Oliveira',
-      email: 'carlos.oliveira@email.com'
-    }
-  },
-  {
-    id: '4',
-    brand: 'Chevrolet',
-    model: 'Onix',
-    year: 2023,
-    license_plate: 'JKL-3456',
-    color: 'Vermelho',
-    fuel_type: 'Flex',
-    mileage: 12000,
-    chassis: '9BGKS69U0NG123456',
-    client_id: '4',
-    plate: 'JKL-3456',
-    vin: null,
-    engine: null,
-    notes: 'Veículo novo - Primeira revisão agendada',
-    created_at: '2024-01-15T13:00:00Z',
-    updated_at: '2024-11-18T10:45:00Z',
-    clients: {
-      name: 'Ana Paula Costa',
-      email: 'ana.costa@email.com'
-    }
-  },
-  {
-    id: '5',
-    brand: 'Fiat',
-    model: 'Argo',
-    year: 2021,
-    license_plate: 'MNO-7890',
-    color: 'Azul',
-    fuel_type: 'Flex',
-    mileage: 38000,
-    chassis: '9BD358206N1234567',
-    client_id: '5',
-    plate: 'MNO-7890',
-    vin: null,
-    engine: null,
-    notes: 'Ar condicionado revisado',
-    created_at: '2023-09-25T15:30:00Z',
-    updated_at: '2024-11-12T11:00:00Z',
-    clients: {
-      name: 'Roberto Ferreira',
-      email: 'roberto.ferreira@email.com'
-    }
-  },
-  {
-    id: '6',
-    brand: 'Hyundai',
-    model: 'HB20',
-    year: 2022,
-    license_plate: 'PQR-2345',
-    color: 'Cinza',
-    fuel_type: 'Flex',
-    mileage: 28000,
-    chassis: '8AFBZZFH8MJ123456',
-    client_id: '6',
-    plate: 'PQR-2345',
-    vin: null,
-    engine: null,
-    notes: 'Pneus trocados recentemente',
-    created_at: '2023-11-08T09:15:00Z',
-    updated_at: '2024-11-14T14:20:00Z',
-    clients: {
-      name: 'Juliana Almeida',
-      email: 'juliana.almeida@email.com'
-    }
-  },
-  {
-    id: '7',
-    brand: 'Renault',
-    model: 'Kwid',
-    year: 2020,
-    license_plate: 'STU-6789',
-    color: 'Laranja',
-    fuel_type: 'Flex',
-    mileage: 52000,
-    chassis: '93Y5SRD60MJ123456',
-    client_id: '2',
-    plate: 'STU-6789',
-    vin: null,
-    engine: null,
-    notes: 'Segundo veículo da cliente Maria Santos',
-    created_at: '2023-07-12T12:00:00Z',
-    updated_at: '2024-11-08T15:45:00Z',
-    clients: {
-      name: 'Maria Santos',
-      email: 'maria.santos@email.com'
-    }
-  },
-  {
-    id: '8',
-    brand: 'Ford',
-    model: 'Ka',
-    year: 2019,
-    license_plate: 'VWX-0123',
-    color: 'Prata',
-    fuel_type: 'Flex',
-    mileage: 75000,
-    chassis: '9BFZK51P0KB123456',
-    client_id: '6',
-    plate: 'VWX-0123',
-    vin: null,
-    engine: null,
-    notes: 'Frota empresarial - Veículo 1',
-    created_at: '2023-04-18T10:30:00Z',
-    updated_at: '2024-11-06T13:10:00Z',
-    clients: {
-      name: 'Juliana Almeida',
-      email: 'juliana.almeida@email.com'
-    }
-  }
-];
-
 export const useVehicles = () => {
   const [vehicles, setVehicles] = useState<Vehicle[] | null>(null);
   const [loading, setLoading] = useState(true);
@@ -197,12 +17,10 @@ export const useVehicles = () => {
       setError(null);
 
       if (!user || !session) {
-        // Se não autenticado, usar dados mock
-        console.log('Usuário não autenticado - usando dados mock de veículos');
-        setTimeout(() => {
-          setVehicles(MOCK_VEHICLES);
-          setLoading(false);
-        }, 500);
+        // Se não autenticado, retornar vazio
+        console.log('Usuário não autenticado - sem dados de veículos');
+        setVehicles([]);
+        setLoading(false);
         return;
       }
 
@@ -213,9 +31,9 @@ export const useVehicles = () => {
         .from('crm_fleet')
         .select(`
           *,
-          vehicles:vehicle_id (
+          crm_vehicles:vehicle_id (
             *,
-            clients:client_id (
+            crm_clients:client_id (
               name,
               email
             )
@@ -226,9 +44,11 @@ export const useVehicles = () => {
 
       if (fetchError) throw fetchError;
 
+      console.log('📊 Dados da frota retornados:', fleetData);
+
       // Transformar dados para o formato esperado (Vehicle[])
       const vehiclesData = fleetData?.map((fleet: any) => ({
-        ...fleet.vehicles,
+        ...fleet.crm_vehicles,
         // Adicionar métricas da frota
         fleet_metrics: {
           total_services: fleet.total_services,
@@ -240,13 +60,15 @@ export const useVehicles = () => {
         }
       })) || [];
 
-      // Se não houver dados no banco, usar mock
-      setVehicles(vehiclesData.length > 0 ? vehiclesData : MOCK_VEHICLES);
+      console.log('🚗 Veículos processados:', vehiclesData);
+
+      // Usar apenas dados reais do banco
+      setVehicles(vehiclesData);
     } catch (err: any) {
       console.error('Erro ao buscar veículos:', err);
-      // Em caso de erro, usar dados mock
-      setVehicles(MOCK_VEHICLES);
-      setError(null); // Não mostrar erro se temos mock
+      // Em caso de erro, retornar vazio e mostrar erro
+      setVehicles([]);
+      setError(err.message || 'Erro ao buscar veículos');
     } finally {
       setLoading(false);
     }
@@ -350,13 +172,7 @@ export const useVehicles = () => {
         .update(vehicleData)
         .eq('id', id)
         .eq('partner_id', user.id)
-        .select(`
-          *,
-          clients:client_id (
-            name,
-            email
-          )
-        `)
+        .select()
         .single();
 
       if (updateError) throw updateError;

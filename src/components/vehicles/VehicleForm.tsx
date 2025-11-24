@@ -17,9 +17,9 @@ interface VehicleFormProps {
   onSuccess?: () => void;
 }
 
-export const VehicleForm = ({ onSuccess }: VehicleFormProps) => {
+export const VehicleForm = ({ vehicle, onSuccess }: VehicleFormProps) => {
   const [loading, setLoading] = useState(false);
-  const { createVehicle } = useVehicles();
+  const { createVehicle, updateVehicle } = useVehicles();
   const { clients } = useClients();
 
   const [formData, setFormData] = useState({
@@ -35,6 +35,25 @@ export const VehicleForm = ({ onSuccess }: VehicleFormProps) => {
     mileage: "",
     notes: ""
   });
+
+  // Preencher formulário quando estiver editando
+  useEffect(() => {
+    if (vehicle) {
+      setFormData({
+        client_id: vehicle.client_id || "",
+        brand: vehicle.brand || "",
+        model: vehicle.model || "",
+        year: vehicle.year?.toString() || "",
+        license_plate: vehicle.plate || "",
+        vin: vehicle.chassis || "",
+        color: vehicle.color || "",
+        fuel_type: vehicle.fuel_type || "",
+        engine: vehicle.engine || "",
+        mileage: vehicle.mileage?.toString() || "",
+        notes: vehicle.notes || ""
+      });
+    }
+  }, [vehicle]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,35 +73,48 @@ export const VehicleForm = ({ onSuccess }: VehicleFormProps) => {
     setLoading(true);
 
     try {
-      const result = await createVehicle({
+      const vehicleData: any = {
         client_id: formData.client_id,
         brand: formData.brand,
         model: formData.model,
-        year: formData.year ? parseInt(formData.year) : null,
-        plate: formData.license_plate || null,
-        vin: formData.vin || null,
-        color: formData.color || null,
-        fuel_type: formData.fuel_type || null,
-        engine: formData.engine || null,
-        mileage: formData.mileage ? parseInt(formData.mileage) : null,
-        notes: formData.notes || null,
-      });
+      };
+
+      // Adicionar campos opcionais apenas se tiverem valor
+      if (formData.year) vehicleData.year = parseInt(formData.year);
+      if (formData.license_plate) vehicleData.plate = formData.license_plate;
+      if (formData.vin) vehicleData.chassis = formData.vin;
+      if (formData.color) vehicleData.color = formData.color;
+      if (formData.fuel_type) vehicleData.fuel_type = formData.fuel_type;
+      if (formData.engine) vehicleData.engine = formData.engine;
+      if (formData.mileage) vehicleData.mileage = parseInt(formData.mileage);
+      if (formData.notes) vehicleData.notes = formData.notes;
+
+      let result;
+      if (vehicle) {
+        // Modo edição
+        result = await updateVehicle(vehicle.id, vehicleData);
+      } else {
+        // Modo criação
+        result = await createVehicle(vehicleData);
+      }
 
       if (result) {
-        // Limpar formulário
-        setFormData({
-          client_id: "",
-          brand: "",
-          model: "",
-          year: "",
-          license_plate: "",
-          vin: "",
-          color: "",
-          fuel_type: "",
-          engine: "",
-          mileage: "",
-          notes: ""
-        });
+        // Limpar formulário apenas se for criação
+        if (!vehicle) {
+          setFormData({
+            client_id: "",
+            brand: "",
+            model: "",
+            year: "",
+            license_plate: "",
+            vin: "",
+            color: "",
+            fuel_type: "",
+            engine: "",
+            mileage: "",
+            notes: ""
+          });
+        }
         onSuccess?.();
       }
     } catch (err: any) {
@@ -275,7 +307,7 @@ export const VehicleForm = ({ onSuccess }: VehicleFormProps) => {
           disabled={loading || !formData.client_id}
           className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg shadow-purple-500/50"
         >
-          {loading ? "Salvando..." : "Salvar Veículo"}
+          {loading ? "Salvando..." : vehicle ? "Atualizar Veículo" : "Salvar Veículo"}
         </Button>
       </div>
     </form>
