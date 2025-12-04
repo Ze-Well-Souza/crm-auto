@@ -134,7 +134,7 @@ export const ServiceOrderCard = ({ serviceOrder, onUpdate, onQuickAction }: Serv
   return (
     <>
       <Card
-        className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 cursor-pointer group relative overflow-hidden"
+        className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-sm hover:shadow-md dark:hover:shadow-lg dark:hover:shadow-purple-500/20 transition-all duration-300 cursor-pointer group relative overflow-hidden"
         onClick={handleCardClick}
       >
         {/* Background gradient based on status */}
@@ -146,30 +146,30 @@ export const ServiceOrderCard = ({ serviceOrder, onUpdate, onQuickAction }: Serv
         <CardHeader className="pb-3 relative z-10">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
-              <Avatar className="h-12 w-12 border-2 border-purple-500/30 bg-purple-500/10">
-                <AvatarFallback className="bg-purple-500/20 text-purple-300 font-semibold text-xs">
+              <Avatar className="h-12 w-12 border-2 border-purple-500 dark:border-purple-500/30 shadow-sm shadow-purple-200 dark:shadow-none bg-purple-100 dark:bg-purple-500/10">
+                <AvatarFallback className="bg-purple-100 dark:bg-purple-500/20 text-purple-800 dark:text-purple-300 font-semibold text-xs">
                   {getOrderIcon()}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <CardTitle className="text-lg flex items-center gap-2 text-white">
+                <CardTitle className="text-lg flex items-center gap-2 text-slate-900 dark:text-white">
                   {serviceOrder.order_number}
                   <Badge
                     variant={statusConfig.variant}
                     className={cn(
                       "flex items-center gap-1",
-                      serviceOrder.status === 'concluido' && "bg-emerald-500/20 text-emerald-300 border-0",
-                      serviceOrder.status === 'em_andamento' && "bg-blue-500/20 text-blue-300 border-0",
-                      serviceOrder.status === 'orcamento' && "bg-slate-500/20 text-slate-300 border-0",
-                      serviceOrder.status === 'aguardando_pecas' && "bg-orange-500/20 text-orange-300 border-0",
-                      serviceOrder.status === 'cancelado' && "bg-red-500/20 text-red-300 border-0"
+                      serviceOrder.status === 'concluido' && "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-0",
+                      serviceOrder.status === 'em_andamento' && "bg-blue-100 dark:bg-blue-500/20 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-0",
+                      serviceOrder.status === 'orcamento' && "bg-slate-100 dark:bg-slate-500/20 text-slate-800 dark:text-slate-300 border border-slate-300 dark:border-0",
+                      serviceOrder.status === 'aguardando_pecas' && "bg-orange-100 dark:bg-orange-500/20 text-orange-800 dark:text-orange-300 border border-orange-300 dark:border-0",
+                      serviceOrder.status === 'cancelado' && "bg-red-100 dark:bg-red-500/20 text-red-800 dark:text-red-300 border border-red-300 dark:border-0"
                     )}
                   >
                     <StatusIcon className="h-3 w-3" />
                     {statusConfig.label}
                   </Badge>
                 </CardTitle>
-                <div className="text-sm text-slate-400 flex items-center gap-2">
+                <div className="text-sm text-slate-600 dark:text-slate-400 flex items-center gap-2">
                   {serviceOrder.clients?.name}
                   {serviceOrder.vehicles && (
                     <>
@@ -187,8 +187,8 @@ export const ServiceOrderCard = ({ serviceOrder, onUpdate, onQuickAction }: Serv
         <CardContent className="space-y-4 relative z-10">
           {/* Service Description */}
           {serviceOrder.description && (
-            <div className="bg-white/5 p-3 rounded-md border border-white/10">
-              <p className="text-sm line-clamp-2 text-slate-300">{serviceOrder.description}</p>
+            <div className="bg-slate-50 dark:bg-white/5 p-3 rounded-md border border-slate-200 dark:border-white/10">
+              <p className="text-sm line-clamp-2 text-slate-700 dark:text-slate-300">{serviceOrder.description}</p>
             </div>
           )}
 
@@ -197,75 +197,75 @@ export const ServiceOrderCard = ({ serviceOrder, onUpdate, onQuickAction }: Serv
             {serviceOrder.total_labor && (
               <div className="text-center">
                 <div className="flex items-center justify-center gap-1">
-                  <Wrench className="h-3 w-3 text-purple-400" />
-                  <span className="text-xs font-semibold text-white">
+                  <Wrench className="h-3 w-3 text-purple-600 dark:text-purple-400" />
+                  <span className="text-xs font-semibold text-slate-900 dark:text-white">
                     {formatCurrency(serviceOrder.total_labor)}
                   </span>
                 </div>
-                <p className="text-xs text-slate-400">Mão de obra</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400">Mão de obra</p>
               </div>
             )}
 
             {serviceOrder.total_parts && (
               <div className="text-center">
                 <div className="flex items-center justify-center gap-1">
-                  <Settings className="h-3 w-3 text-blue-400" />
-                  <span className="text-xs font-semibold text-white">
+                  <Settings className="h-3 w-3 text-blue-600 dark:text-blue-400" />
+                  <span className="text-xs font-semibold text-slate-900 dark:text-white">
                     {formatCurrency(serviceOrder.total_parts)}
                   </span>
                 </div>
-                <p className="text-xs text-slate-400">Peças</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400">Peças</p>
               </div>
             )}
           </div>
 
           {/* Total Amount */}
           {serviceOrder.total_amount && (
-            <div className="flex justify-between items-center pt-2 border-t border-white/10">
-              <span className="text-sm font-medium text-slate-300">Total:</span>
-              <span className="text-lg font-bold text-emerald-400">
+            <div className="flex justify-between items-center pt-2 border-t border-slate-200 dark:border-white/10">
+              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Total:</span>
+              <span className="text-lg font-bold text-emerald-700 dark:text-emerald-400">
                 {formatCurrency(serviceOrder.total_amount)}
               </span>
             </div>
           )}
 
           {/* Performance Metrics */}
-          <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/10 text-xs">
+          <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-200 dark:border-white/10 text-xs">
             <div className="text-center">
               <div className={cn(
                 "font-semibold",
-                orderMetrics.complexity === 'alta' && "text-red-400",
-                orderMetrics.complexity === 'media' && "text-orange-400",
-                orderMetrics.complexity === 'baixa' && "text-emerald-400"
+                orderMetrics.complexity === 'alta' && "text-red-700 dark:text-red-400",
+                orderMetrics.complexity === 'media' && "text-orange-700 dark:text-orange-400",
+                orderMetrics.complexity === 'baixa' && "text-emerald-700 dark:text-emerald-400"
               )}>
                 {orderMetrics.complexity.toUpperCase()}
               </div>
-              <p className="text-slate-400">Complexidade</p>
+              <p className="text-slate-600 dark:text-slate-400">Complexidade</p>
             </div>
 
             <div className="text-center">
-              <div className="font-semibold text-blue-400">
+              <div className="font-semibold text-blue-700 dark:text-blue-400">
                 {Math.round(orderMetrics.profitMargin)}%
               </div>
-              <p className="text-slate-400">Margem</p>
+              <p className="text-slate-600 dark:text-slate-400">Margem</p>
             </div>
 
             <div className="text-center">
-              <div className="font-semibold text-orange-400">
+              <div className="font-semibold text-orange-700 dark:text-orange-400">
                 {Math.round(orderMetrics.timeSpent / 60)}h
               </div>
-              <p className="text-slate-400">Tempo</p>
+              <p className="text-slate-600 dark:text-slate-400">Tempo</p>
             </div>
           </div>
 
           {/* Overdue Alert */}
           {isOverdue() && (
-            <div className="bg-red-500/10 border border-red-500/20 rounded-md p-2">
+            <div className="bg-red-100 dark:bg-red-500/10 border border-red-300 dark:border-red-500/20 rounded-md p-2">
               <div className="flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-red-400" />
-                <span className="text-sm font-medium text-destructive">Atrasada</span>
+                <AlertTriangle className="h-4 w-4 text-red-700 dark:text-red-400" />
+                <span className="text-sm font-medium text-red-800 dark:text-destructive">Atrasada</span>
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-xs text-red-700 dark:text-muted-foreground mt-1">
                 Prazo estimado ultrapassado
               </p>
             </div>
@@ -282,7 +282,7 @@ export const ServiceOrderCard = ({ serviceOrder, onUpdate, onQuickAction }: Serv
           </div>
 
           {/* Creation Date */}
-          <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
+          <div className="flex items-center justify-between text-xs text-slate-600 dark:text-muted-foreground pt-2 border-t border-slate-200 dark:border-white/10">
             <div className="flex items-center gap-1">
               <Calendar className="h-3 w-3" />
               <span>Criada em {formatDate(serviceOrder.created_at)}</span>
@@ -296,8 +296,8 @@ export const ServiceOrderCard = ({ serviceOrder, onUpdate, onQuickAction }: Serv
           </div>
 
           {serviceOrder.notes && (
-            <div className="mt-3 p-2 bg-muted/50 rounded-md">
-              <p className="text-xs text-muted-foreground line-clamp-2">
+            <div className="mt-3 p-2 bg-slate-100 dark:bg-muted/50 border border-slate-200 dark:border-white/10 rounded-md">
+              <p className="text-xs text-slate-600 dark:text-muted-foreground line-clamp-2">
                 {serviceOrder.notes}
               </p>
             </div>
