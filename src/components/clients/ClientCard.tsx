@@ -72,7 +72,7 @@ export const ClientCard = ({ client, onUpdate, onQuickAction }: ClientCardProps)
   return (
     <>
       <Card
-        className="bg-white/80 dark:bg-white/5 border border-slate-200/50 dark:border-white/10 backdrop-blur-xl shadow-xl hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 cursor-pointer group relative overflow-hidden"
+        className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-sm hover:shadow-md dark:hover:shadow-2xl dark:hover:shadow-purple-500/20 transition-all duration-300 cursor-pointer group relative overflow-hidden"
         onClick={handleCardClick}
       >
       {/* Background gradient based on tier - Landing Page Style */}
@@ -87,8 +87,8 @@ export const ClientCard = ({ client, onUpdate, onQuickAction }: ClientCardProps)
       <CardHeader className="pb-3 relative z-10">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <Avatar className="h-12 w-12 border-2 border-purple-500/30">
-              <AvatarFallback className="bg-purple-500/20 text-purple-600 dark:text-purple-300 font-semibold">
+            <Avatar className="h-12 w-12 border-2 border-purple-500 dark:border-purple-500/30 shadow-sm shadow-purple-200 dark:shadow-none">
+              <AvatarFallback className="bg-purple-100 dark:bg-purple-500/20 text-purple-800 dark:text-purple-300 font-semibold">
                 {getInitials(client.name)}
               </AvatarFallback>
             </Avatar>
@@ -96,11 +96,11 @@ export const ClientCard = ({ client, onUpdate, onQuickAction }: ClientCardProps)
               <CardTitle className="text-lg flex items-center gap-2 text-slate-900 dark:text-white">
                 {client.name}
                 <Badge className={cn(
-                  "text-xs border-0",
-                  tier.label === 'VIP' && "bg-amber-500/20 text-amber-600 dark:text-amber-300",
-                  tier.label === 'Premium' && "bg-purple-500/20 text-purple-600 dark:text-purple-300",
-                  tier.label === 'Regular' && "bg-blue-500/20 text-blue-600 dark:text-blue-300",
-                  tier.label === 'Novo' && "bg-slate-500/20 text-slate-700 dark:text-slate-300"
+                  "text-xs",
+                  tier.label === 'VIP' && "bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-0",
+                  tier.label === 'Premium' && "bg-purple-100 dark:bg-purple-500/20 text-purple-800 dark:text-purple-300 border border-purple-300 dark:border-0",
+                  tier.label === 'Regular' && "bg-blue-100 dark:bg-blue-500/20 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-0",
+                  tier.label === 'Novo' && "bg-slate-100 dark:bg-slate-500/20 text-slate-800 dark:text-slate-300 border border-slate-300 dark:border-0"
                 )}>
                   {tier.label}
                 </Badge>
@@ -121,12 +121,12 @@ export const ClientCard = ({ client, onUpdate, onQuickAction }: ClientCardProps)
         <div className="space-y-2">
           {client.email && (
             <div className="flex items-center gap-2 text-sm">
-              <Mail className="h-4 w-4 text-slate-400" />
+              <Mail className="h-4 w-4 text-slate-500 dark:text-slate-400" />
               <span className="truncate flex-1 text-slate-700 dark:text-slate-300">{client.email}</span>
               <Button
                 size="sm"
                 variant="ghost"
-                className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity text-blue-400 hover:text-blue-300 hover:bg-blue-500/20"
+                className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-500/20"
                 onClick={() => handleQuickAction('email')}
               >
                 <Mail className="h-3 w-3" />
@@ -136,13 +136,13 @@ export const ClientCard = ({ client, onUpdate, onQuickAction }: ClientCardProps)
 
           {client.phone && (
             <div className="flex items-center gap-2 text-sm">
-              <Phone className="h-4 w-4 text-slate-400" />
+              <Phone className="h-4 w-4 text-slate-500 dark:text-slate-400" />
               <span className="flex-1 text-slate-700 dark:text-slate-300">{formatPhone(client.phone)}</span>
               <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="h-6 w-6 p-0 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/20"
+                  className="h-6 w-6 p-0 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-500/20"
                   onClick={() => handleQuickAction('call')}
                 >
                   <Phone className="h-3 w-3" />
@@ -150,7 +150,7 @@ export const ClientCard = ({ client, onUpdate, onQuickAction }: ClientCardProps)
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="h-6 w-6 p-0 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/20"
+                  className="h-6 w-6 p-0 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-500/20"
                   onClick={() => handleQuickAction('whatsapp')}
                 >
                   <MessageCircle className="h-3 w-3" />
@@ -161,18 +161,18 @@ export const ClientCard = ({ client, onUpdate, onQuickAction }: ClientCardProps)
           
           {client.city && client.state && (
             <div className="flex items-center gap-2 text-sm">
-              <MapPin className="h-4 w-4 text-slate-400" />
-              <span className="truncate text-slate-300">{client.city}, {client.state}</span>
+              <MapPin className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+              <span className="truncate text-slate-700 dark:text-slate-300">{client.city}, {client.state}</span>
             </div>
           )}
         </div>
 
         {/* Client Metrics - Landing Page Style */}
-        <div className="grid grid-cols-2 gap-3 pt-2 border-t border-white/10">
+        <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-200 dark:border-white/10">
           <div className="text-center">
             <div className="flex items-center justify-center gap-1">
-              <DollarSign className="h-3 w-3 text-emerald-400" />
-              <span className="text-xs font-semibold text-emerald-400">
+              <DollarSign className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
+              <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">
                 {formatCurrency(clientMetrics.totalSpent)}
               </span>
             </div>
@@ -181,8 +181,8 @@ export const ClientCard = ({ client, onUpdate, onQuickAction }: ClientCardProps)
 
           <div className="text-center">
             <div className="flex items-center justify-center gap-1">
-              <Car className="h-3 w-3 text-blue-400" />
-              <span className="text-xs font-semibold text-white">
+              <Car className="h-3 w-3 text-blue-600 dark:text-blue-400" />
+              <span className="text-xs font-semibold text-slate-900 dark:text-white">
                 {clientMetrics.vehicleCount} veículo{clientMetrics.vehicleCount !== 1 ? 's' : ''}
               </span>
             </div>
@@ -191,7 +191,7 @@ export const ClientCard = ({ client, onUpdate, onQuickAction }: ClientCardProps)
         </div>
 
         {/* Last Service - Landing Page Style */}
-        <div className="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-white/10">
+        <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 pt-2 border-t border-slate-200 dark:border-white/10">
           <div className="flex items-center gap-1">
             <Clock className="h-3 w-3" />
             <span>Último serviço: {formatDate(clientMetrics.lastService)}</span>
@@ -212,8 +212,8 @@ export const ClientCard = ({ client, onUpdate, onQuickAction }: ClientCardProps)
         </div>
 
         {client.notes && (
-          <div className="mt-3 p-2 bg-white/5 border border-white/10 rounded-md backdrop-blur-sm">
-            <p className="text-xs text-slate-400 line-clamp-2">
+          <div className="mt-3 p-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-md">
+            <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2">
               {client.notes}
             </p>
           </div>
