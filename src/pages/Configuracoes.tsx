@@ -144,18 +144,18 @@ const Configuracoes = () => {
         {/* Header - Landing Page Style */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-white">
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
               Configurações do Sistema
             </h1>
-            <p className="text-slate-400">Gerencie as configurações da sua oficina</p>
+            <p className="text-slate-600 dark:text-slate-400">Gerencie as configurações da sua oficina</p>
           </div>
 
           <div className="flex items-center gap-2">
-            <Button className="bg-white/5 border-white/10 text-slate-300 hover:bg-white/10" onClick={handleImportData}>
+            <Button className="bg-slate-100 dark:bg-white/5 border-slate-300 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10" onClick={handleImportData}>
               <Upload className="mr-2 h-4 w-4" />
               Importar
             </Button>
-            <Button className="bg-white/5 border-white/10 text-slate-300 hover:bg-white/10" onClick={handleExportData}>
+            <Button className="bg-slate-100 dark:bg-white/5 border-slate-300 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10" onClick={handleExportData}>
               <Download className="mr-2 h-4 w-4" />
               Exportar
             </Button>
@@ -163,79 +163,79 @@ const Configuracoes = () => {
         </div>
 
         {/* Company Information - Landing Page Style */}
-        <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg">
+        <Card className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 backdrop-blur-xl shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-white">
-              <div className="p-2 rounded-lg bg-blue-500/20">
-                <User className="h-5 w-5 text-blue-400" />
+            <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
+              <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-500/20">
+                <User className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               Informações da Empresa
             </CardTitle>
-            <CardDescription className="text-slate-400">
+            <CardDescription className="text-slate-600 dark:text-slate-400">
               Dados básicos da sua oficina que aparecem em relatórios e documentos
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="company-name" className="text-blue-400">Nome da Empresa</Label>
+                <Label htmlFor="company-name" className="text-blue-700 dark:text-blue-400">Nome da Empresa</Label>
                 <Input
                   id="company-name"
                   value={companySettings.name}
                   onChange={(e) => setCompanySettings({...companySettings, name: e.target.value})}
-                  className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
+                  className="bg-white dark:bg-white/5 border-slate-300 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="company-cnpj" className="text-blue-400">CNPJ</Label>
+                <Label htmlFor="company-cnpj" className="text-blue-700 dark:text-blue-400">CNPJ</Label>
                 <Input
                   id="company-cnpj"
                   value={companySettings.cnpj}
                   onChange={(e) => setCompanySettings({...companySettings, cnpj: e.target.value})}
-                  className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
+                  className="bg-white dark:bg-white/5 border-slate-300 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="company-phone" className="text-blue-400">Telefone</Label>
+                <Label htmlFor="company-phone" className="text-blue-700 dark:text-blue-400">Telefone</Label>
                 <Input
                   id="company-phone"
                   value={companySettings.phone}
                   onChange={(e) => setCompanySettings({...companySettings, phone: e.target.value})}
-                  className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
+                  className="bg-white dark:bg-white/5 border-slate-300 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="company-email" className="text-blue-400">E-mail</Label>
+                <Label htmlFor="company-email" className="text-blue-700 dark:text-blue-400">E-mail</Label>
                 <Input
                   id="company-email"
                   type="email"
                   value={companySettings.email}
                   onChange={(e) => setCompanySettings({...companySettings, email: e.target.value})}
-                  className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
+                  className="bg-white dark:bg-white/5 border-slate-300 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="company-address" className="text-blue-400">Endereço</Label>
+              <Label htmlFor="company-address" className="text-blue-700 dark:text-blue-400">Endereço</Label>
               <Textarea
                 id="company-address"
                 value={companySettings.address}
                 onChange={(e) => setCompanySettings({...companySettings, address: e.target.value})}
-                className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
+                className="bg-white dark:bg-white/5 border-slate-300 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="company-website" className="text-blue-400">Website</Label>
+              <Label htmlFor="company-website" className="text-blue-700 dark:text-blue-400">Website</Label>
               <Input
                 id="company-website"
                 value={companySettings.website}
                 onChange={(e) => setCompanySettings({...companySettings, website: e.target.value})}
-                className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
+                className="bg-white dark:bg-white/5 border-slate-300 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
               />
             </div>
 
@@ -247,23 +247,23 @@ const Configuracoes = () => {
         </Card>
 
         {/* System Notifications - Landing Page Style */}
-        <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg">
+        <Card className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 backdrop-blur-xl shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-white">
-              <div className="p-2 rounded-lg bg-orange-500/20">
-                <Bell className="h-5 w-5 text-orange-400" />
+            <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
+              <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-500/20">
+                <Bell className="h-5 w-5 text-orange-600 dark:text-orange-400" />
               </div>
               Notificações
             </CardTitle>
-            <CardDescription className="text-slate-400">
+            <CardDescription className="text-slate-600 dark:text-slate-400">
               Configure como o sistema deve notificar sobre eventos importantes
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="text-base text-blue-400">Notificações no Sistema</Label>
-                <p className="text-sm text-slate-400">
+                <Label className="text-base text-blue-700 dark:text-blue-400">Notificações no Sistema</Label>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
                   Exibir notificações no painel
                 </p>
               </div>
@@ -275,12 +275,12 @@ const Configuracoes = () => {
               />
             </div>
 
-            <Separator className="bg-white/10" />
+            <Separator className="bg-slate-200 dark:bg-white/10" />
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="text-base text-blue-400">Notificações por E-mail</Label>
-                <p className="text-sm text-slate-400">
+                <Label className="text-base text-blue-700 dark:text-blue-400">Notificações por E-mail</Label>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
                   Enviar alertas importantes por e-mail
                 </p>
               </div>
@@ -292,12 +292,12 @@ const Configuracoes = () => {
               />
             </div>
 
-            <Separator className="bg-white/10" />
+            <Separator className="bg-slate-200 dark:bg-white/10" />
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="text-base text-blue-400">Notificações por SMS</Label>
-                <p className="text-sm text-slate-400">
+                <Label className="text-base text-blue-700 dark:text-blue-400">Notificações por SMS</Label>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
                   Enviar lembretes por SMS
                 </p>
               </div>
@@ -309,15 +309,15 @@ const Configuracoes = () => {
               />
             </div>
 
-            <Separator className="bg-white/10" />
+            <Separator className="bg-slate-200 dark:bg-white/10" />
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="text-base text-blue-400 flex items-center gap-2">
-                  <MessageCircle className="h-4 w-4 text-emerald-400" />
+                <Label className="text-base text-blue-700 dark:text-blue-400 flex items-center gap-2">
+                  <MessageCircle className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                   Notificações por WhatsApp
                 </Label>
-                <p className="text-sm text-slate-400">
+                <p className="text-sm text-slate-600 dark:text-slate-400">
                   Enviar notificações via WhatsApp Business
                 </p>
               </div>
@@ -331,10 +331,10 @@ const Configuracoes = () => {
             </div>
 
             {whatsappSettings.enabled && (
-              <div className="ml-6 space-y-4 p-4 border border-white/10 rounded-lg bg-white/5">
+              <div className="ml-6 space-y-4 p-4 border border-slate-200 dark:border-white/10 rounded-lg bg-slate-50 dark:bg-white/5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="whatsapp-number" className="flex items-center gap-2 text-emerald-400">
+                    <Label htmlFor="whatsapp-number" className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
                       <Phone className="h-4 w-4" />
                       Número do WhatsApp Business
                     </Label>
@@ -346,12 +346,12 @@ const Configuracoes = () => {
                         ...whatsappSettings,
                         businessNumber: e.target.value
                       })}
-                      className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
+                      className="bg-white dark:bg-white/5 border-slate-300 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="whatsapp-token" className="flex items-center gap-2 text-emerald-400">
+                    <Label htmlFor="whatsapp-token" className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
                       <Key className="h-4 w-4" />
                       Token da API
                     </Label>
@@ -364,19 +364,19 @@ const Configuracoes = () => {
                         ...whatsappSettings,
                         apiToken: e.target.value
                       })}
-                      className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
+                      className="bg-white dark:bg-white/5 border-slate-300 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-3">
-                  <Label className="text-sm font-medium text-emerald-400">Tipos de Notificação</Label>
+                  <Label className="text-sm font-medium text-emerald-700 dark:text-emerald-400">Tipos de Notificação</Label>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div className="flex items-center justify-between p-2 border border-white/10 rounded bg-white/5">
+                    <div className="flex items-center justify-between p-2 border border-slate-200 dark:border-white/10 rounded bg-white dark:bg-white/5">
                       <div className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-blue-400" />
-                        <span className="text-sm text-white">Agendamentos</span>
+                        <CheckCircle className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                        <span className="text-sm text-slate-900 dark:text-white">Agendamentos</span>
                       </div>
                       <Switch
                         checked={whatsappSettings.notificationTypes.appointments}
@@ -390,10 +390,10 @@ const Configuracoes = () => {
                       />
                     </div>
 
-                    <div className="flex items-center justify-between p-2 border border-white/10 rounded bg-white/5">
+                    <div className="flex items-center justify-between p-2 border border-slate-200 dark:border-white/10 rounded bg-white dark:bg-white/5">
                       <div className="flex items-center gap-2">
-                        <Bell className="h-4 w-4 text-blue-400" />
-                        <span className="text-sm text-white">Lembretes</span>
+                        <Bell className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                        <span className="text-sm text-slate-900 dark:text-white">Lembretes</span>
                       </div>
                       <Switch
                         checked={whatsappSettings.notificationTypes.reminders}
@@ -407,10 +407,10 @@ const Configuracoes = () => {
                       />
                     </div>
 
-                    <div className="flex items-center justify-between p-2 border border-white/10 rounded bg-white/5">
+                    <div className="flex items-center justify-between p-2 border border-slate-200 dark:border-white/10 rounded bg-white dark:bg-white/5">
                       <div className="flex items-center gap-2">
-                        <Settings className="h-4 w-4 text-emerald-400" />
-                        <span className="text-sm text-white">Status de Serviços</span>
+                        <Settings className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                        <span className="text-sm text-slate-900 dark:text-white">Status de Serviços</span>
                       </div>
                       <Switch
                         checked={whatsappSettings.notificationTypes.serviceStatus}
@@ -424,10 +424,10 @@ const Configuracoes = () => {
                       />
                     </div>
 
-                    <div className="flex items-center justify-between p-2 border border-white/10 rounded bg-white/5">
+                    <div className="flex items-center justify-between p-2 border border-slate-200 dark:border-white/10 rounded bg-white dark:bg-white/5">
                       <div className="flex items-center gap-2">
-                        <Database className="h-4 w-4 text-purple-400" />
-                        <span className="text-sm text-white">Pagamentos</span>
+                        <Database className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                        <span className="text-sm text-slate-900 dark:text-white">Pagamentos</span>
                       </div>
                       <Switch
                         checked={whatsappSettings.notificationTypes.payments}
@@ -443,10 +443,10 @@ const Configuracoes = () => {
                   </div>
                 </div>
 
-                <div className="p-3 bg-blue-500/20 border border-blue-500/30 rounded-lg">
+                <div className="p-3 bg-blue-100 dark:bg-blue-500/20 border border-blue-300 dark:border-blue-500/30 rounded-lg">
                   <div className="flex items-start gap-2">
-                    <MessageCircle className="h-4 w-4 text-blue-400 mt-0.5" />
-                    <div className="text-xs text-blue-300">
+                    <MessageCircle className="h-4 w-4 text-blue-600 dark:text-blue-400 mt-0.5" />
+                    <div className="text-xs text-blue-800 dark:text-blue-300">
                       <p className="font-medium">Configuração do WhatsApp Business API</p>
                       <p>Para usar esta funcionalidade, você precisa ter uma conta do WhatsApp Business API configurada. O token pode ser obtido no Meta for Developers.</p>
                     </div>
@@ -466,22 +466,22 @@ const Configuracoes = () => {
         <EmailConfigurationForm />
 
         {/* Appearance Settings */}
-        <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg">
+        <Card className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 backdrop-blur-xl shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-white">
-              <div className="p-2 rounded-lg bg-purple-500/20">
-                <Palette className="h-5 w-5 text-purple-400" />
+            <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
+              <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-500/20">
+                <Palette className="h-5 w-5 text-purple-600 dark:text-purple-400" />
               </div>
               Aparência
             </CardTitle>
-            <CardDescription className="text-slate-400">
+            <CardDescription className="text-slate-600 dark:text-slate-400">
               Personalize a aparência do sistema conforme sua preferência
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-4">
-              <Label className="text-base text-blue-400">Tema do Sistema</Label>
-              <p className="text-sm text-slate-400">
+              <Label className="text-base text-blue-700 dark:text-blue-400">Tema do Sistema</Label>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
                 Escolha entre tema claro, escuro ou automático baseado no sistema
               </p>
 
@@ -489,48 +489,48 @@ const Configuracoes = () => {
                 <Button
                   variant={isLight ? "default" : "outline"}
                   onClick={() => applyTheme("light")}
-                  className={`flex items-center justify-center gap-2 h-16 transition-theme ${isLight ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0' : 'border-white/10 text-white hover:bg-white/10'}`}
+                  className={`flex items-center justify-center gap-2 h-16 transition-theme ${isLight ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0' : 'border-slate-300 dark:border-white/10 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-white/10'}`}
                 >
                   <Sun className="h-5 w-5" />
                   <div className="text-left">
                     <div className="font-medium">Claro</div>
-                    <div className="text-xs text-slate-400">Tema claro</div>
+                    <div className="text-xs opacity-70">Tema claro</div>
                   </div>
                 </Button>
 
                 <Button
                   variant={isDark ? "default" : "outline"}
                   onClick={() => applyTheme("dark")}
-                  className={`flex items-center justify-center gap-2 h-16 transition-theme ${isDark ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0' : 'border-white/10 text-white hover:bg-white/10'}`}
+                  className={`flex items-center justify-center gap-2 h-16 transition-theme ${isDark ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0' : 'border-slate-300 dark:border-white/10 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-white/10'}`}
                 >
                   <Moon className="h-5 w-5" />
                   <div className="text-left">
                     <div className="font-medium">Escuro</div>
-                    <div className="text-xs text-slate-400">Tema escuro</div>
+                    <div className="text-xs opacity-70">Tema escuro</div>
                   </div>
                 </Button>
 
                 <Button
                   variant={isSystem ? "default" : "outline"}
                   onClick={() => applyTheme("system")}
-                  className={`flex items-center justify-center gap-2 h-16 transition-theme ${isSystem ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0' : 'border-white/10 text-white hover:bg-white/10'}`}
+                  className={`flex items-center justify-center gap-2 h-16 transition-theme ${isSystem ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0' : 'border-slate-300 dark:border-white/10 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-white/10'}`}
                 >
                   <Monitor className="h-5 w-5" />
                   <div className="text-left">
                     <div className="font-medium">Sistema</div>
-                    <div className="text-xs text-slate-400">Automático</div>
+                    <div className="text-xs opacity-70">Automático</div>
                   </div>
                 </Button>
               </div>
             </div>
 
-            <Separator className="bg-white/10" />
+            <Separator className="bg-slate-200 dark:bg-white/10" />
 
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-base text-blue-400">Transições Suaves</Label>
-                  <div className="text-sm text-slate-400">
+                  <Label className="text-base text-blue-700 dark:text-blue-400">Transições Suaves</Label>
+                  <div className="text-sm text-slate-600 dark:text-slate-400">
                     Ativar animações suaves ao trocar temas
                   </div>
                 </div>
@@ -544,8 +544,8 @@ const Configuracoes = () => {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-base text-blue-400">Salvar Automaticamente</Label>
-                  <div className="text-sm text-slate-400">
+                  <Label className="text-base text-blue-700 dark:text-blue-400">Salvar Automaticamente</Label>
+                  <div className="text-sm text-slate-600 dark:text-slate-400">
                     Salvar preferências automaticamente
                   </div>
                 </div>
@@ -559,8 +559,8 @@ const Configuracoes = () => {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-base text-blue-400">Sincronizar com Sistema</Label>
-                  <div className="text-sm text-slate-400">
+                  <Label className="text-base text-blue-700 dark:text-blue-400">Sincronizar com Sistema</Label>
+                  <div className="text-sm text-slate-600 dark:text-slate-400">
                     Seguir tema do sistema operacional
                   </div>
                 </div>
@@ -573,22 +573,22 @@ const Configuracoes = () => {
               </div>
             </div>
 
-            <div className="p-4 bg-white/5 border border-white/10 rounded-lg">
+            <div className="p-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg">
               <div className="flex items-start gap-3">
-                <Palette className="h-5 w-5 text-purple-400 mt-0.5" />
+                <Palette className="h-5 w-5 text-purple-600 dark:text-purple-400 mt-0.5" />
                 <div className="space-y-1">
-                  <p className="text-sm font-medium text-white">Tema Atual: {
+                  <p className="text-sm font-medium text-slate-900 dark:text-white">Tema Atual: {
                     theme === "light" ? "Claro" :
                     theme === "dark" ? "Escuro" :
                     "Sistema (Automático)"
                   }</p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-600 dark:text-slate-400">
                     O tema é aplicado automaticamente em todo o sistema e salvo nas suas preferências.
                   </p>
                 </div>
               </div>
 
-                <div className="flex gap-2 pt-4 border-t border-white/10">
+                <div className="flex gap-2 pt-4 border-t border-slate-200 dark:border-white/10">
                   <Button
                     variant="outline"
                     size="sm"
@@ -600,7 +600,7 @@ const Configuracoes = () => {
                         description: "As configurações de tema foram copiadas para a área de transferência.",
                       });
                     }}
-                    className="border-white/10 text-white hover:bg-white/10"
+                    className="border-slate-300 dark:border-white/10 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-white/10"
                   >
                     <Download className="h-4 w-4 mr-2" />
                     Exportar
@@ -616,7 +616,7 @@ const Configuracoes = () => {
                         description: "As configurações de tema foram restauradas para o padrão.",
                       });
                     }}
-                    className="border-white/10 text-white hover:bg-white/10"
+                    className="border-slate-300 dark:border-white/10 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-white/10"
                   >
                     <RotateCcw className="h-4 w-4 mr-2" />
                     Resetar
@@ -627,70 +627,70 @@ const Configuracoes = () => {
           </Card>
 
         {/* Business Rules */}
-        <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg">
+        <Card className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 backdrop-blur-xl shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-white">
-              <div className="p-2 rounded-lg bg-purple-500/20">
-                <Settings className="h-5 w-5 text-purple-400" />
+            <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
+              <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-500/20">
+                <Settings className="h-5 w-5 text-purple-600 dark:text-purple-400" />
               </div>
               Regras de Negócio
             </CardTitle>
-            <CardDescription className="text-slate-400">
+            <CardDescription className="text-slate-600 dark:text-slate-400">
               Configure o funcionamento do sistema para sua oficina
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="working-hours" className="text-blue-400">Horário de Funcionamento</Label>
+                <Label htmlFor="working-hours" className="text-blue-700 dark:text-blue-400">Horário de Funcionamento</Label>
                 <Input
                   id="working-hours"
                   value={businessSettings.workingHours}
                   onChange={(e) => setBusinessSettings({...businessSettings, workingHours: e.target.value})}
-                  className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
+                  className="bg-white dark:bg-white/5 border-slate-300 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="working-days" className="text-blue-400">Dias de Funcionamento</Label>
+                <Label htmlFor="working-days" className="text-blue-700 dark:text-blue-400">Dias de Funcionamento</Label>
                 <Input
                   id="working-days"
                   value={businessSettings.workingDays}
                   onChange={(e) => setBusinessSettings({...businessSettings, workingDays: e.target.value})}
-                  className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
+                  className="bg-white dark:bg-white/5 border-slate-300 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="appointment-duration" className="text-blue-400">Duração Padrão de Agendamento (minutos)</Label>
+                <Label htmlFor="appointment-duration" className="text-blue-700 dark:text-blue-400">Duração Padrão de Agendamento (minutos)</Label>
                 <Input
                   id="appointment-duration"
                   type="number"
                   value={businessSettings.appointmentDuration}
                   onChange={(e) => setBusinessSettings({...businessSettings, appointmentDuration: parseInt(e.target.value)})}
-                  className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
+                  className="bg-white dark:bg-white/5 border-slate-300 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="max-advance" className="text-blue-400">Máximo de Dias para Agendamento</Label>
+                <Label htmlFor="max-advance" className="text-blue-700 dark:text-blue-400">Máximo de Dias para Agendamento</Label>
                 <Input
                   id="max-advance"
                   type="number"
                   value={businessSettings.maxAdvanceBooking}
                   onChange={(e) => setBusinessSettings({...businessSettings, maxAdvanceBooking: parseInt(e.target.value)})}
-                  className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
+                  className="bg-white dark:bg-white/5 border-slate-300 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
               </div>
             </div>
 
-            <Separator className="bg-white/10" />
+            <Separator className="bg-slate-200 dark:bg-white/10" />
 
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-base text-blue-400">Exigir Pagamento Antecipado</Label>
-                  <p className="text-sm text-slate-400">
+                  <Label className="text-base text-blue-700 dark:text-blue-400">Exigir Pagamento Antecipado</Label>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
                     Solicitar pagamento no momento do agendamento
                   </p>
                 </div>
@@ -704,8 +704,8 @@ const Configuracoes = () => {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-base text-blue-400">Permitir Agendamento Online</Label>
-                  <p className="text-sm text-slate-400">
+                  <Label className="text-base text-blue-700 dark:text-blue-400">Permitir Agendamento Online</Label>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
                     Clientes podem agendar serviços pela internet
                   </p>
                 </div>
@@ -729,49 +729,51 @@ const Configuracoes = () => {
         <PWAManager />
 
         {/* System Status */}
-        <Card className="gradient-card">
+        <Card className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 backdrop-blur-xl shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Database className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
+              <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-500/20">
+                <Database className="h-5 w-5 text-slate-600 dark:text-slate-400" />
+              </div>
               Status do Sistema
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-slate-600 dark:text-slate-400">
               Informações sobre o estado atual do sistema
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="flex items-center justify-between p-3 border rounded-lg">
+              <div className="flex items-center justify-between p-3 border border-slate-200 dark:border-white/10 rounded-lg bg-slate-50 dark:bg-white/5">
                 <div>
-                  <p className="text-sm font-medium text-white">Backup Automático</p>
-                  <p className="text-xs text-slate-400">Último: Hoje, 03:00</p>
+                  <p className="text-sm font-medium text-slate-900 dark:text-white">Backup Automático</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">Último: Hoje, 03:00</p>
                 </div>
                 <Badge variant="secondary">Ativo</Badge>
               </div>
 
-              <div className="flex items-center justify-between p-3 border rounded-lg">
+              <div className="flex items-center justify-between p-3 border border-slate-200 dark:border-white/10 rounded-lg bg-slate-50 dark:bg-white/5">
                 <div>
-                  <p className="text-sm font-medium text-white">Conexão Database</p>
-                  <p className="text-xs text-slate-400">Latência: 12ms</p>
+                  <p className="text-sm font-medium text-slate-900 dark:text-white">Conexão Database</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">Latência: 12ms</p>
                 </div>
                 <Badge variant="secondary">Conectado</Badge>
               </div>
 
-              <div className="flex items-center justify-between p-3 border rounded-lg">
+              <div className="flex items-center justify-between p-3 border border-slate-200 dark:border-white/10 rounded-lg bg-slate-50 dark:bg-white/5">
                 <div>
-                  <p className="text-sm font-medium text-white">Versão do Sistema</p>
-                  <p className="text-xs text-slate-400">v1.0.0</p>
+                  <p className="text-sm font-medium text-slate-900 dark:text-white">Versão do Sistema</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">v1.0.0</p>
                 </div>
                 <Badge variant="secondary">Atualizado</Badge>
               </div>
             </div>
             
             <div className="flex gap-2">
-              <Button variant="outline">
+              <Button variant="outline" className="border-slate-300 dark:border-white/10 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-white/10">
                 <RefreshCw className="mr-2 h-4 w-4" />
                 Verificar Atualizações
               </Button>
-              <Button variant="outline">
+              <Button variant="outline" className="border-slate-300 dark:border-white/10 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-white/10">
                 <Shield className="mr-2 h-4 w-4" />
                 Executar Backup
               </Button>
