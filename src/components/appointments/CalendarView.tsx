@@ -72,10 +72,10 @@ export const CalendarView = ({
   const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
   return (
-    <Card className="w-full bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-xl">
+    <Card className="w-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 backdrop-blur-xl shadow-xl">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 bg-clip-text text-transparent">
+          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 dark:from-blue-400 dark:via-purple-400 dark:to-blue-500 bg-clip-text text-transparent">
             {format(currentDate, 'MMMM yyyy', { locale: ptBR })}
           </CardTitle>
           <div className="flex items-center gap-2">
@@ -83,7 +83,7 @@ export const CalendarView = ({
               variant="outline"
               size="sm"
               onClick={previousMonth}
-              className="bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+              className="bg-slate-100 dark:bg-white/5 border-slate-300 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -91,7 +91,7 @@ export const CalendarView = ({
               variant="outline"
               size="sm"
               onClick={nextMonth}
-              className="bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+              className="bg-slate-100 dark:bg-white/5 border-slate-300 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
@@ -108,9 +108,9 @@ export const CalendarView = ({
       </CardHeader>
       <CardContent className="p-0">
         {/* Calendar Grid */}
-        <div className="grid grid-cols-7 border-b border-white/10">
+        <div className="grid grid-cols-7 border-b border-slate-200 dark:border-white/10">
           {weekDays.map((day) => (
-            <div key={day} className="p-3 text-center text-sm font-medium text-purple-400 border-r border-white/10 last:border-r-0">
+            <div key={day} className="p-3 text-center text-sm font-medium text-purple-600 dark:text-purple-400 border-r border-slate-200 dark:border-white/10 last:border-r-0">
               {day}
             </div>
           ))}
@@ -125,21 +125,21 @@ export const CalendarView = ({
               <div
                 key={day.toISOString()}
                 className={cn(
-                  "border-r border-b border-white/10 last:border-r-0 p-2 min-h-[120px] cursor-pointer hover:bg-white/5 transition-all duration-300",
-                  isCurrentDay && "bg-blue-500/10 border-blue-500/30"
+                  "border-r border-b border-slate-200 dark:border-white/10 last:border-r-0 p-2 min-h-[120px] cursor-pointer hover:bg-slate-50 dark:hover:bg-white/5 transition-all duration-300",
+                  isCurrentDay && "bg-blue-100 dark:bg-blue-500/10 border-blue-300 dark:border-blue-500/30"
                 )}
                 onClick={() => onDateSelect(day)}
               >
                 {/* Day Number */}
                 <div className="flex items-center justify-between mb-2">
                   <span className={cn(
-                    "text-sm font-medium text-slate-300",
-                    isCurrentDay && "text-blue-400 font-bold"
+                    "text-sm font-medium text-slate-700 dark:text-slate-300",
+                    isCurrentDay && "text-blue-600 dark:text-blue-400 font-bold"
                   )}>
                     {format(day, 'd')}
                   </span>
                   {dayAppointments.length > 0 && (
-                    <Badge className="text-xs bg-purple-500/20 text-purple-300 border-purple-500/30">
+                    <Badge className="text-xs bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-300 dark:border-purple-500/30">
                       {dayAppointments.length}
                     </Badge>
                   )}
@@ -201,8 +201,8 @@ export const CalendarView = ({
         </div>
 
         {/* Legend */}
-        <div className="p-4 border-t border-white/10 bg-white/5">
-          <div className="flex flex-wrap gap-4 text-xs text-slate-300">
+        <div className="p-4 border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5">
+          <div className="flex flex-wrap gap-4 text-xs text-slate-700 dark:text-slate-300">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded bg-blue-500 shadow-lg shadow-blue-500/50"></div>
               <span>Agendado</span>
