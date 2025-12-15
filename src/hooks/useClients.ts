@@ -3,13 +3,6 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import type { Client } from "@/types";
 import { usePlanLimits } from "./usePlanLimits";
-import { mockClients } from "@/data/mockClients";
-
-// Mock data para desenvolvimento - usando dados avançados com métricas
-const MOCK_CLIENTS: Client[] = mockClients.map(client => ({
-  ...client,
-  partner_id: 'mock-partner'
-}));
 
 export const useClients = () => {
   const [clients, setClients] = useState<Client[] | null>(null);
@@ -25,12 +18,9 @@ export const useClients = () => {
 
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) {
-        // Se não autenticado, usar dados mock
-        console.log('Usuário não autenticado - usando dados mock');
-        setTimeout(() => {
-          setClients(MOCK_CLIENTS);
-          setLoading(false);
-        }, 500);
+        // Se não autenticado, retornar array vazio
+        setClients([]);
+        setLoading(false);
         return;
       }
 
@@ -42,13 +32,11 @@ export const useClients = () => {
 
       if (fetchError) throw fetchError;
 
-      // Se não houver dados no banco, usar mock
-      setClients(data && data.length > 0 ? data : MOCK_CLIENTS);
-    } catch (err: any) {
-      console.error('Erro ao buscar clientes:', err);
-      // Em caso de erro, usar dados mock
-      setClients(MOCK_CLIENTS);
-      setError(null); // Não mostrar erro se temos mock
+      setClients(data || []);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao buscar clientes';
+      setClients([]);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -125,25 +113,14 @@ export const useClients = () => {
 
       await fetchClients();
       return data;
-    } catch (err: any) {
-      console.error('Erro ao criar cliente:', err);
-      // Último fallback: modo demo
-      const newClient: Client = {
-        ...clientData,
-        id: `demo-${Date.now()}`,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        partner_id: 'demo-user'
-      };
-      
-      setClients(prev => prev ? [...prev, newClient] : [newClient]);
-      
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao criar cliente';
       toast({
-        title: "Cliente salvo com sucesso!",
-        description: `${newClient.name} foi adicionado ao sistema.`,
+        title: "Erro ao criar cliente",
+        description: errorMessage,
+        variant: "destructive",
       });
-      
-      return newClient;
+      return null;
     }
   };
 
@@ -171,11 +148,11 @@ export const useClients = () => {
 
       await fetchClients();
       return data;
-    } catch (err: any) {
-      console.error('Erro ao atualizar cliente:', err);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao atualizar cliente';
       toast({
         title: "Erro ao atualizar cliente",
-        description: err.message || "Não foi possível atualizar o cliente.",
+        description: errorMessage,
         variant: "destructive",
       });
       return null;
@@ -204,11 +181,11 @@ export const useClients = () => {
 
       await fetchClients();
       return true;
-    } catch (err: any) {
-      console.error('Erro ao excluir cliente:', err);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao excluir cliente';
       toast({
         title: "Erro ao excluir cliente",
-        description: err.message || "Não foi possível excluir o cliente.",
+        description: errorMessage,
         variant: "destructive",
       });
       return false;

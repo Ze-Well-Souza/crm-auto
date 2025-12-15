@@ -6,56 +6,35 @@ import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TrendingUp, TrendingDown, DollarSign, Calendar, Clock, CircleCheck as CheckCircle, TriangleAlert as AlertTriangle, Users, Car, Wrench, Package, ChartBar as BarChart3, Target, Activity, Bell, ArrowRight, Plus, Eye } from "lucide-react";
-import { useClients } from "@/hooks/useClients";
-import { useVehicles } from "@/hooks/useVehicles";
-import { usePartsNew } from "@/hooks/usePartsNew";
-import { useFinancialTransactionsNew } from "@/hooks/useFinancialTransactionsNew";
-import { useAppointmentsNew } from "@/hooks/useAppointmentsNew";
-import { useServiceOrders } from "@/hooks/useServiceOrders";
-import { useMetrics } from "@/hooks/useMetrics";
+import { useDashboardMetrics } from "@/hooks/useDashboardMetrics";
 import { useRecentActivities } from "@/hooks/useRecentActivities";
 import { formatCurrency, formatDate, formatRelativeTime } from "@/utils/formatters";
 import { Link } from "react-router-dom";
 import { AdvancedAnalyticsDashboard } from "@/components/dashboard/AdvancedAnalyticsDashboard";
 
 const Index = () => {
-  // Data hooks
-  const { clients, loading: clientsLoading } = useClients();
-  const { vehicles, loading: vehiclesLoading } = useVehicles();
-  const { parts, loading: partsLoading } = usePartsNew();
-  const { transactions, loading: transactionsLoading } = useFinancialTransactionsNew();
-  const { appointments, loading: appointmentsLoading } = useAppointmentsNew();
-  const { serviceOrders, loading: serviceOrdersLoading } = useServiceOrders();
-  const { data: metrics, isLoading: metricsLoading } = useMetrics();
+  // Use unified dashboard metrics hook (single query instead of 8)
+  const { data: metrics, isLoading: metricsLoading } = useDashboardMetrics();
   const { data: recentActivities, isLoading: activitiesLoading } = useRecentActivities(5);
 
-  const isLoading = clientsLoading || vehiclesLoading || partsLoading || 
-                   transactionsLoading || appointmentsLoading || serviceOrdersLoading || 
-                   metricsLoading || activitiesLoading;
+  const isLoading = metricsLoading || activitiesLoading;
 
-  // Calculate key metrics from real data
+  // Use metrics from unified hook
   const totalClients = metrics?.totalClients || 0;
   const totalVehicles = metrics?.totalVehicles || 0;
-  const totalParts = metrics?.totalParts || 0;
   const lowStockParts = metrics?.lowStockParts || 0;
-  
-  const totalReceitas = metrics?.totalRevenue || 0;
-  const totalDespesas = transactions?.filter(t => t.type === 'despesa').reduce((sum, t) => sum + t.amount, 0) || 0;
-  const monthlyRevenue = totalReceitas - totalDespesas;
-  
+  const monthlyRevenue = metrics?.monthlyRevenue || 0;
+  const profitMargin = metrics?.profitMargin || 0;
   const totalAppointments = metrics?.totalAppointments || 0;
-  const todayAppointments = metrics?.confirmedAppointments || 0;
-  const pendingAppointments = totalAppointments - metrics?.confirmedAppointments || 0;
+  const pendingAppointments = metrics?.pendingAppointments || 0;
   const completedAppointments = metrics?.confirmedAppointments || 0;
-  
   const totalServiceOrders = metrics?.totalServiceOrders || 0;
-  const inProgressOrders = metrics?.pendingServiceOrders || 0;
+  const inProgressOrders = metrics?.inProgressOrders || 0;
   const completedServiceOrders = metrics?.completedServiceOrders || 0;
 
   // Performance calculations
   const completionRate = totalServiceOrders > 0 ? (completedServiceOrders / totalServiceOrders) * 100 : 0;
   const appointmentRate = totalAppointments > 0 ? (completedAppointments / totalAppointments) * 100 : 0;
-  const profitMargin = totalReceitas > 0 ? (monthlyRevenue / totalReceitas) * 100 : 0;
 
   // Today's priorities based on real data
   const todayPriorities = [
