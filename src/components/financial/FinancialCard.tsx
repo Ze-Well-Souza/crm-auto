@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ interface FinancialCardProps {
   onQuickAction?: (action: string, transaction: FinancialTransaction) => void;
 }
 
-export const FinancialCard = ({ transaction, onUpdate, onQuickAction }: FinancialCardProps) => {
+const FinancialCardComponent = ({ transaction, onUpdate, onQuickAction }: FinancialCardProps) => {
   const [showDashboard, setShowDashboard] = useState(false);
   
   // Mock data for demonstration
@@ -300,3 +300,5 @@ export const FinancialCard = ({ transaction, onUpdate, onQuickAction }: Financia
     </>
   );
 };
+
+export const FinancialCard = memo(FinancialCardComponent);

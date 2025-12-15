@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,7 @@ interface ServiceOrderCardProps {
   onQuickAction?: (action: string, order: ServiceOrder) => void;
 }
 
-export const ServiceOrderCard = ({ serviceOrder, onUpdate, onQuickAction }: ServiceOrderCardProps) => {
+const ServiceOrderCardComponent = ({ serviceOrder, onUpdate, onQuickAction }: ServiceOrderCardProps) => {
   const [showDashboard, setShowDashboard] = useState(false);
   const { metrics, loading: metricsLoading } = useServiceOrderMetrics(serviceOrder.id);
   
@@ -314,3 +314,5 @@ export const ServiceOrderCard = ({ serviceOrder, onUpdate, onQuickAction }: Serv
     </>
   );
 };
+
+export const ServiceOrderCard = memo(ServiceOrderCardComponent);

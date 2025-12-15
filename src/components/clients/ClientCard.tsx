@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,7 @@ interface ClientCardProps {
   onQuickAction?: (action: string, client: Client) => void;
 }
 
-export const ClientCard = ({ client, onUpdate, onQuickAction }: ClientCardProps) => {
+const ClientCardComponent = ({ client, onUpdate, onQuickAction }: ClientCardProps) => {
   const [showDashboard, setShowDashboard] = useState(false);
   const { metrics, loading: metricsLoading } = useClientMetrics(client.id);
   
@@ -230,3 +230,5 @@ export const ClientCard = ({ client, onUpdate, onQuickAction }: ClientCardProps)
     </>
   );
 };
+
+export const ClientCard = memo(ClientCardComponent);

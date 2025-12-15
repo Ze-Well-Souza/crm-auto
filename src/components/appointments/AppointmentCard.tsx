@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ interface AppointmentCardProps {
   onQuickAction?: (action: string, appointment: Appointment) => void;
 }
 
-export const AppointmentCard = ({ appointment, onUpdate, onQuickAction }: AppointmentCardProps) => {
+const AppointmentCardComponent = ({ appointment, onUpdate, onQuickAction }: AppointmentCardProps) => {
   const [showDashboard, setShowDashboard] = useState(false);
   
   // Mock data for demonstration
@@ -328,3 +328,5 @@ export const AppointmentCard = ({ appointment, onUpdate, onQuickAction }: Appoin
     </>
   );
 };
+
+export const AppointmentCard = memo(AppointmentCardComponent);
