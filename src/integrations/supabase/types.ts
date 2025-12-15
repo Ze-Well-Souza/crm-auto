@@ -1727,6 +1727,7 @@ export type Database = {
           is_verified: boolean | null
           latitude: number | null
           location: unknown
+          logo_url: string | null
           longitude: number | null
           operating_hours: Json | null
           photos: Json | null
@@ -1771,6 +1772,7 @@ export type Database = {
           is_verified?: boolean | null
           latitude?: number | null
           location?: unknown
+          logo_url?: string | null
           longitude?: number | null
           operating_hours?: Json | null
           photos?: Json | null
@@ -1815,6 +1817,7 @@ export type Database = {
           is_verified?: boolean | null
           latitude?: number | null
           location?: unknown
+          logo_url?: string | null
           longitude?: number | null
           operating_hours?: Json | null
           photos?: Json | null

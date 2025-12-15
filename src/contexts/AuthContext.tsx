@@ -21,6 +21,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
+  signInAsDemo: () => void;
   resetPassword: (email: string) => Promise<{ error: any }>;
   updatePassword: (newPassword: string) => Promise<{ error: any }>;
   updateProfile: (data: Partial<Profile>) => Promise<{ error: any }>;
@@ -127,8 +128,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const signOut = async () => {
+    // Always clean demo flags
+    localStorage.removeItem('mock_user');
+    localStorage.removeItem('demo_mode');
+    
     if (isMock) {
-      localStorage.removeItem('mock_user');
       setUser(null);
       setSession(null);
       return;
@@ -136,6 +140,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     await supabase.auth.signOut();
     setUser(null);
     setSession(null);
+  };
+
+  const signInAsDemo = () => {
+    const mockUser = {
+      id: 'demo-user-enterprise',
+      email: 'demo@uautospro.com',
+      role: 'admin',
+      user_metadata: {
+        full_name: 'Usuário Demo',
+        role: 'admin'
+      }
+    } as unknown as User;
+    
+    setUser(mockUser);
+    setSession(null);
+    setProfile({
+      id: 'demo-profile',
+      user_id: 'demo-user-enterprise',
+      full_name: 'Usuário Demo',
+      phone: '(11) 99999-9999',
+      avatar_url: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    });
+    
+    // Set demo flags for subscription bypass
+    localStorage.setItem('mock_user', JSON.stringify(mockUser));
+    localStorage.setItem('demo_mode', 'true');
   };
 
   const resetPassword = async (email: string) => {
@@ -247,6 +279,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     signIn,
     signUp,
     signOut,
+    signInAsDemo,
     resetPassword,
     updatePassword,
     updateProfile,

@@ -28,7 +28,7 @@ import {
 } from 'lucide-react';
 
 const Landing = () => {
-  const { user, signIn } = useAuth();
+  const { user, signIn, signInAsDemo } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -171,23 +171,13 @@ const Landing = () => {
     }
   };
 
-  const fillDemoAndLogin = async () => {
-    setFormData({ email: 'admin@oficina.com', password: '123456' });
-    setIsLoading(true);
-    const { error } = await signIn('admin@oficina.com', '123456');
-    if (error) {
-      toast({
-        variant: 'destructive',
-        title: 'Erro no Login',
-        description: error.message === 'Invalid login credentials'
-          ? 'Credenciais inválidas. Verifique seu email e senha.'
-          : error.message
-      });
-    } else {
-      toast({ title: 'Login demo preenchido', description: 'Redirecionando para o dashboard...' });
-      navigate('/dashboard');
-    }
-    setIsLoading(false);
+  const fillDemoAndLogin = () => {
+    signInAsDemo();
+    toast({ 
+      title: 'Modo Demo Ativado', 
+      description: 'Você está usando o plano Enterprise com todos os módulos liberados.' 
+    });
+    navigate('/dashboard');
   };
 
   return (
