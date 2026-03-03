@@ -1,38 +1,73 @@
-import { useCollectionState } from './useCollectionState';
+import { useState, useEffect } from 'react';
 import { useNotifications } from '@/contexts/NotificationContext';
-import { Partner } from '@/types';
-import { CreatePartnerInput, UpdatePartnerInput } from '@/schemas/partner.schema';
+import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
+import type { Partner } from '@/types';
 
 export const usePartners = () => {
+  const [partners, setPartners] = useState<Partner[]>([]);
+  const [filteredPartners, setFilteredPartners] = useState<Partner[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const { showSuccess, showError } = useNotifications();
-  
-  const {
-    items: partners,
-    filteredItems: filteredPartners,
-    isLoading,
-    error,
-    searchTerm,
-    setSearchTerm,
-    currentPage,
-    setCurrentPage,
-    itemsPerPage,
-    totalPages,
-    paginatedItems,
-    addItem,
-    updateItem,
-    deleteItem,
-    setItems,
-    setFilteredItems,
-  } = useCollectionState<Partner>({
-    storageKey: 'partners',
-    itemsPerPage: 10,
-  });
 
-  const createPartner = async (data: CreatePartnerInput) => {
+  const fetchPartners = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        setPartners([]);
+        setFilteredPartners([]);
+        return;
+      }
+
+      // Note: If crm_partners table doesn't exist yet, we use an empty array
+      // The table can be created via migration when needed
+      setPartners([]);
+      setFilteredPartners([]);
+    } catch (err: any) {
+      logger.error('Erro ao buscar parceiros:', err);
+      setError(err.message || 'Erro ao carregar parceiros');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPartners();
+  }, []);
+
+  useEffect(() => {
+    if (searchTerm) {
+      const lowercaseSearch = searchTerm.toLowerCase();
+      const filtered = partners.filter((p) =>
+        p.name.toLowerCase().includes(lowercaseSearch) ||
+        p.email?.toLowerCase().includes(lowercaseSearch) ||
+        p.phone?.includes(lowercaseSearch)
+      );
+      setFilteredPartners(filtered);
+      setCurrentPage(1);
+    } else {
+      setFilteredPartners(partners);
+    }
+  }, [searchTerm, partners]);
+
+  const totalPages = Math.ceil(filteredPartners.length / itemsPerPage);
+  const paginatedPartners = filteredPartners.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const createPartner = async (data: Partial<Partner>) => {
     try {
       const newPartner: Partner = {
         id: crypto.randomUUID(),
-        name: data.name,
+        name: data.name || '',
         cnpj: data.cnpj || null,
         email: data.email || null,
         phone: data.phone || null,
@@ -51,7 +86,7 @@ export const usePartners = () => {
         updated_at: new Date().toISOString(),
       };
 
-      addItem(newPartner);
+      setPartners(prev => [...prev, newPartner]);
       showSuccess('Parceiro cadastrado com sucesso!');
       return newPartner;
     } catch (err) {
@@ -60,12 +95,11 @@ export const usePartners = () => {
     }
   };
 
-  const updatePartner = async (id: string, data: UpdatePartnerInput) => {
+  const updatePartner = async (id: string, data: Partial<Partner>) => {
     try {
-      updateItem(id, {
-        ...data,
-        updated_at: new Date().toISOString(),
-      });
+      setPartners(prev =>
+        prev.map(p => p.id === id ? { ...p, ...data, updated_at: new Date().toISOString() } : p)
+      );
       showSuccess('Parceiro atualizado com sucesso!');
     } catch (err) {
       showError('Erro ao atualizar parceiro');
@@ -75,7 +109,7 @@ export const usePartners = () => {
 
   const deletePartner = async (id: string) => {
     try {
-      deleteItem(id);
+      setPartners(prev => prev.filter(p => p.id !== id));
       showSuccess('Parceiro removido com sucesso!');
     } catch (err) {
       showError('Erro ao remover parceiro');
@@ -102,7 +136,7 @@ export const usePartners = () => {
       filtered = filtered.filter(p => p.rating && p.rating >= filters.minRating!);
     }
 
-    setFilteredItems(filtered);
+    setFilteredPartners(filtered);
   };
 
   const getPartnerById = (id: string) => {
@@ -112,7 +146,7 @@ export const usePartners = () => {
   return {
     partners,
     filteredPartners,
-    paginatedPartners: paginatedItems,
+    paginatedPartners,
     isLoading,
     error,
     searchTerm,

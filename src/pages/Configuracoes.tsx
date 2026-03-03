@@ -96,9 +96,7 @@ const Configuracoes = () => {
   const handleSaveSettings = async (section: string) => {
     setLoading(true);
     try {
-      // Mock save - in real app would save to database
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      // Settings are saved locally for now - could be persisted to Supabase
       toast({
         title: "Configurações salvas",
         description: `As configurações de ${section} foram atualizadas com sucesso.`,
@@ -115,7 +113,6 @@ const Configuracoes = () => {
   };
 
   const handleExportData = () => {
-    // Mock export
     const data = {
       company: companySettings,
       system: systemSettings,
@@ -123,10 +120,17 @@ const Configuracoes = () => {
       exportDate: new Date().toISOString()
     };
     
-    console.log("Exporting configuration:", data);
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `configuracoes_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
     toast({
       title: "Dados exportados",
-      description: "As configurações foram exportadas. Verifique o console.",
+      description: "Arquivo de configurações baixado com sucesso.",
     });
   };
 

@@ -38,8 +38,13 @@ export const PartsActions = ({ part, onUpdate }: PartsActionsProps) => {
     setLoading(true);
     
     try {
-      // Mock delete - in real app would delete from database
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const { supabase } = await import('@/integrations/supabase/client');
+      const { error } = await supabase
+        .from('crm_parts')
+        .delete()
+        .eq('id', part.id);
+
+      if (error) throw error;
       
       toast({
         title: "Peça excluída",
@@ -47,11 +52,10 @@ export const PartsActions = ({ part, onUpdate }: PartsActionsProps) => {
       });
       
       onUpdate();
-    } catch (err) {
-      console.error('Erro ao excluir peça:', err);
+    } catch (err: any) {
       toast({
         title: "Erro",
-        description: "Erro inesperado. Tente novamente.",
+        description: err?.message || "Erro inesperado. Tente novamente.",
         variant: "destructive",
       });
     } finally {

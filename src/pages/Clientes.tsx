@@ -74,13 +74,13 @@ const Clientes = () => {
   };
 
   const handleSchedule = (client: Client) => {
-    console.log('Agendar para cliente:', client);
-    // TODO: Implementar navegação para agendamento
+    // Navigate to appointments page - in future can pre-fill client
+    window.location.href = '/agendamentos';
   };
 
   const handleNewService = (client: Client) => {
-    console.log('Novo serviço para cliente:', client);
-    // TODO: Implementar navegação para nova ordem de serviço
+    // Navigate to service orders page - in future can pre-fill client
+    window.location.href = '/ordens-servico';
   };
 
   if (loading) {

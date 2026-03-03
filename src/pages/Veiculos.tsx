@@ -20,8 +20,7 @@ const Veiculos = () => {
   const { vehicles, loading, error, refetch } = useVehicles();
 
   const handleQuickAction = (action: string, vehicle: any) => {
-    console.log(`Ação ${action} para veículo:`, vehicle);
-    // Implementar ações específicas aqui
+    // Quick actions are handled by individual components
   };
 
   const applyFilters = (vehicleList: any[]) => {
