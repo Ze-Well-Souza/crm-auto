@@ -1,10 +1,11 @@
 import React, { createContext, useContext, ReactNode } from 'react';
 import { Elements } from '@stripe/react-stripe-js';
-import { stripePromise, stripeConfig } from '@/lib/stripe';
+import { loadStripe } from '@stripe/stripe-js';
+import { STRIPE_PUBLISHABLE_KEY } from '@/lib/stripe-client';
 
-interface StripeContextType {
-  // Adicionar métodos específicos do contexto se necessário
-}
+const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
+
+interface StripeContextType {}
 
 const StripeContext = createContext<StripeContextType | undefined>(undefined);
 
@@ -13,12 +14,9 @@ interface StripeProviderProps {
 }
 
 export const StripeProvider: React.FC<StripeProviderProps> = ({ children }) => {
-  const contextValue: StripeContextType = {
-    // Implementar métodos específicos se necessário
-  };
+  const contextValue: StripeContextType = {};
 
   if (!stripePromise) {
-    // Stripe não configurado: retorna filhos sem Elements para evitar erros no console
     return (
       <StripeContext.Provider value={contextValue}>
         {children}
@@ -28,10 +26,20 @@ export const StripeProvider: React.FC<StripeProviderProps> = ({ children }) => {
 
   return (
     <Elements 
-      stripe={stripePromise!} 
+      stripe={stripePromise} 
       options={{
-        appearance: stripeConfig.appearance,
-        locale: stripeConfig.locale,
+        appearance: {
+          theme: 'stripe',
+          variables: {
+            colorPrimary: '#0570de',
+            colorBackground: '#ffffff',
+            colorText: '#30313d',
+            fontFamily: 'Inter, system-ui, sans-serif',
+            spacingUnit: '4px',
+            borderRadius: '8px',
+          },
+        },
+        locale: 'pt-BR',
       }}
     >
       <StripeContext.Provider value={contextValue}>
@@ -41,10 +49,10 @@ export const StripeProvider: React.FC<StripeProviderProps> = ({ children }) => {
   );
 };
 
-export const useStripe = () => {
+export const useStripeContext = () => {
   const context = useContext(StripeContext);
   if (context === undefined) {
-    throw new Error('useStripe must be used within a StripeProvider');
+    throw new Error('useStripeContext must be used within a StripeProvider');
   }
   return context;
 };

@@ -109,9 +109,42 @@ export type Database = {
           },
         ]
       }
+      appointment_slot_locks: {
+        Row: {
+          created_at: string
+          customer_id: string | null
+          expires_at: string
+          id: string
+          order_id: string | null
+          partner_profile_id: string
+          slot_end: string
+          slot_start: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id?: string | null
+          expires_at: string
+          id?: string
+          order_id?: string | null
+          partner_profile_id: string
+          slot_end: string
+          slot_start: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string | null
+          expires_at?: string
+          id?: string
+          order_id?: string | null
+          partner_profile_id?: string
+          slot_end?: string
+          slot_start?: string
+        }
+        Relationships: []
+      }
       appointments: {
         Row: {
-          appointment_date: string
+          appointment_date: string | null
           cancellation_reason: string | null
           cancelled_at: string | null
           cancelled_by: string | null
@@ -122,8 +155,15 @@ export type Database = {
           final_price: number | null
           id: string
           notes: string | null
+          paid_at: string | null
           partner_profile_id: string
           partner_service_id: string
+          payment_discount: number | null
+          payment_final_amount: number | null
+          payment_installments: number | null
+          payment_interest_rate: number | null
+          payment_method: string | null
+          payment_notes: string | null
           service_address: Json | null
           service_description: string | null
           service_type: string
@@ -132,7 +172,7 @@ export type Database = {
           vehicle_info: Json | null
         }
         Insert: {
-          appointment_date: string
+          appointment_date?: string | null
           cancellation_reason?: string | null
           cancelled_at?: string | null
           cancelled_by?: string | null
@@ -143,8 +183,15 @@ export type Database = {
           final_price?: number | null
           id?: string
           notes?: string | null
+          paid_at?: string | null
           partner_profile_id: string
           partner_service_id: string
+          payment_discount?: number | null
+          payment_final_amount?: number | null
+          payment_installments?: number | null
+          payment_interest_rate?: number | null
+          payment_method?: string | null
+          payment_notes?: string | null
           service_address?: Json | null
           service_description?: string | null
           service_type: string
@@ -153,7 +200,7 @@ export type Database = {
           vehicle_info?: Json | null
         }
         Update: {
-          appointment_date?: string
+          appointment_date?: string | null
           cancellation_reason?: string | null
           cancelled_at?: string | null
           cancelled_by?: string | null
@@ -164,8 +211,15 @@ export type Database = {
           final_price?: number | null
           id?: string
           notes?: string | null
+          paid_at?: string | null
           partner_profile_id?: string
           partner_service_id?: string
+          payment_discount?: number | null
+          payment_final_amount?: number | null
+          payment_installments?: number | null
+          payment_interest_rate?: number | null
+          payment_method?: string | null
+          payment_notes?: string | null
           service_address?: Json | null
           service_description?: string | null
           service_type?: string
@@ -600,6 +654,145 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      crm_api_keys: {
+        Row: {
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          key_hash: string
+          key_preview: string
+          last_used_at: string | null
+          name: string
+          permissions: Json | null
+          rate_limit_per_day: number | null
+          rate_limit_per_minute: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          key_hash: string
+          key_preview: string
+          last_used_at?: string | null
+          name: string
+          permissions?: Json | null
+          rate_limit_per_day?: number | null
+          rate_limit_per_minute?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          key_hash?: string
+          key_preview?: string
+          last_used_at?: string | null
+          name?: string
+          permissions?: Json | null
+          rate_limit_per_day?: number | null
+          rate_limit_per_minute?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      crm_api_logs: {
+        Row: {
+          api_key_id: string | null
+          created_at: string | null
+          endpoint: string
+          error_message: string | null
+          id: string
+          ip_address: unknown
+          method: string
+          request_body: Json | null
+          response_body: Json | null
+          response_time_ms: number | null
+          status_code: number
+          user_agent: string | null
+        }
+        Insert: {
+          api_key_id?: string | null
+          created_at?: string | null
+          endpoint: string
+          error_message?: string | null
+          id?: string
+          ip_address?: unknown
+          method: string
+          request_body?: Json | null
+          response_body?: Json | null
+          response_time_ms?: number | null
+          status_code: number
+          user_agent?: string | null
+        }
+        Update: {
+          api_key_id?: string | null
+          created_at?: string | null
+          endpoint?: string
+          error_message?: string | null
+          id?: string
+          ip_address?: unknown
+          method?: string
+          request_body?: Json | null
+          response_body?: Json | null
+          response_time_ms?: number | null
+          status_code?: number
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_api_logs_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "crm_api_keys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_api_rate_limits: {
+        Row: {
+          api_key_id: string
+          created_at: string | null
+          endpoint: string
+          id: string
+          request_count: number | null
+          window_start: string
+          window_type: string
+        }
+        Insert: {
+          api_key_id: string
+          created_at?: string | null
+          endpoint: string
+          id?: string
+          request_count?: number | null
+          window_start: string
+          window_type: string
+        }
+        Update: {
+          api_key_id?: string
+          created_at?: string | null
+          endpoint?: string
+          id?: string
+          request_count?: number | null
+          window_start?: string
+          window_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_api_rate_limits_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "crm_api_keys"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       crm_appointments: {
         Row: {
@@ -1098,9 +1291,21 @@ export type Database = {
           created_at: string
           diagnosis: string | null
           id: string
+          is_online_purchase: boolean | null
+          marketplace_appointment_id: string | null
           notes: string | null
           order_number: string
+          paid_at: string | null
           partner_id: string
+          payment_discount: number | null
+          payment_final_amount: number | null
+          payment_installments: number | null
+          payment_interest_rate: number | null
+          payment_method: string | null
+          payment_notes: string | null
+          payment_status: string | null
+          purchase_date: string | null
+          scheduled_date: string | null
           service_description: string | null
           start_date: string | null
           status: Database["public"]["Enums"]["service_order_status"]
@@ -1110,6 +1315,8 @@ export type Database = {
           total_parts: number | null
           updated_at: string
           vehicle_id: string
+          warranty_days: number | null
+          warranty_expires_at: string | null
         }
         Insert: {
           appointment_id?: string | null
@@ -1118,9 +1325,21 @@ export type Database = {
           created_at?: string
           diagnosis?: string | null
           id?: string
+          is_online_purchase?: boolean | null
+          marketplace_appointment_id?: string | null
           notes?: string | null
           order_number: string
+          paid_at?: string | null
           partner_id: string
+          payment_discount?: number | null
+          payment_final_amount?: number | null
+          payment_installments?: number | null
+          payment_interest_rate?: number | null
+          payment_method?: string | null
+          payment_notes?: string | null
+          payment_status?: string | null
+          purchase_date?: string | null
+          scheduled_date?: string | null
           service_description?: string | null
           start_date?: string | null
           status?: Database["public"]["Enums"]["service_order_status"]
@@ -1130,6 +1349,8 @@ export type Database = {
           total_parts?: number | null
           updated_at?: string
           vehicle_id: string
+          warranty_days?: number | null
+          warranty_expires_at?: string | null
         }
         Update: {
           appointment_id?: string | null
@@ -1138,9 +1359,21 @@ export type Database = {
           created_at?: string
           diagnosis?: string | null
           id?: string
+          is_online_purchase?: boolean | null
+          marketplace_appointment_id?: string | null
           notes?: string | null
           order_number?: string
+          paid_at?: string | null
           partner_id?: string
+          payment_discount?: number | null
+          payment_final_amount?: number | null
+          payment_installments?: number | null
+          payment_interest_rate?: number | null
+          payment_method?: string | null
+          payment_notes?: string | null
+          payment_status?: string | null
+          purchase_date?: string | null
+          scheduled_date?: string | null
           service_description?: string | null
           start_date?: string | null
           status?: Database["public"]["Enums"]["service_order_status"]
@@ -1150,6 +1383,8 @@ export type Database = {
           total_parts?: number | null
           updated_at?: string
           vehicle_id?: string
+          warranty_days?: number | null
+          warranty_expires_at?: string | null
         }
         Relationships: [
           {
@@ -1164,6 +1399,13 @@ export type Database = {
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "crm_clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_service_orders_marketplace_appointment_id_fkey"
+            columns: ["marketplace_appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
             referencedColumns: ["id"]
           },
           {
@@ -1413,6 +1655,42 @@ export type Database = {
           },
         ]
       }
+      event_outbox: {
+        Row: {
+          attempts: number
+          created_at: string
+          event_type: string
+          id: string
+          last_error: string | null
+          next_attempt_at: string | null
+          payload: Json
+          sent_at: string | null
+          status: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          event_type: string
+          id?: string
+          last_error?: string | null
+          next_attempt_at?: string | null
+          payload: Json
+          sent_at?: string | null
+          status?: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          event_type?: string
+          id?: string
+          last_error?: string | null
+          next_attempt_at?: string | null
+          payload?: Json
+          sent_at?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       favorites: {
         Row: {
           created_at: string
@@ -1499,19 +1777,23 @@ export type Database = {
       }
       orders: {
         Row: {
+          appointment_id: string | null
           booking_id: string | null
           cancellation_reason: string | null
           cancelled_at: string | null
           cancelled_by: string | null
           created_at: string
+          currency: string | null
           customer_email: string | null
           customer_name: string | null
           customer_phone: string | null
           customer_vehicle_info: Json | null
           id: string
+          idempotency_key: string | null
           is_scheduled: boolean | null
           notes: string | null
           partner_id: string
+          partner_service_id: string | null
           payment_method: string | null
           payment_status: string | null
           service_id: string
@@ -1519,23 +1801,28 @@ export type Database = {
           service_name: string
           service_price: number
           status: string
+          total_amount: number | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          appointment_id?: string | null
           booking_id?: string | null
           cancellation_reason?: string | null
           cancelled_at?: string | null
           cancelled_by?: string | null
           created_at?: string
+          currency?: string | null
           customer_email?: string | null
           customer_name?: string | null
           customer_phone?: string | null
           customer_vehicle_info?: Json | null
           id?: string
+          idempotency_key?: string | null
           is_scheduled?: boolean | null
           notes?: string | null
           partner_id: string
+          partner_service_id?: string | null
           payment_method?: string | null
           payment_status?: string | null
           service_id: string
@@ -1543,23 +1830,28 @@ export type Database = {
           service_name: string
           service_price: number
           status?: string
+          total_amount?: number | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          appointment_id?: string | null
           booking_id?: string | null
           cancellation_reason?: string | null
           cancelled_at?: string | null
           cancelled_by?: string | null
           created_at?: string
+          currency?: string | null
           customer_email?: string | null
           customer_name?: string | null
           customer_phone?: string | null
           customer_vehicle_info?: Json | null
           id?: string
+          idempotency_key?: string | null
           is_scheduled?: boolean | null
           notes?: string | null
           partner_id?: string
+          partner_service_id?: string | null
           payment_method?: string | null
           payment_status?: string | null
           service_id?: string
@@ -1567,10 +1859,26 @@ export type Database = {
           service_name?: string
           service_price?: number
           status?: string
+          total_amount?: number | null
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "orders_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_partner_service_id_fkey"
+            columns: ["partner_service_id"]
+            isOneToOne: false
+            referencedRelation: "partner_services"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       partner_applications: {
         Row: {
@@ -1697,6 +2005,62 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      partner_date_blocks: {
+        Row: {
+          block_type: string | null
+          blocked_date: string
+          created_at: string | null
+          created_by: string | null
+          end_time: string | null
+          id: string
+          is_recurring: boolean | null
+          partner_profile_id: string
+          reason_internal: string | null
+          reason_public: string | null
+          recurrence_pattern: string | null
+          start_time: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          block_type?: string | null
+          blocked_date: string
+          created_at?: string | null
+          created_by?: string | null
+          end_time?: string | null
+          id?: string
+          is_recurring?: boolean | null
+          partner_profile_id: string
+          reason_internal?: string | null
+          reason_public?: string | null
+          recurrence_pattern?: string | null
+          start_time?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          block_type?: string | null
+          blocked_date?: string
+          created_at?: string | null
+          created_by?: string | null
+          end_time?: string | null
+          id?: string
+          is_recurring?: boolean | null
+          partner_profile_id?: string
+          reason_internal?: string | null
+          reason_public?: string | null
+          recurrence_pattern?: string | null
+          start_time?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_date_blocks_partner_profile_id_fkey"
+            columns: ["partner_profile_id"]
+            isOneToOne: false
+            referencedRelation: "partner_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       partner_profiles: {
         Row: {
@@ -1846,6 +2210,7 @@ export type Database = {
       }
       partner_services: {
         Row: {
+          availability: Json | null
           category_id: string | null
           created_at: string
           custom_description: string | null
@@ -1860,9 +2225,13 @@ export type Database = {
           partner_profile_id: string
           price: number
           service_id: string
+          slug: string | null
           updated_at: string
+          warranty_days: number | null
+          warranty_description: string | null
         }
         Insert: {
+          availability?: Json | null
           category_id?: string | null
           created_at?: string
           custom_description?: string | null
@@ -1877,9 +2246,13 @@ export type Database = {
           partner_profile_id: string
           price: number
           service_id: string
+          slug?: string | null
           updated_at?: string
+          warranty_days?: number | null
+          warranty_description?: string | null
         }
         Update: {
+          availability?: Json | null
           category_id?: string | null
           created_at?: string
           custom_description?: string | null
@@ -1894,7 +2267,10 @@ export type Database = {
           partner_profile_id?: string
           price?: number
           service_id?: string
+          slug?: string | null
           updated_at?: string
+          warranty_days?: number | null
+          warranty_description?: string | null
         }
         Relationships: [
           {
@@ -2283,7 +2659,7 @@ export type Database = {
             foreignKeyName: "reviews_establishment_id_fkey"
             columns: ["establishment_id"]
             isOneToOne: false
-            referencedRelation: "establishments"
+            referencedRelation: "partner_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -3433,6 +3809,11 @@ export type Database = {
         Returns: boolean
       }
       clean_expired_carts: { Args: never; Returns: number }
+      cleanup_old_api_logs: { Args: { days_to_keep?: number }; Returns: number }
+      cleanup_old_rate_limits: {
+        Args: { hours_to_keep?: number }
+        Returns: number
+      }
       create_default_partner_availability: {
         Args: { p_partner_id: number }
         Returns: undefined
@@ -3472,6 +3853,10 @@ export type Database = {
       equals: { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
       executar_testes_sistema: { Args: never; Returns: Json }
       generate_onboarding_code: { Args: never; Returns: string }
+      generate_service_slug: {
+        Args: { partner_name: string; service_name: string }
+        Returns: string
+      }
       geometry: { Args: { "": string }; Returns: unknown }
       geometry_above: {
         Args: { geom1: unknown; geom2: unknown }
@@ -3781,10 +4166,6 @@ export type Database = {
       processar_fila_manual: { Args: never; Returns: Json }
       reject_partner_application: {
         Args: { application_id: string; reason: string; rejector_id: string }
-        Returns: boolean
-      }
-      reprocessar_notificacoes_agendamento: {
-        Args: { agendamento_id: number }
         Returns: boolean
       }
       reprocessar_tarefas_falhadas: { Args: { limite?: number }; Returns: Json }
@@ -4416,6 +4797,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      unaccent: { Args: { "": string }; Returns: string }
       unlockrows: { Args: { "": string }; Returns: number }
       updategeometrysrid: {
         Args: {

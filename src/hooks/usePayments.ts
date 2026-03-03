@@ -1,16 +1,8 @@
 import { useState, useCallback } from 'react';
-import * as Sentry from '@sentry/react';
 import { useStripe, useElements } from '@stripe/react-stripe-js';
 import { PaymentIntent, PaymentMethod } from '@stripe/stripe-js';
-
-// Interface para o resultado mock de PaymentIntent
-interface MockPaymentIntent extends Partial<PaymentIntent> {
-  id: string;
-  status: PaymentIntent.Status;
-  metadata?: {
-    [key: string]: string;
-  };
-}
+import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
 
 interface PaymentData {
   amount: number;
@@ -21,7 +13,7 @@ interface PaymentData {
 
 interface PaymentResult {
   success: boolean;
-  paymentIntent?: MockPaymentIntent;
+  paymentIntent?: PaymentIntent;
   error?: string;
 }
 
@@ -41,41 +33,24 @@ export const usePayments = (): UsePaymentsReturn => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Simular criação de Payment Intent no backend
   const createPaymentIntent = useCallback(async (paymentData: PaymentData) => {
     try {
-      // Em um ambiente real, isso seria uma chamada para seu backend
-      // que criaria o Payment Intent usando a Stripe Secret Key
-      const response = await fetch('/api/payments/create-intent', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(paymentData),
+      const { data, error: fnError } = await supabase.functions.invoke('create-checkout-session', {
+        body: paymentData,
       });
 
-      if (!response.ok) {
-        throw new Error('Falha ao criar Payment Intent');
-      }
+      if (fnError) throw fnError;
 
-      const data = await response.json();
       return {
         clientSecret: data.client_secret,
         paymentIntentId: data.id
       };
     } catch (err) {
-      // Simulação para desenvolvimento
-      const mockClientSecret = `pi_mock_${Date.now()}_secret_mock`;
-      const mockPaymentIntentId = `pi_mock_${Date.now()}`;
-      
-      return {
-        clientSecret: mockClientSecret,
-        paymentIntentId: mockPaymentIntentId
-      };
+      logger.error('Error creating payment intent:', err);
+      throw new Error('Falha ao criar Payment Intent');
     }
   }, []);
 
-  // Confirmar pagamento com método de pagamento
   const confirmPayment = useCallback(async (
     clientSecret: string, 
     paymentMethod: PaymentMethod
@@ -106,7 +81,6 @@ export const usePayments = (): UsePaymentsReturn => {
     }
   }, [stripe]);
 
-  // Processar pagamento com cartão
   const processCardPayment = useCallback(async (paymentData: PaymentData): Promise<PaymentResult> => {
     if (!stripe || !elements) {
       return { success: false, error: 'Stripe não foi carregado' };
@@ -116,10 +90,8 @@ export const usePayments = (): UsePaymentsReturn => {
     setError(null);
 
     try {
-      // Criar Payment Intent
       const { clientSecret } = await createPaymentIntent(paymentData);
 
-      // Confirmar pagamento
       const { error, paymentIntent } = await stripe.confirmPayment({
         elements,
         clientSecret,
@@ -144,13 +116,11 @@ export const usePayments = (): UsePaymentsReturn => {
     }
   }, [stripe, elements, createPaymentIntent]);
 
-  // Processar pagamento PIX
   const processPIXPayment = useCallback(async (paymentData: PaymentData): Promise<PaymentResult> => {
     setIsProcessing(true);
     setError(null);
 
     try {
-      // Criar Payment Intent para PIX
       const { clientSecret, paymentIntentId } = await createPaymentIntent({
         ...paymentData,
         metadata: {
@@ -159,23 +129,13 @@ export const usePayments = (): UsePaymentsReturn => {
         }
       });
 
-      // Simular criação de código PIX
-      // Em um ambiente real, você criaria o código PIX através da API do seu provedor
-      const pixCode = `00020126580014BR.GOV.BCB.PIX0136${paymentIntentId}5204000053039865802BR5925NOME DO BENEFICIARIO6009SAO PAULO62070503***6304`;
-      
-      // Simular sucesso do PIX (em produção, isso seria confirmado via webhook)
-      setTimeout(() => {
-        // Aqui você atualizaria o status do pagamento
-        console.log('PIX payment confirmed:', paymentIntentId);
-      }, 5000);
-
+      // PIX code would be returned from server via webhook
       return { 
         success: true, 
         paymentIntent: {
           id: paymentIntentId,
           status: 'requires_action',
-          metadata: { pix_code: pixCode }
-        }
+        } as unknown as PaymentIntent
       };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Erro no pagamento PIX';
@@ -186,13 +146,11 @@ export const usePayments = (): UsePaymentsReturn => {
     }
   }, [createPaymentIntent]);
 
-  // Processar pagamento com boleto
   const processBoletoPayment = useCallback(async (paymentData: PaymentData): Promise<PaymentResult> => {
     setIsProcessing(true);
     setError(null);
 
     try {
-      // Criar Payment Intent para boleto
       const { clientSecret, paymentIntentId } = await createPaymentIntent({
         ...paymentData,
         metadata: {
@@ -201,20 +159,12 @@ export const usePayments = (): UsePaymentsReturn => {
         }
       });
 
-      // Simular geração de boleto
-      const boletoUrl = `https://example.com/boleto/${paymentIntentId}.pdf`;
-      const boletoCode = `34191.79001 01043.510047 91020.150008 1 84770000${Math.floor(paymentData.amount * 100).toString().padStart(8, '0')}`;
-
       return { 
         success: true, 
         paymentIntent: {
           id: paymentIntentId,
           status: 'requires_action',
-          metadata: { 
-            boleto_url: boletoUrl,
-            boleto_code: boletoCode
-          }
-        }
+        } as unknown as PaymentIntent
       };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Erro na geração do boleto';
