@@ -55,7 +55,7 @@ export const useClients = () => {
       
       // Se não autenticado, usar modo demo
       if (!session?.user) {
-        console.log('Demo Mode: Simulating client save');
+        // Demo mode: simulate client save
         const newClient: Client = {
           ...clientData,
           id: `demo-${Date.now()}`,
@@ -87,7 +87,7 @@ export const useClients = () => {
 
       if (insertError) {
         // Fallback para modo demo em caso de erro RLS
-        console.log('Demo Mode: Fallback after Supabase error', insertError);
+        // Fallback to demo mode on RLS error
         const newClient: Client = {
           ...clientData,
           id: `demo-${Date.now()}`,

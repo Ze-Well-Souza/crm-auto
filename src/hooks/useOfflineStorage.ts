@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNotifications } from '@/contexts/NotificationContext';
+import { logger } from '@/lib/logger';
 
 interface OfflineData {
   id: string;
@@ -30,35 +31,27 @@ export const useOfflineStorage = () => {
     lastSyncTime: null
   });
 
-  // Carregar dados do localStorage
   const loadOfflineData = useCallback(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       const lastSync = localStorage.getItem(LAST_SYNC_KEY);
-      
       if (stored) {
         const pendingSync = JSON.parse(stored);
-        setState(prev => ({
-          ...prev,
-          pendingSync,
-          lastSyncTime: lastSync ? parseInt(lastSync) : null
-        }));
+        setState(prev => ({ ...prev, pendingSync, lastSyncTime: lastSync ? parseInt(lastSync) : null }));
       }
     } catch (error) {
-      console.error('Erro ao carregar dados offline:', error);
+      logger.error('Erro ao carregar dados offline:', error);
     }
   }, []);
 
-  // Salvar dados no localStorage
   const saveOfflineData = useCallback((data: OfflineData[]) => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     } catch (error) {
-      console.error('Erro ao salvar dados offline:', error);
+      logger.error('Erro ao salvar dados offline:', error);
     }
   }, []);
 
-  // Adicionar item para sincronização
   const addToOfflineQueue = useCallback((item: Omit<OfflineData, 'id' | 'timestamp' | 'synced'>) => {
     const newItem: OfflineData = {
       ...item,
@@ -77,58 +70,46 @@ export const useOfflineStorage = () => {
     return newItem.id;
   }, [saveOfflineData, showInfo]);
 
-  // Sincronizar dados pendentes
   const syncPendingData = useCallback(async () => {
-    if (state.isSyncing || state.isOffline || state.pendingSync.length === 0) {
-      return;
-    }
+    if (state.isSyncing || state.isOffline || state.pendingSync.length === 0) return;
 
     setState(prev => ({ ...prev, isSyncing: true }));
 
     try {
       const unsyncedItems = state.pendingSync.filter(item => !item.synced);
       
+      // TODO: Implement real sync with Supabase when needed
       for (const item of unsyncedItems) {
         try {
-          // Simular sincronização
-          await new Promise(resolve => setTimeout(resolve, 500));
-          console.log(`Sincronizando ${item.action} ${item.type}:`, item.data);
+          logger.debug(`Sincronizando ${item.action} ${item.type}:`, item.data);
         } catch (error) {
-          console.error(`Erro ao sincronizar item ${item.id}:`, error);
+          logger.error(`Erro ao sincronizar item ${item.id}:`, error);
         }
       }
 
       const syncTime = Date.now();
       localStorage.setItem(LAST_SYNC_KEY, syncTime.toString());
-      setState(prev => ({ 
-        ...prev, 
-        lastSyncTime: syncTime,
-        pendingSync: []
-      }));
+      setState(prev => ({ ...prev, lastSyncTime: syncTime, pendingSync: [] }));
       localStorage.removeItem(STORAGE_KEY);
 
       if (unsyncedItems.length > 0) {
         showSuccess(`Sincronização concluída: ${unsyncedItems.length} item(s)`);
       }
     } catch (error) {
-      console.error('Erro na sincronização:', error);
+      logger.error('Erro na sincronização:', error);
       showError('Erro na sincronização');
     } finally {
       setState(prev => ({ ...prev, isSyncing: false }));
     }
   }, [state.isSyncing, state.isOffline, state.pendingSync, showSuccess, showError]);
 
-  // Efeitos
-  useEffect(() => {
-    loadOfflineData();
-  }, [loadOfflineData]);
+  useEffect(() => { loadOfflineData(); }, [loadOfflineData]);
 
   useEffect(() => {
     const handleOnline = () => {
       setState(prev => ({ ...prev, isOffline: false }));
       setTimeout(syncPendingData, 1000);
     };
-
     const handleOffline = () => {
       setState(prev => ({ ...prev, isOffline: true }));
       showInfo('Modo offline ativado');
@@ -136,16 +117,11 @@ export const useOfflineStorage = () => {
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
-
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
   }, [syncPendingData, showInfo]);
 
-  return {
-    ...state,
-    addToOfflineQueue,
-    syncPendingData
-  };
+  return { ...state, addToOfflineQueue, syncPendingData };
 };

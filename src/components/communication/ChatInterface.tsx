@@ -323,7 +323,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className = "" }) 
                 multiple
                 onChange={(e) => {
                   // Implementar upload de arquivos
-                  console.log('Arquivos selecionados:', e.target.files);
+                  // TODO: Implement file upload
                 }}
               />
             </div>

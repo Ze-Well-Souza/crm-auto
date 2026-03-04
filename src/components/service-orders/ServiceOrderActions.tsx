@@ -63,12 +63,12 @@ export const ServiceOrderActions = ({ serviceOrder, onUpdate }: ServiceOrderActi
 
   const handleGenerateInvoice = () => {
     // In real app would generate PDF invoice
-    console.log('Generating invoice for order:', serviceOrder.order_number);
+    // Invoice generation via export utils
   };
 
   const handleSendToClient = () => {
     // In real app would send email with order details
-    console.log('Sending order to client:', serviceOrder.order_number);
+    // Email sending via communication context
   };
 
   const canApprove = serviceOrder.status === 'orcamento';

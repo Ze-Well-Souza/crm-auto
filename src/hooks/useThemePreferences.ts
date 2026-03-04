@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTheme } from 'next-themes';
+import { logger } from '@/lib/logger';
 
 interface ThemePreferences {
   smoothTransitions: boolean;
@@ -31,7 +32,7 @@ export const useThemePreferences = () => {
         setPreferences({ ...DEFAULT_PREFERENCES, ...parsed });
       }
     } catch (error) {
-      console.warn('Failed to load theme preferences:', error);
+      logger.warn('Failed to load theme preferences:', error);
     } finally {
       setIsLoading(false);
     }
@@ -46,7 +47,7 @@ export const useThemePreferences = () => {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
       } catch (error) {
-        console.warn('Failed to save theme preferences:', error);
+        logger.warn('Failed to save theme preferences:', error);
       }
     }
   };
@@ -93,7 +94,7 @@ export const useThemePreferences = () => {
       }
       return true;
     } catch (error) {
-      console.error('Failed to import preferences:', error);
+      logger.error('Failed to import preferences:', error);
       return false;
     }
   };

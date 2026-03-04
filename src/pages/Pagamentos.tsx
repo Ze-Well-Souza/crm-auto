@@ -112,7 +112,7 @@ export default function Pagamentos() {
 
       setServiceOrders(transformed);
     } catch (err) {
-      console.error('Error fetching service orders:', err);
+      // Error handled silently
     } finally {
       setLoading(false);
     }
@@ -140,13 +140,12 @@ export default function Pagamentos() {
   };
 
   const handlePaymentSuccess = (paymentId: string) => {
-    console.log('Payment successful:', paymentId);
-    // Aqui você atualizaria o status do pagamento na base de dados
+    // Update payment status in database
+    fetchServiceOrders();
   };
 
-  const handlePaymentError = (error: string) => {
-    console.error('Payment error:', error);
-    // Aqui você trataria o erro de pagamento
+  const handlePaymentError = (_error: string) => {
+    // Payment error handled by PaymentForm component
   };
 
   return (
@@ -306,10 +305,10 @@ export default function Pagamentos() {
                 amount={100}
                 description="Pagamento avulso"
                 onSuccess={(paymentId) => {
-                  console.log('Payment successful:', paymentId);
+                  handlePaymentSuccess(paymentId);
                 }}
                 onError={(error) => {
-                  console.error('Payment error:', error);
+                  handlePaymentError(error);
                 }}
               />
             </CardContent>

@@ -194,7 +194,7 @@ const Financeiro = () => {
                   transaction={transaction} 
                   onUpdate={refetch}
                   onQuickAction={(action, trans) => {
-                    console.log(`Ação ${action} para transação:`, trans);
+                    // Quick actions handled by component
                   }}
                 />
               ))

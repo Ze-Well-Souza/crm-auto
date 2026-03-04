@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 import type { ImageLibraryItem, ImageFilters } from '@/types/image-library';
 
 export const useImageLibrary = () => {
@@ -10,10 +11,8 @@ export const useImageLibrary = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Carregar imagens
   const loadImages = useCallback(async (filters?: ImageFilters) => {
     if (!user) return;
-
     setIsLoading(true);
     setError(null);
 
@@ -24,33 +23,17 @@ export const useImageLibrary = () => {
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
-      if (filters?.category) {
-        query = query.eq('category', filters.category);
-      }
-
-      if (filters?.collection_id) {
-        query = query.eq('collection_id', filters.collection_id);
-      }
-
-      if (filters?.storage_type) {
-        query = query.eq('storage_type', filters.storage_type);
-      }
-
-      if (filters?.search) {
-        query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
-      }
-
-      if (filters?.tags && filters.tags.length > 0) {
-        query = query.contains('tags', filters.tags);
-      }
+      if (filters?.category) query = query.eq('category', filters.category);
+      if (filters?.collection_id) query = query.eq('collection_id', filters.collection_id);
+      if (filters?.storage_type) query = query.eq('storage_type', filters.storage_type);
+      if (filters?.search) query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
+      if (filters?.tags && filters.tags.length > 0) query = query.contains('tags', filters.tags);
 
       const { data, error: fetchError } = await query;
-
       if (fetchError) throw fetchError;
-
       setImages(data || []);
     } catch (err: any) {
-      console.error('Erro ao carregar imagens:', err);
+      logger.error('Erro ao carregar imagens:', err);
       setError(err.message);
       toast.error('Erro ao carregar imagens');
     } finally {
@@ -58,77 +41,40 @@ export const useImageLibrary = () => {
     }
   }, [user]);
 
-  // Upload de imagem
   const uploadImage = useCallback(async (file: File, metadata: Pick<ImageLibraryItem, 'title' | 'description' | 'alt_text' | 'category' | 'tags' | 'collection_id'>) => {
-    if (!user) {
-      toast.error('Usuário não autenticado');
-      return null;
-    }
-
+    if (!user) { toast.error('Usuário não autenticado'); return null; }
     setIsLoading(true);
 
     try {
-      console.log('[ImageLibrary] Starting upload:', { fileName: file.name, fileSize: file.size, fileType: file.type });
-      
-      // Upload do arquivo para o storage
       const fileExt = file.name.split('.').pop();
       const fileName = `${user.id}/${Date.now()}.${fileExt}`;
 
-      console.log('[ImageLibrary] Uploading to storage:', fileName);
-
       const { error: uploadError } = await supabase.storage
         .from('image-library')
-        .upload(fileName, file, {
-          cacheControl: '3600',
-          upsert: false
-        });
+        .upload(fileName, file, { cacheControl: '3600', upsert: false });
 
-      if (uploadError) {
-        console.error('[ImageLibrary] Upload error:', uploadError);
-        throw uploadError;
-      }
+      if (uploadError) throw uploadError;
 
-      console.log('[ImageLibrary] Upload successful, getting public URL');
-
-      // Obter URL pública
       const { data: { publicUrl } } = supabase.storage
         .from('image-library')
         .getPublicUrl(fileName);
 
-      console.log('[ImageLibrary] Public URL:', publicUrl);
-
-      // Criar registro no banco
       const insertData = {
-        user_id: user.id,
-        storage_type: 'supabase',
-        file_path: publicUrl,
-        file_size: file.size,
-        file_type: file.type,
-        is_favorite: false,
-        is_public: false,
+        user_id: user.id, storage_type: 'supabase', file_path: publicUrl,
+        file_size: file.size, file_type: file.type, is_favorite: false, is_public: false,
         ...metadata
       };
 
-      console.log('[ImageLibrary] Creating database record:', insertData);
-
       const { data, error: insertError } = await supabase
-        .from('image_library')
-        .insert(insertData)
-        .select()
-        .single();
+        .from('image_library').insert(insertData).select().single();
 
-      if (insertError) {
-        console.error('[ImageLibrary] Database insert error:', insertError);
-        throw insertError;
-      }
-
-      console.log('[ImageLibrary] Database record created:', data);
+      if (insertError) throw insertError;
 
       setImages(prev => [data, ...prev]);
       toast.success('Imagem enviada com sucesso!');
       return data;
     } catch (err: any) {
-      console.error('[ImageLibrary] Upload failed:', err);
+      logger.error('Erro no upload de imagem:', err);
       toast.error(err.message || 'Erro ao enviar imagem');
       return null;
     } finally {
@@ -136,36 +82,21 @@ export const useImageLibrary = () => {
     }
   }, [user]);
 
-  // Adicionar imagem via URL
   const addImageUrl = useCallback(async (url: string, metadata: Pick<ImageLibraryItem, 'title' | 'description' | 'alt_text' | 'category' | 'tags' | 'collection_id'>) => {
-    if (!user) {
-      toast.error('Usuário não autenticado');
-      return null;
-    }
-
+    if (!user) { toast.error('Usuário não autenticado'); return null; }
     setIsLoading(true);
 
     try {
       const { data, error: insertError } = await supabase
         .from('image_library')
-        .insert({
-          user_id: user.id,
-          storage_type: 'url',
-          external_url: url,
-          is_favorite: false,
-          is_public: false,
-          ...metadata
-        })
-        .select()
-        .single();
-
+        .insert({ user_id: user.id, storage_type: 'url', external_url: url, is_favorite: false, is_public: false, ...metadata })
+        .select().single();
       if (insertError) throw insertError;
-
       setImages(prev => [data, ...prev]);
       toast.success('Imagem adicionada com sucesso!');
       return data;
     } catch (err: any) {
-      console.error('Erro ao adicionar imagem:', err);
+      logger.error('Erro ao adicionar imagem:', err);
       toast.error('Erro ao adicionar imagem');
       return null;
     } finally {
@@ -173,28 +104,18 @@ export const useImageLibrary = () => {
     }
   }, [user]);
 
-  // Atualizar imagem
   const updateImage = useCallback(async (id: string, updates: Partial<ImageLibraryItem>) => {
     if (!user) return null;
-
     setIsLoading(true);
-
     try {
       const { data, error: updateError } = await supabase
-        .from('image_library')
-        .update(updates)
-        .eq('id', id)
-        .eq('user_id', user.id)
-        .select()
-        .single();
-
+        .from('image_library').update(updates).eq('id', id).eq('user_id', user.id).select().single();
       if (updateError) throw updateError;
-
       setImages(prev => prev.map(img => img.id === id ? data : img));
       toast.success('Imagem atualizada!');
       return data;
     } catch (err: any) {
-      console.error('Erro ao atualizar imagem:', err);
+      logger.error('Erro ao atualizar imagem:', err);
       toast.error('Erro ao atualizar imagem');
       return null;
     } finally {
@@ -202,35 +123,22 @@ export const useImageLibrary = () => {
     }
   }, [user]);
 
-  // Deletar imagem
   const deleteImage = useCallback(async (id: string, storageUrl?: string) => {
     if (!user) return false;
-
     setIsLoading(true);
-
     try {
-      // Se for storage do Supabase, deletar arquivo
       if (storageUrl && storageUrl.includes('image-library/object/public')) {
         const path = storageUrl.split('/image-library/object/public/image-library/').pop();
-        if (path) {
-          await supabase.storage.from('image-library').remove([path]);
-        }
+        if (path) await supabase.storage.from('image-library').remove([path]);
       }
-
-      // Deletar registro
       const { error: deleteError } = await supabase
-        .from('image_library')
-        .delete()
-        .eq('id', id)
-        .eq('user_id', user.id);
-
+        .from('image_library').delete().eq('id', id).eq('user_id', user.id);
       if (deleteError) throw deleteError;
-
       setImages(prev => prev.filter(img => img.id !== id));
       toast.success('Imagem removida!');
       return true;
     } catch (err: any) {
-      console.error('Erro ao deletar imagem:', err);
+      logger.error('Erro ao deletar imagem:', err);
       toast.error('Erro ao deletar imagem');
       return false;
     } finally {
@@ -238,37 +146,17 @@ export const useImageLibrary = () => {
     }
   }, [user]);
 
-  // Incrementar uso da imagem
   const trackImageUsage = useCallback(async (imageId: string, usedIn: string, context?: Record<string, any>) => {
     if (!user) return;
-
     try {
       await supabase.rpc('increment_image_usage', { image_id: imageId });
-      
-      await supabase.from('image_usage_log').insert({
-        image_id: imageId,
-        user_id: user.id,
-        used_in: usedIn,
-        context
-      });
+      await supabase.from('image_usage_log').insert({ image_id: imageId, user_id: user.id, used_in: usedIn, context });
     } catch (err) {
-      console.error('Erro ao registrar uso:', err);
+      logger.error('Erro ao registrar uso:', err);
     }
   }, [user]);
 
-  useEffect(() => {
-    loadImages();
-  }, [loadImages]);
+  useEffect(() => { loadImages(); }, [loadImages]);
 
-  return {
-    images,
-    isLoading,
-    error,
-    loadImages,
-    uploadImage,
-    addImageUrl,
-    updateImage,
-    deleteImage,
-    trackImageUsage
-  };
+  return { images, isLoading, error, loadImages, uploadImage, addImageUrl, updateImage, deleteImage, trackImageUsage };
 };
