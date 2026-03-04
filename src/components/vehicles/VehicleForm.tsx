@@ -118,7 +118,7 @@ export const VehicleForm = ({ vehicle, onSuccess }: VehicleFormProps) => {
         onSuccess?.();
       }
     } catch (err: any) {
-      console.error('Erro no formulário:', err);
+      // Error handled by toast below
       toast.error(err.message || "Erro ao salvar veículo");
     } finally {
       setLoading(false);

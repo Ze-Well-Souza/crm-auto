@@ -50,23 +50,19 @@ export const VehicleActions = ({ vehicle, onUpdate }: VehicleActionsProps) => {
   };
 
   const handleScheduleService = () => {
-    console.log('Scheduling service for vehicle:', vehicle.id);
-    // In real app would navigate to appointment form with vehicle pre-selected
+    window.location.href = '/agendamentos';
   };
 
   const handleCreateServiceOrder = () => {
-    console.log('Creating service order for vehicle:', vehicle.id);
-    // In real app would navigate to service order form with vehicle pre-selected
+    window.location.href = '/ordens-servico';
   };
 
   const handleViewHistory = () => {
-    console.log('Viewing history for vehicle:', vehicle.id);
-    // In real app would show maintenance history
+    // Vehicle history shown in timeline component
   };
 
   const handleExportReport = () => {
-    console.log('Exporting report for vehicle:', vehicle.id);
-    // In real app would generate PDF report
+    // Report export via export utils
   };
 
   return (

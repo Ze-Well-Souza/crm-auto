@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useCrudState, useStandardState } from "@/hooks/useStandardState";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 import type { Part, Supplier } from "@/types";
 
 export const usePartsNew = () => {
@@ -29,7 +30,7 @@ export const usePartsNew = () => {
       
       partsState.setData(data || []);
     } catch (err: any) {
-      console.error('Erro ao buscar peças:', err);
+      logger.error('Erro ao buscar peças:', err);
       partsState.setError(err.message || 'Erro inesperado ao carregar peças');
     }
   };
@@ -54,7 +55,7 @@ export const usePartsNew = () => {
       
       suppliersState.setData(data || []);
     } catch (err: any) {
-      console.error('Erro ao buscar fornecedores:', err);
+      logger.error('Erro ao buscar fornecedores:', err);
       suppliersState.setError(err.message || 'Erro ao carregar fornecedores');
     }
   };
