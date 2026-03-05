@@ -26,10 +26,37 @@ export const usePartners = () => {
         return;
       }
 
-      // Note: If crm_partners table doesn't exist yet, we use an empty array
-      // The table can be created via migration when needed
-      setPartners([]);
-      setFilteredPartners([]);
+      const { data, error: fetchError } = await supabase
+        .from('crm_partners')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .order('created_at', { ascending: false });
+
+      if (fetchError) throw fetchError;
+
+      const mapped: Partner[] = (data || []).map((p: any) => ({
+        id: p.id,
+        name: p.name,
+        cnpj: p.cnpj,
+        email: p.email,
+        phone: p.phone,
+        address: p.address,
+        city: p.city,
+        state: p.state,
+        zip_code: p.zip_code,
+        category: p.category,
+        status: p.status,
+        rating: p.rating,
+        orders_count: p.orders_count,
+        total_revenue: p.total_revenue,
+        marketplace_id: p.marketplace_id,
+        notes: p.notes,
+        created_at: p.created_at,
+        updated_at: p.updated_at,
+      }));
+
+      setPartners(mapped);
+      setFilteredPartners(mapped);
     } catch (err: any) {
       logger.error('Erro ao buscar parceiros:', err);
       setError(err.message || 'Erro ao carregar parceiros');
@@ -65,31 +92,37 @@ export const usePartners = () => {
 
   const createPartner = async (data: Partial<Partner>) => {
     try {
-      const newPartner: Partner = {
-        id: crypto.randomUUID(),
-        name: data.name || '',
-        cnpj: data.cnpj || null,
-        email: data.email || null,
-        phone: data.phone || null,
-        address: data.address || null,
-        city: data.city || null,
-        state: data.state || null,
-        zip_code: data.zip_code || null,
-        category: data.category || null,
-        status: data.status || null,
-        rating: data.rating || null,
-        orders_count: 0,
-        total_revenue: 0,
-        marketplace_id: data.marketplace_id || null,
-        notes: data.notes || null,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) throw new Error('Usuário não autenticado');
 
-      setPartners(prev => [...prev, newPartner]);
+      const { data: inserted, error: insertError } = await supabase
+        .from('crm_partners')
+        .insert([{
+          name: data.name || '',
+          cnpj: data.cnpj || null,
+          email: data.email || null,
+          phone: data.phone || null,
+          address: data.address || null,
+          city: data.city || null,
+          state: data.state || null,
+          zip_code: data.zip_code || null,
+          category: data.category || null,
+          status: data.status || 'ativo',
+          rating: data.rating || null,
+          marketplace_id: data.marketplace_id || null,
+          notes: data.notes || null,
+          user_id: session.user.id,
+        }])
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+
       showSuccess('Parceiro cadastrado com sucesso!');
-      return newPartner;
-    } catch (err) {
+      await fetchPartners();
+      return inserted;
+    } catch (err: any) {
+      logger.error('Erro ao cadastrar parceiro:', err);
       showError('Erro ao cadastrar parceiro');
       throw err;
     }
@@ -97,11 +130,21 @@ export const usePartners = () => {
 
   const updatePartner = async (id: string, data: Partial<Partner>) => {
     try {
-      setPartners(prev =>
-        prev.map(p => p.id === id ? { ...p, ...data, updated_at: new Date().toISOString() } : p)
-      );
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) throw new Error('Usuário não autenticado');
+
+      const { error: updateError } = await supabase
+        .from('crm_partners')
+        .update({ ...data, updated_at: new Date().toISOString() })
+        .eq('id', id)
+        .eq('user_id', session.user.id);
+
+      if (updateError) throw updateError;
+
       showSuccess('Parceiro atualizado com sucesso!');
-    } catch (err) {
+      await fetchPartners();
+    } catch (err: any) {
+      logger.error('Erro ao atualizar parceiro:', err);
       showError('Erro ao atualizar parceiro');
       throw err;
     }
@@ -109,9 +152,21 @@ export const usePartners = () => {
 
   const deletePartner = async (id: string) => {
     try {
-      setPartners(prev => prev.filter(p => p.id !== id));
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) throw new Error('Usuário não autenticado');
+
+      const { error: deleteError } = await supabase
+        .from('crm_partners')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', session.user.id);
+
+      if (deleteError) throw deleteError;
+
       showSuccess('Parceiro removido com sucesso!');
-    } catch (err) {
+      await fetchPartners();
+    } catch (err: any) {
+      logger.error('Erro ao remover parceiro:', err);
       showError('Erro ao remover parceiro');
       throw err;
     }
@@ -123,25 +178,13 @@ export const usePartners = () => {
     minRating?: number;
   }) => {
     let filtered = [...partners];
-
-    if (filters.category) {
-      filtered = filtered.filter(p => p.category === filters.category);
-    }
-
-    if (filters.status) {
-      filtered = filtered.filter(p => p.status === filters.status);
-    }
-
-    if (filters.minRating) {
-      filtered = filtered.filter(p => p.rating && p.rating >= filters.minRating!);
-    }
-
+    if (filters.category) filtered = filtered.filter(p => p.category === filters.category);
+    if (filters.status) filtered = filtered.filter(p => p.status === filters.status);
+    if (filters.minRating) filtered = filtered.filter(p => p.rating && p.rating >= filters.minRating!);
     setFilteredPartners(filtered);
   };
 
-  const getPartnerById = (id: string) => {
-    return partners.find(p => p.id === id);
-  };
+  const getPartnerById = (id: string) => partners.find(p => p.id === id);
 
   return {
     partners,
