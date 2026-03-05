@@ -1163,6 +1163,72 @@ export type Database = {
           },
         ]
       }
+      crm_partners: {
+        Row: {
+          address: string | null
+          category: string | null
+          city: string | null
+          cnpj: string | null
+          created_at: string
+          email: string | null
+          id: string
+          marketplace_id: string | null
+          name: string
+          notes: string | null
+          orders_count: number | null
+          phone: string | null
+          rating: number | null
+          state: string | null
+          status: string | null
+          total_revenue: number | null
+          updated_at: string
+          user_id: string
+          zip_code: string | null
+        }
+        Insert: {
+          address?: string | null
+          category?: string | null
+          city?: string | null
+          cnpj?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          marketplace_id?: string | null
+          name: string
+          notes?: string | null
+          orders_count?: number | null
+          phone?: string | null
+          rating?: number | null
+          state?: string | null
+          status?: string | null
+          total_revenue?: number | null
+          updated_at?: string
+          user_id: string
+          zip_code?: string | null
+        }
+        Update: {
+          address?: string | null
+          category?: string | null
+          city?: string | null
+          cnpj?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          marketplace_id?: string | null
+          name?: string
+          notes?: string | null
+          orders_count?: number | null
+          phone?: string | null
+          rating?: number | null
+          state?: string | null
+          status?: string | null
+          total_revenue?: number | null
+          updated_at?: string
+          user_id?: string
+          zip_code?: string | null
+        }
+        Relationships: []
+      }
       crm_parts: {
         Row: {
           brand: string | null
