@@ -34,6 +34,10 @@ async function flushQueue() {
   const queue = getQueue();
   if (queue.length === 0) return;
 
+  if (localStorage.getItem('demo_mode') === 'true' || import.meta.env.VITE_AUTH_MODE === 'mock') {
+    return;
+  }
+
   const { data: { session } } = await supabase.auth.getSession();
   const userId = session?.user?.id || 'anonymous';
 
@@ -55,6 +59,11 @@ async function flushQueue() {
  * Track a single analytics event
  */
 export async function trackEvent(event: string, page?: string, metadata?: Record<string, any>) {
+  // Ignora tracking se estiver em modo demo (evita erros 404 no console antes da criação da tabela)
+  if (localStorage.getItem('demo_mode') === 'true' || import.meta.env.VITE_AUTH_MODE === 'mock') {
+    return;
+  }
+
   try {
     const { data: { session } } = await supabase.auth.getSession();
     const userId = session?.user?.id || 'anonymous';
