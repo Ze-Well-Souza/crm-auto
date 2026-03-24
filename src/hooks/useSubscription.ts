@@ -251,6 +251,7 @@ export const useSubscription = () => {
 
   const hasFeature = (feature: string): boolean => {
     if (isMock || bypass) return true;
+    if (localStorage.getItem('demo_mode') === 'true') return true;
     if (!plan && localStorage.getItem('mock_user')) return true;
     if (!plan) return false;
 
