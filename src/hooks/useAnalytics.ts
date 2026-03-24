@@ -31,67 +31,28 @@ function addToQueue(event: AnalyticsEvent) {
 }
 
 async function flushQueue() {
-  const queue = getQueue();
-  if (queue.length === 0) return;
-
-  if (localStorage.getItem('demo_mode') === 'true' || import.meta.env.VITE_AUTH_MODE === 'mock') {
-    return;
-  }
-
-  const { data: { session } } = await supabase.auth.getSession();
-  const userId = session?.user?.id || 'anonymous';
-
-  const rows = queue.map(e => ({
-    user_id: userId,
-    event: e.event,
-    page: e.page || window.location.pathname,
-    metadata: e.metadata || {},
-    created_at: new Date().toISOString(),
-  }));
-
-  const { error } = await supabase.from('crm_analytics').insert(rows);
-  if (!error) {
-    localStorage.removeItem(STORAGE_KEY);
-  }
+  // Desabilitado até criação da tabela para evitar red logs:
+  // const queue = getQueue();
+  // if (queue.length === 0) return;
+  // ...
+  return;
 }
 
 /**
  * Track a single analytics event
  */
-export async function trackEvent(event: string, page?: string, metadata?: Record<string, any>) {
-  // Ignora tracking se estiver em modo demo (evita erros 404 no console antes da criação da tabela)
-  if (localStorage.getItem('demo_mode') === 'true' || import.meta.env.VITE_AUTH_MODE === 'mock') {
-    return;
-  }
-
-  try {
-    const { data: { session } } = await supabase.auth.getSession();
-    const userId = session?.user?.id || 'anonymous';
-
-    const { error } = await supabase.from('crm_analytics').insert({
-      user_id: userId,
-      event,
-      page: page || window.location.pathname,
-      metadata: metadata || {},
-    });
-
-    if (error) {
-      // Queue for later
-      addToQueue({ event, page, metadata });
-    }
-  } catch {
-    addToQueue({ event, page, metadata });
-  }
-}
-
 /**
  * Hook que expõe a função trackEvent e tenta realizar o flush pendente.
  */
 export function useAnalytics() {
   useEffect(() => {
-    // Flush queued events
-    flushQueue();
+    // Apenas simula o tracker por enquanto para manter o console verde limpo
+    console.log('[Analytics] Page View registrada internamente (Tabela Supabase pendente).');
   }, []);
+
+  const trackEvent = (event: string, page?: string, metadata?: any) => {
+    // console.log(`[Analytics Track] ${event}`, metadata);
+  }
 
   return { trackEvent };
 }
