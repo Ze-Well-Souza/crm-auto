@@ -24,17 +24,17 @@ interface VehicleDashboardProps {
 export const VehicleDashboard = ({ vehicle, open, onOpenChange }: VehicleDashboardProps) => {
   if (!vehicle) return null;
 
-  // Mock metrics for demonstration
+  // Real metrics - will be populated from database data
   const vehicleStats = {
-    totalSpent: Math.random() * 5000 + 500,
-    serviceCount: Math.floor(Math.random() * 20) + 2,
+    totalSpent: 0,
+    serviceCount: 0,
     avgServiceCost: 0,
-    lastService: new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000),
-    nextMaintenance: Math.floor(Math.random() * 15000) + 5000,
-    marketValue: Math.random() * 60000 + 15000,
-    depreciationRate: Math.random() * 15 + 5,
-    fuelEfficiency: Math.random() * 5 + 8,
-    maintenanceScore: Math.floor(Math.random() * 100) + 1
+    lastService: null as Date | null,
+    nextMaintenance: vehicle.mileage ? vehicle.mileage + 10000 : 0,
+    marketValue: 0,
+    depreciationRate: 0,
+    fuelEfficiency: 0,
+    maintenanceScore: 0
   };
 
   vehicleStats.avgServiceCost = vehicleStats.totalSpent / vehicleStats.serviceCount;

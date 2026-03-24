@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, Crown, Zap, Rocket, ArrowRight, Star, Moon, Sun } from "lucide-react";
+import { Check, Crown, Zap, Rocket, ArrowRight, Star, Moon, Sun, Car } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTheme } from "next-themes";
 

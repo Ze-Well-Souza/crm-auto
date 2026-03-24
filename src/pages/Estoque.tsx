@@ -22,8 +22,7 @@ const Estoque = () => {
   const searchConfig = usePartsSearch(parts || []);
 
   const handleQuickAction = (action: string, part: any) => {
-    console.log(`Ação ${action} para peça:`, part);
-    // Implementar ações específicas aqui
+    // Quick actions handled by individual card components
   };
 
   // Filter Groups Configuration

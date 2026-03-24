@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useCrudState } from "@/hooks/useStandardState";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 import type { Appointment } from "@/types";
 
 export const useAppointmentsNew = () => {
@@ -28,7 +29,7 @@ export const useAppointmentsNew = () => {
       
       state.setData(data || []);
     } catch (err: any) {
-      console.error('Erro ao buscar agendamentos:', err);
+      logger.error('Erro ao buscar agendamentos:', err);
       state.setError(err.message || 'Erro inesperado ao carregar agendamentos');
     }
   };

@@ -1,18 +1,16 @@
 import { toast } from 'sonner';
-import * as Sentry from '@sentry/react';
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
 
 export const usePlanLimits = () => {
-  // Validação server-side via Edge Function
   const validateLimit = async (
     actionType: 'clients' | 'appointments' | 'reports'
   ): Promise<{ canProceed: boolean; current: number; limit: string | number; percentage?: number; message?: string }> => {
     try {
-      // Mapear tipos para corresponder ao schema da Edge Function
       const featureMap = {
         'clients': 'clients',
         'appointments': 'appointments', 
-        'reports': 'service_orders' // Reports estão mapeados para service_orders no backend
+        'reports': 'service_orders'
       } as const;
 
       const { data, error } = await supabase.functions.invoke('validate-plan-limit', {
@@ -20,15 +18,10 @@ export const usePlanLimits = () => {
       });
 
       if (error) {
-        console.error('Error validating limit:', error);
-        Sentry.captureException(error, {
-          tags: { component: 'usePlanLimits', action: 'validateLimit' },
-          extra: { actionType }
-        });
+        logger.error('Error validating limit:', error);
         return { canProceed: false, current: 0, limit: 0, message: 'Erro ao validar limite' };
       }
 
-      // Adaptar resposta da Edge Function para o formato esperado
       if (data) {
         return {
           canProceed: data.allowed || false,
@@ -43,7 +36,7 @@ export const usePlanLimits = () => {
 
       return { canProceed: false, current: 0, limit: 0, message: 'Erro ao validar limite' };
     } catch (error) {
-      console.error('Error in validateLimit:', error);
+      logger.error('Error in validateLimit:', error);
       return { canProceed: false, current: 0, limit: 0, message: 'Erro ao validar limite' };
     }
   };
@@ -72,8 +65,6 @@ export const usePlanLimits = () => {
     actionType: 'clients' | 'appointments' | 'reports',
     actionName: string
   ): Promise<boolean> => {
-    // A validação server-side via RLS já garante que o limite não será ultrapassado
-    // Este método agora apenas verifica e exibe mensagem ao usuário antes da tentativa
     const canProceed = await checkLimit(actionType, actionName);
     return canProceed;
   };
@@ -115,6 +106,6 @@ export const usePlanLimits = () => {
     checkAndIncrement,
     showLimitWarning,
     getLimitStatus,
-    validateLimit, // Expor para uso direto
+    validateLimit,
   };
 };

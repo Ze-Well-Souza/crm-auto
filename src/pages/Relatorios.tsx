@@ -27,6 +27,7 @@ import { AdvancedChart } from "@/components/reports/AdvancedChart";
 import { AnalyticsDashboard } from "@/components/reports/AnalyticsDashboard";
 import { InteractiveAnalyticsDashboard } from "@/components/analytics/InteractiveAnalyticsDashboard";
 import { exportToPDF, exportToExcel, exportToCSV } from "@/utils/exportUtils";
+import { logger } from "@/lib/logger";
 
 const Relatorios = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -88,7 +89,7 @@ const Relatorios = () => {
       };
       await exportToPDF([reportData], { filename: 'relatorio-geral' });
     } catch (error) {
-      console.error('Erro ao exportar PDF:', error);
+      logger.error('Erro ao exportar PDF:', error);
     } finally {
       setIsExporting(false);
     }
@@ -118,7 +119,7 @@ const Relatorios = () => {
       };
       await exportToExcel([reportData], { filename: 'relatorio-geral' });
     } catch (error) {
-      console.error('Erro ao exportar Excel:', error);
+      logger.error('Erro ao exportar Excel:', error);
     } finally {
       setIsExporting(false);
     }
@@ -148,7 +149,7 @@ const Relatorios = () => {
       };
       await exportToCSV([reportData], { filename: 'relatorio-geral' });
     } catch (error) {
-      console.error('Erro ao exportar CSV:', error);
+      logger.error('Erro ao exportar CSV:', error);
     } finally {
       setIsExporting(false);
     }
@@ -156,31 +157,30 @@ const Relatorios = () => {
 
   const handleApplyFilters = (filters: any[]) => {
     setActiveFilters(filters);
-    // Implementar lógica de filtros
-    console.log('Filtros aplicados:', filters);
   };
 
-  const generatePDF = (reportType: string) => {
-    // Mock PDF generation - in real app would use jsPDF or similar
-    const data = {
-      type: reportType,
-      date: new Date().toISOString(),
-      period: selectedPeriod,
-      metrics: {
-        totalClients,
-        totalVehicles,
-        totalReceitas,
-        totalDespesas,
-        saldo,
-        totalAppointments,
-        completedAppointments,
-        totalServiceOrders,
-        completedServiceOrders
-      }
-    };
-    
-    console.log(`Generating ${reportType} PDF:`, data);
-    alert(`Relatório ${reportType} seria gerado aqui. Dados no console.`);
+  const generatePDF = async (reportType: string) => {
+    setIsExporting(true);
+    try {
+      const reportData = {
+        title: `Relatório ${reportType}`,
+        period: selectedPeriod,
+        metrics: {
+          totalRevenue: totalReceitas,
+          totalExpenses: totalDespesas,
+          totalClients,
+          totalVehicles,
+          totalAppointments,
+          totalServiceOrders
+        },
+        data: { clientes, veiculos, transacoes, agendamentos, ordensServico }
+      };
+      await exportToPDF([reportData], { filename: `relatorio-${reportType}` });
+    } catch (error) {
+      logger.error('Erro ao gerar PDF:', error);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const reportTypes = [

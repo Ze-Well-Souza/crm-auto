@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { logger } from '@/lib/logger';
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -69,9 +70,9 @@ export const usePWA = (): PWAState & PWAActions => {
           }
         });
 
-        console.log('Service Worker registrado com sucesso');
+        // SW registered successfully
       } catch (error) {
-        console.error('Erro ao registrar Service Worker:', error);
+        logger.error('Erro ao registrar Service Worker:', error);
       }
     }
   }, []);
@@ -87,19 +88,19 @@ export const usePWA = (): PWAState & PWAActions => {
       const { outcome } = await deferredPrompt.userChoice;
       
       if (outcome === 'accepted') {
-        console.log('PWA instalado pelo usuário');
+        logger.info('PWA instalado pelo usuário');
         setState(prev => ({ 
           ...prev, 
           isInstallable: false, 
           isInstalled: true 
         }));
       } else {
-        console.log('Instalação do PWA rejeitada pelo usuário');
+        logger.info('Instalação do PWA rejeitada pelo usuário');
       }
       
       setDeferredPrompt(null);
     } catch (error) {
-      console.error('Erro ao instalar PWA:', error);
+      logger.error('Erro ao instalar PWA:', error);
     } finally {
       setState(prev => ({ ...prev, isLoading: false }));
     }
@@ -127,7 +128,7 @@ export const usePWA = (): PWAState & PWAActions => {
       // Recarregar a página para aplicar a atualização
       window.location.reload();
     } catch (error) {
-      console.error('Erro ao atualizar PWA:', error);
+      logger.error('Erro ao atualizar PWA:', error);
       setState(prev => ({ ...prev, isLoading: false }));
     }
   }, [registration]);
@@ -138,9 +139,8 @@ export const usePWA = (): PWAState & PWAActions => {
 
     try {
       await registration.update();
-      console.log('Verificação de atualização concluída');
     } catch (error) {
-      console.error('Erro ao verificar atualizações:', error);
+      logger.error('Erro ao verificar atualizações:', error);
     }
   }, [registration]);
 
@@ -221,7 +221,7 @@ export const useOfflineData = () => {
           if (registration.sync) {
             return registration.sync.register('sync-offline-data');
           }
-        }).catch(console.error);
+        }).catch((err) => logger.error('Sync error:', err));
       }
     };
 
@@ -275,11 +275,13 @@ export const usePushNotifications = () => {
 
     if (permission === 'granted' && 'serviceWorker' in navigator) {
       const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: import.meta.env.VITE_VAPID_PUBLIC_KEY
-      });
-      setSubscription(subscription);
+      if ('pushManager' in registration) {
+        const subscription = await (registration as any).pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: import.meta.env.VITE_VAPID_PUBLIC_KEY
+        });
+        setSubscription(subscription);
+      }
     }
 
     return permission;

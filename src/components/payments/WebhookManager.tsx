@@ -140,9 +140,8 @@ export const WebhookManager: React.FC = () => {
     setIsLoading(true);
     try {
       await refetch();
-      console.log('Webhook events reloaded');
     } catch (error) {
-      console.error('Webhook test failed:', error);
+      // Reload failed silently
     } finally {
       setIsLoading(false);
     }

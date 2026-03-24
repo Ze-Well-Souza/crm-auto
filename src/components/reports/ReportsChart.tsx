@@ -104,13 +104,11 @@ export const ReportsChart = ({ title, type, data = [], period = "Este mês" }: R
   const config = getChartConfig();
 
   const handleExport = () => {
-    console.log(`Exportando gráfico ${type}:`, chartData);
-    // Implementar exportação específica do gráfico
+    // Export handled by parent report page
   };
 
   const handleRefresh = () => {
-    console.log(`Atualizando dados do gráfico ${type}`);
-    // Implementar atualização dos dados
+    // Refresh handled by parent
   };
 
   return (

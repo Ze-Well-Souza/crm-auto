@@ -22,8 +22,7 @@ const OrdensServico = () => {
   const { serviceOrders, loading, error, refetch } = useServiceOrders();
 
   const handleQuickAction = (action: string, order: any) => {
-    console.log(`Ação ${action} para ordem:`, order);
-    // Implementar ações específicas aqui
+    // Quick actions are handled by individual components
   };
 
   const applyFilters = (orderList: any[]) => {
@@ -40,8 +39,12 @@ const OrdensServico = () => {
 
     // Apply quick filters
     if (filters.urgent) {
-      // Mock urgent logic - in real app would check due dates
-      filtered = filtered.filter(() => Math.random() > 0.7);
+      // Filter orders that have been open for more than 7 days
+      filtered = filtered.filter(order => {
+        const created = new Date(order.created_at);
+        const daysSinceCreation = (Date.now() - created.getTime()) / (1000 * 60 * 60 * 24);
+        return daysSinceCreation > 7 && order.status !== 'concluido' && order.status !== 'entregue' && order.status !== 'cancelado';
+      });
     }
     if (filters.highValue) {
       filtered = filtered.filter(order => (order.total_amount || 0) > 500);

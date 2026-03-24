@@ -1,826 +1,620 @@
-# 🔍 AUDITORIA COMPLETA DO SISTEMA CRM - PLANO DE IMPLEMENTAÇÃO
+# Tasks Final - Plano de Implementação e Integração
 
-## 📊 RESUMO EXECUTIVO
-
-### ✅ O QUE JÁ FUNCIONA (90%)
-- ✅ Autenticação Supabase completa + RLS em todas as tabelas
-- ✅ 12 módulos funcionais: Clientes, Veículos, Agendamentos, Ordens de Serviço, Financeiro, Estoque, Relatórios, Comunicação, Admin, Parceiros, Pagamentos, Biblioteca de Imagens
-- ✅ Sistema de Planos com Stripe (hooks, componentes, edge functions)
-- ✅ Sistema de roles (user, admin, super_admin)
-- ✅ PWA instalável com Service Worker
-- ✅ Dashboard analytics com gráficos
-- ✅ 80+ testes automatizados
-- ✅ Tema light/dark
-
-### ❌ O QUE AINDA PRECISA (10%)
-
-**APIs Pagas (necessárias para funcionalidades completas)**:
-1. **Stripe**: Pagamentos recorrentes (Price IDs não configurados)
-2. **Resend**: Emails transacionais automáticos (8 templates prontos)
-3. **WhatsApp Business API**: Envio em massa automático (opcional)
-
-**Implementações sem custo**:
-1. Habilitar confirmação de email no Supabase (CRÍTICO)
-2. Sistema de backup automático
-3. Monitoramento e alertas
-4. Testes E2E
-5. PWA modo offline robusto
-6. Melhorias de UX/UI
+**Status do Projeto:** 75% para integração básica | 45% para integração avançada
+**Tempo Estimado Total:** 6-8 semanas
+**Data de Criação:** 2025
+**Atualizado:** 26/12/2025
 
 ---
 
-## 💰 APIs PAGAS - POR QUE VOCÊ VAI PRECISAR
+## 1. CRIAR REST API COMPLETA
 
-### 1. 🔐 STRIPE - Sistema de Pagamentos Recorrentes
+### Objetivo
+Expor endpoints REST para terceiros integrarem com o CRM.
 
-**Status**: Implementado mas sem Price IDs configurados  
-**Custo**: 2.99% + R$ 0,39 por transação  
+### Tarefas
 
-**Por que é essencial**:
-- Processar pagamentos automáticos de assinaturas mensais/anuais
-- Gerenciar ciclos de cobrança recorrentes
-- Upgrade/downgrade automático de planos
-- Webhooks para sincronizar status de pagamento em tempo real
-- Gestão automática de falhas de pagamento (dunning)
-- Emissão de faturas e notas fiscais
+#### 1.1 Setup da API Structure ✅ COMPLETO
+- [x] Criar pasta `supabase/functions/_shared` com estrutura base
+- [x] Setup de rotas via Edge Functions
+- [x] Middleware de autenticação (API Keys) - `api-auth.ts`
+- [x] Middleware de rate limiting - `api-rate-limit.ts`
+- [x] Middleware de CORS dinâmico - `api-cors.ts`
+- [x] Error handling standardizado - `api-errors.ts`
+- [x] Response wrapper padrão - `api-response.ts`
+- [x] Sistema de validação - `api-validation.ts`
+- [x] Sistema de logging - `api-logger.ts`
+- [x] Edge function de teste - `api-test`
+- [x] Edge function de gerenciamento - `api-keys`
+- [x] Documentação completa - `API_STRUCTURE_README.md`
 
-**Sem Stripe você**:
-- ❌ Não consegue cobrar assinaturas automaticamente
-- ❌ Precisa gerenciar pagamentos manualmente (PIX/Boleto)
-- ❌ Não tem controle automático de upgrade/downgrade
-- ❌ Perde tempo com gestão financeira manual
-- ❌ Não consegue escalar o negócio
+**Tempo Estimado:** 2-3 dias
+**Tempo Real:** 1 dia
+**Status:** ✅ COMPLETO
+**Data:** 26/12/2025
+**Documentação:** Ver `API_STRUCTURE_README.md` e `API_IMPLEMENTATION_PLAN.md`
 
-**Edge Functions que dependem do Stripe**:
-- `create-checkout-session` (gera sessão de pagamento)
-- `stripe-webhook` (sincroniza eventos de pagamento)
-- `handle-subscription-change` (gerencia mudanças de plano)
+#### 1.2 Endpoints de Autenticação
+- [ ] POST `/api/v1/auth/login` - Email/Senha
+- [ ] POST `/api/v1/auth/register` - Novo usuário
+- [ ] POST `/api/v1/auth/refresh` - Renovar token
+- [ ] POST `/api/v1/auth/logout` - Logout
+- [ ] GET `/api/v1/auth/me` - Dados do usuário
+- [ ] POST `/api/v1/auth/api-keys` - Gerar chaves API
 
-**Como ativar** (quando estiver pronto para monetizar):
-1. Criar conta no Stripe: https://stripe.com
-2. Criar 3 produtos no Dashboard:
-   - Básico: R$ 99/mês ou R$ 990/ano
-   - Profissional: R$ 249/mês ou R$ 2.490/ano
-   - Enterprise: R$ 499/mês ou R$ 4.990/ano
-3. Copiar os 6 Price IDs gerados (monthly + yearly de cada plano)
-4. Executar SQL no Supabase para atualizar tabela `subscription_plans`:
-```sql
--- Atualizar com seus Price IDs reais
-UPDATE subscription_plans 
-SET 
-  stripe_price_id_monthly = 'price_xxxxxxxxxxxxx',
-  stripe_price_id_yearly = 'price_yyyyyyyyyyyyyyy'
-WHERE name = 'basic';
+**Tempo Estimado:** 3-4 dias
+**Teste:** Testes de autenticação, validação de tokens
 
-UPDATE subscription_plans 
-SET 
-  stripe_price_id_monthly = 'price_xxxxxxxxxxxxx',
-  stripe_price_id_yearly = 'price_yyyyyyyyyyyyyyy'
-WHERE name = 'professional';
+#### 1.3 Endpoints de Clientes
+- [ ] GET `/api/v1/clients` - Listar clientes (com paginação)
+- [ ] GET `/api/v1/clients/:id` - Detalhes do cliente
+- [ ] POST `/api/v1/clients` - Criar cliente
+- [ ] PUT `/api/v1/clients/:id` - Atualizar cliente
+- [ ] DELETE `/api/v1/clients/:id` - Deletar cliente
+- [ ] GET `/api/v1/clients/:id/vehicles` - Veículos do cliente
+- [ ] GET `/api/v1/clients/:id/orders` - Ordens do cliente
+- [ ] GET `/api/v1/clients/:id/history` - Histórico
 
-UPDATE subscription_plans 
-SET 
-  stripe_price_id_monthly = 'price_xxxxxxxxxxxxx',
-  stripe_price_id_yearly = 'price_yyyyyyyyyyyyyyy'
-WHERE name = 'enterprise';
-```
-5. Configurar webhook endpoint no Stripe Dashboard
-6. Testar checkout completo
+**Tempo Estimado:** 4-5 dias
+**Teste:** CRUD tests, validação de dados, permissões
 
-**Alternativa temporária (não escalável)**:
-- Aceitar apenas PIX/Boleto e registrar pagamentos manualmente no sistema
-- Avisar cliente quando pagamento vencer
-- Atualizar plano manualmente
+#### 1.4 Endpoints de Veículos
+- [ ] GET `/api/v1/vehicles` - Listar veículos
+- [ ] GET `/api/v1/vehicles/:id` - Detalhes
+- [ ] POST `/api/v1/vehicles` - Criar
+- [ ] PUT `/api/v1/vehicles/:id` - Atualizar
+- [ ] DELETE `/api/v1/vehicles/:id` - Deletar
+- [ ] GET `/api/v1/vehicles/:id/services` - Ordens de serviço
+- [ ] GET `/api/v1/vehicles/:id/timeline` - Timeline
 
----
+**Tempo Estimado:** 3-4 dias
+**Teste:** CRUD tests, relacionamento com clientes
 
-### 2. 📧 RESEND - Emails Transacionais Automáticos
+#### 1.5 Endpoints de Ordens de Serviço
+- [ ] GET `/api/v1/orders` - Listar ordens
+- [ ] GET `/api/v1/orders/:id` - Detalhes
+- [ ] POST `/api/v1/orders` - Criar ordem
+- [ ] PUT `/api/v1/orders/:id` - Atualizar status
+- [ ] DELETE `/api/v1/orders/:id` - Deletar
+- [ ] POST `/api/v1/orders/:id/items` - Adicionar itens
+- [ ] GET `/api/v1/orders/:id/payments` - Pagamentos
 
-**Status**: 8 templates React Email prontos, aguardando API key  
-**Custo**: Gratuito até 3.000 emails/mês, depois $20/mês (10.000 emails)
+**Tempo Estimado:** 4-5 dias
+**Teste:** Status transitions, validações
 
-**Por que é essencial**:
-- **Email de boas-vindas**: Enviado automaticamente quando usuário se cadastra
-- **Confirmação de agendamento**: Cliente recebe email confirmando data/hora
-- **Lembrete 24h antes**: Reduz no-shows em até 70%
-- **Notificação de pagamento**: Cliente sabe que pagamento foi processado
-- **Alteração de plano**: Informa upgrade/downgrade/cancelamento
-- **Recuperação de senha**: Permite redefinir senha com segurança
-- **Reativação de clientes**: Reconquista clientes inativos (60+ dias)
-- **Cotações de serviço**: Envia orçamento profissional por email
+#### 1.6 Endpoints de Agendamentos
+- [ ] GET `/api/v1/appointments` - Listar
+- [ ] GET `/api/v1/appointments/:id` - Detalhes
+- [ ] POST `/api/v1/appointments` - Criar
+- [ ] PUT `/api/v1/appointments/:id` - Atualizar
+- [ ] DELETE `/api/v1/appointments/:id` - Cancelar
+- [ ] GET `/api/v1/appointments/availability` - Slots disponíveis
 
-**Sem Resend você**:
-- ❌ Não envia lembretes automáticos (mais no-shows)
-- ❌ Cliente não recebe confirmações (pior experiência)
-- ❌ Precisa ligar/mandar WhatsApp manualmente para tudo
-- ❌ Perde tempo com tarefas que poderiam ser automáticas
-- ❌ Parece menos profissional
+**Tempo Estimado:** 3-4 dias
+**Teste:** Conflito de horários, disponibilidade
 
-**Templates já criados** (prontos para usar):
-1. `welcome-email.tsx` - Boas-vindas com guia de primeiros passos
-2. `appointment-confirmation.tsx` - Confirmação de agendamento
-3. `appointment-reminder.tsx` - Lembrete 24h antes
-4. `payment-confirmation.tsx` - Comprovante de pagamento
-5. `subscription-change.tsx` - Mudança de plano
-6. `password-reset.tsx` - Recuperação de senha
-7. `reactivation-email.tsx` - Recuperação de clientes inativos
-8. `quotation-email.tsx` - Cotação profissional
+#### 1.7 Endpoints de Estoque
+- [ ] GET `/api/v1/parts` - Listar peças
+- [ ] GET `/api/v1/parts/:id` - Detalhes
+- [ ] POST `/api/v1/parts` - Criar peça
+- [ ] PUT `/api/v1/parts/:id` - Atualizar
+- [ ] DELETE `/api/v1/parts/:id` - Deletar
+- [ ] POST `/api/v1/parts/:id/stock` - Ajustar estoque
+- [ ] GET `/api/v1/parts/low-stock` - Alerta
 
-**Edge Functions que enviam emails**:
-- `send-notification-email` (motor principal de emails)
-- `send-welcome-email` (triggered por signup)
-- `send-appointment-reminders` (cron job diário)
-- `send-reactivation-emails` (cron job semanal)
+**Tempo Estimado:** 3-4 dias
+**Teste:** Movimentação de estoque
 
-**Como ativar**:
-1. Criar conta gratuita: https://resend.com
-2. Verificar seu domínio de email (ex: emails@suaoficina.com)
-3. Copiar API Key
-4. Adicionar secret `RESEND_API_KEY` no Supabase
-5. Pronto! Emails enviados automaticamente
+#### 1.8 Endpoints de Financeiro
+- [ ] GET `/api/v1/transactions` - Listar transações
+- [ ] POST `/api/v1/transactions` - Criar transação
+- [ ] GET `/api/v1/payments` - Listar pagamentos
+- [ ] GET `/api/v1/reports/financial` - Relatório financeiro
+- [ ] GET `/api/v1/invoices` - Listar faturas
+- [ ] POST `/api/v1/invoices` - Gerar fatura
 
-**Alternativas gratuitas** (temporárias):
-- **Gmail SMTP**: 500 emails/dia grátis (configuração mais complexa)
-- **SendGrid Free**: 100 emails/dia grátis
-- **Mailgun**: 5.000 emails/mês grátis no primeiro mês
+**Tempo Estimado:** 4-5 dias
+**Teste:** Cálculos financeiros, relatórios
 
----
+#### 1.9 Endpoints de Webhooks
+- [ ] POST `/api/v1/webhooks` - Registrar webhook
+- [ ] GET `/api/v1/webhooks` - Listar webhooks
+- [ ] DELETE `/api/v1/webhooks/:id` - Deletar webhook
+- [ ] POST `/api/v1/webhooks/:id/test` - Testar webhook
+- [ ] GET `/api/v1/webhooks/:id/logs` - Log de execuções
 
-### 3. 📱 WhatsApp Business API - Automação de Mensagens
-
-**Status**: Interface implementada com WhatsApp Web (manual)  
-**Custo**: ~$0.005 a $0.10 por mensagem (varia por país)
-
-**Por que pode ser útil** (não é crítico):
-- Enviar lembretes em massa automaticamente
-- Notificar serviço concluído
-- Enviar cobranças pendentes
-- Disparar promoções para base de clientes
-
-**Sem WhatsApp Business API você**:
-- ✅ Ainda pode usar WhatsApp Web (abre link com mensagem pronta)
-- ✅ Funciona bem para até 50-100 mensagens/dia
-- ❌ Não tem envio automático em massa
-- ❌ Precisa clicar manualmente em cada cliente
-
-**Implementação atual** (gratuita e funcional):
-- Botão que abre WhatsApp Web com mensagem pré-preenchida
-- Templates de mensagem prontos
-- Funciona perfeitamente para pequeno/médio volume
-
-**Quando vale a pena investir**:
-- Você tem 500+ clientes ativos
-- Precisa enviar 100+ mensagens/dia
-- Quer automação completa (lembretes, cobranças, etc)
-
-**Como ativar** (quando necessário):
-1. Criar conta WhatsApp Business
-2. Solicitar acesso à API (processo de aprovação)
-3. Configurar webhook
-4. Adicionar credenciais no Supabase
+**Tempo Estimado:** 3-4 dias
+**Teste:** Retry logic, payload delivery
 
 ---
 
-## 🎯 PLANO DE IMPLEMENTAÇÃO COMPLETO
+## 2. IMPLEMENTAR WEBHOOKS DE SAÍDA
 
-### ⚠️ CRÍTICO (FAZER ANTES DE PRODUÇÃO) - 1-2 dias
+### Objetivo
+Notificar sistemas externos quando eventos ocorrem no CRM.
 
-#### 1. Configuração de Email no Supabase
-**Manual** - Acesse Dashboard Supabase
+### Tarefas
 
-1. Acesse: https://supabase.com/dashboard/project/lfsoxururyqknnjhrzxu/auth/providers
-2. Em "Email Auth", clique em "Configurar"
-3. Ative "Enable Email Confirmations" = ON
-4. Configure:
-   - Site URL: `https://seu-dominio.com` (ou URL Lovable)
-   - Redirect URLs: Adicionar:
-     - `https://seu-dominio.com/auth/callback`
-     - `https://seu-dominio.com/reset-password`
-     - `http://localhost:5173/auth/callback` (desenvolvimento)
+#### 2.1 Sistema de Webhook Core
+- [ ] Criar tabela `webhooks` com eventos, URL, headers customizados
+- [ ] Criar tabela `webhook_events` para histórico
+- [ ] Criar tabela `webhook_logs` para troubleshooting
+- [ ] Implementar fila de processamento (Bull/Bee-Queue)
+- [ ] Retry logic (exponential backoff)
+- [ ] Timeout handling
+- [ ] Signature validation (HMAC)
 
-**Por que é crítico**: Sem isso, usuários podem se cadastrar sem verificar email (risco de segurança e contas fake).
+**Tempo Estimado:** 3-4 dias
+**Teste:** Envio de webhooks, retry logic
 
-#### 2. Criar Usuário Admin Teste
-**Manual** - Executar SQL no Supabase
+#### 2.2 Eventos de Webhook
+- [ ] client.created / client.updated / client.deleted
+- [ ] vehicle.created / vehicle.updated / vehicle.deleted
+- [ ] order.created / order.updated / order.completed
+- [ ] appointment.created / appointment.confirmed / appointment.completed
+- [ ] payment.received / payment.failed
+- [ ] invoice.created / invoice.paid
+- [ ] stock.low_alert / stock.updated
 
-```sql
--- 1. Criar usuário admin no Supabase Auth (via Dashboard > Authentication > Users)
--- Email: admin@crmauto.com
--- Senha: Admin@2025
+**Tempo Estimado:** 2-3 dias
+**Teste:** Event triggering, payload validation
 
--- 2. Depois de criar, executar este SQL para dar permissões:
--- Substitua 'UUID_DO_USUARIO' pelo ID gerado
+#### 2.3 Webhook Dashboard UI
+- [ ] CRUD interface para webhooks
+- [ ] Teste manual de webhooks
+- [ ] Visualização de logs
+- [ ] Retry manual
+- [ ] Filtro por evento e status
 
--- Atribuir role de super_admin
-INSERT INTO user_roles (user_id, role)
-VALUES ('UUID_DO_USUARIO', 'super_admin');
-
--- Criar assinatura gratuita
-INSERT INTO partner_subscriptions (
-  partner_id,
-  plan_id,
-  status,
-  current_period_start,
-  current_period_end
-)
-VALUES (
-  'UUID_DO_USUARIO',
-  (SELECT id FROM subscription_plans WHERE name = 'free' LIMIT 1),
-  'active',
-  NOW(),
-  NOW() + INTERVAL '100 years'
-);
-```
-
-#### 3. Testar Fluxo Completo de Signup
-**Manual** - Testar no navegador
-
-1. Acesse `/auth?plan=profissional`
-2. Clique em "Cadastro"
-3. Preencha:
-   - Email: teste@seudominio.com
-   - Senha: Teste@2025
-4. Clique "Criar conta"
-5. ✅ Deve aparecer modal: "Verifique seu email"
-6. Abra o email recebido
-7. Clique no link de confirmação
-8. ✅ Deve redirecionar para `/onboarding`
-9. Complete o wizard de boas-vindas
-10. ✅ Deve entrar no dashboard com plano "Profissional Trial" (14 dias)
-
-#### 4. Testar Acesso Admin
-**Manual** - Após criar usuário admin
-
-1. Faça login com `admin@crmauto.com`
-2. Acesse `/admin`
-3. ✅ Deve ver 4 tabs:
-   - Usuários (gerenciar usuários)
-   - Assinaturas (ver planos de todos)
-   - Saúde do Sistema (métricas)
-   - Logs de Auditoria
-4. Teste mudar role de um usuário
-5. Teste cancelar/ativar assinatura
-
-#### 5. Testar Limites de Plano
-**Manual** - Criar usuário normal
-
-1. Crie usuário normal (não admin)
-2. Ele deve receber plano "Gratuito" (40 clientes, 40 agendamentos)
-3. Vá em `/clientes` e crie 40 clientes
-4. Tente criar o 41º cliente
-5. ✅ Deve aparecer modal: "Limite atingido! Faça upgrade"
-6. Clique "Ver planos"
-7. ✅ Deve redirecionar para `/planos`
-8. Escolha plano "Profissional"
-9. ⚠️ Checkout NÃO vai funcionar ainda (Price IDs não configurados)
+**Tempo Estimado:** 3-4 dias
+**Teste:** UI functionality
 
 ---
 
-### 🔴 IMPORTANTE (PRIMEIRAS 1-2 SEMANAS) - 8-12 horas
+## 3. IMPLEMENTAR OAUTH 2.0 / OPENID CONNECT
 
-#### SPRINT 1: Sistema de Backup Automático
+### Objetivo
+Permitir login via terceiros (Google, GitHub, Microsoft).
 
-**Objetivo**: Proteger dados contra perda acidental
+### Tarefas
 
-**Implementar**:
+#### 3.1 Setup OAuth
+- [ ] Instalar `@auth0/auth0-react` ou `next-auth`
+- [ ] Configurar Google OAuth
+- [ ] Configurar GitHub OAuth
+- [ ] Configurar Microsoft OAuth
+- [ ] Atualizar AuthContext para suportar OAuth
+- [ ] Mapping de profiles OAuth para usuarios locais
+- [ ] Linking de contas
 
-1. **Edge Function: backup-database**
-```typescript
-// supabase/functions/backup-database/index.ts
-// - Exportar todas as tabelas críticas para JSON
-// - Fazer upload para Supabase Storage
-// - Executar via cron semanal (todo domingo 3h)
-```
+**Tempo Estimado:** 4-5 dias
+**Teste:** Login flow para cada provider
 
-2. **Página no Admin para download de backups**
-```typescript
-// src/pages/Admin.tsx - Nova tab "Backups"
-// - Listar backups disponíveis
-// - Botão para download manual
-// - Botão para gerar backup agora
-```
+#### 3.2 Social Login UI
+- [ ] Botões de login social na landing page
+- [ ] Dialog de login com OAuth
+- [ ] Account linking interface
+- [ ] Remoção de contas linkadas
 
-3. **Notificar admin quando backup completo**
-```typescript
-// Enviar email via Resend (quando configurado)
-// Ou registrar em audit_log
-```
-
-**Estimativa**: 4-6 horas  
-**Prioridade**: 🔴 Alta (protege contra perda de dados)
+**Tempo Estimado:** 2-3 dias
+**Teste:** UI e navegação
 
 ---
 
-#### SPRINT 2: Monitoramento e Alertas
+## 4. DOCUMENTAÇÃO API (SWAGGER/OPENAPI)
 
-**Objetivo**: Saber quando algo dá errado antes que afete usuários
+### Objetivo
+Gerar documentação interativa da API.
 
-**Implementar**:
+### Tarefas
 
-1. **Dashboard de Saúde do Sistema** (melhorar `/admin` aba "Saúde")
-```typescript
-// Adicionar métricas:
-- Tempo de resposta de Edge Functions (últimas 24h)
-- Taxa de erro de queries (> 1s = alerta)
-- Uso de storage (alertar se > 80%)
-- Taxa de sucesso de emails (se Resend configurado)
-- Taxa de falha de webhooks Stripe
-```
+#### 4.1 Setup Swagger
+- [ ] Instalar `swagger-ui-express` e `swagger-jsdoc`
+- [ ] Configurar arquivo `swagger.yaml`
+- [ ] Gerar arquivo OpenAPI 3.0
+- [ ] Endpoint `/api/docs` para UI Swagger
 
-2. **Sistema de Alertas Automáticos**
-```typescript
-// Criar edge function: check-system-health
-// Executar a cada hora via cron
-// Enviar email para admin se:
-// - Edge function com 5+ erros consecutivos
-// - Storage > 80% cheio
-// - Queries lentas detectadas (> 2s)
-```
+**Tempo Estimado:** 2-3 dias
+**Teste:** Swagger UI funcional
 
-3. **Métricas de Negócio no Admin**
-```typescript
-// Adicionar cards no dashboard admin:
-- MRR (Monthly Recurring Revenue)
-- Churn rate (% cancelamentos/mês)
-- Conversão trial → pago
-- LTV médio (lifetime value)
-```
+#### 4.2 Documentar Endpoints
+- [ ] Documentar todos os endpoints em Swagger
+- [ ] Request/response schemas
+- [ ] Códigos de erro
+- [ ] Exemplos de uso
+- [ ] Rate limits documentados
+- [ ] Autenticação explicada
 
-**Estimativa**: 4-6 horas  
-**Prioridade**: 🔴 Alta (essencial para operação)
+**Tempo Estimado:** 5-7 dias
+**Teste:** Validação de specs
+
+#### 4.3 Publicar Documentação
+- [ ] Deploy no ReadTheDocs ou similar
+- [ ] Versioning da documentação
+- [ ] Changelog de API
+- [ ] Migration guides
+
+**Tempo Estimado:** 2-3 dias
+**Teste:** Acesso público
 
 ---
 
-### 🟡 MELHORIAS (AO LONGO DO TEMPO) - 12-20 horas
+## 5. API KEYS E RATE LIMITING
 
-#### SPRINT 3: Testes E2E (End-to-End)
+### Objetivo
+Controlar acesso e uso da API por cliente.
 
-**Objetivo**: Garantir que fluxos críticos nunca quebrem
+### Tarefas
 
-**Implementar com Playwright**:
+#### 5.1 Sistema de API Keys
+- [ ] Criar tabela `api_keys`
+- [ ] Gerar chaves seguras (crypto.randomBytes)
+- [ ] Hash das chaves no banco (bcrypt)
+- [ ] Tabela `api_key_permissions`
+- [ ] Rotação de keys
+- [ ] Revogação de keys
+- [ ] Auditoria de uso
 
-```bash
-npm install -D @playwright/test
-```
+**Tempo Estimado:** 3-4 dias
+**Teste:** Key generation e validation
 
-**Testes críticos**:
-1. Signup → Email → Login → Onboarding
-2. Criar cliente → Criar veículo → Criar agendamento
-3. Criar ordem de serviço → Adicionar peças → Finalizar
-4. Atingir limite → Modal upgrade
-5. Admin → Gerenciar usuários → Alterar role
+#### 5.2 Rate Limiting
+- [ ] Implementar rate limiter por API key
+- [ ] Redis para armazenar rate limits
+- [ ] Limite por endpoint
+- [ ] Limite por dia/hora/minuto
+- [ ] Quotas de uso (requests/mês)
+- [ ] Alerts quando aproximando do limite
 
-**Estimativa**: 6-8 horas  
-**Prioridade**: 🟡 Média (importante mas não urgente)
+**Tempo Estimado:** 3-4 dias
+**Teste:** Rate limit enforcement
 
----
+#### 5.3 UI de Gerenciamento
+- [ ] Página para criar/editar/deletar keys
+- [ ] Visualização de uso
+- [ ] Histórico de atividades
+- [ ] Permissões granulares por key
 
-#### SPRINT 4: PWA Modo Offline Robusto
-
-**Objetivo**: Sistema funciona sem internet
-
-**Implementar**:
-
-1. **Cache de dados essenciais**
-```typescript
-// Service Worker: cache últimos 50 clientes, 30 agendamentos
-// Usar IndexedDB para armazenamento local
-```
-
-2. **Queue de ações offline**
-```typescript
-// Criar cliente offline → Queue
-// Quando voltar online → Sincronizar
-// Detectar conflitos (editado offline e online)
-```
-
-3. **Indicador visual de modo offline**
-```typescript
-// Banner: "Você está offline. Dados serão sincronizados"
-// Mostrar quais ações estão na fila
-```
-
-4. **Push Notifications**
-```typescript
-// Notificar 1h antes de agendamento
-// Notificar pagamento recebido
-// Notificar limite de plano atingido
-```
-
-**Estimativa**: 6-8 horas  
-**Prioridade**: 🟡 Média (nice to have)
+**Tempo Estimado:** 2-3 dias
+**Teste:** CRUD operations
 
 ---
 
-#### SPRINT 5: Sistema de Busca Avançada
+## 6. INTEGRAÇÃO COM STRIPE (Real)
 
-**Objetivo**: Encontrar qualquer coisa rapidamente
+### Objetivo
+Substituir mock por Stripe real.
 
-**Implementar**:
+### Tarefas
 
-1. **Busca Global (Cmd+K)**
-```typescript
-// Atalho de teclado para busca rápida
-// Buscar em: clientes, veículos, agendamentos, OS
-// Navegação com teclado (↑↓ Enter)
-```
+#### 6.1 Setup Stripe
+- [ ] Gerar chaves Stripe real (public + secret)
+- [ ] Instalar SDK correto
+- [ ] Atualizar ambiente
+- [ ] Webhook setup no Stripe dashboard
 
-2. **Filtros Salvos**
-```typescript
-// Salvar filtros favoritos
-// Compartilhar via URL
-// Exportar resultados filtrados
-```
+**Tempo Estimado:** 1-2 dias
+**Teste:** Transações de teste
 
-3. **Full-Text Search no Postgres**
-```sql
-CREATE INDEX idx_clients_search 
-ON clients USING gin(
-  to_tsvector('portuguese', 
-    name || ' ' || COALESCE(email, '') || ' ' || COALESCE(phone, '')
-  )
-);
-```
+#### 6.2 Produtos e Pricing
+- [ ] Criar produtos no Stripe
+- [ ] Criar planos de preço
+- [ ] Testar fluxo de pagamento
+- [ ] Webhook de pagamento
 
-**Estimativa**: 4-6 horas  
-**Prioridade**: 🟡 Média (melhora muito UX)
+**Tempo Estimado:** 2-3 dias
+**Teste:** Fluxo completo
 
----
+#### 6.3 Refund e Cancelamento
+- [ ] Implementar reembolsos
+- [ ] Cancelamento de plano
+- [ ] Suspensão por falta de pagamento
 
-#### SPRINT 6: Melhorias de UX/UI
-
-**Objetivo**: Interface mais intuitiva e produtiva
-
-**Implementar**:
-
-1. **Tour Guiado Contextual**
-```typescript
-// Usar react-joyride
-// "Como criar seu primeiro cliente"
-// "Como agendar um serviço"
-// "Como gerar relatórios"
-```
-
-2. **Atalhos de Teclado**
-```typescript
-// N = Novo cliente
-// A = Novo agendamento
-// / = Busca
-// ? = Mostrar atalhos
-```
-
-3. **Drag & Drop**
-```typescript
-// Arrastar agendamento no calendário para reagendar
-// Arrastar peças para ordem de serviço
-```
-
-4. **Feedback Visual Melhorado**
-```typescript
-// Skeleton loaders em todos os componentes
-// Animações de transição suaves
-// Toasts mais informativos
-```
-
-**Estimativa**: 6-8 horas  
-**Prioridade**: 🟢 Baixa (polimento)
+**Tempo Estimado:** 2-3 dias
+**Teste:** Cenários de reembolso
 
 ---
 
-#### SPRINT 7: Relatórios e Analytics Avançados
+## 7. TESTES DE INTEGRAÇÃO E E2E
 
-**Objetivo**: Insights de negócio profundos
+### Objetivo
+Garantir que a API funciona corretamente em produção.
 
-**Implementar**:
+### Tarefas
 
-1. **Relatórios Pré-configurados**
-```typescript
-// Vendas por período
-// Clientes mais lucrativos (top 10)
-// Peças mais vendidas
-// Desempenho por mecânico (se adicionar)
-// Inadimplência (pagamentos atrasados)
-```
+#### 7.1 Testes Unitários
+- [ ] Setup Jest com coverage
+- [ ] Testes de autenticação
+- [ ] Testes de validação
+- [ ] Testes de banco de dados
+- [ ] Meta: 80%+ coverage
 
-2. **Export Avançado**
-```typescript
-// Agendar relatório automático (semanal/mensal)
-// Enviar relatório por email
-// Integração com Google Sheets
-```
+**Tempo Estimado:** 5-7 dias
+**Teste:** Coverage report
 
-3. **Dashboards Personalizáveis**
-```typescript
-// Widgets arrastaveis
-// Adicionar/remover gráficos
-// Salvar layouts personalizados
-```
+#### 7.2 Testes de Integração
+- [ ] Testes de fluxo completo (client → order → payment)
+- [ ] Testes de webhook
+- [ ] Testes de rate limiting
+- [ ] Testes de RLS
 
-**Estimativa**: 6-8 horas  
-**Prioridade**: 🟢 Baixa (nice to have)
+**Tempo Estimado:** 5-7 dias
+**Teste:** Suites de integração
 
----
+#### 7.3 Testes E2E
+- [ ] Setup Cypress/Playwright
+- [ ] Cenários principais (login, criar cliente, etc)
+- [ ] Testes mobile
+- [ ] Performance tests
 
-#### SPRINT 8: Integrações Adicionais
+**Tempo Estimado:** 5-7 dias
+**Teste:** E2E suites
 
-**Objetivo**: Conectar com ferramentas externas
+#### 7.4 Testes de API
+- [ ] Setup Postman/Insomnia
+- [ ] Coleção de testes
+- [ ] Teste de cada endpoint
+- [ ] Validação de respostas
 
-**Implementar**:
-
-1. **Google Calendar**
-```typescript
-// Sincronizar agendamentos
-// Ver no Google Calendar
-// Notificações do Google
-```
-
-2. **Importação/Exportação**
-```typescript
-// Importar clientes de CSV/Excel
-// Importar agendamentos
-// Exportar backup completo em JSON
-```
-
-3. **Zapier/Make** (se relevante)
-```typescript
-// Webhook triggers customizados
-// Conectar com 1000+ apps
-```
-
-**Estimativa**: 4-6 horas  
-**Prioridade**: 🟢 Baixa (opcional)
+**Tempo Estimado:** 3-4 dias
+**Teste:** Coleção funcional
 
 ---
 
-### 💰 QUANDO QUISER MONETIZAR - 2-4 horas
+## 8. DEPLOYMENT E CI/CD
 
-#### SPRINT 9: Ativar Stripe para Pagamentos
+### Objetivo
+Automatizar build, testes e deploy.
 
-**Pré-requisitos**:
-- Ter alguns usuários testando (beta)
-- Ter CNPJ cadastrado no Stripe
-- Decidir os valores finais dos planos
+### Tarefas
 
-**Passo a passo**:
+#### 8.1 GitHub Actions
+- [ ] Setup workflow para push (lint + test)
+- [ ] Setup workflow para PR (validate + test)
+- [ ] Setup workflow para release (build + deploy)
+- [ ] Secrets management
+- [ ] Notifications
 
-1. **Criar Produtos no Stripe Dashboard**
-```
-Produto: CRM Auto - Plano Básico
-- Price: R$ 99/mês (recorrente mensal)
-- Price: R$ 990/ano (recorrente anual) - economia de 16%
+**Tempo Estimado:** 3-4 dias
+**Teste:** Workflows funcionando
 
-Produto: CRM Auto - Plano Profissional
-- Price: R$ 249/mês
-- Price: R$ 2.490/ano - economia de 16%
+#### 8.2 Docker
+- [ ] Dockerfile para frontend
+- [ ] Dockerfile para API (se separada)
+- [ ] docker-compose.yml
+- [ ] .dockerignore
 
-Produto: CRM Auto - Plano Enterprise
-- Price: R$ 499/mês
-- Price: R$ 4.990/ano - economia de 16%
-```
+**Tempo Estimado:** 2-3 dias
+**Teste:** Images buildando
 
-2. **Copiar Price IDs gerados**
-```
-Stripe gera IDs tipo: price_1ABC123xyz
-Você terá 6 Price IDs no total (3 planos × 2 ciclos)
-```
+#### 8.3 Kubernetes (Opcional)
+- [ ] k8s manifests
+- [ ] Deployment configurations
+- [ ] Service definitions
+- [ ] Ingress setup
 
-3. **Atualizar banco de dados**
-```sql
--- Executar no Supabase SQL Editor
-UPDATE subscription_plans 
-SET 
-  stripe_price_id_monthly = 'price_SEU_ID_MENSAL_BASICO',
-  stripe_price_id_yearly = 'price_SEU_ID_ANUAL_BASICO'
-WHERE name = 'basic';
-
--- Repetir para professional e enterprise
-```
-
-4. **Configurar Webhook no Stripe**
-```
-Dashboard Stripe → Developers → Webhooks → Add endpoint
-URL: https://lfsoxururyqknnjhrzxu.supabase.co/functions/v1/stripe-webhook
-Eventos: Selecionar todos de "customer.subscription.*"
-```
-
-5. **Testar Checkout Completo**
-```
-1. Criar usuário teste
-2. Ir em /planos
-3. Escolher "Profissional"
-4. Clicar "Começar Trial"
-5. Preencher dados de cartão teste: 4242 4242 4242 4242
-6. Verificar se:
-   - Checkout abre corretamente
-   - Pagamento processa
-   - Webhook atualiza banco
-   - Plano ativa no sistema
-```
-
-**Estimativa**: 2-4 horas  
-**Prioridade**: 💰 Quando quiser cobrar
+**Tempo Estimado:** 3-4 dias
+**Teste:** Deploy em cluster
 
 ---
 
-#### SPRINT 10: Ativar Resend para Emails
+## 9. MONITORING E LOGGING
 
-**Pré-requisitos**:
-- Ter domínio próprio (ex: suaoficina.com)
-- Acesso ao DNS do domínio
+### Objetivo
+Rastrear erros e performance em produção.
 
-**Passo a passo**:
+### Tarefas
 
-1. **Criar conta Resend**: https://resend.com (gratuito)
+#### 9.1 Error Tracking (Sentry)
+- [ ] Setup Sentry
+- [ ] Integração frontend
+- [ ] Integração backend
+- [ ] Alertas configurados
 
-2. **Verificar domínio**
-```
-Adicionar registros DNS:
-TXT: resend._domainkey.suaoficina.com
-CNAME: resend.suaoficina.com
-```
+**Tempo Estimado:** 2-3 dias
+**Teste:** Errors reportando
 
-3. **Copiar API Key**
-```
-Dashboard Resend → API Keys → Create
-```
+#### 9.2 Performance Monitoring
+- [ ] Setup New Relic ou DataDog
+- [ ] Métricas de API
+- [ ] Slow queries
+- [ ] Dashboard
 
-4. **Adicionar secret no Supabase**
-```
-Dashboard Supabase → Settings → Edge Functions → Add Secret
-RESEND_API_KEY = re_xxxxxxxxxxxxx
-```
+**Tempo Estimado:** 2-3 dias
+**Teste:** Métricas coletando
 
-5. **Testar envio de email**
-```
-1. Criar novo usuário
-2. Verificar se email de boas-vindas chega
-3. Criar agendamento para amanhã
-4. Verificar se lembrete será enviado (via cron)
-```
+#### 9.3 Logging
+- [ ] Setup Winston/Pino
+- [ ] Log levels
+- [ ] Log aggregation (ELK/Grafana)
+- [ ] Auditoria de ações
 
-**Estimativa**: 1-2 horas  
-**Prioridade**: 📧 Quando quiser emails automáticos
+**Tempo Estimado:** 2-3 dias
+**Teste:** Logs sendo coletados
 
 ---
 
-## ✅ CHECKLIST FINAL ANTES DE PRODUÇÃO
+## 10. BACKUP E DISASTER RECOVERY
 
-### Segurança
-- [x] RLS ativo em todas as tabelas
-- [x] Funções com `SET search_path = public`
-- [ ] Confirmação de email habilitada
-- [ ] Rate limiting testado
-- [ ] Backup automático funcionando
+### Objetivo
+Proteger dados em caso de falha.
 
-### Funcionalidades
-- [x] Todos os 12 módulos testados
-- [x] Sistema de planos funcionando
-- [x] Limites de plano enforçados
-- [ ] Fluxo de signup completo testado
-- [ ] Usuário admin criado e testado
+### Tarefas
+
+#### 10.1 Backup Strategy
+- [ ] Backup diário do banco
+- [ ] Backup incremental
+- [ ] Retenção de 30 dias
+- [ ] Armazenamento em S3
+
+**Tempo Estimado:** 2-3 dias
+**Teste:** Restauração de backup
+
+#### 10.2 Disaster Recovery
+- [ ] Plano de ação
+- [ ] Tempo de recuperação (RTO)
+- [ ] Ponto de recuperação (RPO)
+- [ ] Testes de failover
+
+**Tempo Estimado:** 2-3 dias
+**Teste:** Simulação de falha
+
+---
+
+## 11. SEGURANÇA
+
+### Objetivo
+Proteger dados e sistema.
+
+### Tarefas
+
+#### 11.1 Audit Security
+- [ ] Penetration testing
+- [ ] Code security review
+- [ ] Dependency scanning
+- [ ] SSL/TLS validation
+
+**Tempo Estimado:** 3-5 dias
+**Teste:** Report de segurança
+
+#### 11.2 Compliance
+- [ ] LGPD compliance
+- [ ] GDPR compliance (se EU)
+- [ ] PCI DSS (se processar cards)
+- [ ] Certificações
+
+**Tempo Estimado:** 4-6 dias
+**Teste:** Audit checklist
+
+#### 11.3 Secret Management
+- [ ] Vault setup (HashiCorp)
+- [ ] Rotação de secrets
+- [ ] Ambiente variables
+- [ ] Acesso restrito
+
+**Tempo Estimado:** 2-3 dias
+**Teste:** Secret access
+
+---
+
+## 12. DOCUMENTATION E GUIDES
+
+### Objetivo
+Facilitar integração para terceiros.
+
+### Tarefas
+
+#### 12.1 Integration Guides
+- [ ] Guide: Como autenticar
+- [ ] Guide: Como usar webhooks
+- [ ] Guide: Rate limits
+- [ ] Guide: Error handling
+- [ ] Code examples (cURL, Python, Node.js, PHP)
+
+**Tempo Estimado:** 3-4 dias
+**Teste:** Guides funcionando
+
+#### 12.2 Changelog
+- [ ] Versioning strategy (semver)
+- [ ] Changelog file
+- [ ] Migration guides
+- [ ] Breaking changes docs
+
+**Tempo Estimado:** 1-2 dias
+**Teste:** Changelog atualizado
+
+---
+
+## ORDEM DE PRIORIDADE RECOMENDADA
+
+### Fase 1: MVP Integração (2 semanas)
+1. REST API básica (clientes, veículos, ordens)
+2. Autenticação API (API Keys)
+3. Documentação Swagger básica
+4. Testes unitários essenciais
+
+### Fase 2: Funcionalidades (2 semanas)
+5. Webhooks de saída
+6. Endpoints completos (estoque, financeiro)
+7. Rate limiting
+8. Testes de integração
+
+### Fase 3: Produção (2 semanas)
+9. CI/CD pipeline
+10. Monitoring e logging
+11. Segurança audit
+12. Backup & DR
+
+### Fase 4: Melhorias (2 semanas)
+13. OAuth 2.0
+14. Compliance
+15. Performance optimization
+16. Documentação completa
+
+---
+
+## CHECKLIST DE SUCESSO
+
+### API Funciona
+- [ ] Todos endpoints respondendo
+- [ ] Autenticação funcionando
+- [ ] Rate limiting implementado
+- [ ] Webhooks sendo enviados
+- [ ] Testes passando (80%+ coverage)
+
+### Documentação Completa
+- [ ] Swagger/OpenAPI gerado
+- [ ] Integration guides escritos
+- [ ] Code examples funcionando
+- [ ] Changelog mantido
+
+### Produção Ready
+- [ ] CI/CD pipeline funcionando
+- [ ] Monitoring ativo
+- [ ] Backups configurados
+- [ ] Security audit passado
+- [ ] Alerts configurados
 
 ### Performance
-- [x] Lighthouse score 90+
-- [x] Queries otimizadas com indexes
-- [x] Lazy loading implementado
-- [x] PWA configurado
-
-### Integrações (quando ativar)
-- [ ] Stripe Price IDs configurados
-- [ ] Resend API Key adicionada
-- [ ] Webhooks Stripe testados
-- [ ] Emails automáticos testados
+- [ ] API response < 200ms
+- [ ] Webhooks entregues < 5s
+- [ ] Uptime > 99.5%
+- [ ] Load test passado (1000 req/s)
 
 ---
 
-## 📈 ESTRATÉGIA DE LANÇAMENTO SUGERIDA
+## RISCOS E MITIGAÇÕES
 
-### Fase 1: Beta Privado (2-4 semanas)
-- Convidar 5-10 oficinas amigas
-- Oferecer GRATUITO durante beta
-- Coletar feedback intensivo
-- Corrigir bugs críticos
-- Ajustar UX baseado em uso real
-
-**Métricas para validar**:
-- Taxa de adoção (% que volta no dia seguinte)
-- Funcionalidades mais usadas
-- Bugs reportados (meta: < 5 críticos)
-- NPS (Net Promoter Score) > 40
-
-### Fase 2: Beta Público (1-2 meses)
-- Abrir para 50-100 oficinas
-- **Manter plano Gratuito** (40 clientes)
-- Implementar Stripe
-- Oferecer upgrade para planos pagos
-- Oferecer desconto early-bird (30% off primeiros 3 meses)
-
-**Métricas para validar**:
-- Conversão trial → pago (meta: > 10%)
-- Churn mensal (meta: < 5%)
-- MRR crescendo
-- Suporte < 2h resposta
-
-### Fase 3: Lançamento Completo
-- Marketing e divulgação (Instagram, Facebook, Google Ads)
-- SEO otimizado
-- Parcerias com distribuidoras de peças
-- Programa de afiliados (20% comissão)
-- Webinars demonstrativos semanais
-
-**Métricas de sucesso**:
-- 100 clientes pagos em 6 meses
-- MRR R$ 20.000/mês
-- Churn < 3%
-- NPS > 50
+| Risco | Probabilidade | Impacto | Mitigação |
+|-------|--------------|--------|-----------|
+| API lenta em produção | Média | Alto | Load testing early, caching strategy |
+| Webhooks não entregues | Média | Médio | Retry logic, monitoring, fallback |
+| Dados expostos | Baixa | Crítico | Security audit, rate limiting, encryption |
+| Downtime | Baixa | Alto | Backup, failover, monitoring |
+| Compatibilidade quebrada | Média | Médio | Versioning, changelog, migration guides |
 
 ---
 
-## 💡 ALTERNATIVAS GRATUITAS (PARA COMEÇAR SEM INVESTIR)
+## RECURSOS NECESSÁRIOS
 
-### Para Pagamentos (sem Stripe):
-1. **PIX + Registro Manual**
-   - Cliente te manda PIX
-   - Você registra pagamento manualmente no sistema
-   - Ativa plano manualmente
-   - **Prós**: Zero custo
-   - **Contras**: Não escala, muito trabalho manual
-
-2. **Mercado Pago**
-   - Concorrente brasileiro do Stripe
-   - Taxas similares
-   - Integração mais complexa
-
-### Para Emails (sem Resend):
-1. **Gmail SMTP Gratuito**
-   - 500 emails/dia grátis
-   - Configuração via SMTP
-   - **Prós**: Totalmente grátis
-   - **Contras**: Configuração complexa
-
-2. **SendGrid Free Tier**
-   - 100 emails/dia grátis
-   - Mais fácil que Gmail SMTP
-   - **Contras**: Limite baixo
-
-3. **Mailgun**
-   - 5.000 emails/mês grátis (primeiro mês)
-   - Depois cai para 100/dia
-   - **Contras**: Limite baixo após 1 mês
-
-### Para WhatsApp (sem API paga):
-1. **WhatsApp Web Manual** (IMPLEMENTADO)
-   - Botão abre WhatsApp Web com mensagem pronta
-   - Funciona perfeitamente até 100 mensagens/dia
-   - **Prós**: Totalmente grátis e funcional
-   - **Contras**: Clique manual por cliente
+- 2-3 Desenvolvedores Backend
+- 1 QA/Tester
+- 1 DevOps/Infra
+- 1 Security Engineer (consultant)
+- Ferramentas: Postman, Sentry, DataDog, GitHub Actions
 
 ---
 
-## 🎯 RECOMENDAÇÃO FINAL
+## MÉTRICAS DE SUCESSO
 
-**Para lançar HOJE em produção**:
-1. ✅ Habilitar confirmação de email (10min)
-2. ✅ Criar usuário admin teste (15min)
-3. ✅ Testar fluxo completo de signup (30min)
-4. ✅ Testar limites de planos (20min)
-
-**Total**: 1h15min → Sistema pronto para produção! 🚀
-
-**Para começar a monetizar** (depois de validar com usuários):
-1. Configurar Stripe (2-4h)
-2. Configurar Resend (1-2h)
-3. Testar checkout completo (1h)
-
-**Total**: 4-7h → Receita recorrente ativa! 💰
+- Taxa de adoção da API: > 50% dos clientes em 6 meses
+- Uptime: > 99.5%
+- Latência P95: < 500ms
+- Taxa de erro: < 0.1%
+- Customer satisfaction: > 4.5/5
 
 ---
 
-## 📊 RESUMO FINAL
-
-### Status Atual: 90% PRONTO
-- ✅ 12 módulos funcionais completos
-- ✅ Banco de dados 100% real com RLS
-- ✅ Sistema de planos implementado
-- ✅ PWA instalável
-- ⚠️ Falta configurar APIs pagas (Stripe, Resend)
-- ⚠️ Falta habilitar confirmação de email
-
-### Tempo para Produção
-- **Crítico**: 1-2 horas (habilitar email, criar admin, testar)
-- **Importante**: 1-2 semanas (backup, monitoramento)
-- **Melhorias**: 1-3 meses (testes E2E, PWA offline, UX)
-
-### Custo Mensal Estimado (após ativar tudo)
-- **Supabase**: Gratuito até 500MB / $25/mês (Pro)
-- **Stripe**: 2.99% + R$ 0,39 por transação (você ganha dinheiro!)
-- **Resend**: Gratuito até 3k emails / $20/mês (10k)
-- **WhatsApp API**: Opcional (~$50-200/mês se usar)
-
-**Total**: R$ 0 a R$ 500/mês (dependendo do volume)
-
----
-
-**🚀 VOCÊ ESTÁ PRONTO! Sistema profissional, escalável e pronto para crescer.**
-
-**Última atualização**: 19/11/2025
+**Última atualização:** [data]
+**Responsável:** [nome]
+**Status:** [Planejamento / Em Progresso / Completo]

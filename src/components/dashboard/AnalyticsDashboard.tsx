@@ -37,8 +37,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
   };
 
   const handleExport = () => {
-    // Implementar exportação de relatórios
-    console.log("Exportando relatórios...");
+    // Export handled by report page
   };
 
   if (error) {

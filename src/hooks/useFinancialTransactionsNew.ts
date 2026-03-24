@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useCrudState, useStandardState } from "@/hooks/useStandardState";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 import type { FinancialTransaction, PaymentMethod } from "@/types";
 
 export const useFinancialTransactionsNew = () => {
@@ -29,7 +30,7 @@ export const useFinancialTransactionsNew = () => {
       
       transactionsState.setData(data || []);
     } catch (err: any) {
-      console.error('Erro ao buscar transações:', err);
+      logger.error('Erro ao buscar transações:', err);
       transactionsState.setError(err.message || 'Erro inesperado ao carregar transações financeiras');
     }
   };
@@ -38,18 +39,18 @@ export const useFinancialTransactionsNew = () => {
     try {
       paymentMethodsState.setLoading(true);
       
-      // Payment methods fixos (não dependem de autenticação)
-      const mockPaymentMethods: PaymentMethod[] = [
-        { id: 'pm-1', name: 'Dinheiro', type: 'cash', active: true, created_at: new Date().toISOString() },
-        { id: 'pm-2', name: 'Cartão de Débito', type: 'debit', active: true, created_at: new Date().toISOString() },
-        { id: 'pm-3', name: 'Cartão de Crédito', type: 'credit', active: true, created_at: new Date().toISOString() },
-        { id: 'pm-4', name: 'PIX', type: 'pix', active: true, created_at: new Date().toISOString() },
-        { id: 'pm-5', name: 'Boleto', type: 'boleto', active: true, created_at: new Date().toISOString() },
+      // Standard payment methods (static constants, no mock needed)
+      const standardPaymentMethods: PaymentMethod[] = [
+        { id: 'pm-cash', name: 'Dinheiro', type: 'cash', active: true, created_at: new Date().toISOString() },
+        { id: 'pm-debit', name: 'Cartão de Débito', type: 'debit', active: true, created_at: new Date().toISOString() },
+        { id: 'pm-credit', name: 'Cartão de Crédito', type: 'credit', active: true, created_at: new Date().toISOString() },
+        { id: 'pm-pix', name: 'PIX', type: 'pix', active: true, created_at: new Date().toISOString() },
+        { id: 'pm-boleto', name: 'Boleto', type: 'boleto', active: true, created_at: new Date().toISOString() },
       ];
       
-      paymentMethodsState.setData(mockPaymentMethods);
+      paymentMethodsState.setData(standardPaymentMethods);
     } catch (err: any) {
-      console.error('Erro ao buscar métodos de pagamento:', err);
+      logger.error('Erro ao buscar métodos de pagamento:', err);
       paymentMethodsState.setError(err.message || 'Erro ao carregar métodos de pagamento');
     }
   };

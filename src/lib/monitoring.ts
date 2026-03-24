@@ -1,82 +1,28 @@
-import * as Sentry from '@sentry/react';
+// Lightweight monitoring utilities (Sentry removed for bundle optimization)
+// Re-add Sentry when needed by uncommenting and configuring VITE_SENTRY_DSN
 
-const SENTRY_DSN = import.meta.env.VITE_SENTRY_DSN;
-const ENVIRONMENT = import.meta.env.MODE;
+import { logger } from './logger';
 
 export const initMonitoring = () => {
-  if (!SENTRY_DSN) {
-    console.warn('Sentry DSN not configured. Error monitoring disabled.');
-    return;
-  }
-
-  Sentry.init({
-    dsn: SENTRY_DSN,
-    environment: ENVIRONMENT,
-    integrations: [
-      Sentry.browserTracingIntegration(),
-      Sentry.replayIntegration({
-        maskAllText: false,
-        blockAllMedia: false,
-      }),
-    ],
-    
-    // Performance Monitoring
-    tracesSampleRate: ENVIRONMENT === 'production' ? 0.1 : 1.0,
-    
-    // Session Replay
-    replaysSessionSampleRate: 0.1,
-    replaysOnErrorSampleRate: 1.0,
-    
-    // Error filtering
-    beforeSend(event, hint) {
-      // Filter out non-critical errors
-      const error = hint.originalException;
-      
-      if (error instanceof Error) {
-        // Ignore network errors that are expected
-        if (error.message.includes('Failed to fetch')) {
-          return null;
-        }
-        
-        // Ignore expected auth errors
-        if (error.message.includes('not authenticated')) {
-          return null;
-        }
-      }
-      
-      return event;
-    },
-    
-    // Set user context
-    beforeSendTransaction(event) {
-      return event;
-    },
-  });
+  // Monitoring initialization placeholder
+  // Sentry can be re-enabled here when needed
+  logger.info('Monitoring initialized (lightweight mode)');
 };
 
 // Custom error logging
-export const logError = (error: Error, context?: Record<string, any>) => {
-  console.error('Error:', error, context);
+export const logError = (error: Error, context?: Record<string, unknown>) => {
+  logger.error('Error:', error, context);
   
-  if (SENTRY_DSN) {
-    Sentry.captureException(error, {
-      extra: context,
-    });
-  }
+  // In production, you could send to an external service here
+  // Example: sendToErrorService(error, context);
 };
 
 // Custom event tracking
-export const trackEvent = (eventName: string, data?: Record<string, any>) => {
-  console.log('Event:', eventName, data);
+export const trackEvent = (eventName: string, data?: Record<string, unknown>) => {
+  logger.info('Event:', eventName, data);
   
-  if (SENTRY_DSN) {
-    Sentry.addBreadcrumb({
-      category: 'user-action',
-      message: eventName,
-      data,
-      level: 'info',
-    });
-  }
+  // In production, you could send to analytics here
+  // Example: sendToAnalytics(eventName, data);
 };
 
 // Performance monitoring
@@ -87,13 +33,18 @@ export const measurePerformance = (name: string, fn: () => void) => {
     fn();
   } finally {
     const duration = performance.now() - start;
-    
-    if (SENTRY_DSN) {
-      Sentry.addBreadcrumb({
-        category: 'performance',
-        message: `${name} took ${duration.toFixed(2)}ms`,
-        level: 'info',
-      });
-    }
+    logger.debug(`${name} took ${duration.toFixed(2)}ms`);
+  }
+};
+
+// Async performance monitoring
+export const measurePerformanceAsync = async <T>(name: string, fn: () => Promise<T>): Promise<T> => {
+  const start = performance.now();
+  
+  try {
+    return await fn();
+  } finally {
+    const duration = performance.now() - start;
+    logger.debug(`${name} took ${duration.toFixed(2)}ms`);
   }
 };

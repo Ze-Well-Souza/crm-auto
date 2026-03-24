@@ -13,7 +13,6 @@ import { ThemeTransitionManager } from "@/components/theme/ThemeTransitionManage
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AdminRoute } from "@/components/auth/AdminRoute";
 import { FeatureRoute } from "@/components/auth/FeatureRoute";
-// import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Suspense, lazy } from "react";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
@@ -28,7 +27,7 @@ const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Admin = lazy(() => import("./pages/Admin"));
 const Clientes = lazy(() => import("./pages/Clientes"));
 const Veiculos = lazy(() => import("./pages/Veiculos"));
-// const PlanosPublicos = lazy(() => import("./pages/PlanosPublicos"));
+const Perfil = lazy(() => import("./pages/Perfil"));
 const OrdensServico = lazy(() => import("./pages/OrdensServico"));
 const Agendamentos = lazy(() => import("./pages/Agendamentos"));
 const Estoque = lazy(() => import("./pages/Estoque"));
@@ -48,10 +47,18 @@ const PageLoadingFallback = () => (
   </div>
 );
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes (previously cacheTime)
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
 const App = () => (
-  // <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider
         attribute="class"
@@ -110,6 +117,7 @@ const App = () => (
                           <Route path="/comunicacao" element={<ProtectedRoute><Comunicacao /></ProtectedRoute>} />
                           <Route path="/biblioteca-imagens" element={<ProtectedRoute><ImageLibrary /></ProtectedRoute>} />
                           <Route path="/configuracoes" element={<ProtectedRoute><Configuracoes /></ProtectedRoute>} />
+                          <Route path="/perfil" element={<ProtectedRoute><Perfil /></ProtectedRoute>} />
                           <Route path="/docs" element={<ProtectedRoute><Documentation /></ProtectedRoute>} />
                           
                           <Route path="*" element={<NotFound />} />
@@ -124,7 +132,6 @@ const App = () => (
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>
-  // </ErrorBoundary>
 );
 
 export default App;

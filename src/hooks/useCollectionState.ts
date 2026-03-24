@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { logger } from '@/lib/logger';
 
 interface UseCollectionStateOptions {
   storageKey: string;
@@ -16,7 +17,6 @@ export const useCollectionState = <T extends { id: string }>({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Load items from localStorage on mount
   useEffect(() => {
     try {
       const stored = localStorage.getItem(storageKey);
@@ -26,18 +26,16 @@ export const useCollectionState = <T extends { id: string }>({
         setFilteredItems(parsed);
       }
     } catch (err) {
-      console.error('Error loading from localStorage:', err);
+      logger.error('Error loading from localStorage:', err);
     }
   }, [storageKey]);
 
-  // Save items to localStorage whenever they change
   useEffect(() => {
     if (items.length > 0) {
       localStorage.setItem(storageKey, JSON.stringify(items));
     }
   }, [items, storageKey]);
 
-  // Filter items based on search term
   useEffect(() => {
     if (searchTerm) {
       const lowercaseSearch = searchTerm.toLowerCase();
@@ -51,50 +49,25 @@ export const useCollectionState = <T extends { id: string }>({
     }
   }, [searchTerm, items]);
 
-  // Calculate pagination
   const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
   const paginatedItems = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return filteredItems.slice(startIndex, endIndex);
+    return filteredItems.slice(startIndex, startIndex + itemsPerPage);
   }, [filteredItems, currentPage, itemsPerPage]);
 
-  // CRUD operations
-  const addItem = (item: T) => {
-    setItems((prev) => [...prev, item]);
-    setFilteredItems((prev) => [...prev, item]);
-  };
-
+  const addItem = (item: T) => { setItems(prev => [...prev, item]); setFilteredItems(prev => [...prev, item]); };
   const updateItem = (id: string, updates: Partial<T>) => {
-    setItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, ...updates } : item))
-    );
-    setFilteredItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, ...updates } : item))
-    );
+    setItems(prev => prev.map(item => item.id === id ? { ...item, ...updates } : item));
+    setFilteredItems(prev => prev.map(item => item.id === id ? { ...item, ...updates } : item));
   };
-
   const deleteItem = (id: string) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
-    setFilteredItems((prev) => prev.filter((item) => item.id !== id));
+    setItems(prev => prev.filter(item => item.id !== id));
+    setFilteredItems(prev => prev.filter(item => item.id !== id));
   };
 
   return {
-    items,
-    filteredItems,
-    paginatedItems,
-    isLoading,
-    error,
-    searchTerm,
-    setSearchTerm,
-    currentPage,
-    setCurrentPage,
-    itemsPerPage,
-    totalPages,
-    addItem,
-    updateItem,
-    deleteItem,
-    setItems,
-    setFilteredItems,
+    items, filteredItems, paginatedItems, isLoading, error, searchTerm, setSearchTerm,
+    currentPage, setCurrentPage, itemsPerPage, totalPages, addItem, updateItem, deleteItem,
+    setItems, setFilteredItems,
   };
 };

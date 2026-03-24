@@ -153,8 +153,8 @@ const Agendamentos = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="space-y-2">
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 bg-clip-text text-transparent">Agendamentos</h1>
-              <p className="text-slate-400">Gerencie a agenda de serviços com visualização interativa</p>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 dark:from-blue-400 dark:via-purple-400 dark:to-blue-500 bg-clip-text text-transparent">Agendamentos</h1>
+              <p className="text-slate-600 dark:text-slate-400">Gerencie a agenda de serviços com visualização interativa</p>
             </div>
 
             <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg shadow-purple-500/50" onClick={() => setShowForm(true)}>
@@ -165,80 +165,80 @@ const Agendamentos = () => {
 
         {/* Stats - Landing Page Style */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-purple-500/20 transition-all duration-300">
+          <Card className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 backdrop-blur-xl shadow-lg hover:shadow-purple-500/20 transition-all duration-300">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-300">
-                <div className="p-2 rounded-lg bg-purple-500/20">
-                  <Calendar className="h-4 w-4 text-purple-400" />
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-500/20">
+                  <Calendar className="h-4 w-4 text-purple-600 dark:text-purple-400" />
                 </div>
                 Total
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-white">{totalAppointments}</div>
-              <p className="text-xs text-slate-400 mt-1">Agendamentos</p>
+              <div className="text-3xl font-bold text-slate-900 dark:text-white">{totalAppointments}</div>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">Agendamentos</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-orange-500/20 transition-all duration-300">
+          <Card className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 backdrop-blur-xl shadow-lg hover:shadow-orange-500/20 transition-all duration-300">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-300">
-                <div className="p-2 rounded-lg bg-orange-500/20">
-                  <Clock className="h-4 w-4 text-orange-400" />
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-500/20">
+                  <Clock className="h-4 w-4 text-orange-600 dark:text-orange-400" />
                 </div>
                 Pendentes
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-white">{pendingAppointments}</div>
-              <p className="text-xs text-slate-400 mt-1">Aguardando confirmação</p>
+              <div className="text-3xl font-bold text-slate-900 dark:text-white">{pendingAppointments}</div>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">Aguardando confirmação</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-emerald-500/20 transition-all duration-300">
+          <Card className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 backdrop-blur-xl shadow-lg hover:shadow-emerald-500/20 transition-all duration-300">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-300">
-                <div className="p-2 rounded-lg bg-emerald-500/20">
-                  <CheckCircle className="h-4 w-4 text-emerald-400" />
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-500/20">
+                  <CheckCircle className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                 </div>
                 Confirmados
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-white">{confirmedAppointments}</div>
-              <p className="text-xs text-slate-400 mt-1">Confirmados</p>
+              <div className="text-3xl font-bold text-slate-900 dark:text-white">{confirmedAppointments}</div>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">Confirmados</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg hover:shadow-blue-500/20 transition-all duration-300">
+          <Card className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 backdrop-blur-xl shadow-lg hover:shadow-blue-500/20 transition-all duration-300">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-300">
-                <div className="p-2 rounded-lg bg-blue-500/20">
-                  <CheckCircle className="h-4 w-4 text-blue-400" />
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-500/20">
+                  <CheckCircle className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                 </div>
                 Concluídos
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-white">{completedAppointments}</div>
-              <p className="text-xs text-slate-400 mt-1">Finalizados</p>
+              <div className="text-3xl font-bold text-slate-900 dark:text-white">{completedAppointments}</div>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">Finalizados</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Tabs for Calendar and List View - Landing Page Style */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-white/5 border border-white/10 backdrop-blur-xl p-1 rounded-xl">
+          <TabsList className="grid w-full grid-cols-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 backdrop-blur-xl p-1 rounded-xl">
             <TabsTrigger
               value="calendar"
-              className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-purple-500/50 rounded-lg transition-all text-slate-300"
+              className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-purple-500/50 rounded-lg transition-all text-slate-700 dark:text-slate-300"
             >
               <CalendarDays className="h-4 w-4" />
               Agenda Visual
             </TabsTrigger>
             <TabsTrigger
               value="list"
-              className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-purple-500/50 rounded-lg transition-all text-slate-300"
+              className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-purple-500/50 rounded-lg transition-all text-slate-700 dark:text-slate-300"
             >
               <List className="h-4 w-4" />
               Lista
@@ -270,10 +270,10 @@ const Agendamentos = () => {
 
             {/* Search Results Info - Landing Page Style */}
             {searchConfig.isFiltered && (
-              <div className="flex items-center justify-between bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 backdrop-blur-sm">
+              <div className="flex items-center justify-between bg-blue-100 dark:bg-blue-500/10 border border-blue-300 dark:border-blue-500/30 rounded-lg p-3 backdrop-blur-sm">
                 <div className="flex items-center gap-2">
-                  <Filter className="h-4 w-4 text-blue-400" />
-                  <span className="text-sm text-blue-300">
+                  <Filter className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                  <span className="text-sm text-blue-800 dark:text-blue-300">
                     {searchConfig.paginationInfo.totalItems} agendamento(s) encontrado(s)
                     {searchConfig.paginationInfo.totalItems !== appointments?.length &&
                       ` de ${appointments?.length} total`
@@ -284,7 +284,7 @@ const Agendamentos = () => {
                   variant="ghost"
                   size="sm"
                   onClick={searchConfig.handleReset}
-                  className="text-blue-400 hover:text-blue-300 hover:bg-blue-500/20"
+                  className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-500/20"
                 >
                   Limpar filtros
                 </Button>

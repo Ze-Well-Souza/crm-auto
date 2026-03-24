@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode, useCallback, useMemo } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 export interface NotificationOptions {
@@ -46,7 +46,7 @@ interface NotificationProviderProps {
 export const NotificationProvider: React.FC<NotificationProviderProps> = ({ children }) => {
   const { toast } = useToast();
 
-  const showSuccess = (message: string, options?: NotificationOptions) => {
+  const showSuccess = useCallback((message: string, options?: NotificationOptions) => {
     toast({
       title: options?.title || "Sucesso",
       description: message,
@@ -54,9 +54,9 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
       action: options?.action,
       className: "border-green-500 bg-green-50 dark:bg-green-950 text-green-900 dark:text-green-100",
     });
-  };
+  }, [toast]);
 
-  const showError = (message: string, options?: NotificationOptions) => {
+  const showError = useCallback((message: string, options?: NotificationOptions) => {
     toast({
       title: options?.title || "Erro",
       description: message,
@@ -64,9 +64,9 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
       action: options?.action,
       className: "border-red-500 bg-red-50 dark:bg-red-950 text-red-900 dark:text-red-100",
     });
-  };
+  }, [toast]);
 
-  const showWarning = (message: string, options?: NotificationOptions) => {
+  const showWarning = useCallback((message: string, options?: NotificationOptions) => {
     toast({
       title: options?.title || "Atenção",
       description: message,
@@ -74,9 +74,9 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
       action: options?.action,
       className: "border-orange-500 bg-orange-50 dark:bg-orange-950 text-orange-900 dark:text-orange-100",
     });
-  };
+  }, [toast]);
 
-  const showInfo = (message: string, options?: NotificationOptions) => {
+  const showInfo = useCallback((message: string, options?: NotificationOptions) => {
     toast({
       title: options?.title || "Informação",
       description: message,
@@ -84,51 +84,51 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
       action: options?.action,
       className: "border-blue-500 bg-blue-50 dark:bg-blue-950 text-blue-900 dark:text-blue-100",
     });
-  };
+  }, [toast]);
 
   // Business-specific notifications
-  const showOperationSuccess = (operation: string, entity?: string) => {
+  const showOperationSuccess = useCallback((operation: string, entity?: string) => {
     const entityText = entity ? ` ${entity}` : '';
     showSuccess(`${operation}${entityText} realizada com sucesso!`);
-  };
+  }, [showSuccess]);
 
-  const showOperationError = (operation: string, entity?: string, error?: string) => {
+  const showOperationError = useCallback((operation: string, entity?: string, error?: string) => {
     const entityText = entity ? ` ${entity}` : '';
     const errorText = error ? `: ${error}` : '';
     showError(`Erro ao ${operation.toLowerCase()}${entityText}${errorText}`);
-  };
+  }, [showError]);
 
-  const showValidationError = (field: string, message: string) => {
+  const showValidationError = useCallback((field: string, message: string) => {
     showError(`${field}: ${message}`, {
       title: "Erro de Validação"
     });
-  };
+  }, [showError]);
 
-  const showConnectionError = () => {
+  const showConnectionError = useCallback(() => {
     showError("Erro de conexão. Verifique sua internet e tente novamente.", {
       title: "Conexão Perdida",
       duration: 6000
     });
-  };
+  }, [showError]);
 
-  const showSaveSuccess = (entity: string) => {
+  const showSaveSuccess = useCallback((entity: string) => {
     showSuccess(`${entity} salvo com sucesso!`);
-  };
+  }, [showSuccess]);
 
-  const showDeleteSuccess = (entity: string) => {
+  const showDeleteSuccess = useCallback((entity: string) => {
     showSuccess(`${entity} excluído com sucesso!`);
-  };
+  }, [showSuccess]);
 
-  const showUpdateSuccess = (entity: string) => {
+  const showUpdateSuccess = useCallback((entity: string) => {
     showSuccess(`${entity} atualizado com sucesso!`);
-  };
+  }, [showSuccess]);
 
-  const showCreateSuccess = (entity: string) => {
+  const showCreateSuccess = useCallback((entity: string) => {
     showSuccess(`${entity} criado com sucesso!`);
-  };
+  }, [showSuccess]);
 
   // System notifications
-  const showSystemAlert = (message: string, type: 'maintenance' | 'update' | 'security' = 'update') => {
+  const showSystemAlert = useCallback((message: string, type: 'maintenance' | 'update' | 'security' = 'update') => {
     const titles = {
       maintenance: 'Manutenção do Sistema',
       update: 'Atualização Disponível',
@@ -146,57 +146,54 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
       duration: durations[type],
       persistent: type === 'security'
     });
-  };
+  }, [showWarning]);
 
-  const showPerformanceAlert = (message: string) => {
+  const showPerformanceAlert = useCallback((message: string) => {
     showInfo(message, {
       title: "Performance",
       duration: 4000
     });
-  };
+  }, [showInfo]);
 
-  const showDataSyncAlert = (status: 'syncing' | 'synced' | 'error') => {
+  const showDataSyncAlert = useCallback((status: 'syncing' | 'synced' | 'error') => {
     const messages = {
       syncing: 'Sincronizando dados...',
       synced: 'Dados sincronizados com sucesso!',
       error: 'Erro na sincronização de dados'
     };
 
-    const types = {
-      syncing: showInfo,
-      synced: showSuccess,
-      error: showError
-    };
-
-    types[status](messages[status], {
-      title: "Sincronização",
-      duration: status === 'syncing' ? 2000 : 3000
-    });
-  };
+    if (status === 'syncing') {
+      showInfo(messages[status], { title: "Sincronização", duration: 2000 });
+    } else if (status === 'synced') {
+      showSuccess(messages[status], { title: "Sincronização", duration: 3000 });
+    } else {
+      showError(messages[status], { title: "Sincronização", duration: 3000 });
+    }
+  }, [showInfo, showSuccess, showError]);
 
   // WhatsApp notifications
-  const showWhatsAppSuccess = (message: string) => {
+  const showWhatsAppSuccess = useCallback((message: string) => {
     showSuccess(message, {
       title: "WhatsApp",
       duration: 4000
     });
-  };
+  }, [showSuccess]);
 
-  const showWhatsAppError = (message: string) => {
+  const showWhatsAppError = useCallback((message: string) => {
     showError(message, {
       title: "Erro no WhatsApp",
       duration: 5000
     });
-  };
+  }, [showError]);
 
-  const showWhatsAppConfigAlert = () => {
+  const showWhatsAppConfigAlert = useCallback(() => {
     showWarning("Configure o número e token do WhatsApp Business para ativar as notificações.", {
       title: "Configuração Necessária",
       duration: 6000
     });
-  };
+  }, [showWarning]);
 
-  const value: NotificationContextType = {
+  const value: NotificationContextType = useMemo(() => ({
     showSuccess,
     showError,
     showWarning,
@@ -215,7 +212,26 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     showWhatsAppSuccess,
     showWhatsAppError,
     showWhatsAppConfigAlert,
-  };
+  }), [
+    showSuccess,
+    showError,
+    showWarning,
+    showInfo,
+    showOperationSuccess,
+    showOperationError,
+    showValidationError,
+    showConnectionError,
+    showSaveSuccess,
+    showDeleteSuccess,
+    showUpdateSuccess,
+    showCreateSuccess,
+    showSystemAlert,
+    showPerformanceAlert,
+    showDataSyncAlert,
+    showWhatsAppSuccess,
+    showWhatsAppError,
+    showWhatsAppConfigAlert,
+  ]);
 
   return (
     <NotificationContext.Provider value={value}>

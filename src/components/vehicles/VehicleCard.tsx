@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,7 @@ interface VehicleCardProps {
   onQuickAction?: (action: string, vehicle: Vehicle) => void;
 }
 
-export const VehicleCard = ({ vehicle, onUpdate, onQuickAction }: VehicleCardProps) => {
+const VehicleCardComponent = ({ vehicle, onUpdate, onQuickAction }: VehicleCardProps) => {
   const [showDashboard, setShowDashboard] = useState(false);
   const { metrics, loading: metricsLoading } = useVehicleMetrics(vehicle.id);
   
@@ -305,3 +305,5 @@ export const VehicleCard = ({ vehicle, onUpdate, onQuickAction }: VehicleCardPro
     </>
   );
 };
+
+export const VehicleCard = memo(VehicleCardComponent);
