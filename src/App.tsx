@@ -112,7 +112,8 @@ const App = () => (
                           
                           {/* Rotas sem Proteção de Features */}
                           {/** rota de planos removida */}
-                          <Route path="/pagamentos" element={<ProtectedRoute><Pagamentos /></ProtectedRoute>} />
+                          {/* v2: pagamento online via Mercado Pago */}
+                          {/* <Route path="/pagamentos" element={<ProtectedRoute><Pagamentos /></ProtectedRoute>} /> */}
                           <Route path="/parceiros" element={<ProtectedRoute><Parceiros /></ProtectedRoute>} />
                           <Route path="/comunicacao" element={<ProtectedRoute><Comunicacao /></ProtectedRoute>} />
                           <Route path="/biblioteca-imagens" element={<ProtectedRoute><ImageLibrary /></ProtectedRoute>} />
