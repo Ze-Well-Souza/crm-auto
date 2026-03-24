@@ -15,6 +15,7 @@ import { AdminRoute } from "@/components/auth/AdminRoute";
 import { FeatureRoute } from "@/components/auth/FeatureRoute";
 import { Suspense, lazy } from "react";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { AnalyticsTracker } from "@/components/AnalyticsTracker";
 
 // Lazy load pages
 const Index = lazy(() => import("./pages/Index"));
@@ -40,6 +41,7 @@ const Parceiros = lazy(() => import("./pages/Parceiros"));
 const ImageLibrary = lazy(() => import("./pages/ImageLibrary"));
 const InstallPWA = lazy(() => import("./pages/InstallPWA"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const Planos = lazy(() => import("./pages/Planos"));
 
 const PageLoadingFallback = () => (
   <div className="flex items-center justify-center min-h-screen">
@@ -82,6 +84,7 @@ const App = () => (
                       }}
                     >
                       <Suspense fallback={<PageLoadingFallback />}>
+                        <AnalyticsTracker />
                         <Routes>
                         {/* Rotas Públicas */}
                           <Route path="/landing" element={<Landing />} />
@@ -111,7 +114,7 @@ const App = () => (
                           <Route path="/relatorios" element={<ProtectedRoute><FeatureRoute feature="crm_reports"><Relatorios /></FeatureRoute></ProtectedRoute>} />
                           
                           {/* Rotas sem Proteção de Features */}
-                          {/** rota de planos removida */}
+                          <Route path="/planos" element={<ProtectedRoute><Planos /></ProtectedRoute>} />
                           {/* v2: pagamento online via Mercado Pago */}
                           {/* <Route path="/pagamentos" element={<ProtectedRoute><Pagamentos /></ProtectedRoute>} /> */}
                           <Route path="/parceiros" element={<ProtectedRoute><Parceiros /></ProtectedRoute>} />

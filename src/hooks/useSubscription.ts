@@ -202,7 +202,7 @@ export const useSubscription = () => {
       if (!selectedPlan) throw new Error('Nenhum plano compatível encontrado');
 
       const trialEndsAt = new Date();
-      trialEndsAt.setDate(trialEndsAt.getDate() + 14); // 14 dias
+      trialEndsAt.setDate(trialEndsAt.getDate() + 90); // 3 meses de trial
 
       const currentPeriodEnd = new Date();
       currentPeriodEnd.setMonth(currentPeriodEnd.getMonth() + 1);
