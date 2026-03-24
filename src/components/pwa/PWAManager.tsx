@@ -187,45 +187,45 @@ export const PWAManager: React.FC<PWAManagerProps> = ({
 
   return (
     <div className={`space-y-6 ${className}`}>
-      <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg">
+      <Card className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 backdrop-blur-xl shadow-lg">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-white">
-            <div className="p-2 rounded-lg bg-blue-500/20">
-              <Smartphone className="w-5 h-5 text-blue-400" />
+          <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
+            <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-500/20">
+              <Smartphone className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
             Gerenciador PWA
           </CardTitle>
-          <CardDescription className="text-slate-400">
+          <CardDescription className="text-slate-600 dark:text-slate-400">
             Configure e gerencie as funcionalidades do Progressive Web App
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Status Geral */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg">
               <div className="flex items-center gap-2">
                 {connectionStatus.icon}
-                <span className="font-medium text-sm text-white">Conexão</span>
+                <span className="font-medium text-sm text-slate-900 dark:text-white">Conexão</span>
               </div>
               <Badge className={connectionStatus.color}>
                 {connectionStatus.text}
               </Badge>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg">
               <div className="flex items-center gap-2">
                 {installStatus.icon}
-                <span className="font-medium text-sm text-white">Instalação</span>
+                <span className="font-medium text-sm text-slate-900 dark:text-white">Instalação</span>
               </div>
               <Badge className={installStatus.color}>
                 {installStatus.text}
               </Badge>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg">
               <div className="flex items-center gap-2">
                 {notificationStatus.icon}
-                <span className="font-medium text-sm text-white">Notificações</span>
+                <span className="font-medium text-sm text-slate-900 dark:text-white">Notificações</span>
               </div>
               <Badge className={notificationStatus.color}>
                 {notificationStatus.text}
@@ -265,15 +265,15 @@ export const PWAManager: React.FC<PWAManagerProps> = ({
             </Alert>
           )}
 
-          <Separator className="bg-white/10" />
+          <Separator className="bg-slate-200 dark:bg-white/10" />
 
           {/* Instalação */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-blue-400">Instalação do App</h3>
+            <h3 className="text-lg font-medium text-blue-700 dark:text-blue-400">Instalação do App</h3>
             <div className="flex items-center justify-between">
               <div>
-                <Label className="font-medium text-white">Instalar CRM Parceiro</Label>
-                <p className="text-sm text-slate-400">
+                <Label className="font-medium text-slate-900 dark:text-white">Instalar CRM Parceiro</Label>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
                   Instale o app para acesso rápido e funcionalidades offline
                 </p>
               </div>
@@ -296,16 +296,16 @@ export const PWAManager: React.FC<PWAManagerProps> = ({
             </div>
           </div>
 
-          <Separator className="bg-white/10" />
+          <Separator className="bg-slate-200 dark:bg-white/10" />
 
           {/* Atualizações */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-blue-400">Atualizações</h3>
+            <h3 className="text-lg font-medium text-blue-700 dark:text-blue-400">Atualizações</h3>
 
             <div className="flex items-center justify-between">
               <div>
-                <Label className="font-medium text-white">Atualizações Automáticas</Label>
-                <p className="text-sm text-slate-400">
+                <Label className="font-medium text-slate-900 dark:text-white">Atualizações Automáticas</Label>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
                   Baixar e instalar atualizações automaticamente
                 </p>
               </div>
@@ -317,8 +317,8 @@ export const PWAManager: React.FC<PWAManagerProps> = ({
 
             <div className="flex items-center justify-between">
               <div>
-                <Label className="font-medium text-white">Verificar Atualizações</Label>
-                <p className="text-sm text-slate-400">
+                <Label className="font-medium text-slate-900 dark:text-white">Verificar Atualizações</Label>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
                   Verificar manualmente por novas versões
                 </p>
               </div>
@@ -326,7 +326,7 @@ export const PWAManager: React.FC<PWAManagerProps> = ({
                 variant="outline"
                 onClick={handleCheckUpdates}
                 disabled={isLoading}
-                className="flex items-center gap-2 border-white/10 text-white hover:bg-white/10"
+                className="flex items-center gap-2 border-slate-300 dark:border-white/10 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-white/10"
               >
                 <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
                 Verificar
@@ -351,16 +351,16 @@ export const PWAManager: React.FC<PWAManagerProps> = ({
             )}
           </div>
 
-          <Separator className="bg-white/10" />
+          <Separator className="bg-slate-200 dark:bg-white/10" />
 
           {/* Modo Offline */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-blue-400">Modo Offline</h3>
+            <h3 className="text-lg font-medium text-blue-700 dark:text-blue-400">Modo Offline</h3>
 
             <div className="flex items-center justify-between">
               <div>
-                <Label className="font-medium text-white">Habilitar Modo Offline</Label>
-                <p className="text-sm text-slate-400">
+                <Label className="font-medium text-slate-900 dark:text-white">Habilitar Modo Offline</Label>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
                   Permitir uso do app sem conexão com internet
                 </p>
               </div>
@@ -371,38 +371,38 @@ export const PWAManager: React.FC<PWAManagerProps> = ({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-3 bg-white/5 border border-white/10 rounded-lg">
+              <div className="p-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
                   <Cloud className="w-4 h-4 text-blue-400" />
-                  <span className="font-medium text-sm text-white">Cache de Dados</span>
+                  <span className="font-medium text-sm text-slate-900 dark:text-white">Cache de Dados</span>
                 </div>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-600 dark:text-slate-400">
                   Dados salvos localmente para acesso offline
                 </p>
               </div>
 
-              <div className="p-3 bg-white/5 border border-white/10 rounded-lg">
+              <div className="p-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
                   <RefreshCw className="w-4 h-4 text-emerald-400" />
-                  <span className="font-medium text-sm text-white">Sincronização</span>
+                  <span className="font-medium text-sm text-slate-900 dark:text-white">Sincronização</span>
                 </div>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-600 dark:text-slate-400">
                   {pendingSync.length} item(s) aguardando sincronização
                 </p>
               </div>
             </div>
           </div>
 
-          <Separator className="bg-white/10" />
+          <Separator className="bg-slate-200 dark:bg-white/10" />
 
           {/* Notificações */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-blue-400">Notificações Push</h3>
+            <h3 className="text-lg font-medium text-blue-700 dark:text-blue-400">Notificações Push</h3>
 
             <div className="flex items-center justify-between">
               <div>
-                <Label className="font-medium text-white">Habilitar Notificações</Label>
-                <p className="text-sm text-slate-400">
+                <Label className="font-medium text-slate-900 dark:text-white">Habilitar Notificações</Label>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
                   Receber notificações sobre atualizações e eventos importantes
                 </p>
               </div>
@@ -410,7 +410,7 @@ export const PWAManager: React.FC<PWAManagerProps> = ({
                 <Button
                   onClick={handleNotificationPermission}
                   variant="outline"
-                  className="flex items-center gap-2 border-white/10 text-white hover:bg-white/10"
+                  className="flex items-center gap-2 border-slate-300 dark:border-white/10 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-white/10"
                 >
                   <Bell className="w-4 h-4" />
                   Permitir

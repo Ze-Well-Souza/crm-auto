@@ -20,8 +20,9 @@ export const useServiceOrders = () => {
 
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) {
-        setError('Usuário não autenticado');
+        // No active session — show empty state gracefully (e.g. demo mode)
         setServiceOrders([]);
+        setLoading(false);
         return;
       }
 

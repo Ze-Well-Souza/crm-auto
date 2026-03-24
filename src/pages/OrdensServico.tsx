@@ -128,6 +128,13 @@ const OrdensServico = () => {
         <Card className="border-destructive bg-destructive/5">
           <CardContent className="pt-6">
             <p className="text-destructive">Erro ao carregar ordens de serviço: {error}</p>
+            <Button 
+              variant="outline" 
+              onClick={refetch}
+              className="mt-4"
+            >
+              Tentar Novamente
+            </Button>
           </CardContent>
         </Card>
       </DashboardLayout>
@@ -140,10 +147,10 @@ const OrdensServico = () => {
         {/* Header - Landing Page Style */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-transparent dark:bg-gradient-to-r dark:from-blue-400 dark:via-purple-400 dark:to-blue-500 dark:bg-clip-text">
               Ordens de Serviço
             </h1>
-            <p className="text-slate-400">Gerencie orçamentos, serviços e acompanhe o status</p>
+            <p className="text-slate-600 dark:text-slate-400">Gerencie orçamentos, serviços e acompanhe o status</p>
           </div>
 
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -153,9 +160,9 @@ const OrdensServico = () => {
                 Nova Ordem
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto bg-slate-900 border-white/10">
+            <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto bg-white dark:bg-slate-900 border-slate-200 dark:border-white/10">
               <DialogHeader>
-                <DialogTitle className="text-white">Criar Nova Ordem de Serviço</DialogTitle>
+                <DialogTitle className="text-slate-900 dark:text-white">Criar Nova Ordem de Serviço</DialogTitle>
               </DialogHeader>
               <ServiceOrderForm onSuccess={() => {
                 setIsDialogOpen(false);
@@ -175,15 +182,15 @@ const OrdensServico = () => {
         />
 
         {/* Search */}
-        <Card className="bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl">
+        <Card className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 backdrop-blur-xl">
           <CardContent className="pt-6">
             <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-purple-400" />
+              <Search className="absolute left-3 top-3 h-4 w-4 text-purple-600 dark:text-purple-400" />
               <Input
                 placeholder="Buscar ordens por número ou descrição..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-slate-400 focus:border-purple-500/50 focus:ring-purple-500/20"
+                className="pl-10 bg-white dark:bg-white/5 border-slate-300 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-purple-500/50 focus:ring-purple-500/20"
               />
             </div>
           </CardContent>
